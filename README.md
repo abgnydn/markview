@@ -8,7 +8,7 @@ Beautiful rendering, full-text search, split view, presentation mode, built-in e
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-6366f1.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Made with Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
+[![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![MCP Tools](https://img.shields.io/badge/MCP_Tools-15-10b981)](apps/mcp)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-▶-ff6b6b)](https://web-ahmet-bar-gnaydns-projects.vercel.app)
 
@@ -106,7 +106,7 @@ See [apps/mcp/README.md](apps/mcp/README.md) for full documentation.
 ```
 markview/
 ├── apps/
-│   ├── web/          # Next.js 15 documentation viewer
+│   ├── web/          # Next.js 16 documentation viewer
 │   ├── mcp/          # MCP server (15 tools)
 │   └── extension/    # Chrome extension
 ├── LICENSE           # MIT
@@ -116,7 +116,7 @@ markview/
 
 | App | Tech | Description |
 |-----|------|-------------|
-| **Web** | Next.js 15, React, Zustand, Shiki, Mermaid, KaTeX | Main documentation viewer |
+| **Web** | Next.js 16, React, Zustand, Shiki, Mermaid, KaTeX | Main documentation viewer |
 | **MCP** | TypeScript, @modelcontextprotocol/sdk | AI documentation tools |
 | **Extension** | Chrome Extensions API | View .md files in browser |
 
