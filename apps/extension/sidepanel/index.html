@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarkView</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Toolbar -->
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <span class="logo-icon">📄</span>
+        <h1 class="logo-text">MarkView</h1>
+      </div>
+      <div class="toolbar-right">
+        <button id="theme-toggle" class="toolbar-btn" title="Toggle theme">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Drop Zone (shown when no file loaded) -->
+    <div id="drop-zone" class="drop-zone">
+      <div class="drop-zone-content">
+        <div class="drop-zone-icon">📄</div>
+        <h2>Drop Markdown Files Here</h2>
+        <p>or <button id="browse-btn" class="browse-btn">browse files</button></p>
+        <p class="drop-zone-hint">Supports .md and .markdown files</p>
+      </div>
+      <input type="file" id="file-input" accept=".md,.markdown" multiple hidden>
+    </div>
+
+    <!-- Viewer (shown when file is loaded) -->
+    <div id="viewer" class="viewer" hidden>
+      <div id="markdown-content" class="markdown-content"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
