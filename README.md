@@ -66,6 +66,18 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) — drop some markdown files and go.
 
+Or use the **[live demo](https://web-ahmet-bar-gnaydns-projects.vercel.app)** — no install needed.
+
+### Install as PWA (Desktop App)
+
+MarkView works as a Progressive Web App — install it for an app-like experience with offline support:
+
+1. Open the web app in Chrome/Edge
+2. Click the **install icon** (⊕) in the address bar
+3. Click **"Install"**
+
+That's it — MarkView now runs as a standalone desktop app, works offline, and persists your workspaces.
+
 ### Chrome Extension
 
 Load `apps/extension` as an unpacked extension in Chrome to view `.md` files directly in the browser.
