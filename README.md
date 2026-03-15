@@ -84,7 +84,52 @@ Load `apps/extension` as an unpacked extension in Chrome to view `.md` files dir
 
 ### MCP Server
 
-Connect your AI assistant (Claude, Cursor, etc.) to MarkView's documentation tools:
+The MCP server lets AI assistants read, search, and manage your markdown documentation. First, build it:
+
+```bash
+cd apps/mcp
+npm install
+npm run build
+```
+
+Then add it to your AI tool:
+
+<details>
+<summary><strong>Claude Desktop</strong></summary>
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "markview": {
+      "command": "node",
+      "args": ["/absolute/path/to/markview/apps/mcp/dist/index.js", "/path/to/your/docs"]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. You'll see "markview" in the MCP tools menu (🔧).
+
+</details>
+
+<details>
+<summary><strong>Cursor</strong></summary>
+
+Go to **Settings → MCP Servers → Add Server** and use:
+
+```json
+{
+  "command": "node",
+  "args": ["/absolute/path/to/markview/apps/mcp/dist/index.js", "/path/to/your/docs"]
+}
+```
+
+</details>
+
+<details>
+<summary><strong>Any MCP-compatible client</strong></summary>
 
 ```json
 {
@@ -96,6 +141,16 @@ Connect your AI assistant (Claude, Cursor, etc.) to MarkView's documentation too
   }
 }
 ```
+
+</details>
+
+**What you can ask your AI:**
+
+> *"Search my docs for authentication setup"*
+> *"What are the headings in API.md?"*
+> *"Find all broken links in my documentation"*
+> *"Create a new doc called getting-started.md with an intro section"*
+> *"Show me all code examples in Python across my docs"*
 
 ---
 
