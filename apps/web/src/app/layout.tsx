@@ -19,11 +19,13 @@ export const metadata: Metadata = {
     siteName: "MarkView",
     type: "website",
     locale: "en_US",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MarkView — The markdown viewer your docs deserve" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "MarkView — The markdown viewer your docs deserve",
     description: "Beautiful rendering, full-text search, split view, editor, 15 MCP tools. Privacy-first — your files never leave the browser.",
+    images: ["/og-image.png"],
   },
   appleWebApp: {
     capable: true,
