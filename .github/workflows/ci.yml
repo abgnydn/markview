@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  typecheck-and-build:
-    name: Type Check & Build
+  test-and-build:
+    name: Test, Type Check & Build
     runs-on: ubuntu-latest
     
     steps:
@@ -25,6 +25,10 @@ jobs:
         run: npm ci
         working-directory: apps/web
       
+      - name: Run web tests
+        run: npm test
+        working-directory: apps/web
+      
       - name: Type check web
         run: npx tsc --noEmit
         working-directory: apps/web
@@ -36,6 +40,10 @@ jobs:
       # MCP Server
       - name: Install MCP dependencies
         run: npm ci
+        working-directory: apps/mcp
+      
+      - name: Run MCP tests
+        run: npm test
         working-directory: apps/mcp
       
       - name: Type check & build MCP
