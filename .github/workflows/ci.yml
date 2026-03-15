@@ -17,12 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: apps/web/package-lock.json
       
       # Web App
       - name: Install web dependencies
-        run: npm ci
+        run: npm install
         working-directory: apps/web
       
       - name: Run web unit tests
@@ -39,7 +37,7 @@ jobs:
       
       # MCP Server
       - name: Install MCP dependencies
-        run: npm ci
+        run: npm install
         working-directory: apps/mcp
       
       - name: Run MCP tests
