@@ -14,9 +14,10 @@ interface ToolbarProps {
   onToggleSplitView?: () => void;
   onToggleDiffView?: () => void;
   onToggleEditor?: () => void;
+  onGoHome?: () => void;
 }
 
-export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor }: ToolbarProps) {
+export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onGoHome }: ToolbarProps) {
   const { mode, setMode, fontSize } = useThemeStore();
   const workspaces = useWorkspaceStore((s) => s.workspaces);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
@@ -111,8 +112,8 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
             <ExportMenu />
             <button
               className="toolbar-btn"
-              onClick={() => deleteWorkspace(activeWorkspaceId!)}
-              title="Close workspace"
+              onClick={onGoHome}
+              title="Home"
             >
               <FolderOpen size={18} />
             </button>

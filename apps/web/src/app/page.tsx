@@ -49,6 +49,7 @@ export default function HomePage() {
   const [showDiffView, setShowDiffView] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [renderedHtml, setRenderedHtml] = useState('');
+  const [showLanding, setShowLanding] = useState(false);
   const addFilesInputRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -102,6 +103,10 @@ export default function HomePage() {
     setHeadings(h);
   }, []);
 
+  const handleHtmlRendered = useCallback((html: string) => {
+    setRenderedHtml(html);
+  }, []);
+
   // Inter-document linking handler
   const handleNavigateToFile = useCallback((filename: string) => {
     const lowerFilename = filename.toLowerCase();
@@ -149,11 +154,19 @@ export default function HomePage() {
 
   const hasWorkspace = workspaces.length > 0 && activeWorkspaceId && activeFile;
 
-  if (!hasWorkspace) {
+  if (!hasWorkspace || showLanding) {
     return (
       <LandingPage
-        onFilesSelected={handleFilesSelected}
-        onGitHubImport={handleNewWorkspace}
+        onFilesSelected={(files, title) => {
+          setShowLanding(false);
+          handleFilesSelected(files);
+        }}
+        onGitHubImport={(files, title) => {
+          setShowLanding(false);
+          handleNewWorkspace(files, title);
+        }}
+        hasExistingWorkspace={hasWorkspace ? true : false}
+        onBackToWorkspace={() => setShowLanding(false)}
       />
     );
   }
@@ -167,6 +180,7 @@ export default function HomePage() {
         onToggleSplitView={() => setShowSplitView(!showSplitView)}
         onToggleDiffView={() => setShowDiffView(true)}
         onToggleEditor={() => setShowEditor(true)}
+        onGoHome={() => setShowLanding(true)}
       />
       <WorkspaceTabs />
 
@@ -191,6 +205,7 @@ export default function HomePage() {
               <MarkdownRenderer
                 content={frontmatterResult ? frontmatterResult.content : activeFileContent}
                 onHeadingsChange={handleHeadingsChange}
+                onHtmlRendered={handleHtmlRendered}
                 onNavigateToFile={handleNavigateToFile}
                 workspaceFiles={workspaceFileNames}
               />

@@ -7,6 +7,7 @@ import { useThemeStore } from '@/stores/theme-store';
 interface MarkdownRendererProps {
   content: string;
   onHeadingsChange?: (headings: TocHeading[]) => void;
+  onHtmlRendered?: (html: string) => void;
   onNavigateToFile?: (filename: string) => void;
   workspaceFiles?: string[]; // filenames for link validation
 }
@@ -101,7 +102,7 @@ function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string) 
   </div>`;
 }
 
-export function MarkdownRenderer({ content, onHeadingsChange, onNavigateToFile, workspaceFiles }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles }: MarkdownRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [html, setHtml] = useState('');
   const resolved = useThemeStore((s) => s.resolved);
@@ -123,6 +124,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onNavigateToFile, 
 
         if (!cancelled) {
           setHtml(highlighted);
+          onHtmlRendered?.(highlighted);
         }
       } catch (e) {
         console.warn('Markdown processing error:', e);

@@ -1,15 +1,17 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome } from 'lucide-react';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft } from 'lucide-react';
 import './landing.css';
 
 interface LandingPageProps {
   onFilesSelected: (files: { filename: string; content: string }[], title?: string) => void;
   onGitHubImport: (files: { filename: string; content: string }[], title?: string) => void;
+  hasExistingWorkspace?: boolean;
+  onBackToWorkspace?: () => void;
 }
 
-export function LandingPage({ onFilesSelected, onGitHubImport }: LandingPageProps) {
+export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorkspace, onBackToWorkspace }: LandingPageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [githubUrl, setGithubUrl] = useState('');
   const [isImporting, setIsImporting] = useState(false);
@@ -92,6 +94,13 @@ export function LandingPage({ onFilesSelected, onGitHubImport }: LandingPageProp
 
   return (
     <div className="landing">
+      {/* Back to workspace */}
+      {hasExistingWorkspace && onBackToWorkspace && (
+        <button className="landing-back-btn" onClick={onBackToWorkspace}>
+          <ArrowLeft size={16} />
+          Back to workspace
+        </button>
+      )}
       {/* Hero */}
       <section className="landing-hero">
         <div className="landing-hero-glow" />
