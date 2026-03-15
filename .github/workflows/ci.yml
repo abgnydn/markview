@@ -18,6 +18,10 @@ jobs:
         with:
           node-version: 20
       
+      # Remove root lockfile so it doesn't confuse per-app installs
+      - name: Clean root package-lock
+        run: rm -f package-lock.json
+      
       # Web App
       - name: Install web dependencies
         run: npm install
