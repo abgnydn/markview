@@ -12,7 +12,7 @@ Beautiful rendering, full-text search, split view, presentation mode, built-in e
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![MCP Tools](https://img.shields.io/badge/MCP_Tools-15-10b981)](apps/mcp)
-[![Live Demo](https://img.shields.io/badge/Live_Demo-▶-ff6b6b)](https://web-ahmet-bar-gnaydns-projects.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-▶-ff6b6b)](https://getmarkview.vercel.app)
 
 <br />
 
@@ -68,7 +68,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) — drop some markdown files and go.
 
-Or use the **[live demo](https://web-ahmet-bar-gnaydns-projects.vercel.app)** — no install needed.
+Or use the **[live demo](https://getmarkview.vercel.app)** — no install needed.
 
 ### Install as PWA (Desktop App)
 
