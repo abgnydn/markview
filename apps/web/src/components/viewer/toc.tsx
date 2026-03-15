@@ -63,7 +63,22 @@ export function TableOfContents({ headings, scrollContainerRef }: TocProps) {
     };
   }, [setupObserver]);
 
-  if (headings.length === 0) return null;
+  if (headings.length === 0) {
+    return (
+      <aside className="toc">
+        <div className="toc-skeleton">
+          <div className="skeleton-line" style={{ width: '50%' }} />
+          <div className="skeleton-line" style={{ width: '80%' }} />
+          <div className="skeleton-line" style={{ width: '65%' }} />
+          <div className="skeleton-line" style={{ width: '90%' }} />
+          <div className="skeleton-line" style={{ width: '55%' }} />
+          <div className="skeleton-line" style={{ width: '70%' }} />
+          <div className="skeleton-line" style={{ width: '45%' }} />
+          <div className="skeleton-line" style={{ width: '75%' }} />
+        </div>
+      </aside>
+    );
+  }
 
   const handleClick = (id: string) => {
     const el = document.getElementById(id);

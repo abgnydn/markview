@@ -193,3 +193,103 @@ test.describe('Productivity Tools', () => {
     await page.keyboard.press('Escape');
   });
 });
+
+const mermaidMarkdown = `# Diagrams
+
+\`\`\`mermaid
+flowchart TD
+    A[Start] --> B[End]
+\`\`\`
+
+## Sequence
+
+\`\`\`mermaid
+sequenceDiagram
+    Alice->>Bob: Hello
+    Bob-->>Alice: Hi
+\`\`\`
+`;
+
+test.describe('Mermaid Diagrams', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await uploadFile(page, 'diagrams.md', mermaidMarkdown);
+    await page.waitForSelector('.markdown-content', { timeout: 10000 });
+    // Wait for mermaid to render
+    await page.waitForSelector('.mermaid-wrapper', { timeout: 15000 });
+  });
+
+  test('renders mermaid diagrams as SVG', async ({ page }) => {
+    const wrappers = page.locator('.mermaid-wrapper');
+    await expect(wrappers.first()).toBeVisible();
+    // Should contain SVG
+    const svg = wrappers.first().locator('svg').first();
+    await expect(svg).toBeVisible();
+  });
+
+  test('shows toolbar on hover', async ({ page }) => {
+    const wrapper = page.locator('.mermaid-wrapper').first();
+    const toolbar = wrapper.locator('.mermaid-toolbar');
+    // Toolbar should be hidden initially
+    await expect(toolbar).toHaveCSS('opacity', '0');
+    // Hover to show
+    await wrapper.hover();
+    await expect(toolbar).toHaveCSS('opacity', '1');
+  });
+
+  test('toolbar has zoom, SVG, and PNG buttons', async ({ page }) => {
+    const wrapper = page.locator('.mermaid-wrapper').first();
+    await wrapper.hover();
+    await expect(wrapper.locator('[data-mermaid-zoom]')).toBeVisible();
+    await expect(wrapper.locator('[data-mermaid-copy-svg]')).toBeVisible();
+    await expect(wrapper.locator('[data-mermaid-copy-png]')).toBeVisible();
+  });
+
+  test('zoom opens preview modal', async ({ page }) => {
+    const wrapper = page.locator('.mermaid-wrapper').first();
+    await wrapper.hover();
+    await wrapper.locator('[data-mermaid-zoom]').click();
+    await expect(page.locator('.mermaid-preview-overlay')).toBeVisible();
+    await expect(page.locator('.mermaid-preview-container')).toBeVisible();
+    // Close with escape
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.mermaid-preview-overlay')).not.toBeVisible();
+  });
+});
+
+test.describe('Code Block Copy', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await uploadFile(page, 'test.md', testMarkdown);
+    await page.waitForSelector('.markdown-content', { timeout: 10000 });
+  });
+
+  test('code blocks have copy button', async ({ page }) => {
+    const copyBtn = page.locator('[data-copy-code]').first();
+    await expect(copyBtn).toBeVisible();
+  });
+
+  test('code block wrapper shows language label', async ({ page }) => {
+    const langLabel = page.locator('.code-block-lang').first();
+    await expect(langLabel).toBeVisible();
+    await expect(langLabel).toContainText('javascript');
+  });
+});
+
+test.describe('Loading Skeletons', () => {
+  test('TOC shows skeleton before content loads', async ({ page }) => {
+    await page.goto('/');
+    await uploadFile(page, 'test.md', testMarkdown);
+    // TOC aside should be present immediately (either skeleton or loaded)
+    await expect(page.locator('.toc')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('TOC skeleton transitions to real content', async ({ page }) => {
+    await page.goto('/');
+    await uploadFile(page, 'test.md', testMarkdown);
+    await page.waitForSelector('.markdown-content', { timeout: 10000 });
+    // After rendering, TOC should have real headings
+    const toc = page.locator('.toc');
+    await expect(toc).toContainText('Heading 1', { timeout: 10000 });
+  });
+});

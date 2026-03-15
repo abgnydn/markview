@@ -205,8 +205,16 @@ export default function HomePage() {
             )}
             {isContentLoading ? (
               <div className="content-loading">
-                <div className="loading-spinner" />
-                <p>Loading document...</p>
+                <div className="skeleton-line skeleton-title" />
+                <div className="skeleton-line skeleton-long" />
+                <div className="skeleton-line skeleton-full" />
+                <div className="skeleton-line skeleton-medium" />
+                <div className="skeleton-line skeleton-long" />
+                <div className="skeleton-block" />
+                <div className="skeleton-line skeleton-subtitle" />
+                <div className="skeleton-line skeleton-full" />
+                <div className="skeleton-line skeleton-long" />
+                <div className="skeleton-line skeleton-short" />
               </div>
             ) : activeFileContent ? (
               <MarkdownRenderer
