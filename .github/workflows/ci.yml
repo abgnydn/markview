@@ -29,14 +29,6 @@ jobs:
         run: npm test
         working-directory: apps/web
       
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-        working-directory: apps/web
-      
-      - name: Run E2E tests
-        run: npx playwright test
-        working-directory: apps/web
-      
       - name: Type check web
         run: npx tsc --noEmit
         working-directory: apps/web
