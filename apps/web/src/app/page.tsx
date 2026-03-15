@@ -5,7 +5,7 @@ import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { Toolbar } from '@/components/viewer/toolbar';
 import { Sidebar } from '@/components/viewer/sidebar';
-import { MarkdownRenderer } from '@/components/viewer/markdown-renderer';
+import { MarkdownRenderer, preloadShiki } from '@/components/viewer/markdown-renderer';
 import { TableOfContents } from '@/components/viewer/toc';
 import { SearchDialog } from '@/components/viewer/search-dialog';
 import { LandingPage } from '@/components/landing/landing-page';
@@ -61,6 +61,7 @@ export default function HomePage() {
   useEffect(() => {
     initializeTheme();
     initialize();
+    preloadShiki(); // Start loading Shiki grammars immediately
   }, [initializeTheme, initialize]);
 
   // Scroll to top on file change

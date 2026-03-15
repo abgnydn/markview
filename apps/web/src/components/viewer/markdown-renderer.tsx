@@ -43,6 +43,25 @@ async function ensureShiki() {
   await shikiPromise;
 }
 
+/** Call on app mount to preload Shiki before first render */
+export function preloadShiki() {
+  ensureShiki();
+}
+
+// Mermaid singleton — avoid re-importing on every render
+let mermaidModule: typeof import('mermaid')['default'] | null = null;
+let mermaidPromise: Promise<typeof import('mermaid')['default']> | null = null;
+
+async function ensureMermaid() {
+  if (mermaidModule) return mermaidModule;
+  if (mermaidPromise) return mermaidPromise;
+  mermaidPromise = import('mermaid').then((m) => {
+    mermaidModule = m.default;
+    return m.default;
+  });
+  return mermaidPromise;
+}
+
 function highlightHtml(html: string, theme: 'dark' | 'light'): string {
   if (!shikiHighlighter) return html;
 
@@ -86,7 +105,7 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
   if (!html.includes('language-mermaid')) return html;
 
   try {
-    const mermaid = (await import('mermaid')).default;
+    const mermaid = await ensureMermaid();
     mermaid.initialize({
       startOnLoad: false,
       theme: theme === 'dark' ? 'dark' : 'default',
