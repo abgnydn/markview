@@ -38,6 +38,8 @@ next-env.d.ts
 
 # Testing
 coverage/
+test-results/
+playwright-report/
 
 # Misc
 *.log
