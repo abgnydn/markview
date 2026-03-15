@@ -40,6 +40,7 @@ export default function HomePage() {
   const createWorkspace = useWorkspaceStore((s) => s.createWorkspace);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const addFiles = useWorkspaceStore((s) => s.addFiles);
+  const deleteWorkspace = useWorkspaceStore((s) => s.deleteWorkspace);
   const initializeTheme = useThemeStore((s) => s.initialize);
   const focusMode = useThemeStore((s) => s.focusMode);
 
@@ -167,6 +168,12 @@ export default function HomePage() {
         }}
         hasExistingWorkspace={hasWorkspace ? true : false}
         onBackToWorkspace={() => setShowLanding(false)}
+        onClearAll={async () => {
+          for (const ws of workspaces) {
+            await deleteWorkspace(ws.id);
+          }
+          setShowLanding(false);
+        }}
       />
     );
   }

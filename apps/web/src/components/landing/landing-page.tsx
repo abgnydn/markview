@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft } from 'lucide-react';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2 } from 'lucide-react';
 import './landing.css';
 
 interface LandingPageProps {
@@ -9,9 +9,10 @@ interface LandingPageProps {
   onGitHubImport: (files: { filename: string; content: string }[], title?: string) => void;
   hasExistingWorkspace?: boolean;
   onBackToWorkspace?: () => void;
+  onClearAll?: () => void;
 }
 
-export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorkspace, onBackToWorkspace }: LandingPageProps) {
+export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorkspace, onBackToWorkspace, onClearAll }: LandingPageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [githubUrl, setGithubUrl] = useState('');
   const [isImporting, setIsImporting] = useState(false);
@@ -94,12 +95,22 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
 
   return (
     <div className="landing">
-      {/* Back to workspace */}
-      {hasExistingWorkspace && onBackToWorkspace && (
-        <button className="landing-back-btn" onClick={onBackToWorkspace}>
-          <ArrowLeft size={16} />
-          Back to workspace
-        </button>
+      {/* Back to workspace / Clear all */}
+      {hasExistingWorkspace && (
+        <div className="landing-nav-bar">
+          {onBackToWorkspace && (
+            <button className="landing-back-btn" onClick={onBackToWorkspace}>
+              <ArrowLeft size={16} />
+              Back to workspace
+            </button>
+          )}
+          {onClearAll && (
+            <button className="landing-clear-btn" onClick={onClearAll}>
+              <Trash2 size={14} />
+              Clear all
+            </button>
+          )}
+        </div>
       )}
       {/* Hero */}
       <section className="landing-hero">

@@ -9,11 +9,17 @@
   position: relative;
 }
 
-.landing-back-btn {
+.landing-nav-bar {
   position: fixed;
   top: 20px;
   right: 24px;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.landing-back-btn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -34,6 +40,29 @@
   border-color: rgba(99, 102, 241, 0.5);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.landing-clear-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  color: #fca5a5;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all 0.2s;
+}
+
+.landing-clear-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
 }
 
 /* === Hero === */
