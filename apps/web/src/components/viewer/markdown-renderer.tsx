@@ -114,9 +114,26 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
 
       try {
         const { svg } = await mermaid.render(id, code.trim());
+        const escapedSvg = svg.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         replacements.push({
           match: m[0],
-          replacement: `<div class="mermaid-wrapper">${svg}</div>`,
+          replacement: `<div class="mermaid-wrapper" data-mermaid-svg="${escapedSvg}">
+            <div class="mermaid-toolbar">
+              <button class="mermaid-btn" data-mermaid-zoom title="Expand diagram">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                <span>Zoom</span>
+              </button>
+              <button class="mermaid-btn" data-mermaid-copy-svg title="Copy as SVG">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                <span>SVG</span>
+              </button>
+              <button class="mermaid-btn" data-mermaid-copy-png title="Copy as PNG">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <span>PNG</span>
+              </button>
+            </div>
+            ${svg}
+          </div>`,
         });
       } catch (e) {
         console.warn('Mermaid render error for block:', e);
@@ -239,6 +256,106 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         });
       };
     });
+  }, [html]);
+
+  // Wire up mermaid toolbar buttons (zoom, copy SVG, copy PNG)
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const container = contentRef.current;
+
+    const handleMermaidClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('[data-mermaid-zoom], [data-mermaid-copy-svg], [data-mermaid-copy-png]') as HTMLElement;
+      if (!btn) return;
+
+      const wrapper = btn.closest('.mermaid-wrapper') as HTMLElement;
+      if (!wrapper) return;
+
+      const svgEl = wrapper.querySelector('svg:not(.mermaid-toolbar svg)') as SVGElement;
+      if (!svgEl) return;
+
+      // Zoom — fullscreen preview
+      if (btn.hasAttribute('data-mermaid-zoom')) {
+        e.stopPropagation();
+        const overlay = document.createElement('div');
+        overlay.className = 'mermaid-preview-overlay';
+        overlay.innerHTML = `
+          <div class="mermaid-preview-container">
+            <div class="mermaid-preview-header">
+              <span>Diagram Preview</span>
+              <button class="mermaid-preview-close" title="Close (Esc)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="mermaid-preview-body">
+              ${svgEl.outerHTML}
+            </div>
+          </div>
+        `;
+
+        const close = () => overlay.remove();
+        overlay.querySelector('.mermaid-preview-close')?.addEventListener('click', close);
+        overlay.addEventListener('click', (ev) => {
+          if ((ev.target as HTMLElement).classList.contains('mermaid-preview-overlay')) close();
+        });
+        document.addEventListener('keydown', function handler(ev) {
+          if (ev.key === 'Escape') { close(); document.removeEventListener('keydown', handler); }
+        });
+
+        // Enable zoom via scroll wheel
+        let scale = 1;
+        const previewBody = overlay.querySelector('.mermaid-preview-body') as HTMLElement;
+        previewBody?.addEventListener('wheel', (ev) => {
+          ev.preventDefault();
+          scale = Math.max(0.25, Math.min(5, scale + (ev.deltaY > 0 ? -0.1 : 0.1)));
+          const previewSvg = previewBody.querySelector('svg') as SVGElement;
+          if (previewSvg) previewSvg.style.transform = `scale(${scale})`;
+        }, { passive: false });
+
+        document.body.appendChild(overlay);
+      }
+
+      // Copy SVG
+      if (btn.hasAttribute('data-mermaid-copy-svg')) {
+        e.stopPropagation();
+        const svgMarkup = svgEl.outerHTML;
+        navigator.clipboard.writeText(svgMarkup).then(() => {
+          const span = btn.querySelector('span');
+          if (span) { span.textContent = 'Copied!'; setTimeout(() => { span.textContent = 'SVG'; }, 1500); }
+        });
+      }
+
+      // Copy PNG
+      if (btn.hasAttribute('data-mermaid-copy-png')) {
+        e.stopPropagation();
+        const svgData = new XMLSerializer().serializeToString(svgEl);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const scale = 2; // 2x for retina
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext('2d')!;
+          ctx.scale(scale, scale);
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
+                const span = btn.querySelector('span');
+                if (span) { span.textContent = 'Copied!'; setTimeout(() => { span.textContent = 'PNG'; }, 1500); }
+              });
+            }
+          }, 'image/png');
+        };
+        img.src = url;
+      }
+    };
+
+    container.addEventListener('click', handleMermaidClick);
+    return () => container.removeEventListener('click', handleMermaidClick);
   }, [html]);
 
   // Inter-document linking + link validation
