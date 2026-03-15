@@ -173,6 +173,27 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
               <Layers size={18} />
               Open Folder
             </button>
+            <button
+              className="landing-cta-secondary"
+              onClick={async () => {
+                const demoFiles = ['welcome.md', 'architecture.md', 'api-reference.md'];
+                try {
+                  const files = await Promise.all(
+                    demoFiles.map(async (name) => {
+                      const res = await fetch(`/demo/${name}`);
+                      const content = await res.text();
+                      return { filename: name, content };
+                    })
+                  );
+                  onGitHubImport(files, 'MarkView Demo');
+                } catch {
+                  alert('Failed to load demo files');
+                }
+              }}
+            >
+              <Eye size={18} />
+              Try the Demo
+            </button>
           </div>
 
           <div className="landing-github-import">
