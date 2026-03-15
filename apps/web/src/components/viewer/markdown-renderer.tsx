@@ -240,6 +240,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
           theme: resolved === 'dark' ? 'dark' : 'default',
           securityLevel: 'loose',
           fontFamily: 'Inter, system-ui, sans-serif',
+          suppressErrorRendering: true,
         });
 
         for (let i = 0; i < mermaidBlocks.length; i++) {
@@ -260,6 +261,11 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
           } catch (e) {
             console.warn('Mermaid render error:', e);
             pre.dataset.mermaid = 'true';
+            // Clean up orphaned SVG elements that mermaid creates on failed renders
+            const orphan = document.getElementById(id);
+            if (orphan) orphan.remove();
+            const orphanDiv = document.querySelector(`#d${id}`);
+            if (orphanDiv) orphanDiv.remove();
           }
         }
       } catch (e) {

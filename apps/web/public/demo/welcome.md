@@ -165,23 +165,28 @@ pie title MarkView Feature Distribution
     "Distribution" : 15
 ```
 
-### Git Graph
+### Class Diagram
 
 ```mermaid
-gitgraph
-    commit id: "init"
-    commit id: "core"
-    branch feature/rendering
-    commit id: "mermaid"
-    commit id: "katex"
-    checkout main
-    branch feature/tools
-    commit id: "search"
-    commit id: "editor"
-    checkout main
-    merge feature/rendering
-    merge feature/tools
-    commit id: "v1.0.0" tag: "release"
+classDiagram
+    class MarkdownRenderer {
+        +string content
+        +render() string
+        +highlightCode()
+    }
+    class PresentationMode {
+        +string html
+        +number currentSlide
+        +next()
+        +prev()
+    }
+    class WorkspaceStore {
+        +Workspace[] workspaces
+        +createWorkspace()
+        +deleteWorkspace()
+    }
+    MarkdownRenderer --> PresentationMode : provides HTML
+    WorkspaceStore --> MarkdownRenderer : provides content
 ```
 
 ---

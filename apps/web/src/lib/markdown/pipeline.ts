@@ -44,7 +44,7 @@ const sanitizeSchema = {
     ol: ['start', 'type', 'reversed'],
     li: ['value'],
     input: ['type', 'checked', 'disabled'],
-    code: ['className'],  // for language-* classes
+    code: ['className'],  // for language-* classes — rehype-sanitize allows any className value by default when listed
     pre: ['className'],
     time: ['datetime'],
     blockquote: ['cite'],
