@@ -134,6 +134,30 @@ markview/
 
 ---
 
+## 🗺️ Roadmap
+
+MarkView is actively maintained. Here's what's coming:
+
+| Status | Feature | Description |
+|--------|---------|-------------|
+| ✅ | Rich rendering | GFM, Mermaid, KaTeX, Shiki, alerts, tables |
+| ✅ | Workspace management | Multi-tab, file trees, IndexedDB persistence |
+| ✅ | Productivity suite | Search, split view, diff, editor, presentation, export |
+| ✅ | MCP server | 15 AI documentation tools |
+| ✅ | Chrome extension | View .md files in the browser |
+| ✅ | PWA & offline | Install as desktop app, works without internet |
+| 🔜 | Import workspace ZIP | Load shared workspace archives |
+| 🔜 | Custom themes | User-configurable color schemes |
+| 🔜 | Plugin system | Extend rendering with custom blocks |
+| 🔮 | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
+| 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |
+| 🔮 | npm publish MCP | `npx markview-mcp ./docs` |
+| 🔮 | VS Code extension | View docs without leaving the editor |
+
+🔜 = planned &nbsp; 🔮 = exploring — [contributions welcome!](CONTRIBUTING.md)
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
