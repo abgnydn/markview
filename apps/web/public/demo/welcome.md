@@ -129,7 +129,9 @@ flowchart TD
     E --> F[Syntax Highlighting]
     E --> G[Mermaid Diagrams]
     E --> H[KaTeX Math]
-    F & G & H --> I[Display in Viewer]
+    F --> I[Display in Viewer]
+    G --> I
+    H --> I
     I --> J[Table of Contents]
     I --> K[Search Index]
 ```

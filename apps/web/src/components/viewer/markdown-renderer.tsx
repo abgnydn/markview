@@ -52,7 +52,7 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
   return html.replace(
     /<pre><code class="language-([^"]+)">([\s\S]*?)<\/code><\/pre>/g,
     (match, lang, code) => {
-      if (lang === 'mermaid') return match; // Skip mermaid blocks
+      if (lang === 'mermaid') return match; // Skip mermaid blocks — rendered separately
 
       // Decode HTML entities
       const decoded = code
@@ -78,6 +78,64 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
       }
     }
   );
+}
+
+// Render mermaid diagrams in the HTML string (before React gets it)
+async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promise<string> {
+  // Quick check: if no mermaid blocks, skip mermaid import entirely
+  if (!html.includes('language-mermaid')) return html;
+
+  try {
+    const mermaid = (await import('mermaid')).default;
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: theme === 'dark' ? 'dark' : 'default',
+      securityLevel: 'loose',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      suppressErrorRendering: true,
+    });
+
+    let counter = 0;
+    const regex = /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g;
+    const replacements: { match: string; replacement: string }[] = [];
+
+    // Collect all mermaid blocks
+    let m;
+    while ((m = regex.exec(html)) !== null) {
+      const encoded = m[1];
+      const code = encoded
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+
+      const id = `mermaid-${Date.now()}-${counter++}`;
+
+      try {
+        const { svg } = await mermaid.render(id, code.trim());
+        replacements.push({
+          match: m[0],
+          replacement: `<div class="mermaid-wrapper">${svg}</div>`,
+        });
+      } catch (e) {
+        console.warn('Mermaid render error for block:', e);
+        // Clean up orphaned SVG
+        const orphan = document.getElementById(id);
+        if (orphan) orphan.remove();
+        // Leave block as-is (will show as code)
+      }
+    }
+
+    // Apply replacements
+    for (const r of replacements) {
+      html = html.replace(r.match, r.replacement);
+    }
+  } catch (e) {
+    console.warn('Mermaid failed to load:', e);
+  }
+
+  return html;
 }
 
 function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string) {
@@ -122,9 +180,12 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         // Highlight code blocks in HTML string (before DOM)
         const highlighted = highlightHtml(rawHtml, resolved);
 
+        // Render mermaid diagrams in the HTML string (before DOM)
+        const withMermaid = await renderMermaidInHtml(highlighted, resolved);
+
         if (!cancelled) {
-          setHtml(highlighted);
-          onHtmlRendered?.(highlighted);
+          setHtml(withMermaid);
+          onHtmlRendered?.(withMermaid);
         }
       } catch (e) {
         console.warn('Markdown processing error:', e);
@@ -224,58 +285,6 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     return () => container.removeEventListener('click', handleClick);
   }, [html, onNavigateToFile, workspaceFiles]);
 
-  // Mermaid rendering (wrapped in try-catch for extension CSP compatibility)
-  useEffect(() => {
-    if (!contentRef.current || !html) return;
-    const container = contentRef.current;
-
-    const mermaidBlocks = container.querySelectorAll('code.language-mermaid');
-    if (mermaidBlocks.length === 0) return; // Skip if no mermaid blocks
-
-    const renderMermaid = async () => {
-      try {
-        const mermaid = (await import('mermaid')).default;
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: resolved === 'dark' ? 'dark' : 'default',
-          securityLevel: 'loose',
-          fontFamily: 'Inter, system-ui, sans-serif',
-          suppressErrorRendering: true,
-        });
-
-        for (let i = 0; i < mermaidBlocks.length; i++) {
-          const block = mermaidBlocks[i];
-          const pre = block.parentElement as HTMLPreElement;
-          if (pre.dataset.mermaid === 'true') continue;
-
-          const code = block.textContent || '';
-          const id = `mermaid-${Date.now()}-${i}`;
-
-          try {
-            const { svg } = await mermaid.render(id, code);
-            const wrapper = document.createElement('div');
-            wrapper.className = 'mermaid-wrapper';
-            wrapper.innerHTML = svg;
-            wrapper.dataset.mermaidSource = code;
-            pre.replaceWith(wrapper);
-          } catch (e) {
-            console.warn('Mermaid render error:', e);
-            pre.dataset.mermaid = 'true';
-            // Clean up orphaned SVG elements that mermaid creates on failed renders
-            const orphan = document.getElementById(id);
-            if (orphan) orphan.remove();
-            const orphanDiv = document.querySelector(`#d${id}`);
-            if (orphanDiv) orphanDiv.remove();
-          }
-        }
-      } catch (e) {
-        console.warn('Mermaid failed to load (CSP or env issue), showing raw code:', e);
-      }
-    };
-
-    const timer = setTimeout(renderMermaid, 100);
-    return () => clearTimeout(timer);
-  }, [html, resolved]);
 
   // KaTeX math rendering
   useEffect(() => {
