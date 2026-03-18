@@ -57,8 +57,14 @@ jobs:
         run: npm test
         working-directory: apps/mcp
       
-      - name: Type check & build MCP
-        run: npm run build
+      - name: Type check MCP
+        run: npx tsc --noEmit
         working-directory: apps/mcp
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+          NODE_OPTIONS: '--max-old-space-size=8192'
+
+      - name: Build MCP
+        run: npx tsc --skipLibCheck
+        working-directory: apps/mcp
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
