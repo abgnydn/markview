@@ -7,6 +7,7 @@
 Beautiful rendering, full-text search, split view, presentation mode, built-in editor, and 15 MCP tools for AI assistants. Your files never leave the browser.
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=npm)](https://www.npmjs.com/package/@markview/core)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-98_passing-22c55e)](apps/web/e2e)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -227,9 +228,23 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup inst
 
 ---
 
+## 📦 @markview/core
+
+The rendering engine is available as a standalone npm package:
+
+```bash
+npm install @markview/core
+```
+
+Use it in any JavaScript/TypeScript project — no React or Next.js required. See the [package README](packages/core/README.md) for full API docs.
+
+---
+
 ## 📄 License
 
 [AGPL-3.0](LICENSE) © [Ahmet Barış Günaydın](https://github.com/abgnydn)
+
+For commercial use without AGPL obligations, see [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md).
 
 ---
 
