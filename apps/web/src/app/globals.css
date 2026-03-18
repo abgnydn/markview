@@ -207,6 +207,22 @@ body {
   gap: 12px;
 }
 
+.toolbar-home-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.toolbar-home-btn:hover {
+  opacity: 0.75;
+}
+
 .toolbar-logo {
   font-size: 24px;
   line-height: 1;

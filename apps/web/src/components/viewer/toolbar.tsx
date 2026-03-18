@@ -73,8 +73,10 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
             <Menu size={20} />
           </button>
         )}
-        <span className="toolbar-logo">📄</span>
-        <h1 className="toolbar-brand">MarkView</h1>
+        <button className="toolbar-home-btn" onClick={onGoHome} title="Back to home" aria-label="Back to home">
+          <span className="toolbar-logo">📄</span>
+          <h1 className="toolbar-brand">MarkView</h1>
+        </button>
         {activeWorkspace && (
           <span className="toolbar-workspace-name">{activeWorkspace.title}</span>
         )}
