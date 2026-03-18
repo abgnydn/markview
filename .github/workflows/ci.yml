@@ -60,3 +60,5 @@ jobs:
       - name: Type check & build MCP
         run: npm run build
         working-directory: apps/mcp
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
