@@ -1500,6 +1500,14 @@ body {
 /* ============================================
    RESPONSIVE
    ============================================ */
+
+/* Hamburger + overflow: hidden on desktop */
+.toolbar-hamburger,
+.toolbar-overflow-container {
+  display: none;
+}
+
+/* --- Tablet (≤1024px) --- */
 @media (max-width: 1024px) {
   .toc {
     display: none;
@@ -1510,11 +1518,104 @@ body {
   }
 }
 
+/* --- Mobile (≤768px) --- */
 @media (max-width: 768px) {
-  .sidebar {
+  /* Hamburger visible */
+  .toolbar-hamburger {
+    display: flex;
+  }
+  
+  /* Overflow menu visible */
+  .toolbar-overflow-container {
+    display: block;
+    position: relative;
+  }
+
+  /* Hide secondary toolbar buttons */
+  .toolbar-secondary {
+    display: none;
+  }
+
+  /* Toolbar adjustments */
+  .toolbar {
+    padding: 0 12px;
+    gap: 4px;
+  }
+
+  .toolbar-right {
+    gap: 2px;
+  }
+
+  .toolbar-btn {
+    padding: 10px;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .toolbar-reading-stats {
+    display: none;
+  }
+
+  .toolbar-theme-label {
     display: none;
   }
   
+  .toolbar-workspace-name {
+    display: none;
+  }
+
+  .toolbar-font-size {
+    display: none;
+  }
+
+  .toolbar-brand {
+    font-size: 16px;
+  }
+
+  /* Sidebar: off-screen drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+    box-shadow: none;
+  }
+
+  .sidebar.sidebar-mobile-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Backdrop */
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fade-in 200ms ease;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Touch-friendly sidebar items */
+  .sidebar-item {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .sidebar-folder-item {
+    min-height: 44px;
+  }
+
+  /* Content */
   .viewer-content {
     padding: 20px 16px 80px;
   }
@@ -1526,13 +1627,101 @@ body {
   .upload-title {
     font-size: 28px;
   }
-  
-  .toolbar-theme-label {
-    display: none;
+
+  /* Code blocks + tables horizontal scroll */
+  .viewer-content pre {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
-  
-  .toolbar-workspace-name {
-    display: none;
+
+  .viewer-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Workspace tabs */
+  .workspace-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Breadcrumbs */
+  .breadcrumbs {
+    font-size: 12px;
+  }
+}
+
+/* --- Small mobile (≤480px) --- */
+@media (max-width: 480px) {
+  .viewer-content {
+    padding: 16px 12px 80px;
+  }
+
+  .viewer-content h1 { font-size: 24px; }
+  .viewer-content h2 { font-size: 20px; }
+  .viewer-content h3 { font-size: 17px; }
+
+  .code-block-wrapper {
+    margin-left: -12px;
+    margin-right: -12px;
+    border-radius: 0;
+  }
+
+  .viewer-filename {
+    font-size: 18px;
+  }
+
+  .frontmatter-card {
+    padding: 12px;
+  }
+}
+
+/* Toolbar overflow menu (mobile only) */
+.toolbar-overflow-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  min-width: 180px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 1001;
+  padding: 6px;
+  animation: dropdown-in 150ms ease;
+}
+
+.toolbar-overflow-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.toolbar-overflow-item:hover {
+  background: var(--bg-hover);
+}
+
+/* Safe area (iPhone notch) */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .toolbar {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
+  .viewer-content {
+    padding-bottom: max(80px, calc(env(safe-area-inset-bottom) + 40px));
   }
 }
 

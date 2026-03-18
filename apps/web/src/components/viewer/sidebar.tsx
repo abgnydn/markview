@@ -125,7 +125,7 @@ function TreeItem({
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void; className?: string }) {
   const workspaces = useWorkspaceStore((s) => s.workspaces);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const files = useWorkspaceStore((s) => s.files);
@@ -143,7 +143,7 @@ export function Sidebar() {
   if (!activeWorkspace) return null;
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${className || ''}`}>
       <div className="sidebar-header">
         <h2 className="sidebar-title">{activeWorkspace.title}</h2>
         <span className="sidebar-count">{files.length} docs</span>
@@ -157,7 +157,7 @@ export function Sidebar() {
               node={node}
               depth={0}
               activeFileId={activeFileId}
-              onSelect={setActiveFile}
+              onSelect={(id) => { setActiveFile(id); onFileSelect?.(); }}
               onRemove={removeFile}
             />
           ))
@@ -167,7 +167,7 @@ export function Sidebar() {
             <div
               key={file.id}
               className={`sidebar-item ${activeFileId === file.id ? 'sidebar-item-active' : ''}`}
-              onClick={() => setActiveFile(file.id)}
+              onClick={() => { setActiveFile(file.id); onFileSelect?.(); }}
               title={file.filename}
               role="button"
               tabIndex={0}

@@ -51,6 +51,7 @@ export default function HomePage() {
   const [showEditor, setShowEditor] = useState(false);
   const [renderedHtml, setRenderedHtml] = useState('');
   const [showLanding, setShowLanding] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const addFilesInputRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -189,11 +190,20 @@ export default function HomePage() {
         onToggleDiffView={() => setShowDiffView(true)}
         onToggleEditor={() => setShowEditor(true)}
         onGoHome={() => setShowLanding(true)}
+        onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
       />
       <WorkspaceTabs />
 
       <div className="viewer-layout">
-        {!focusMode && <Sidebar />}
+        {mobileSidebarOpen && (
+          <div className="sidebar-backdrop" onClick={() => setMobileSidebarOpen(false)} />
+        )}
+        {!focusMode && (
+          <Sidebar
+            className={mobileSidebarOpen ? 'sidebar-mobile-open' : ''}
+            onFileSelect={() => setMobileSidebarOpen(false)}
+          />
+        )}
         <main className="viewer-main" ref={contentRef}>
           <ReadingProgress scrollContainerRef={contentRef} />
           <div className="viewer-content">
