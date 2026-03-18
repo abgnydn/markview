@@ -362,6 +362,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
 const html = await
   renderMarkdown(md);`}
             </pre>
+            <a href="https://www.npmjs.com/package/@markview/core" target="_blank" rel="noopener noreferrer" className="landing-npm-pkg-link">View on npm →</a>
           </div>
           <div className="landing-npm-pkg-card landing-npm-pkg-featured">
             <div className="landing-npm-pkg-label">Most Popular</div>
@@ -377,6 +378,7 @@ const html = await
 <MarkView content={md}
   theme="dark" shiki />`}
             </pre>
+            <a href="https://www.npmjs.com/package/@markview/react" target="_blank" rel="noopener noreferrer" className="landing-npm-pkg-link">View on npm →</a>
           </div>
           <div className="landing-npm-pkg-card">
             <div className="landing-npm-pkg-name">@markview/webcomponent</div>
@@ -391,6 +393,7 @@ const html = await
 <mark-view content="# Hi"
   theme="dark" shiki />`}
             </pre>
+            <a href="https://www.npmjs.com/package/@markview/webcomponent" target="_blank" rel="noopener noreferrer" className="landing-npm-pkg-link">View on npm →</a>
           </div>
         </div>
         <div className="landing-npm-features">

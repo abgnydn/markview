@@ -796,6 +796,20 @@
   margin-bottom: 12px;
 }
 
+.landing-npm-pkg-link {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #a78bfa;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.landing-npm-pkg-link:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}
+
 .landing-npm-pkg-card .landing-npm-install-box {
   margin: 0 0 0;
   padding: 8px 12px;
