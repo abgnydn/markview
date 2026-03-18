@@ -174,12 +174,18 @@ export default function HomePage() {
   // Editor save handler
   const handleEditorSave = useCallback(async (newContent: string) => {
     if (!activeFileId) return;
+    // Save version to history before updating
+    const { useVersionStore } = await import('@/stores/version-store');
+    const activeF = useWorkspaceStore.getState().files.find((f) => f.id === activeFileId);
+    if (activeF && activeFileContent) {
+      useVersionStore.getState().saveVersion(activeFileId, activeF.filename, activeFileContent, 'editor');
+    }
     const { db } = await import('@/lib/storage/db');
     await db.files.update(activeFileId, { content: newContent });
     // Reload content
     useWorkspaceStore.getState().setActiveFile(activeFileId);
     setShowEditor(false);
-  }, [activeFileId]);
+  }, [activeFileId, activeFileContent]);
 
   const activeFile = files.find((f) => f.id === activeFileId);
 

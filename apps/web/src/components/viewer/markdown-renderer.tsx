@@ -3,6 +3,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';
 import { useThemeStore } from '@/stores/theme-store';
+import { usePluginStore } from '@/lib/plugins/plugin-registry';
+import '@/lib/plugins/embed-plugin';
 
 interface MarkdownRendererProps {
   content: string;
@@ -72,6 +74,22 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
     /<pre><code class="language-([^"]+)">([\s\S]*?)<\/code><\/pre>/g,
     (match, lang, code) => {
       if (lang === 'mermaid') return match; // Skip mermaid blocks — rendered separately
+
+      // Check for registered plugin
+      const plugin = usePluginStore.getState().getPlugin(lang);
+      if (plugin) {
+        const decoded = code
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'");
+        try {
+          return plugin.render(decoded, theme);
+        } catch {
+          return match; // fallback to raw code
+        }
+      }
 
       // Decode HTML entities
       const decoded = code

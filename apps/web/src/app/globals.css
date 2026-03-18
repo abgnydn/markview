@@ -3085,3 +3085,119 @@ body {
   color: var(--accent-red);
   background: var(--bg-hover);
 }
+
+/* ============================================
+   VERSION HISTORY PANEL
+   ============================================ */
+.version-panel {
+  border-top: 1px solid var(--border-default);
+  padding: 12px 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.version-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.version-panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.version-panel-hint {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.version-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.version-panel-item {
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.version-panel-item:hover,
+.version-panel-item.active {
+  background: var(--bg-hover);
+}
+
+.version-panel-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.version-panel-time {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.version-panel-source {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.version-panel-item-meta {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.version-panel-item-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.version-restore-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent-blue);
+  color: #fff;
+  cursor: pointer;
+}
+
+.version-delete-btn {
+  display: flex;
+  align-items: center;
+  padding: 3px 6px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.version-delete-btn:hover {
+  color: var(--accent-red);
+}
