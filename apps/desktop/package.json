@@ -1,0 +1,16 @@
+{
+  "name": "desktop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": ". ~/.cargo/env && tauri dev",
+    "build": ". ~/.cargo/env && tauri build",
+    "tauri": ". ~/.cargo/env && tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2"
+  }
+}
