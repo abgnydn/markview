@@ -320,7 +320,7 @@ export default function HomePage() {
       <input
         ref={addFilesInputRef}
         type="file"
-        accept=".md,.markdown"
+        accept=".md,.markdown,.zip"
         multiple
         className="hidden"
         onChange={(e) => {

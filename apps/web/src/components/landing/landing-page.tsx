@@ -20,6 +20,20 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
     if (!fileList) return;
+
+    // Check for .zip files first
+    const zipFile = Array.from(fileList).find((f) => f.name.endsWith('.zip'));
+    if (zipFile) {
+      try {
+        const { importWorkspaceZip } = await import('@/lib/import/import-zip');
+        const { title, files } = await importWorkspaceZip(zipFile);
+        onFilesSelected(files, title);
+      } catch (err) {
+        alert(err instanceof Error ? err.message : 'Failed to import ZIP');
+      }
+      return;
+    }
+
     const results: { filename: string; content: string }[] = [];
     for (const file of Array.from(fileList)) {
       if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
@@ -143,7 +157,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             <input
               ref={fileInputRef}
               type="file"
-              accept=".md,.markdown"
+              accept=".md,.markdown,.zip"
               multiple
               style={{ display: 'none' }}
               onChange={handleFileChange}

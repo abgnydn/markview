@@ -207,10 +207,10 @@ MarkView is actively maintained. Here's what's coming:
 | ✅ | MCP server | 15 AI documentation tools |
 | ✅ | Chrome extension | View .md files in the browser |
 | ✅ | PWA & offline | Install as desktop app, works without internet |
-| 🔜 | Import workspace ZIP | Load shared workspace archives |
+| ✅ | Import workspace ZIP | Load shared workspace archives |
 | 🔜 | Custom themes | User-configurable color schemes |
 | 🔜 | Plugin system | Extend rendering with custom blocks |
-| 🔮 | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
+| ✅ | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
 | 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |
 | ✅ | npm publish MCP | `npx markview-mcp ./docs` — [published!](https://www.npmjs.com/package/@markview/mcp) |
 | 🔮 | VS Code extension | View docs without leaving the editor |
