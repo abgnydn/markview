@@ -337,45 +337,61 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
         </div>
       </section>
 
-      {/* npm Package */}
+      {/* npm Packages */}
       <section className="landing-section landing-npm-section">
         <div className="landing-npm-badge">
           <Package size={14} />
-          <span>npm package</span>
+          <span>npm packages</span>
         </div>
         <h2 className="landing-section-title">Use the renderer anywhere</h2>
         <p className="landing-section-subtitle">
-          The core rendering engine is available as a standalone npm package.
-          Framework-agnostic. Zero dependencies on React or Next.js.
+          Available as standalone packages for any stack.
+          Pick the one that fits your project.
         </p>
-        <div className="landing-npm-install-box">
-          <code className="landing-npm-cmd">npm install @markview/core</code>
-          <button
-            className="landing-npm-copy"
-            onClick={() => {
-              navigator.clipboard.writeText('npm install @markview/core');
-            }}
-            title="Copy to clipboard"
-          >
-            Copy
-          </button>
-        </div>
-        <div className="landing-npm-code-example">
-          <div className="landing-npm-code-header">
-            <span>app.ts</span>
+        <div className="landing-npm-packages">
+          <div className="landing-npm-pkg-card">
+            <div className="landing-npm-pkg-name">@markview/core</div>
+            <div className="landing-npm-pkg-desc">Framework-agnostic engine</div>
+            <div className="landing-npm-install-box">
+              <code className="landing-npm-cmd">npm i @markview/core</code>
+            </div>
+            <pre className="landing-npm-code-content">
+{`import { renderMarkdown }
+  from '@markview/core';
+
+const html = await
+  renderMarkdown(md);`}
+            </pre>
           </div>
-          <pre className="landing-npm-code-content">
-{`import { renderMarkdown } from '@markview/core';
-import '@markview/core/styles';
+          <div className="landing-npm-pkg-card landing-npm-pkg-featured">
+            <div className="landing-npm-pkg-label">Most Popular</div>
+            <div className="landing-npm-pkg-name">@markview/react</div>
+            <div className="landing-npm-pkg-desc">Drop-in React component</div>
+            <div className="landing-npm-install-box">
+              <code className="landing-npm-cmd">npm i @markview/react</code>
+            </div>
+            <pre className="landing-npm-code-content">
+{`import { MarkView }
+  from '@markview/react';
 
-const html = await renderMarkdown(content, {
-  shiki: true,      // syntax highlighting
-  mermaid: true,    // diagram rendering
-  katex: true,      // math equations
-});
+<MarkView content={md}
+  theme="dark" shiki />`}
+            </pre>
+          </div>
+          <div className="landing-npm-pkg-card">
+            <div className="landing-npm-pkg-name">@markview/webcomponent</div>
+            <div className="landing-npm-pkg-desc">Vue · Angular · Svelte · HTML</div>
+            <div className="landing-npm-install-box">
+              <code className="landing-npm-cmd">npm i @markview/webcomponent</code>
+            </div>
+            <pre className="landing-npm-code-content">
+{`import
+  '@markview/webcomponent';
 
-document.querySelector('#docs').innerHTML = html;`}
-          </pre>
+<mark-view content="# Hi"
+  theme="dark" shiki />`}
+            </pre>
+          </div>
         </div>
         <div className="landing-npm-features">
           <div className="landing-npm-feature"><Check size={14} /> Shiki syntax highlighting (140+ languages)</div>

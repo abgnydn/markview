@@ -7,7 +7,9 @@
 Beautiful rendering, full-text search, split view, presentation mode, built-in editor, and 15 MCP tools for AI assistants. Your files never leave the browser.
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
-[![npm](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=npm)](https://www.npmjs.com/package/@markview/core)
+[![core](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=%40markview%2Fcore)](https://www.npmjs.com/package/@markview/core)
+[![react](https://img.shields.io/npm/v/@markview/react?color=61dafb&label=%40markview%2Freact)](https://www.npmjs.com/package/@markview/react)
+[![webcomponent](https://img.shields.io/npm/v/@markview/webcomponent?color=f7df1e&label=%40markview%2Fwebcomponent)](https://www.npmjs.com/package/@markview/webcomponent)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-98_passing-22c55e)](apps/web/e2e)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -228,15 +230,33 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup inst
 
 ---
 
-## 📦 @markview/core
+## 📦 Packages
 
-The rendering engine is available as a standalone npm package:
+MarkView's rendering engine is available as standalone npm packages:
 
-```bash
-npm install @markview/core
+| Package | Install | Use case |
+|---------|---------|----------|
+| [`@markview/core`](packages/core) | `npm i @markview/core` | Framework-agnostic rendering engine |
+| [`@markview/react`](packages/react) | `npm i @markview/react` | Drop-in React component |
+| [`@markview/webcomponent`](packages/webcomponent) | `npm i @markview/webcomponent` | Web Component for Vue, Angular, Svelte, plain HTML |
+
+**React:**
+```tsx
+import { MarkView } from '@markview/react';
+import '@markview/core/styles';
+
+<MarkView content={markdown} theme="dark" shiki mermaid katex />
 ```
 
-Use it in any JavaScript/TypeScript project — no React or Next.js required. See the [package README](packages/core/README.md) for full API docs.
+**Any framework / plain HTML:**
+```html
+<script type="module">
+  import '@markview/webcomponent';
+</script>
+<mark-view content="# Hello" theme="dark" shiki mermaid katex></mark-view>
+```
+
+See each package README for full API docs.
 
 ---
 

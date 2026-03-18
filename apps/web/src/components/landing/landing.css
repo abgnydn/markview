@@ -726,14 +726,91 @@
 }
 
 .landing-npm-code-content {
-  padding: 16px 20px;
+  padding: 14px 16px;
   background: #111118;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 12.5px;
-  line-height: 1.7;
+  font-size: 11.5px;
+  line-height: 1.6;
   color: #a5b4fc;
   margin: 0;
   overflow-x: auto;
+  border-radius: 0 0 10px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.landing-npm-packages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto 32px;
+}
+
+.landing-npm-pkg-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 20px 16px 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.landing-npm-pkg-featured {
+  border-color: rgba(129, 140, 248, 0.3);
+  background: rgba(129, 140, 248, 0.05);
+  box-shadow: 0 0 30px rgba(129, 140, 248, 0.08);
+}
+
+.landing-npm-pkg-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 4px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #818cf8, #6366f1);
+  color: #fff;
+}
+
+.landing-npm-pkg-featured .landing-npm-pkg-name {
+  margin-top: 20px;
+}
+
+.landing-npm-pkg-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e4e4e7;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  margin-bottom: 4px;
+}
+
+.landing-npm-pkg-desc {
+  font-size: 12px;
+  color: #71717a;
+  margin-bottom: 12px;
+}
+
+.landing-npm-pkg-card .landing-npm-install-box {
+  margin: 0 0 0;
+  padding: 8px 12px;
+  border-radius: 8px 8px 0 0;
+}
+
+.landing-npm-pkg-card .landing-npm-cmd {
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .landing-npm-packages {
+    grid-template-columns: 1fr;
+    max-width: 340px;
+  }
 }
 
 .landing-npm-features {
