@@ -1,0 +1,70 @@
+{
+  "name": "@markview/core",
+  "version": "0.1.0",
+  "description": "Beautiful, framework-agnostic markdown renderer with Shiki, Mermaid, KaTeX, and GitHub-flavored markdown support",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles": "./styles/markview.css"
+  },
+  "files": [
+    "dist",
+    "styles",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run"
+  },
+  "license": "AGPL-3.0",
+  "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abgnydn/markview",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/abgnydn/markview/tree/main/packages/core",
+  "keywords": [
+    "markdown",
+    "renderer",
+    "viewer",
+    "shiki",
+    "mermaid",
+    "katex",
+    "gfm",
+    "github-flavored-markdown",
+    "syntax-highlighting"
+  ],
+  "dependencies": {
+    "unified": "^11.0.5",
+    "remark-parse": "^11.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-rehype": "^11.1.2",
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
+    "unist-util-visit": "^5.0.0"
+  },
+  "peerDependencies": {
+    "shiki": "^4.0.0",
+    "mermaid": "^11.0.0",
+    "katex": "^0.16.0"
+  },
+  "peerDependenciesMeta": {
+    "shiki": { "optional": true },
+    "mermaid": { "optional": true },
+    "katex": { "optional": true }
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.0"
+  }
+}
