@@ -238,6 +238,67 @@
   cursor: not-allowed;
 }
 
+/* === Template Picker === */
+.landing-templates {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.landing-templates-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.landing-templates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.landing-template-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.landing-template-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.landing-template-emoji {
+  font-size: 1.1rem;
+}
+
+.landing-template-name {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .landing-templates-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* === Preview Window === */
 .landing-preview {
   position: relative;

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail } from 'lucide-react';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate } from 'lucide-react';
+import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
 import './landing.css';
 
 interface LandingPageProps {
@@ -233,6 +234,26 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
               >
                 {isImporting ? 'Importing...' : 'Import'}
               </button>
+            </div>
+          </div>
+
+          {/* Template picker */}
+          <div className="landing-templates">
+            <div className="landing-templates-label">
+              <LayoutTemplate size={14} />
+              Or start from a template
+            </div>
+            <div className="landing-templates-grid">
+              {WORKSPACE_TEMPLATES.map((tpl) => (
+                <button
+                  key={tpl.id}
+                  className="landing-template-card"
+                  onClick={() => onFilesSelected(tpl.files, tpl.name)}
+                >
+                  <span className="landing-template-emoji">{tpl.emoji}</span>
+                  <span className="landing-template-name">{tpl.name}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>

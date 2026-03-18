@@ -7,6 +7,7 @@ import { Toolbar } from '@/components/viewer/toolbar';
 import { Sidebar } from '@/components/viewer/sidebar';
 import { MarkdownRenderer, preloadShiki } from '@/components/viewer/markdown-renderer';
 import { TableOfContents } from '@/components/viewer/toc';
+import { AnnotationToolbar, AnnotationPanel } from '@/components/viewer/annotation-toolbar';
 import { SearchDialog } from '@/components/viewer/search-dialog';
 import { LandingPage } from '@/components/landing/landing-page';
 import { WorkspaceTabs } from '@/components/workspace/workspace-tabs';
@@ -297,6 +298,12 @@ export default function HomePage() {
               <div className="content-loading">
                 <p>No content available</p>
               </div>
+            )}
+            {activeFileId && (
+              <AnnotationToolbar fileId={activeFileId} containerRef={contentRef} />
+            )}
+            {activeFileId && (
+              <AnnotationPanel fileId={activeFileId} />
             )}
           </div>
         </main>
