@@ -84,6 +84,21 @@ export default function HomePage() {
       // Clean URL without reload
       window.history.replaceState({}, '', window.location.pathname);
     }
+    // Detect #md= shared content
+    if (window.location.hash.includes('md=')) {
+      import('@/lib/sharing/url-share').then(({ checkUrlForSharedContent }) => {
+        checkUrlForSharedContent().then((result) => {
+          if (result) {
+            const wsStore = useWorkspaceStore.getState();
+            wsStore.createWorkspace(
+              result.title || 'Shared Document',
+              [{ filename: `${result.title || 'document'}.md`, content: result.content }]
+            );
+            window.history.replaceState({}, '', window.location.pathname);
+          }
+        });
+      });
+    }
   }, [initializeTheme, initialize]);
 
   // Scroll to top on file change

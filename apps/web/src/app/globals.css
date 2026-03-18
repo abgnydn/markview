@@ -685,6 +685,40 @@ body {
   background: var(--bg-hover);
 }
 
+/* Drag-and-drop reorder */
+.sidebar-drag-handle {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  opacity: 0;
+  cursor: grab;
+  transition: opacity var(--transition-fast);
+  display: flex;
+  align-items: center;
+  margin-right: -2px;
+}
+
+.sidebar-item-draggable:hover .sidebar-drag-handle {
+  opacity: 0.5;
+}
+
+.sidebar-drag-handle:hover {
+  opacity: 1 !important;
+  color: var(--text-secondary);
+}
+
+.sidebar-item-dragging {
+  opacity: 0.4;
+}
+
+.sidebar-item-drop-target {
+  border-top: 2px solid var(--accent-blue);
+  margin-top: -2px;
+}
+
+.sidebar-item-draggable {
+  transition: background var(--transition-fast), border-top 0.1s ease;
+}
+
 /* ============================================
    VIEWER MAIN
    ============================================ */

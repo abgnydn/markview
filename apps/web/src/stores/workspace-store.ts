@@ -49,6 +49,7 @@ interface WorkspaceState {
   setActiveFile: (fileId: string) => Promise<void>;
   addFiles: (files: { filename: string; content: string }[]) => Promise<void>;
   removeFile: (fileId: string) => Promise<void>;
+  reorderFiles: (fromIndex: number, toIndex: number) => void;
 }
 
 function generateId(): string {
@@ -373,5 +374,18 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         ),
       });
     }
+  },
+
+  // ---------- Reorder Files ----------
+  reorderFiles: (fromIndex, toIndex) => {
+    const { files } = get();
+    if (fromIndex < 0 || fromIndex >= files.length) return;
+    if (toIndex < 0 || toIndex >= files.length) return;
+    if (fromIndex === toIndex) return;
+
+    const newFiles = [...files];
+    const [moved] = newFiles.splice(fromIndex, 1);
+    newFiles.splice(toIndex, 0, moved);
+    set({ files: newFiles });
   },
 }));

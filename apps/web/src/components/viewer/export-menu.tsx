@@ -15,6 +15,7 @@ import {
   Presentation,
   FileCode,
   LayoutDashboard,
+  Link2,
 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useThemeStore } from '@/stores/theme-store';
@@ -201,6 +202,18 @@ export function ExportMenu() {
     setTimeout(printDocument, 100);
   }, []);
 
+  const handleShareUrl = useCallback(async () => {
+    if (!activeFileContent) return;
+    const { encodeMarkdownUrl, MAX_SHAREABLE_LENGTH } = await import('@/lib/sharing/url-share');
+    if (activeFileContent.length > MAX_SHAREABLE_LENGTH) {
+      showToast('File too large for URL sharing');
+      return;
+    }
+    const url = await encodeMarkdownUrl(activeFileContent, activeFile?.displayName || activeFile?.filename);
+    await navigator.clipboard.writeText(url);
+    showToast('Share URL copied!');
+  }, [activeFileContent, activeFile]);
+
   if (!activeFile) return null;
 
   return (
@@ -314,6 +327,15 @@ export function ExportMenu() {
             <Printer size={15} />
             <span>Print / Save as PDF</span>
             <kbd className="export-kbd">⌘P</kbd>
+          </button>
+
+          <div className="export-dropdown-divider" />
+
+          {/* Share */}
+          <button className="export-dropdown-item" onClick={handleShareUrl}>
+            <Link2 size={15} />
+            <span>Share as URL</span>
+            <kbd className="export-kbd">Link</kbd>
           </button>
         </div>
       )}

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { FileText, Trash2, ChevronRight, ChevronDown, Folder, FolderOpen, Share2 } from 'lucide-react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
+import { FileText, Trash2, ChevronRight, ChevronDown, Folder, FolderOpen, Share2, GripVertical } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useCollabStore } from '@/stores/collab-store';
 import { ShareDialog } from '@/components/collab/share-dialog';
@@ -135,8 +135,14 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const removeFile = useWorkspaceStore((s) => s.removeFile);
+  const reorderFiles = useWorkspaceStore((s) => s.reorderFiles);
   const collabIsActive = useCollabStore((s) => s.isActive);
   const [showShareDialog, setShowShareDialog] = useState(false);
+
+  // Drag state
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const dragCounter = useRef(0);
 
   const activeWorkspace = workspaces.find((ws) => ws.id === activeWorkspaceId);
 
@@ -144,6 +150,54 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
 
   // Check if we have nested paths at all
   const hasNesting = useMemo(() => files.some((f) => f.filename.includes('/')), [files]);
+
+  const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
+    setDragIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(index));
+    // Make the drag ghost slightly transparent
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '0.5';
+    }
+  }, []);
+
+  const handleDragEnd = useCallback((e: React.DragEvent) => {
+    setDragIndex(null);
+    setDropIndex(null);
+    dragCounter.current = 0;
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '1';
+    }
+  }, []);
+
+  const handleDragEnter = useCallback((index: number) => {
+    dragCounter.current++;
+    setDropIndex(index);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    dragCounter.current--;
+    if (dragCounter.current <= 0) {
+      setDropIndex(null);
+      dragCounter.current = 0;
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    if (!isNaN(fromIndex) && fromIndex !== toIndex) {
+      reorderFiles(fromIndex, toIndex);
+    }
+    setDragIndex(null);
+    setDropIndex(null);
+    dragCounter.current = 0;
+  }, [reorderFiles]);
 
   if (!activeWorkspace) return null;
 
@@ -163,7 +217,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
       </div>
       <nav className="sidebar-nav">
         {hasNesting ? (
-          // Nested file tree
+          // Nested file tree — no drag reorder for tree structure
           tree.map((node) => (
             <TreeItem
               key={node.path}
@@ -175,17 +229,27 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
             />
           ))
         ) : (
-          // Flat list (no folders)
-          files.map((file) => (
+          // Flat list — draggable for reorder
+          files.map((file, index) => (
             <div
               key={file.id}
-              className={`sidebar-item ${activeFileId === file.id ? 'sidebar-item-active' : ''}`}
+              className={`sidebar-item sidebar-item-draggable ${activeFileId === file.id ? 'sidebar-item-active' : ''} ${dragIndex === index ? 'sidebar-item-dragging' : ''} ${dropIndex === index && dragIndex !== index ? 'sidebar-item-drop-target' : ''}`}
               onClick={() => { setActiveFile(file.id); onFileSelect?.(); }}
               title={file.filename}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter') setActiveFile(file.id); }}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, index)}
             >
+              <span className="sidebar-drag-handle" onMouseDown={(e) => e.stopPropagation()}>
+                <GripVertical size={12} />
+              </span>
               <FileText size={14} className="sidebar-item-icon" />
               <span className="sidebar-item-name">{file.displayName || file.filename}</span>
               <button
