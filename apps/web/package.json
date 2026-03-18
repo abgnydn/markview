@@ -11,7 +11,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@markview/core": "file:../../packages/core",
+    "@markview/core": "^0.1.0",
     "@types/katex": "^0.16.8",
     "dexie": "^4.3.0",
     "jszip": "^3.10.1",
