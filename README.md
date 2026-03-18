@@ -4,7 +4,7 @@
 
 **The markdown viewer your docs deserve.**
 
-Beautiful rendering, full-text search, split view, presentation mode, built-in editor, and 15 MCP tools for AI assistants. Your files never leave the browser.
+**Beautiful rendering, WYSIWYG editor, custom themes, annotations, plugin system, and 15 MCP tools for AI assistants. Your files never leave the browser.**
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
 [![core](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=%40markview%2Fcore)](https://www.npmjs.com/package/@markview/core)
@@ -12,7 +12,7 @@ Beautiful rendering, full-text search, split view, presentation mode, built-in e
 [![webcomponent](https://img.shields.io/npm/v/@markview/webcomponent?color=f7df1e&label=%40markview%2Fwebcomponent)](https://www.npmjs.com/package/@markview/webcomponent)
 [![mcp](https://img.shields.io/npm/v/@markview/mcp?color=10b981&label=%40markview%2Fmcp)](https://www.npmjs.com/package/@markview/mcp)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-66_passing-22c55e)](apps/web/src/__tests__)
+[![Tests](https://img.shields.io/badge/tests-79_passing-22c55e)](apps/web/src/__tests__)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![MCP Tools](https://img.shields.io/badge/MCP_Tools-15-10b981)](apps/mcp)
@@ -39,18 +39,27 @@ Beautiful rendering, full-text search, split view, presentation mode, built-in e
 - 📂 **Multi-tab workspaces** with nested file trees
 - 💾 **Persistent sessions** via IndexedDB (survives refresh)
 - 🔗 **Inter-document linking** — click links between docs
-- 📎 **Drag & drop** file upload or open folders
+- 📎 **Drag & drop** file upload, open folders, or reorder files
 - 🐙 **GitHub import** — paste a repo URL, instantly load docs
+- 📋 **Workspace templates** — README, API Docs, Changelog, Meeting Notes, Tech Spec, Blog Post
+- 🔗 **URL sharing** — share workspaces via URL (gzip + base64url in hash)
 
 ### Productivity
 - 🔍 **Full-text search** across all documents (⌘K)
 - ↔️ **Split view** — compare two files side by side
 - 📊 **Diff view** — unified diff with line-by-line highlighting
-- ✏️ **Built-in editor** — edit, split, and preview modes
+- ✏️ **Built-in editor** — edit, split, and preview modes with formatting toolbar (⌘B/⌘I/⌘K)
 - 🎬 **Presentation mode** — transform headings into slides
 - 🧘 **Focus mode** — distraction-free reading
 - ⌨️ **Keyboard-first** — navigate files, switch workspaces, adjust font size
 - 📋 **Export everywhere** — PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc, static site, or print
+- 💬 **Annotations** — highlight text, add color-coded notes, persisted per file
+- 📜 **Version history** — automatic snapshots on save, restore previous versions
+- 🎨 **Custom themes** — 6 curated presets (Dracula, Nord, Monokai, Solarized, Rosé Pine)
+
+### Extensibility
+- 🔌 **Plugin system** — register custom code-fence renderers (alert, chart, tabs, timeline built-in)
+- 🎬 **Embed support** — YouTube, Figma, CodePen, CodeSandbox, Loom via ` ```embed `
 
 ### Privacy & Offline
 - 🔒 **Zero accounts** — no sign-up required
@@ -197,7 +206,7 @@ markview/
 
 ## 🗺️ Roadmap
 
-MarkView is actively maintained. Here's what's coming:
+MarkView is actively maintained. Here's what's shipped and what's next:
 
 | Status | Feature | Description |
 |--------|---------|-------------|
@@ -209,13 +218,21 @@ MarkView is actively maintained. Here's what's coming:
 | ✅ | PWA & offline | Install as desktop app, works without internet |
 | ✅ | Import workspace ZIP | Load shared workspace archives |
 | ✅ | Custom themes | 6 curated color schemes — Dracula, Monokai, Nord, Solarized, Rosé Pine |
-| 🔜 | Plugin system | Extend rendering with custom blocks |
+| ✅ | URL sharing | Share workspaces via URL — gzip + base64url, zero server |
+| ✅ | Drag-and-drop reorder | Rearrange files in the sidebar via drag & drop |
+| ✅ | WYSIWYG editor toolbar | 13 format buttons + ⌘B/⌘I/⌘K shortcuts + Tab indent |
+| ✅ | Workspace templates | 6 starter templates — README, API Docs, Changelog, and more |
+| ✅ | Annotations | Highlight text, add color-coded notes, persisted |
+| ✅ | Plugin system | Custom code-fence renderers — alert, chart, tabs, timeline, embed |
+| ✅ | Embed support | YouTube, Figma, CodePen, CodeSandbox, Loom embeds |
+| ✅ | Version history | Auto-snapshot on save, restore any previous version |
 | ✅ | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
-| 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |
 | ✅ | npm publish MCP | `npx markview-mcp ./docs` — [published!](https://www.npmjs.com/package/@markview/mcp) |
+| 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |
 | 🔮 | VS Code extension | View docs without leaving the editor |
+| 🔮 | AI writing assistant | Grammar check, autocomplete, summarize |
 
-🔜 = planned &nbsp; 🔮 = exploring — [contributions welcome!](CONTRIBUTING.md)
+🔮 = exploring — [contributions welcome!](CONTRIBUTING.md)
 
 ---
 

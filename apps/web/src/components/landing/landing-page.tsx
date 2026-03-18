@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate } from 'lucide-react';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug } from 'lucide-react';
 import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
 import './landing.css';
 
@@ -87,12 +87,18 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
     { icon: Layers, title: 'Workspace Management', desc: 'Multi-tab workspaces with nested file trees, drag to reorder, persistent sessions via IndexedDB' },
     { icon: Search, title: 'Instant Search', desc: 'Full-text search across all documents with keyboard shortcut (⌘K) and highlighted results' },
     { icon: Columns2, title: 'Split & Compare', desc: 'Side-by-side file viewing and unified diff comparison with line-by-line highlighting' },
-    { icon: Code2, title: 'Built-in Editor', desc: 'Edit, split, and preview modes with live markdown rendering and ⌘S to save' },
+    { icon: Type, title: 'WYSIWYG Editor', desc: '13 formatting buttons (bold, italic, headings, lists, links), ⌘B/⌘I/⌘K shortcuts, Tab indent' },
     { icon: PresentationIcon, title: 'Presentation Mode', desc: 'Transform markdown into navigable slides based on headings — instant slide decks' },
-    { icon: Keyboard, title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard' },
+    { icon: Palette, title: 'Custom Themes', desc: '6 curated presets — Dracula, Nord, Monokai, Solarized, Rosé Pine, GitHub — with dark/light variants' },
+    { icon: Link2, title: 'URL Sharing', desc: 'Share any workspace via URL — content is gzip-compressed and base64-encoded in the hash, zero server needed' },
+    { icon: LayoutTemplate, title: 'Starter Templates', desc: '6 pre-built templates — README, API Docs, Changelog, Meeting Notes, Tech Spec, Blog Post' },
+    { icon: MessageSquarePlus, title: 'Annotations', desc: 'Highlight text, pick a color, add notes — annotations are persisted per file and shown in a panel' },
+    { icon: Plug, title: 'Plugin System', desc: 'Extend rendering with custom code fences — built-in: alert boxes, bar charts, tabs, timelines, embeds' },
+    { icon: History, title: 'Version History', desc: 'Auto-snapshots on editor save, stored in IndexedDB — browse, restore, or delete any previous version' },
     { icon: BookOpen, title: 'Reading Experience', desc: 'Table of contents, reading progress, word count, breadcrumbs, frontmatter cards' },
     { icon: FileText, title: 'Export Everywhere', desc: 'PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc — export to 10+ formats or generate a full static site' },
     { icon: Github, title: 'GitHub Import', desc: 'Paste any GitHub repo URL and instantly load its markdown documentation' },
+    { icon: Keyboard, title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard' },
     { icon: Zap, title: 'Focus Mode', desc: 'Distraction-free reading that hides sidebar and TOC — just you and the content' },
     { icon: Puzzle, title: 'PWA & Extension', desc: 'Install as a desktop app or use the Chrome extension for viewing .md files anywhere' },
   ];
@@ -141,8 +147,8 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             <span className="landing-title-accent">your docs deserve</span>
           </h1>
           <p className="landing-subtitle">
-            Beautiful rendering, full-text search, split view, presentation mode,
-            built-in editor, and 15 MCP tools for AI assistants.
+            Beautiful rendering, WYSIWYG editor, custom themes, annotations,
+            plugin system, and 15 MCP tools for AI assistants.
             <br />
             Your files never leave the browser.
           </p>
