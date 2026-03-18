@@ -208,7 +208,7 @@ MarkView is actively maintained. Here's what's coming:
 | ✅ | Chrome extension | View .md files in the browser |
 | ✅ | PWA & offline | Install as desktop app, works without internet |
 | ✅ | Import workspace ZIP | Load shared workspace archives |
-| 🔜 | Custom themes | User-configurable color schemes |
+| ✅ | Custom themes | 6 curated color schemes — Dracula, Monokai, Nord, Solarized, Rosé Pine |
 | 🔜 | Plugin system | Extend rendering with custom blocks |
 | ✅ | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
 | 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |

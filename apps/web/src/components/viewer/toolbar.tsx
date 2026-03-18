@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical } from 'lucide-react';
+import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { ExportMenu } from './export-menu';
+import { THEME_PRESETS } from '@/lib/themes/presets';
 
 interface ToolbarProps {
   onSearchOpen?: () => void;
@@ -20,6 +21,8 @@ interface ToolbarProps {
 
 export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onGoHome, onToggleSidebar }: ToolbarProps) {
   const { mode, setMode, fontSize } = useThemeStore();
+  const colorScheme = useThemeStore((s) => s.colorScheme);
+  const setColorScheme = useThemeStore((s) => s.setColorScheme);
   const workspaces = useWorkspaceStore((s) => s.workspaces);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const deleteWorkspace = useWorkspaceStore((s) => s.deleteWorkspace);
@@ -28,7 +31,9 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
   const activeWorkspace = workspaces.find((ws) => ws.id === activeWorkspaceId);
 
   const [showOverflow, setShowOverflow] = useState(false);
+  const [showThemePicker, setShowThemePicker] = useState(false);
   const overflowRef = useRef<HTMLDivElement>(null);
+  const themePickerRef = useRef<HTMLDivElement>(null);
 
   // Close overflow menu on click outside
   useEffect(() => {
@@ -36,10 +41,13 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
       if (overflowRef.current && !overflowRef.current.contains(e.target as Node)) {
         setShowOverflow(false);
       }
+      if (themePickerRef.current && !themePickerRef.current.contains(e.target as Node)) {
+        setShowThemePicker(false);
+      }
     };
-    if (showOverflow) document.addEventListener('mousedown', handleClick);
+    if (showOverflow || showThemePicker) document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, [showOverflow]);
+  }, [showOverflow, showThemePicker]);
 
   const cycleTheme = () => {
     const next: Record<string, 'dark' | 'light' | 'system'> = {
@@ -177,6 +185,39 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
             </div>
           </>
         )}
+
+        {/* Theme picker */}
+        <div className="toolbar-theme-picker-container" ref={themePickerRef}>
+          <button
+            className="toolbar-btn toolbar-theme-picker-btn"
+            onClick={() => setShowThemePicker(!showThemePicker)}
+            title="Color scheme"
+          >
+            <Palette size={18} />
+          </button>
+          {showThemePicker && (
+            <div className="toolbar-theme-picker">
+              <div className="theme-picker-header">Color Scheme</div>
+              {THEME_PRESETS.map((preset) => (
+                <button
+                  key={preset.id}
+                  className={`theme-picker-item ${colorScheme === preset.id ? 'theme-picker-active' : ''}`}
+                  onClick={() => {
+                    setColorScheme(preset.id);
+                    setShowThemePicker(false);
+                  }}
+                >
+                  <span className="theme-picker-swatch" style={{
+                    background: `linear-gradient(135deg, ${preset.dark['--bg-primary'] || '#0d1117'} 50%, ${preset.dark['--accent-blue'] || '#58a6ff'} 50%)`,
+                  }} />
+                  <span className="theme-picker-name">{preset.emoji} {preset.name}</span>
+                  {colorScheme === preset.id && <span className="theme-picker-check">✓</span>}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         <span className="toolbar-font-size">{fontSize}px</span>
         <button
           className="toolbar-btn toolbar-theme-btn"

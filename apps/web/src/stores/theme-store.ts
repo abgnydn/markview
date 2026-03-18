@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { applyThemePreset } from '@/lib/themes/presets';
 
 type ThemeMode = 'dark' | 'light' | 'system';
 type ResolvedTheme = 'dark' | 'light';
@@ -10,11 +11,13 @@ interface ThemeState {
   resolved: ResolvedTheme;
   fontSize: number; // 12-24
   focusMode: boolean;
+  colorScheme: string; // preset id
   setMode: (mode: ThemeMode) => void;
   setFontSize: (size: number) => void;
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
   toggleFocusMode: () => void;
+  setColorScheme: (schemeId: string) => void;
   initialize: () => void;
 }
 
@@ -45,10 +48,12 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
   resolved: 'dark',
   fontSize: 16,
   focusMode: false,
+  colorScheme: 'github',
 
   setMode: (mode) => {
     const resolved = resolveTheme(mode);
     applyTheme(resolved);
+    applyThemePreset(get().colorScheme, resolved);
     localStorage.setItem('markview-theme', mode);
     set({ mode, resolved });
   },
@@ -74,25 +79,35 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     set((s) => ({ focusMode: !s.focusMode }));
   },
 
+  setColorScheme: (schemeId) => {
+    const { resolved } = get();
+    applyThemePreset(schemeId, resolved);
+    localStorage.setItem('markview-color-scheme', schemeId);
+    set({ colorScheme: schemeId });
+  },
+
   initialize: () => {
     const saved = localStorage.getItem('markview-theme') as ThemeMode | null;
     const mode = saved || 'system';
     const resolved = resolveTheme(mode);
     applyTheme(resolved);
 
+    const savedScheme = localStorage.getItem('markview-color-scheme') || 'github';
+    applyThemePreset(savedScheme, resolved);
+
     const savedSize = localStorage.getItem('markview-font-size');
     const fontSize = savedSize ? parseInt(savedSize, 10) : 16;
     applyFontSize(fontSize);
 
-    set({ mode, resolved, fontSize });
+    set({ mode, resolved, fontSize, colorScheme: savedScheme });
 
-    // Listen for system theme changes
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     mq.addEventListener('change', () => {
-      const { mode: currentMode } = get();
+      const { mode: currentMode, colorScheme: scheme } = get();
       if (currentMode === 'system') {
         const newResolved = getSystemTheme();
         applyTheme(newResolved);
+        applyThemePreset(scheme, newResolved);
         set({ resolved: newResolved });
       }
     });
