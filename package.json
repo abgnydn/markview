@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Beautiful, privacy-first markdown documentation viewer with MCP tools for AI assistants",
   "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/abgnydn/markview"

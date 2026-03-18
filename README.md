@@ -6,7 +6,7 @@
 
 Beautiful rendering, full-text search, split view, presentation mode, built-in editor, and 15 MCP tools for AI assistants. Your files never leave the browser.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-6366f1.svg)](LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-98_passing-22c55e)](apps/web/e2e)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -178,7 +178,7 @@ markview/
 │   ├── web/          # Next.js 16 documentation viewer
 │   ├── mcp/          # MCP server (15 tools)
 │   └── extension/    # Chrome extension
-├── LICENSE           # MIT
+├── LICENSE           # AGPL-3.0
 ├── CONTRIBUTING.md
 └── README.md
 ```
@@ -229,7 +229,7 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup inst
 
 ## 📄 License
 
-[MIT](LICENSE) © [Ahmet Barış Günaydın](https://github.com/abgnydn)
+[AGPL-3.0](LICENSE) © [Ahmet Barış Günaydın](https://github.com/abgnydn)
 
 ---
 
