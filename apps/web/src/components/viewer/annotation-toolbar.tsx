@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { MessageSquarePlus, Highlighter, X, Trash2 } from 'lucide-react';
 import { useAnnotationStore, Annotation } from '@/stores/annotation-store';
 
@@ -159,11 +159,16 @@ interface AnnotationPanelProps {
 }
 
 export function AnnotationPanel({ fileId }: AnnotationPanelProps) {
-  const annotations = useAnnotationStore((s) => s.annotations.filter((a) => a.fileId === fileId));
+  const allAnnotations = useAnnotationStore((s) => s.annotations);
   const activeId = useAnnotationStore((s) => s.activeAnnotationId);
   const setActive = useAnnotationStore((s) => s.setActiveAnnotation);
   const removeAnnotation = useAnnotationStore((s) => s.removeAnnotation);
   const updateNote = useAnnotationStore((s) => s.updateNote);
+
+  const annotations = useMemo(
+    () => allAnnotations.filter((a) => a.fileId === fileId),
+    [allAnnotations, fileId]
+  );
 
   if (annotations.length === 0) return null;
 
