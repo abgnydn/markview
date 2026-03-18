@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2 } from 'lucide-react';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail } from 'lucide-react';
 import './landing.css';
 
 interface LandingPageProps {
@@ -196,6 +196,11 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             </button>
           </div>
 
+          <a className="landing-github-star" href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">
+            <Github size={16} />
+            <span>Star on GitHub</span>
+          </a>
+
           <div className="landing-github-import">
             <div className="landing-github-input-row">
               <Github size={16} />
@@ -332,6 +337,109 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
         </div>
       </section>
 
+      {/* npm Package */}
+      <section className="landing-section landing-npm-section">
+        <div className="landing-npm-badge">
+          <Package size={14} />
+          <span>npm package</span>
+        </div>
+        <h2 className="landing-section-title">Use the renderer anywhere</h2>
+        <p className="landing-section-subtitle">
+          The core rendering engine is available as a standalone npm package.
+          Framework-agnostic. Zero dependencies on React or Next.js.
+        </p>
+        <div className="landing-npm-install-box">
+          <code className="landing-npm-cmd">npm install @markview/core</code>
+          <button
+            className="landing-npm-copy"
+            onClick={() => {
+              navigator.clipboard.writeText('npm install @markview/core');
+            }}
+            title="Copy to clipboard"
+          >
+            Copy
+          </button>
+        </div>
+        <div className="landing-npm-code-example">
+          <div className="landing-npm-code-header">
+            <span>app.ts</span>
+          </div>
+          <pre className="landing-npm-code-content">
+{`import { renderMarkdown } from '@markview/core';
+import '@markview/core/styles';
+
+const html = await renderMarkdown(content, {
+  shiki: true,      // syntax highlighting
+  mermaid: true,    // diagram rendering
+  katex: true,      // math equations
+});
+
+document.querySelector('#docs').innerHTML = html;`}
+          </pre>
+        </div>
+        <div className="landing-npm-features">
+          <div className="landing-npm-feature"><Check size={14} /> Shiki syntax highlighting (140+ languages)</div>
+          <div className="landing-npm-feature"><Check size={14} /> Mermaid diagrams</div>
+          <div className="landing-npm-feature"><Check size={14} /> KaTeX math equations</div>
+          <div className="landing-npm-feature"><Check size={14} /> GitHub-style alerts</div>
+          <div className="landing-npm-feature"><Check size={14} /> XSS sanitization</div>
+          <div className="landing-npm-feature"><Check size={14} /> Themeable CSS with custom properties</div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="landing-section">
+        <h2 className="landing-section-title">Simple pricing</h2>
+        <p className="landing-section-subtitle">
+          Free for open source. Commercial licenses for proprietary use.
+        </p>
+        <div className="landing-pricing-grid">
+          <div className="landing-pricing-card">
+            <div className="landing-pricing-name">Open Source</div>
+            <div className="landing-pricing-price">Free</div>
+            <div className="landing-pricing-period">AGPL-3.0 license</div>
+            <ul className="landing-pricing-features">
+              <li><Check size={14} /> Full rendering engine</li>
+              <li><Check size={14} /> All features included</li>
+              <li><Check size={14} /> Community support</li>
+              <li><Check size={14} /> Must open-source your app</li>
+            </ul>
+            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">
+              View on GitHub
+            </a>
+          </div>
+          <div className="landing-pricing-card landing-pricing-featured">
+            <div className="landing-pricing-popular">Most Popular</div>
+            <div className="landing-pricing-name">Indie</div>
+            <div className="landing-pricing-price">$99<span>/year</span></div>
+            <div className="landing-pricing-period">1 developer, 1 project</div>
+            <ul className="landing-pricing-features">
+              <li><Check size={14} /> Use in proprietary apps</li>
+              <li><Check size={14} /> No AGPL obligations</li>
+              <li><Check size={14} /> All future updates</li>
+              <li><Check size={14} /> Email support</li>
+            </ul>
+            <a className="landing-pricing-btn landing-pricing-btn-primary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Indie%20License">
+              <Mail size={14} /> Get License
+            </a>
+          </div>
+          <div className="landing-pricing-card">
+            <div className="landing-pricing-name">Team</div>
+            <div className="landing-pricing-price">$299<span>/year</span></div>
+            <div className="landing-pricing-period">Up to 5 developers</div>
+            <ul className="landing-pricing-features">
+              <li><Check size={14} /> Unlimited projects</li>
+              <li><Check size={14} /> No AGPL obligations</li>
+              <li><Check size={14} /> All future updates</li>
+              <li><Check size={14} /> Priority support</li>
+            </ul>
+            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Team%20License">
+              <Mail size={14} /> Contact Us
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="landing-footer">
         <p>
@@ -339,6 +447,13 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
         </p>
         <p className="landing-footer-sub">
           Built with Next.js · Shiki · Mermaid · KaTeX · MCP
+        </p>
+        <p className="landing-footer-links">
+          <a href="https://www.npmjs.com/package/@markview/core" target="_blank" rel="noopener noreferrer">npm</a>
+          <span>·</span>
+          <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <span>·</span>
+          <a href="https://github.com/abgnydn/markview/blob/main/COMMERCIAL_LICENSE.md" target="_blank" rel="noopener noreferrer">Commercial License</a>
         </p>
       </footer>
     </div>

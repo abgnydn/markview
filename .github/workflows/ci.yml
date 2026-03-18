@@ -22,6 +22,15 @@ jobs:
       - name: Clean root package-lock
         run: rm -f package-lock.json
       
+      # Core Package
+      - name: Install core dependencies
+        run: npm install
+        working-directory: packages/core
+      
+      - name: Build core package
+        run: npm run build
+        working-directory: packages/core
+      
       # Web App
       - name: Install web dependencies
         run: npm install

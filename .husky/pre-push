@@ -1,0 +1,9 @@
+# Build core package
+echo "🔨 Building @markview/core..."
+cd packages/core && npm run build || exit 1
+
+# Build web app
+echo "🔨 Building web app..."
+cd ../../apps/web && npm run build || exit 1
+
+echo "✅ All builds passed"

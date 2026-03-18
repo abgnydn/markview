@@ -27,6 +27,26 @@
     "shiki"
   ],
   "private": true,
+  "scripts": {
+    "build": "npm run build:core && npm run build:web",
+    "build:core": "cd packages/core && npm run build",
+    "build:web": "cd apps/web && npm run build",
+    "test": "cd apps/web && npm test",
+    "lint": "cd apps/web && npm run lint",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.2.0",
+    "lint-staged": "^16.1.0"
+  },
+  "lint-staged": {
+    "apps/web/src/**/*.{ts,tsx}": [
+      "eslint --fix --no-warn-ignored"
+    ],
+    "packages/core/src/**/*.ts": [
+      "eslint --fix --no-warn-ignored"
+    ]
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
