@@ -19,6 +19,10 @@ import { DiffView } from '@/components/viewer/diff-view';
 import { MarkdownEditor } from '@/components/viewer/markdown-editor';
 import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
+import { useCollabStore } from '@/stores/collab-store';
+import { getRoomIdFromUrl } from '@/lib/collab/y-provider';
+import { PresenceBar } from '@/components/collab/presence-bar';
+import { JoinDialog } from '@/components/collab/join-dialog';
 import type { TocHeading } from '@/lib/markdown/pipeline';
 
 function calculateReadingStats(content: string) {
@@ -52,8 +56,18 @@ export default function HomePage() {
   const [renderedHtml, setRenderedHtml] = useState('');
   const [showLanding, setShowLanding] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [pendingRoomId, setPendingRoomId] = useState<string | null>(null);
   const addFilesInputRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Collab state
+  const collabIsActive = useCollabStore((s) => s.isActive);
+  const collabIsHost = useCollabStore((s) => s.isHost);
+  const syncedTitle = useCollabStore((s) => s.syncedTitle);
+  const syncedFiles = useCollabStore((s) => s.syncedFiles);
+  const syncedActiveFileId = useCollabStore((s) => s.syncedActiveFileId);
+  const syncedActiveFileContent = useCollabStore((s) => s.syncedActiveFileContent);
+  const setSyncedActiveFile = useCollabStore((s) => s.setSyncedActiveFile);
 
   // Keyboard navigation
   useKeyboardNav();
@@ -62,7 +76,14 @@ export default function HomePage() {
   useEffect(() => {
     initializeTheme();
     initialize();
-    preloadShiki(); // Start loading Shiki grammars immediately
+    preloadShiki();
+    // Detect ?room= parameter
+    const roomId = getRoomIdFromUrl();
+    if (roomId) {
+      setPendingRoomId(roomId);
+      // Clean URL without reload
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, [initializeTheme, initialize]);
 
   // Scroll to top on file change
@@ -155,9 +176,28 @@ export default function HomePage() {
     );
   }
 
+  // Guest mode: viewing a shared workspace
+  const isGuestMode = collabIsActive && !collabIsHost;
+
+  // Determine effective content based on mode
+  const effectiveContent = isGuestMode ? syncedActiveFileContent : activeFileContent;
+  const effectiveActiveFile = isGuestMode
+    ? syncedFiles.find((f) => f.id === syncedActiveFileId)
+    : activeFile;
+
   const hasWorkspace = workspaces.length > 0 && activeWorkspaceId && activeFile;
 
-  if (!hasWorkspace || showLanding) {
+  // Show join dialog if we have a pending room
+  if (pendingRoomId && !collabIsActive) {
+    return (
+      <JoinDialog
+        roomId={pendingRoomId}
+        onClose={() => setPendingRoomId(null)}
+      />
+    );
+  }
+
+  if ((!hasWorkspace && !isGuestMode) || showLanding) {
     return (
       <LandingPage
         onFilesSelected={(files, title) => {
@@ -180,6 +220,8 @@ export default function HomePage() {
     );
   }
 
+  const displayFilename = effectiveActiveFile?.filename || 'untitled';
+
   return (
     <div className={`app ${focusMode ? 'focus-mode' : ''}`}>
       <Toolbar
@@ -192,6 +234,7 @@ export default function HomePage() {
         onGoHome={() => setShowLanding(true)}
         onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
       />
+      <PresenceBar />
       <WorkspaceTabs />
 
       <div className="viewer-layout">
@@ -207,9 +250,9 @@ export default function HomePage() {
         <main className="viewer-main" ref={contentRef}>
           <ReadingProgress scrollContainerRef={contentRef} />
           <div className="viewer-content">
-            <Breadcrumbs filepath={activeFile.filename} />
+            <Breadcrumbs filepath={displayFilename} />
             <div className="viewer-file-header">
-              <h2 className="viewer-filename">{activeFile.filename.split('/').pop()?.replace(/\.md$/i, '') || activeFile.filename}</h2>
+              <h2 className="viewer-filename">{displayFilename.split('/').pop()?.replace(/\.md$/i, '') || displayFilename}</h2>
             </div>
             {frontmatterResult && Object.keys(frontmatterResult.data).length > 0 && (
               <FrontmatterCard data={frontmatterResult.data} />

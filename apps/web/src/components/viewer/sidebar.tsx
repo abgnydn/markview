@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { FileText, Trash2, ChevronRight, ChevronDown, Folder, FolderOpen } from 'lucide-react';
+import { FileText, Trash2, ChevronRight, ChevronDown, Folder, FolderOpen, Share2 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { useCollabStore } from '@/stores/collab-store';
+import { ShareDialog } from '@/components/collab/share-dialog';
+import '@/components/collab/collab.css';
 
 interface TreeNode {
   name: string;
@@ -132,6 +135,8 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const removeFile = useWorkspaceStore((s) => s.removeFile);
+  const collabIsActive = useCollabStore((s) => s.isActive);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   const activeWorkspace = workspaces.find((ws) => ws.id === activeWorkspaceId);
 
@@ -143,10 +148,18 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   if (!activeWorkspace) return null;
 
   return (
+    <>
     <aside className={`sidebar ${className || ''}`}>
       <div className="sidebar-header">
         <h2 className="sidebar-title">{activeWorkspace.title}</h2>
-        <span className="sidebar-count">{files.length} docs</span>
+        <button
+          className={`collab-share-btn ${collabIsActive ? 'collab-sharing' : ''}`}
+          onClick={() => setShowShareDialog(true)}
+          title={collabIsActive ? 'Sharing — click to manage' : 'Share workspace'}
+        >
+          <Share2 size={12} />
+          {collabIsActive ? 'Sharing' : 'Share'}
+        </button>
       </div>
       <nav className="sidebar-nav">
         {hasNesting ? (
@@ -190,5 +203,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
         )}
       </nav>
     </aside>
+    {showShareDialog && <ShareDialog onClose={() => setShowShareDialog(false)} />}
+    </>
   );
 }
