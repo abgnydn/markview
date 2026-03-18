@@ -1,0 +1,55 @@
+{
+  "name": "@markview/webcomponent",
+  "version": "0.1.0",
+  "description": "Web Component for beautiful markdown rendering — works in any framework or plain HTML",
+  "license": "AGPL-3.0",
+  "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abgnydn/markview",
+    "directory": "packages/webcomponent"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@markview/core": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "shiki": { "optional": true },
+    "mermaid": { "optional": true },
+    "katex": { "optional": true }
+  },
+  "devDependencies": {
+    "@markview/core": "file:../core",
+    "typescript": "^5",
+    "shiki": "^3",
+    "mermaid": "^11",
+    "katex": "^0.16",
+    "@types/katex": "^0.16"
+  },
+  "keywords": [
+    "web-component",
+    "custom-element",
+    "markdown",
+    "viewer",
+    "renderer",
+    "vue",
+    "angular",
+    "svelte",
+    "shiki",
+    "mermaid",
+    "katex"
+  ]
+}
