@@ -1,0 +1,67 @@
+{
+  "name": "@markview/react",
+  "version": "0.1.0",
+  "description": "Drop-in React component for beautiful markdown rendering — Shiki, Mermaid, KaTeX, and more",
+  "license": "AGPL-3.0",
+  "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abgnydn/markview",
+    "directory": "packages/react"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@markview/core": ">=0.1.0",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "shiki": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    },
+    "katex": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@markview/core": "file:../core",
+    "@types/katex": "^0.16.8",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "katex": "^0.16.38",
+    "mermaid": "^11.13.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "shiki": "^4.0.2",
+    "typescript": "^5"
+  },
+  "keywords": [
+    "react",
+    "markdown",
+    "viewer",
+    "renderer",
+    "component",
+    "shiki",
+    "mermaid",
+    "katex",
+    "syntax-highlighting"
+  ]
+}
