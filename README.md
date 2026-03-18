@@ -11,7 +11,7 @@ Beautiful rendering, full-text search, split view, presentation mode, built-in e
 [![react](https://img.shields.io/npm/v/@markview/react?color=61dafb&label=%40markview%2Freact)](https://www.npmjs.com/package/@markview/react)
 [![webcomponent](https://img.shields.io/npm/v/@markview/webcomponent?color=f7df1e&label=%40markview%2Fwebcomponent)](https://www.npmjs.com/package/@markview/webcomponent)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-98_passing-22c55e)](apps/web/e2e)
+[![Tests](https://img.shields.io/badge/tests-66_passing-22c55e)](apps/web/src/__tests__)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![MCP Tools](https://img.shields.io/badge/MCP_Tools-15-10b981)](apps/mcp)
@@ -49,7 +49,7 @@ Beautiful rendering, full-text search, split view, presentation mode, built-in e
 - 🎬 **Presentation mode** — transform headings into slides
 - 🧘 **Focus mode** — distraction-free reading
 - ⌨️ **Keyboard-first** — navigate files, switch workspaces, adjust font size
-- 📋 **Export** — PDF, HTML, JSON, rich text, plain text, markdown bundle
+- 📋 **Export everywhere** — PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc, static site, or print
 
 ### Privacy & Offline
 - 🔒 **Zero accounts** — no sign-up required

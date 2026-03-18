@@ -76,7 +76,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
     { icon: PresentationIcon, title: 'Presentation Mode', desc: 'Transform markdown into navigable slides based on headings — instant slide decks' },
     { icon: Keyboard, title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard' },
     { icon: BookOpen, title: 'Reading Experience', desc: 'Table of contents, reading progress, word count, breadcrumbs, frontmatter cards' },
-    { icon: FileText, title: 'Export Anything', desc: 'Copy as HTML, rich text, plain text. Export to PDF, standalone HTML, JSON, or Markdown bundle' },
+    { icon: FileText, title: 'Export Everywhere', desc: 'PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc — export to 10+ formats or generate a full static site' },
     { icon: Github, title: 'GitHub Import', desc: 'Paste any GitHub repo URL and instantly load its markdown documentation' },
     { icon: Zap, title: 'Focus Mode', desc: 'Distraction-free reading that hides sidebar and TOC — just you and the content' },
     { icon: Puzzle, title: 'PWA & Extension', desc: 'Install as a desktop app or use the Chrome extension for viewing .md files anywhere' },
