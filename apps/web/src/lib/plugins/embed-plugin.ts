@@ -118,5 +118,13 @@ export const embedPlugin: CodeFencePlugin = {
   },
 };
 
-// Auto-register on import
-usePluginStore.getState().register(embedPlugin);
+// Auto-register on import (once)
+let _embedRegistered = false;
+if (!_embedRegistered) {
+  _embedRegistered = true;
+  usePluginStore.setState((state) => {
+    const next = new Map(state.plugins);
+    next.set(embedPlugin.id, embedPlugin);
+    return { plugins: next };
+  });
+}

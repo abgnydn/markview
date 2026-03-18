@@ -183,13 +183,21 @@ export const timelinePlugin: CodeFencePlugin = {
   },
 };
 
-// Register built-ins on module load
+// Register built-ins on module load (once)
+let _builtinsRegistered = false;
 function registerBuiltins() {
-  const store = usePluginStore.getState();
-  store.register(alertPlugin);
-  store.register(chartPlugin);
-  store.register(tabsPlugin);
-  store.register(timelinePlugin);
+  if (_builtinsRegistered) return;
+  _builtinsRegistered = true;
+
+  // Batch all registrations into a single state update to avoid cascading re-renders
+  const builtins = [alertPlugin, chartPlugin, tabsPlugin, timelinePlugin];
+  usePluginStore.setState((state) => {
+    const next = new Map(state.plugins);
+    for (const plugin of builtins) {
+      next.set(plugin.id, plugin);
+    }
+    return { plugins: next };
+  });
 }
 
 // Auto-register when this module is first imported
