@@ -85,22 +85,34 @@ export default function HomePage() {
       // Clean URL without reload
       window.history.replaceState({}, '', window.location.pathname);
     }
-    // Detect #md= shared content
-    if (window.location.hash.includes('md=')) {
-      import('@/lib/sharing/url-share').then(({ checkUrlForSharedContent }) => {
-        checkUrlForSharedContent().then((result) => {
-          if (result) {
-            const wsStore = useWorkspaceStore.getState();
-            wsStore.createWorkspace(
-              result.title || 'Shared Document',
-              [{ filename: `${result.title || 'document'}.md`, content: result.content }]
-            );
-            window.history.replaceState({}, '', window.location.pathname);
-          }
-        });
-      });
-    }
   }, [initializeTheme, initialize]);
+
+  // Detect #md= shared content — runs only after store is hydrated from IndexedDB
+  const pendingHashRef = useRef<string | null>(null);
+  useEffect(() => {
+    // Capture hash before any navigation clears it
+    if (window.location.hash.includes('md=') && !pendingHashRef.current) {
+      pendingHashRef.current = window.location.hash;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded || !pendingHashRef.current) return;
+    const hash = pendingHashRef.current;
+    pendingHashRef.current = null;
+    import('@/lib/sharing/url-share').then(({ decodeMarkdownUrl }) => {
+      decodeMarkdownUrl(hash).then((result) => {
+        if (result) {
+          const wsStore = useWorkspaceStore.getState();
+          wsStore.createWorkspace(
+            result.title || 'Shared Document',
+            [{ filename: `${result.title || 'document'}.md`, content: result.content }]
+          );
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+      });
+    });
+  }, [isLoaded]);
 
   // Scroll to top on file change
   useEffect(() => {

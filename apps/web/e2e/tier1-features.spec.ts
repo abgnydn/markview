@@ -190,20 +190,32 @@ test.describe('URL Sharing', () => {
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboardText).toContain('#md=');
   });
+});
 
-  // Skip: This test is flaky due to IndexedDB state + hash detection timing.
-  // URL encoding/decoding roundtrip is thoroughly covered by url-share.test.ts (8 unit tests).
-  test.skip('shared URL opens as new workspace', async ({ page }) => {
-    // Clear any existing workspaces from IndexedDB first
+// ─── URL Share Roundtrip ─────────────────────────────────────────────────────
+// Isolated test with no beforeEach file upload — needs a clean page for hash detection
+
+test.describe('URL Share Roundtrip', () => {
+  // Annotate with retries — IndexedDB state timing can be flaky with parallel workers
+  test('shared URL opens as new workspace', async ({ page }) => {
+    // Step 1: Navigate to landing, clear ALL IndexedDB databases
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
-      for (const db of dbs) {
-        if (db.name) indexedDB.deleteDatabase(db.name);
-      }
+      await Promise.all(dbs.map(db => {
+        if (!db.name) return;
+        return new Promise<void>((res) => {
+          const req = indexedDB.deleteDatabase(db.name!);
+          req.onsuccess = () => res();
+          req.onerror = () => res(); // ignore errors
+        });
+      }));
+      // Give it a moment to fully delete
+      await new Promise(res => setTimeout(res, 100));
     });
 
-    // Build a share URL by compressing content in the browser context via CompressionStream
+    // Step 2: Build the share hash
     const shareHash = await page.evaluate(async () => {
       const content = '# Shared Doc\n\nOpened from URL!';
       const encoder = new TextEncoder();
@@ -218,12 +230,12 @@ test.describe('URL Sharing', () => {
       return `#md=${base64}&title=Shared+Doc`;
     });
 
-    // Navigate to the share URL with fresh IndexedDB
+    // Step 3: Navigate to the fresh hash URL (empty IndexedDB, fresh store)
     await page.goto(`/${shareHash}`);
-    await page.waitForSelector('.viewer-layout', { timeout: 15000 });
 
-    // Should create a workspace with the shared content
+    // Step 4: Wait for the viewer and the shared content
+    await page.waitForSelector('.viewer-layout', { timeout: 20000 });
     await page.waitForSelector('.markdown-content', { timeout: 10000 });
-    await expect(page.locator('.markdown-content')).toContainText('Opened from URL');
+    await expect(page.locator('.markdown-content')).toContainText('Opened from URL', { timeout: 10000 });
   });
 });

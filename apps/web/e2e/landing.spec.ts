@@ -24,7 +24,7 @@ test.describe('Landing Page', () => {
   });
 
   test('has Open Folder button', async ({ page }) => {
-    const btn = page.locator('.landing-cta-secondary');
+    const btn = page.locator('.landing-cta-secondary', { hasText: 'Open Folder' });
     await expect(btn).toBeVisible();
     await expect(btn).toContainText('Open Folder');
   });

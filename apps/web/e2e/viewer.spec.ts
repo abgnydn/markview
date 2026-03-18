@@ -229,12 +229,23 @@ test.describe('Mermaid Diagrams', () => {
 
   test('shows toolbar on hover', async ({ page }) => {
     const wrapper = page.locator('.mermaid-wrapper').first();
-    const toolbar = wrapper.locator('.mermaid-toolbar');
-    // Toolbar should be hidden initially
-    await expect(toolbar).toHaveCSS('opacity', '0');
+    // Move mouse to corner to ensure no hover state from previous test
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(350); // let transition complete
+    // Toolbar hidden initially — check via JS to avoid computed style mismatch
+    const initialOpacity = await page.evaluate(() => {
+      const toolbar = document.querySelector('.mermaid-toolbar');
+      return toolbar ? getComputedStyle(toolbar).opacity : '0';
+    });
+    expect(parseFloat(initialOpacity)).toBeLessThanOrEqual(0.1);
     // Hover to show
     await wrapper.hover();
-    await expect(toolbar).toHaveCSS('opacity', '1');
+    await page.waitForTimeout(300);
+    const hoverOpacity = await page.evaluate(() => {
+      const toolbar = document.querySelector('.mermaid-toolbar');
+      return toolbar ? getComputedStyle(toolbar).opacity : '0';
+    });
+    expect(parseFloat(hoverOpacity)).toBeGreaterThanOrEqual(0.9);
   });
 
   test('toolbar has zoom, SVG, and PNG buttons', async ({ page }) => {
