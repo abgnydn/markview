@@ -43,6 +43,8 @@
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "@markview/tsconfig": "*",
+    "@markview/eslint-config": "*"
   }
 }

@@ -1,1 +1,7 @@
-(self.__next_f=self.__next_f||[]).push([0])
+
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').catch(() => {});
+                });
+              }
+            

@@ -37,7 +37,8 @@
     "shiki": "^3",
     "mermaid": "^11",
     "katex": "^0.16",
-    "@types/katex": "^0.16"
+    "@types/katex": "^0.16",
+    "@markview/tsconfig": "*"
   },
   "keywords": [
     "web-component",
