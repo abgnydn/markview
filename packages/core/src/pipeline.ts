@@ -271,9 +271,14 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'default'): Pro
       }
     }
 
-    for (const r of replacements) {
-      html = html.replace(r.match, r.replacement);
-    }
+    let replIdx = 0;
+    html = html.replace(
+      /\<pre\>\<code class="language-mermaid"\>[\s\S]*?\<\/code\>\<\/pre\>/g,
+      () => {
+        const r = replacements[replIdx++];
+        return r ? r.replacement : replacements[replIdx - 1]?.match ?? '';
+      }
+    );
   } catch (e) {
     console.warn('Mermaid failed to load:', e);
   }
@@ -332,7 +337,7 @@ async function renderKatexInHtml(html: string): Promise<string> {
 // ---- Heading ID Injection ----
 
 function injectHeadingIds(html: string): string {
-  return html.replace(/<(h[1-6])>(.*?)<\/\1>/g, (_match, tag, inner) => {
+  return html.replace(/\<(h[1-6])\>(.*?)\<\/\1\>/gs, (_match, tag, inner) => {
     const text = inner.replace(/<[^>]*>/g, '').trim();
     const id = text
       .toLowerCase()

@@ -1,0 +1,13 @@
+{
+  "name": "@markview/tsconfig",
+  "version": "0.1.0",
+  "description": "Shared TypeScript configurations for the markview monorepo",
+  "private": true,
+  "license": "AGPL-3.0",
+  "files": [
+    "base.json",
+    "library.json",
+    "nextjs.json",
+    "node.json"
+  ]
+}

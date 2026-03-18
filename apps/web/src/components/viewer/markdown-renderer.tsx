@@ -151,10 +151,9 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
 
       try {
         const { svg } = await mermaid.render(id, code.trim());
-        const escapedSvg = svg.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         replacements.push({
           match: m[0],
-          replacement: `<div class="mermaid-wrapper" data-mermaid-svg="${escapedSvg}">
+          replacement: `<div class="mermaid-wrapper">
             <div class="mermaid-toolbar">
               <button class="mermaid-btn" data-mermaid-zoom title="Expand diagram">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
@@ -181,10 +180,16 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
       }
     }
 
-    // Apply replacements
-    for (const r of replacements) {
-      html = html.replace(r.match, r.replacement);
-    }
+    // Apply replacements in order (index counter avoids re-replacing the same
+    // match when two mermaid blocks have identical source)
+    let replIdx = 0;
+    html = html.replace(
+      /\<pre\>\<code class="language-mermaid"\>[\s\S]*?\<\/code\>\<\/pre\>/g,
+      () => {
+        const r = replacements[replIdx++];
+        return r ? r.replacement : '';
+      }
+    );
   } catch (e) {
     console.warn('Mermaid failed to load:', e);
   }
@@ -226,7 +231,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     const process = async () => {
       try {
         // Render markdown
-        const rawHtml = await renderMarkdown(content);
+        const rawHtml = await renderMarkdown(content, { codeBlockToolbar: false });
 
         // Ensure shiki is loaded (fails gracefully in extension context)
         await ensureShiki();

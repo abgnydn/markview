@@ -1,0 +1,20 @@
+{
+  "name": "@markview/eslint-config",
+  "version": "0.1.0",
+  "description": "Shared ESLint configurations for the markview monorepo",
+  "private": true,
+  "license": "AGPL-3.0",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./next": "./next.js",
+    "./library": "./library.js"
+  },
+  "peerDependencies": {
+    "eslint": "^9"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "typescript-eslint": "^8"
+  }
+}

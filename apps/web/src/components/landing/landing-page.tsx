@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug } from 'lucide-react';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor } from 'lucide-react';
 import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
 import './landing.css';
 
@@ -100,7 +100,8 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
     { icon: Github, title: 'GitHub Import', desc: 'Paste any GitHub repo URL and instantly load its markdown documentation' },
     { icon: Keyboard, title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard' },
     { icon: Zap, title: 'Focus Mode', desc: 'Distraction-free reading that hides sidebar and TOC — just you and the content' },
-    { icon: Puzzle, title: 'PWA & Extension', desc: 'Install as a desktop app or use the Chrome extension for viewing .md files anywhere' },
+    { icon: Puzzle, title: 'Native macOS App', desc: 'Native Tauri v2 desktop app — set as your default .md opener, ships as a proper .app + .dmg bundle' },
+    { icon: Chrome, title: 'PWA & Extension', desc: 'Install as a PWA from Chrome/Edge or use the Chrome extension to view .md files in the browser' },
   ];
 
   const mcpTools = [
@@ -139,7 +140,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
         <div className="landing-hero-content">
           <div className="landing-badge">
             <Shield size={14} />
-            <span>Zero-account · Privacy-first · Offline-ready</span>
+            <span>Zero-account · Privacy-first · Native macOS app · Offline-ready</span>
           </div>
           <h1 className="landing-title">
             The markdown viewer
@@ -215,6 +216,16 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
               <Eye size={18} />
               Try the Demo
             </button>
+            <a
+              className="landing-cta-secondary"
+              href="https://github.com/abgnydn/markview/releases/latest"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
+            >
+              <Monitor size={18} />
+              Download for macOS
+            </a>
           </div>
 
           <a className="landing-github-star" href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">

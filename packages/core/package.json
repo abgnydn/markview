@@ -21,7 +21,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "vitest run"
+    "test": "vitest run",
+    "size": "size-limit"
   },
   "license": "AGPL-3.0",
   "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
@@ -63,8 +64,17 @@
     "katex": { "optional": true }
   },
   "devDependencies": {
+    "@size-limit/preset-small-lib": "^11.1.6",
     "@types/node": "^22.15.3",
+    "size-limit": "^11.1.6",
     "typescript": "^5.8.3",
     "vitest": "^4.1.0"
-  }
+  },
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "50 kB",
+      "import": "{ renderMarkdown }"
+    }
+  ]
 }

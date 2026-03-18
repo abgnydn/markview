@@ -61,6 +61,11 @@
 - 🔌 **Plugin system** — register custom code-fence renderers (alert, chart, tabs, timeline built-in)
 - 🎬 **Embed support** — YouTube, Figma, CodePen, CodeSandbox, Loom via ` ```embed `
 
+### Desktop App
+- 🖥️ **Native macOS app** — built with Tauri v2, opens `.md` and `.markdown` files natively
+- 📂 **Default opener** — set MarkView as your system-default `.md` file handler
+- 🚀 **Tiny binary** — ships as a proper `.app` + `.dmg`, no Electron bloat
+
 ### Privacy & Offline
 - 🔒 **Zero accounts** — no sign-up required
 - ☁️ **Zero cloud** — files never leave the browser
@@ -83,15 +88,31 @@ Open [http://localhost:3000](http://localhost:3000) — drop some markdown files
 
 Or use the **[live demo](https://getmarkview.vercel.app)** — no install needed.
 
-### Install as PWA (Desktop App)
+### Native macOS App (Recommended)
 
-MarkView works as a Progressive Web App — install it for an app-like experience with offline support:
+MarkView ships as a proper native macOS app via Tauri — set it as your default `.md` opener:
 
-1. Open the web app in Chrome/Edge
-2. Click the **install icon** (⊕) in the address bar
-3. Click **"Install"**
+```bash
+# Build the .app + .dmg
+npm run desktop:build
 
-That's it — MarkView now runs as a standalone desktop app, works offline, and persists your workspaces.
+# Install to /Applications
+sudo cp -r apps/desktop/src-tauri/target/release/bundle/macos/MarkView.app /Applications/
+
+# Register file associations
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/MarkView.app
+```
+
+Then right-click any `.md` file → **Get Info** → **Open With** → **MarkView** → **Change All**.
+
+For development:
+```bash
+npm run desktop:dev
+```
+
+### Install as PWA
+
+MarkView also works as a Progressive Web App — install it from Chrome/Edge for an offline-capable app-like experience.
 
 ### Chrome Extension
 
@@ -189,8 +210,11 @@ See [apps/mcp/README.md](apps/mcp/README.md) for full documentation.
 markview/
 ├── apps/
 │   ├── web/          # Next.js 16 documentation viewer
+│   ├── desktop/      # Native macOS app (Tauri v2)
 │   ├── mcp/          # MCP server (15 tools)
 │   └── extension/    # Chrome extension
+├── packages/
+│   └── core/         # Framework-agnostic rendering engine
 ├── LICENSE           # AGPL-3.0
 ├── CONTRIBUTING.md
 └── README.md
@@ -199,6 +223,7 @@ markview/
 | App | Tech | Description |
 |-----|------|-------------|
 | **Web** | Next.js 16, React, Zustand, Shiki, Mermaid, KaTeX | Main documentation viewer |
+| **Desktop** | Tauri v2, Rust, WebKit | Native macOS app with file associations |
 | **MCP** | TypeScript, @modelcontextprotocol/sdk | AI documentation tools |
 | **Extension** | Chrome Extensions API | View .md files in browser |
 
@@ -228,11 +253,46 @@ MarkView is actively maintained. Here's what's shipped and what's next:
 | ✅ | Version history | Auto-snapshot on save, restore any previous version |
 | ✅ | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
 | ✅ | npm publish MCP | `npx markview-mcp ./docs` — [published!](https://www.npmjs.com/package/@markview/mcp) |
+| ✅ | Native macOS app | Tauri v2 desktop app — set as default `.md` opener, ships as `.app` + `.dmg` |
 | 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |
 | 🔮 | VS Code extension | View docs without leaving the editor |
 | 🔮 | AI writing assistant | Grammar check, autocomplete, summarize |
+| 🔮 | Windows / Linux desktop | Tauri supports all platforms — packaging pending |
 
 🔮 = exploring — [contributions welcome!](CONTRIBUTING.md)
+
+---
+
+## 🐳 Self-Hosting
+
+MarkView ships a static export — host it anywhere, or run it locally with Docker.
+
+**Docker Compose (quickest):**
+
+```bash
+# Copy and configure environment variables
+cp apps/web/.env.example .env
+
+# Build and start (serves on http://localhost:3000)
+docker compose up --build -d
+```
+
+**Manual Docker:**
+
+```bash
+docker build -f apps/web/Dockerfile -t markview .
+docker run -p 3000:3000 markview
+```
+
+**Variables you can configure in `.env`:**
+
+| Variable | Default | Description |
+|---|---|---|
+| `NEXT_PUBLIC_SENTRY_DSN` | *(empty)* | [Sentry](https://sentry.io) DSN for error monitoring |
+| `NEXT_PUBLIC_YJS_SIGNALING_SERVER` | `wss://signaling.yjs.dev` | WebRTC signaling server for collaboration |
+
+> [!NOTE]
+> For production collaboration use, self-host a signaling server. See [y-webrtc signaling setup](https://github.com/yjs/y-webrtc#signaling).
 
 ---
 

@@ -23,6 +23,8 @@
   ],
   "scripts": {
     "build": "tsc",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
@@ -43,15 +45,19 @@
   },
   "devDependencies": {
     "@markview/core": "file:../core",
+    "@markview/tsconfig": "file:../tsconfig",
+    "@testing-library/react": "^16.3.2",
     "@types/katex": "^0.16.8",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "jsdom": "^26.1.0",
     "katex": "^0.16.38",
     "mermaid": "^11.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "shiki": "^4.0.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.0"
   },
   "keywords": [
     "react",

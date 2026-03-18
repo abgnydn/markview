@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install root dependencies
+        run: npm ci --ignore-scripts
+
+      # Build packages in dependency order
+      - name: Install & Build core
+        run: |
+          npm install
+          npm run build
+        working-directory: packages/core
+
+      - name: Install & Build @markview/react
+        run: |
+          npm install
+          npm run build
+        working-directory: packages/react
+
+      - name: Install & Build @markview/webcomponent
+        run: |
+          npm install
+          npm run build
+        working-directory: packages/webcomponent
+
+      - name: Install & Build MCP
+        run: |
+          npm install
+          npx tsc --skipLibCheck
+        working-directory: apps/mcp
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
+
+      - name: Create release PR or publish packages
+        uses: changesets/action@v1
+        with:
+          publish: npm run release
+          commit: "chore: version packages"
+          title: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -9,6 +9,7 @@ import { ViewerPage } from '@/components/viewer/viewer-page';
 import { JoinDialog } from '@/components/collab/join-dialog';
 import { getRoomIdFromUrl } from '@/lib/collab/y-provider';
 import { preloadShiki } from '@/components/viewer/markdown-renderer';
+import { initTauriBridge } from '@/lib/tauri/tauri-bridge';
 
 export default function HomePage() {
   // ── Store slices ───────────────────────────────────────────────────
@@ -38,6 +39,7 @@ export default function HomePage() {
     initializeTheme();
     initialize();
     preloadShiki();
+    initTauriBridge(); // no-op in browser, activates in Tauri desktop
     const roomId = getRoomIdFromUrl();
     if (roomId) {
       setPendingRoomId(roomId);

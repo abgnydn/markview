@@ -1,0 +1,73 @@
+name: Release Desktop App
+
+on:
+  push:
+    tags:
+      - 'desktop-v*'   # trigger with: git tag desktop-v0.1.0 && git push --tags
+
+jobs:
+  build-macos:
+    name: Build macOS (.app + .dmg)
+    runs-on: macos-latest
+    permissions:
+      contents: write   # needed to create GitHub Release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      - name: Install root npm dependencies
+        run: npm ci
+
+      - name: Install desktop npm dependencies
+        run: npm ci
+        working-directory: apps/desktop
+
+      - name: Build web static export (required by Tauri)
+        run: npm run build
+        working-directory: apps/web
+
+      - name: Build Tauri app
+        run: npm run build
+        working-directory: apps/desktop
+        env:
+          # Optional: sign & notarize on macOS (add these as GitHub secrets)
+          # APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          # APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          # APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          # APPLE_ID: ${{ secrets.APPLE_ID }}
+          # APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: apps/desktop
+          tagName: ${{ github.ref_name }}
+          releaseName: MarkView ${{ github.ref_name }}
+          releaseBody: |
+            ## MarkView Desktop ${{ github.ref_name }}
+
+            Native macOS app built with Tauri v2.
+
+            ### Install
+            1. Download `MarkView.dmg` below
+            2. Open and drag to `/Applications`
+            3. Right-click any `.md` file → **Get Info** → **Open With** → **MarkView** → **Change All**
+          releaseDraft: true
+          prerelease: false

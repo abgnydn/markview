@@ -1,0 +1,70 @@
+version: 2
+updates:
+  # Root workspace
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      dev-tooling:
+        patterns:
+          - "husky"
+          - "lint-staged"
+          - "turbo"
+          - "@changesets/*"
+
+  # Web app
+  - package-ecosystem: "npm"
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      next-react:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      testing:
+        patterns:
+          - "vitest"
+          - "@playwright/test"
+          - "@vitejs/*"
+
+  # MCP server
+  - package-ecosystem: "npm"
+    directory: "/apps/mcp"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+
+  # Core package
+  - package-ecosystem: "npm"
+    directory: "/packages/core"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+
+  # React package
+  - package-ecosystem: "npm"
+    directory: "/packages/react"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+
+  # Web Component package
+  - package-ecosystem: "npm"
+    directory: "/packages/webcomponent"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"

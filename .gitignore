@@ -46,3 +46,7 @@ playwright-report/
 *.log
 .vercel
 apps/web/.git_old/
+
+# Tauri / Rust build artifacts
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/WixTools/

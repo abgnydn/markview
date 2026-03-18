@@ -1,0 +1,18 @@
+services:
+  markview-web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      # Optional — add your Sentry DSN here to enable error monitoring
+      - NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN:-}
+      # Optional — override the default y-webrtc signaling server
+      - NEXT_PUBLIC_YJS_SIGNALING_SERVER=${NEXT_PUBLIC_YJS_SIGNALING_SERVER:-wss://signaling.yjs.dev}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 30s
+      timeout: 3s
+      retries: 3

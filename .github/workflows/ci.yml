@@ -10,53 +10,96 @@ jobs:
   test-and-build:
     name: Test, Type Check & Build
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      
-      # Remove root lockfile so it doesn't confuse per-app installs
-      - name: Clean root package-lock
-        run: rm -f package-lock.json
-      
-      # Core Package
+          cache: 'npm'
+
+      # Install all workspaces from root (uses npm workspaces)
+      - name: Install root dependencies
+        run: npm ci --ignore-scripts
+
+      # ── Core Package ────────────────────────────────────────────────────
       - name: Install core dependencies
         run: npm install
         working-directory: packages/core
-      
+
       - name: Build core package
         run: npm run build
         working-directory: packages/core
-      
-      # Web App
+
+      - name: Test core package
+        run: npm test
+        working-directory: packages/core
+
+      - name: Check bundle size (core)
+        run: npm run size
+        working-directory: packages/core
+
+      # ── @markview/react ─────────────────────────────────────────────────
+      - name: Install @markview/react dependencies
+        run: npm install
+        working-directory: packages/react
+
+      - name: Type check @markview/react
+        run: npx tsc --noEmit
+        working-directory: packages/react
+
+      - name: Test @markview/react
+        run: npm test
+        working-directory: packages/react
+
+      - name: Build @markview/react
+        run: npm run build
+        working-directory: packages/react
+
+      # ── @markview/webcomponent ──────────────────────────────────────────
+      - name: Install @markview/webcomponent dependencies
+        run: npm install
+        working-directory: packages/webcomponent
+
+      - name: Type check @markview/webcomponent
+        run: npx tsc --noEmit
+        working-directory: packages/webcomponent
+
+      - name: Build @markview/webcomponent
+        run: npm run build
+        working-directory: packages/webcomponent
+
+      # ── Web App ─────────────────────────────────────────────────────────
       - name: Install web dependencies
         run: npm install
         working-directory: apps/web
-      
+
       - name: Run web unit tests
         run: npm test
         working-directory: apps/web
-      
+
       - name: Type check web
         run: npx tsc --noEmit
         working-directory: apps/web
-      
+
+      - name: Lint web
+        run: npm run lint
+        working-directory: apps/web
+
       - name: Build web
         run: npm run build
         working-directory: apps/web
-      
-      # MCP Server
+
+      # ── MCP Server ──────────────────────────────────────────────────────
       - name: Install MCP dependencies
         run: npm install
         working-directory: apps/mcp
-      
+
       - name: Run MCP tests
         run: npm test
         working-directory: apps/mcp
-      
+
       - name: Type check MCP
         run: npx tsc --noEmit
         working-directory: apps/mcp
@@ -68,3 +111,8 @@ jobs:
         working-directory: apps/mcp
         env:
           NODE_OPTIONS: '--max-old-space-size=8192'
+
+      # ── Chrome Extension ────────────────────────────────────────────────
+      - name: Validate extension manifest
+        run: node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')); console.log('✅ manifest.json is valid JSON')"
+        working-directory: apps/extension
