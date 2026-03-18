@@ -39,7 +39,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
     for (const file of Array.from(fileList)) {
       if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
         const content = await file.text();
-        const relativePath = (file as any).webkitRelativePath || file.name;
+        const relativePath = (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name;
         results.push({ filename: relativePath, content });
       }
     }
@@ -67,12 +67,12 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
       const res = await fetch(apiUrl);
       const data = await res.json();
       if (!data.tree) { alert('Could not fetch repository'); setIsImporting(false); return; }
-      const mdFiles = data.tree.filter((f: any) => {
+      const mdFiles = data.tree.filter((f: { path: string; type: string }) => {
         const isMarkdown = f.path.endsWith('.md') || f.path.endsWith('.markdown');
         return f.type === 'blob' && isMarkdown && (!subpath || f.path.startsWith(subpath));
       });
       const files = await Promise.all(
-        mdFiles.slice(0, 50).map(async (f: any) => {
+        mdFiles.slice(0, 50).map(async (f: { path: string }) => {
           const raw = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${f.path}`);
           return { filename: f.path, content: await raw.text() };
         })
@@ -184,7 +184,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
                   for (const file of Array.from(target.files)) {
                     if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
                       const content = await file.text();
-                      results.push({ filename: (file as any).webkitRelativePath || file.name, content });
+                      results.push({ filename: (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name, content });
                     }
                   }
                   if (results.length > 0) onFilesSelected(results);

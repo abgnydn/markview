@@ -8,9 +8,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WEB_DIR="$SCRIPT_DIR/../web"
 EXT_DIR="$SCRIPT_DIR"
 
-echo "🔨 Building MarkView web app..."
-cd "$WEB_DIR"
-npm run build
+echo "🔨 Expecting MarkView web app to be built already..."
+# cd "$WEB_DIR"
+# npm run build
 
 echo "📦 Copying static export to extension..."
 rm -rf "$EXT_DIR/app"

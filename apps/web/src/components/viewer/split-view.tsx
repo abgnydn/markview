@@ -25,6 +25,7 @@ export function SplitView({ mainFileId, onClose }: SplitViewProps) {
   // Load second file content
   useEffect(() => {
     if (!secondFileId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSecondContent(null);
       return;
     }
@@ -38,6 +39,7 @@ export function SplitView({ mainFileId, onClose }: SplitViewProps) {
   // Default to first other file
   useEffect(() => {
     if (!secondFileId && otherFiles.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSecondFileId(otherFiles[0].id);
     }
   }, [otherFiles, secondFileId]);

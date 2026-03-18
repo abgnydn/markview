@@ -6,8 +6,7 @@
   "build": {
     "frontendDist": "../../web/out",
     "devUrl": "http://localhost:3001",
-    "beforeDevCommand": "cd ../web && npm run dev -- --port 3001",
-    "beforeBuildCommand": "cd ../web && npm run build"
+    "beforeDevCommand": "cd ../web && npm run dev -- --port 3001"
   },
   "app": {
     "withGlobalTauri": true,

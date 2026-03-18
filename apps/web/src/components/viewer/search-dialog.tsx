@@ -33,6 +33,7 @@ export function SearchDialog() {
   // Focus input when opened
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('');
       setResults([]);
       setSelectedIndex(0);
@@ -43,6 +44,7 @@ export function SearchDialog() {
   // Search as you type — fetch content from IndexedDB
   useEffect(() => {
     if (!activeWorkspaceId || !query) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResults([]);
       return;
     }

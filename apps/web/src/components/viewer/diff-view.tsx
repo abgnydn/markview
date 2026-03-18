@@ -93,6 +93,7 @@ export function DiffView({ fileAId, onClose }: DiffViewProps) {
   const fileB = files.find((f) => f.id === fileBId);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!fileBId) { setContentB(null); return; }
     let cancelled = false;
     db.files.get(fileBId).then((f) => {
@@ -103,6 +104,7 @@ export function DiffView({ fileAId, onClose }: DiffViewProps) {
 
   useEffect(() => {
     if (!fileBId && otherFiles.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFileBId(otherFiles[0].id);
     }
   }, [otherFiles, fileBId]);

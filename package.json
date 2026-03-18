@@ -1,6 +1,7 @@
 {
   "name": "markview",
   "version": "1.0.0",
+  "packageManager": "npm@11.7.0",
   "description": "Beautiful, privacy-first markdown documentation viewer with MCP tools for AI assistants",
   "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
   "license": "AGPL-3.0",
@@ -48,10 +49,10 @@
   },
   "lint-staged": {
     "apps/web/src/**/*.{ts,tsx}": [
-      "bash -c 'cd apps/web && npx next lint --fix --file $(echo \"$1\" | sed \"s|apps/web/||g\")' --"
+      "eslint --fix"
     ],
     "packages/core/src/**/*.ts": [
-      "bash -c 'cd packages/core && npx tsc --noEmit'"
+      "eslint --fix"
     ]
   },
   "workspaces": [

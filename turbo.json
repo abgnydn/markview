@@ -23,6 +23,14 @@
     "size": {
       "dependsOn": ["build"],
       "outputs": []
+    },
+    "apps-extension#build": {
+      "dependsOn": ["web#build"],
+      "outputs": ["app/**"]
+    },
+    "desktop#build": {
+      "dependsOn": ["web#build"],
+      "outputs": ["src-tauri/target/**"]
     }
   }
 }
