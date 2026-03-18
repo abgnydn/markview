@@ -1,24 +1,40 @@
 {
-  "name": "markview-mcp",
-  "version": "1.0.0",
-  "description": "MCP server for MarkView — expose markdown documentation to AI assistants",
+  "name": "@markview/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for MarkView — expose markdown documentation to AI assistants. Run: npx @markview/mcp ./docs",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "markview-mcp": "dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "mcp",
     "markdown",
     "documentation",
-    "ai"
+    "ai",
+    "model-context-protocol",
+    "claude",
+    "cursor",
+    "markview"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abgnydn/markview.git",
+    "directory": "apps/mcp"
+  },
+  "homepage": "https://github.com/abgnydn/markview/tree/main/apps/mcp",
+  "author": "Ahmet Barış Günaydın",
   "license": "AGPL-3.0",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",

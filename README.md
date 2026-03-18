@@ -10,6 +10,7 @@ Beautiful rendering, full-text search, split view, presentation mode, built-in e
 [![core](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=%40markview%2Fcore)](https://www.npmjs.com/package/@markview/core)
 [![react](https://img.shields.io/npm/v/@markview/react?color=61dafb&label=%40markview%2Freact)](https://www.npmjs.com/package/@markview/react)
 [![webcomponent](https://img.shields.io/npm/v/@markview/webcomponent?color=f7df1e&label=%40markview%2Fwebcomponent)](https://www.npmjs.com/package/@markview/webcomponent)
+[![mcp](https://img.shields.io/npm/v/@markview/mcp?color=10b981&label=%40markview%2Fmcp)](https://www.npmjs.com/package/@markview/mcp)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-66_passing-22c55e)](apps/web/src/__tests__)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -211,7 +212,7 @@ MarkView is actively maintained. Here's what's coming:
 | 🔜 | Plugin system | Extend rendering with custom blocks |
 | 🔮 | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
 | 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |
-| 🔮 | npm publish MCP | `npx markview-mcp ./docs` |
+| ✅ | npm publish MCP | `npx markview-mcp ./docs` — [published!](https://www.npmjs.com/package/@markview/mcp) |
 | 🔮 | VS Code extension | View docs without leaving the editor |
 
 🔜 = planned &nbsp; 🔮 = exploring — [contributions welcome!](CONTRIBUTING.md)
@@ -232,13 +233,14 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup inst
 
 ## 📦 Packages
 
-MarkView's rendering engine is available as standalone npm packages:
+MarkView is available as standalone npm packages:
 
 | Package | Install | Use case |
 |---------|---------|----------|
 | [`@markview/core`](packages/core) | `npm i @markview/core` | Framework-agnostic rendering engine |
 | [`@markview/react`](packages/react) | `npm i @markview/react` | Drop-in React component |
 | [`@markview/webcomponent`](packages/webcomponent) | `npm i @markview/webcomponent` | Web Component for Vue, Angular, Svelte, plain HTML |
+| [`@markview/mcp`](apps/mcp) | `npx markview-mcp ./docs` | MCP server — give AI assistants access to your docs |
 
 **React:**
 ```tsx
@@ -254,6 +256,11 @@ import '@markview/core/styles';
   import '@markview/webcomponent';
 </script>
 <mark-view content="# Hello" theme="dark" shiki mermaid katex></mark-view>
+```
+
+**MCP for AI assistants:**
+```bash
+npx markview-mcp ./your-docs
 ```
 
 See each package README for full API docs.

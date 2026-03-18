@@ -343,12 +343,12 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
           <Package size={14} />
           <span>npm packages</span>
         </div>
-        <h2 className="landing-section-title">Use the renderer anywhere</h2>
+        <h2 className="landing-section-title">Use anywhere, install nothing</h2>
         <p className="landing-section-subtitle">
-          Available as standalone packages for any stack.
-          Pick the one that fits your project.
+          4 packages for every use case — rendering, components, AI tools.
+          Pick the one that fits your stack.
         </p>
-        <div className="landing-npm-packages">
+        <div className="landing-npm-packages landing-npm-packages-4">
           <div className="landing-npm-pkg-card">
             <div className="landing-npm-pkg-name">@markview/core</div>
             <div className="landing-npm-pkg-desc">Framework-agnostic engine</div>
@@ -395,6 +395,21 @@ const html = await
             </pre>
             <a href="https://www.npmjs.com/package/@markview/webcomponent" target="_blank" rel="noopener noreferrer" className="landing-npm-pkg-link">View on npm →</a>
           </div>
+          <div className="landing-npm-pkg-card landing-npm-pkg-mcp">
+            <div className="landing-npm-pkg-label-green">AI Ready</div>
+            <div className="landing-npm-pkg-name">@markview/mcp</div>
+            <div className="landing-npm-pkg-desc">MCP server for AI assistants</div>
+            <div className="landing-npm-install-box">
+              <code className="landing-npm-cmd">npx markview-mcp ./docs</code>
+            </div>
+            <pre className="landing-npm-code-content">
+{`// 15 tools for Claude,
+// Cursor, and any
+// MCP-compatible client
+// Zero config needed`}
+            </pre>
+            <a href="https://www.npmjs.com/package/@markview/mcp" target="_blank" rel="noopener noreferrer" className="landing-npm-pkg-link">View on npm →</a>
+          </div>
         </div>
         <div className="landing-npm-features">
           <div className="landing-npm-feature"><Check size={14} /> Shiki syntax highlighting (140+ languages)</div>
@@ -402,7 +417,7 @@ const html = await
           <div className="landing-npm-feature"><Check size={14} /> KaTeX math equations</div>
           <div className="landing-npm-feature"><Check size={14} /> GitHub-style alerts</div>
           <div className="landing-npm-feature"><Check size={14} /> XSS sanitization</div>
-          <div className="landing-npm-feature"><Check size={14} /> Themeable CSS with custom properties</div>
+          <div className="landing-npm-feature"><Check size={14} /> 15 MCP tools for AI</div>
         </div>
       </section>
 
