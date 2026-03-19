@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^11.1.6",
-    "@types/node": "^22.15.3",
+    "@types/node": "^25.5.0",
     "size-limit": "^11.1.6",
     "typescript": "^5.8.3",
     "vitest": "^4.1.0",
