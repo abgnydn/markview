@@ -3,7 +3,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor } from 'lucide-react';
 import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
-import Script from 'next/script';
 import './landing.css';
 
 interface LandingPageProps {
@@ -118,7 +117,6 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
 
   return (
     <div className="landing">
-      <Script src="https://app.lemonsqueezy.com/js/lemon.js" strategy="lazyOnload" />
       {/* Back to workspace / Clear all */}
       {hasExistingWorkspace && (
         <div className="landing-nav-bar">
@@ -513,7 +511,7 @@ const html = await
               <li><Check size={14} /> All future updates</li>
               <li><Check size={14} /> Email support</li>
             </ul>
-            <a className="landing-pricing-btn landing-pricing-btn-primary lemonsqueezy-button" href="https://markview.lemonsqueezy.com/checkout/buy/placeholder" onClick={(e) => { e.preventDefault(); (window as any).createLemonSqueezy?.(); (window as any).LemonSqueezy?.Url.Open('https://markview.lemonsqueezy.com/checkout/buy/placeholder'); }}>
+            <a className="landing-pricing-btn landing-pricing-btn-primary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Indie%20License">
               <Mail size={14} /> Get License
             </a>
           </div>
@@ -527,7 +525,7 @@ const html = await
               <li><Check size={14} /> All future updates</li>
               <li><Check size={14} /> Priority support</li>
             </ul>
-            <a className="landing-pricing-btn landing-pricing-btn-secondary lemonsqueezy-button" href="https://markview.lemonsqueezy.com/checkout/buy/placeholder" onClick={(e) => { e.preventDefault(); (window as any).createLemonSqueezy?.(); (window as any).LemonSqueezy?.Url.Open('https://markview.lemonsqueezy.com/checkout/buy/placeholder'); }}>
+            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Business%20License">
               <Mail size={14} /> Contact Us
             </a>
           </div>
