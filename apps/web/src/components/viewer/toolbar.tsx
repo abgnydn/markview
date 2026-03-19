@@ -56,8 +56,10 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
 
 
   const handleClearAll = () => {
-    workspaces.forEach(ws => deleteWorkspace(ws.id));
-    if (onGoHome) onGoHome();
+    if (window.confirm('Are you sure you want to clear all workspaces?')) {
+      workspaces.forEach(ws => deleteWorkspace(ws.id));
+      if (onGoHome) onGoHome();
+    }
   };
 
   const ThemeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;

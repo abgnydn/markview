@@ -39,7 +39,9 @@ export function WorkspaceTabs() {
 
   const handleClose = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    deleteWorkspace(id);
+    if (window.confirm('Are you sure you want to close this workspace?')) {
+      deleteWorkspace(id);
+    }
   };
 
   const formatSize = (bytes: number): string => {
