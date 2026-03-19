@@ -1923,6 +1923,8 @@
 .toolbar-overflow-item {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  text-align: left;
   gap: 10px;
   width: 100%;
   padding: 10px 14px;
@@ -2604,10 +2606,12 @@
 }
 
 .diff-view-header {
+  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 12px 48px 12px 16px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-muted);
 }
@@ -2624,6 +2628,7 @@
 .diff-view-files {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   flex: 1;
 }
@@ -2659,11 +2664,15 @@
 .diff-stat-remove { color: var(--accent-red); }
 
 .diff-view-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
   padding: 4px;
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
+  z-index: 10;
 }
 
 .diff-view-close:hover {
