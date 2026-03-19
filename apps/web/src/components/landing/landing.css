@@ -68,7 +68,7 @@
 
 /* Floating top-right Back to workspace button */
 .landing-top-right-floating-btn {
-  position: absolute;
+  position: fixed;
   top: 24px;
   right: 24px;
   display: flex;
