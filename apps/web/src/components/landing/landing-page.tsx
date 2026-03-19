@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor, Users } from 'lucide-react';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Copy, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor, Users } from 'lucide-react';
 import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
 import './landing.css';
 
@@ -17,6 +17,13 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [githubUrl, setGithubUrl] = useState('');
   const [isImporting, setIsImporting] = useState(false);
+  const [copiedPkg, setCopiedPkg] = useState<string | null>(null);
+
+  const handleCopy = (pkg: string, cmd: string) => {
+    navigator.clipboard.writeText(cmd);
+    setCopiedPkg(pkg);
+    setTimeout(() => setCopiedPkg(null), 2000);
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
@@ -393,6 +400,9 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             <div className="landing-npm-pkg-desc">Framework-agnostic engine</div>
             <div className="landing-npm-install-box">
               <code className="landing-npm-cmd">npm i @markview/core</code>
+              <button className="landing-npm-copy-btn" onClick={() => handleCopy('core', 'npm i @markview/core')} title="Copy command" aria-label="Copy to clipboard">
+                {copiedPkg === 'core' ? <Check size={14} className="landing-npm-copied-icon" /> : <Copy size={14} />}
+              </button>
             </div>
             <pre className="landing-npm-code-content">
 {`import { renderMarkdown }
@@ -409,6 +419,9 @@ const html = await
             <div className="landing-npm-pkg-desc">Drop-in React component</div>
             <div className="landing-npm-install-box">
               <code className="landing-npm-cmd">npm i @markview/react</code>
+              <button className="landing-npm-copy-btn" onClick={() => handleCopy('react', 'npm i @markview/react')} title="Copy command" aria-label="Copy to clipboard">
+                {copiedPkg === 'react' ? <Check size={14} className="landing-npm-copied-icon" /> : <Copy size={14} />}
+              </button>
             </div>
             <pre className="landing-npm-code-content">
 {`import { MarkView }
@@ -424,6 +437,9 @@ const html = await
             <div className="landing-npm-pkg-desc">Vue · Angular · Svelte · HTML</div>
             <div className="landing-npm-install-box">
               <code className="landing-npm-cmd">npm i @markview/webcomponent</code>
+              <button className="landing-npm-copy-btn" onClick={() => handleCopy('webcomponent', 'npm i @markview/webcomponent')} title="Copy command" aria-label="Copy to clipboard">
+                {copiedPkg === 'webcomponent' ? <Check size={14} className="landing-npm-copied-icon" /> : <Copy size={14} />}
+              </button>
             </div>
             <pre className="landing-npm-code-content">
 {`import
@@ -440,6 +456,9 @@ const html = await
             <div className="landing-npm-pkg-desc">MCP server for AI assistants</div>
             <div className="landing-npm-install-box">
               <code className="landing-npm-cmd">npx markview-mcp ./docs</code>
+              <button className="landing-npm-copy-btn" onClick={() => handleCopy('mcp', 'npx markview-mcp ./docs')} title="Copy command" aria-label="Copy to clipboard">
+                {copiedPkg === 'mcp' ? <Check size={14} className="landing-npm-copied-icon" /> : <Copy size={14} />}
+              </button>
             </div>
             <pre className="landing-npm-code-content">
 {`// 15 tools for Claude,

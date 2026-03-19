@@ -223,19 +223,31 @@
 
 /* GitHub import */
 .landing-github-import {
-  max-width: 480px;
-  margin: 0 auto;
+  max-width: 600px;
+  width: 100%;
+  margin: 32px auto 0;
+  position: relative;
+  z-index: 10;
 }
 
 .landing-github-input-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 6px 6px 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  gap: 12px;
+  padding: 8px 8px 8px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
   color: #a1a1aa;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.landing-github-input-row:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 8px 32px rgba(99, 102, 241, 0.2);
 }
 
 .landing-github-input {
@@ -243,32 +255,39 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #e4e4e7;
-  font-size: 13px;
+  color: #fff;
+  font-size: 16px;
+  font-family: monospace;
 }
 
 .landing-github-input::placeholder {
-  color: #52525b;
+  color: #71717a;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 15px;
 }
 
 .landing-github-btn {
-  padding: 8px 16px;
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  border-radius: 8px;
-  color: #a5b4fc;
-  font-size: 12px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 
 .landing-github-btn:hover:not(:disabled) {
-  background: rgba(99, 102, 241, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.6);
 }
 
 .landing-github-btn:disabled {
-  opacity: 0.4;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
@@ -508,10 +527,10 @@
   line-height: 1.6;
 }
 
-/* === Feature Grid === */
+/* === Feature Grid (Bento Box Layout) === */
 .landing-features-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -521,11 +540,43 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 14px;
   transition: all 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Bento Asymmetry */
+.landing-feature-card:nth-child(1) {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 32px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.landing-feature-card:nth-child(1) .landing-feature-icon {
+  width: 56px;
+  height: 56px;
+}
+
+.landing-feature-card:nth-child(1) .landing-feature-title {
+  font-size: 24px;
+  margin-top: auto;
+  margin-bottom: 12px;
+}
+
+.landing-feature-card:nth-child(1) .landing-feature-desc {
+  font-size: 15px;
+}
+
+.landing-feature-card:nth-child(4),
+.landing-feature-card:nth-child(8),
+.landing-feature-card:nth-child(9) {
+  grid-column: span 2;
 }
 
 .landing-feature-card:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
   transform: translateY(-4px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
@@ -769,6 +820,7 @@
 .landing-npm-install-box {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   max-width: 460px;
   margin: 0 auto 32px;
@@ -776,6 +828,35 @@
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
+}
+
+.landing-npm-copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #a1a1aa;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.landing-npm-pkg-card:hover .landing-npm-copy-btn,
+.landing-npm-copy-btn:focus {
+  opacity: 1;
+}
+
+.landing-npm-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.landing-npm-copied-icon {
+  color: #34d399;
 }
 
 .landing-npm-cmd {
