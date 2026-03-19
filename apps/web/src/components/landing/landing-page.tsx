@@ -277,31 +277,12 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             <span className="landing-preview-dot" style={{background: '#28c840'}} />
             <span className="landing-preview-title">MarkView</span>
           </div>
-          <div className="landing-preview-body">
-            <div className="landing-preview-sidebar">
-              <div className="landing-preview-sidebar-item active">📄 README.md</div>
-              <div className="landing-preview-sidebar-item">📄 API.md</div>
-              <div className="landing-preview-sidebar-item">📁 docs/</div>
-              <div className="landing-preview-sidebar-item indent">📄 setup.md</div>
-              <div className="landing-preview-sidebar-item indent">📄 auth.md</div>
-            </div>
-            <div className="landing-preview-content">
-              <div className="landing-preview-h1">Getting Started</div>
-              <div className="landing-preview-text">Welcome to the project documentation. This guide covers installation, configuration, and usage.</div>
-              <div className="landing-preview-h2">Installation</div>
-              <div className="landing-preview-code">
-                <span className="landing-preview-code-lang">bash</span>
-                npm install markview
-              </div>
-              <div className="landing-preview-h2">Features</div>
-              <div className="landing-preview-text">✅ Rich rendering&nbsp; ✅ Full-text search&nbsp; ✅ Offline</div>
-            </div>
-            <div className="landing-preview-toc">
-              <div className="landing-preview-toc-title">ON THIS PAGE</div>
-              <div className="landing-preview-toc-item active">Getting Started</div>
-              <div className="landing-preview-toc-item">Installation</div>
-              <div className="landing-preview-toc-item">Features</div>
-            </div>
+          <div className="landing-preview-body" style={{ padding: 0, overflow: 'hidden' }}>
+            <img 
+              src="/landing-screenshot.png" 
+              alt="MarkView App Interface" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} 
+            />
           </div>
         </div>
       </section>
