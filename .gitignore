@@ -6,6 +6,7 @@ node_modules/
 # Build outputs
 dist/
 .next/
+.turbo/
 out/
 build/
 
@@ -49,3 +50,9 @@ apps/web/.git_old/
 # Tauri / Rust build artifacts
 apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/WixTools/
+
+# Extension build output (regenerated from web build)
+apps/extension/app/
+
+# Lint results
+apps/web/lint-results.json

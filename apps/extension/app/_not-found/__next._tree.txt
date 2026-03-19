@@ -1,3 +1,0 @@
-:HL["./_next/static/chunks/af1efce6e64f30cb.css","style"]
-:HL["https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css","style"]
-0:{"buildId":"yAb-kdVF-2tP6KEnV_XdF","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
