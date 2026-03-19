@@ -43,6 +43,7 @@
 - 🐙 **GitHub import** — paste a repo URL, instantly load docs
 - 📋 **Workspace templates** — README, API Docs, Changelog, Meeting Notes, Tech Spec, Blog Post
 - 🔗 **URL sharing** — share workspaces via URL (gzip + base64url in hash)
+- 🤝 **P2P Collaboration** — real-time multiplayer editing via WebRTC, zero server required
 
 ### Productivity
 - 🔍 **Full-text search** across all documents (⌘K)
@@ -62,9 +63,10 @@
 - 🎬 **Embed support** — YouTube, Figma, CodePen, CodeSandbox, Loom via ` ```embed `
 
 ### Desktop App
-- 🖥️ **Native macOS app** — built with Tauri v2, opens `.md` and `.markdown` files natively
+- 🖥️ **Native macOS app** — built with Tauri v2, fast and lightweight
 - 📂 **Default opener** — set MarkView as your system-default `.md` file handler
-- 🚀 **Tiny binary** — ships as a proper `.app` + `.dmg`, no Electron bloat
+- 🍏 **Mac App Store** — Coming soon for a one-time purchase of $4.99
+- 🚀 **Build from source** — completely un-gated for developers to compile locally
 
 ### Privacy & Offline
 - 🔒 **Zero accounts** — no sign-up required
@@ -305,6 +307,29 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup inst
 3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
 4. Push to the branch (`git push origin feat/amazing-feature`)
 5. Open a Pull Request
+
+---
+
+## 💰 Pricing & Licensing
+
+MarkView is supported by a **dual-license** model for developers, and a one-time purchase for consumers.
+
+### 1. Developer SDKs & Components
+For integrating `@markview/core`, `@markview/react`, or `@markview/webcomponent` into your software:
+
+| License | Price | Terms |
+|---------|-------|-------|
+| **Open Source** | Free | **AGPL-3.0**. You must open-source your entire application. |
+| **Indie** | $149 / year | Valid for 1 developer, up to 3 commercial projects. No open-source requirement. |
+| **Business** | $499 / year | Up to 15 developers, unlimited commercial projects. Priority support. |
+| **Enterprise** | Custom | Unlimited developers, custom integrations, SLA, dedicated support. |
+
+To purchase a commercial license to embed MarkView into a closed-source product, see the [Pricing Section on our Website](https://getmarkview.vercel.app/#pricing).
+
+### 2. Desktop App (Consumers)
+The native macOS Tauri app will soon be available on the **Mac App Store** for a one-time purchase of **$4.99**, giving you lifetime updates and unparalleled native integration. 
+
+You can always compile the desktop app from source for free (see "Quick Start" guidelines).
 
 ---
 
