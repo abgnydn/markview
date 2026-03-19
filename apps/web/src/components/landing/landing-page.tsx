@@ -218,7 +218,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             </button>
             <a
               className="landing-cta-secondary"
-              href="https://github.com/abgnydn/markview/releases/latest"
+              href="https://github.com/abgnydn/markview#-quick-start"
               target="_blank"
               rel="noopener noreferrer"
               style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
