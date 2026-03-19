@@ -128,11 +128,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
           <Monitor size={18} />
         </button>
       )}
-      {/* Navigation */}
-      <div className="landing-nav-bar">
-        <Link href="/pricing" className="landing-back-btn" style={{ textDecoration: 'none' }}>Pricing</Link>
-        <Link href="/docs" className="landing-back-btn" style={{ textDecoration: 'none' }}>Documentation</Link>
-      </div>
+
       {/* Hero */}
       <section className="landing-hero">
         <div className="landing-hero-glow" />
