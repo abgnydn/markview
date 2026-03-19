@@ -133,6 +133,18 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
       <section className="landing-hero">
         <div className="landing-hero-glow" />
         <div className="landing-hero-content">
+          <img 
+            src="/icon-192.png" 
+            alt="MarkView App Icon" 
+            style={{ 
+              width: 88, 
+              height: 88, 
+              borderRadius: 22, 
+              margin: '0 auto 32px auto', 
+              display: 'block', 
+              boxShadow: '0 12px 32px rgba(88, 166, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)' 
+            }} 
+          />
           <div className="landing-badge">
             <Shield size={14} />
             <span>Zero-account · Privacy-first · Native macOS app · Offline-ready</span>
