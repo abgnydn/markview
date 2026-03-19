@@ -22,16 +22,35 @@ export interface TocHeading {
   level: number;
 }
 
+/**
+ * Strip HTML tags from a string iteratively (no backtracking risk).
+ * Handles unclosed tags and nested tags safely.
+ */
+function stripHtmlTags(input: string): string {
+  let result = '';
+  let inTag = false;
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === '<') {
+      inTag = true;
+    } else if (input[i] === '>') {
+      inTag = false;
+    } else if (!inTag) {
+      result += input[i];
+    }
+  }
+  return result;
+}
+
 export function extractHeadings(html: string): TocHeading[] {
   const headings: TocHeading[] = [];
-  const regex = /<h([1-6])(?:\s+id="([^"]*)")?[^>]*>(.*?)<\/h\1>/g;
+  const regex = /<h([1-6])(?:\s+id="([^"]*)")?[^>]*>(.*?)<\/h\1>/gs;
 
   let match;
   while ((match = regex.exec(html)) !== null) {
     const level = parseInt(match[1]);
     const existingId = match[2];
-    // Strip HTML tags to get plain text
-    const text = match[3].replace(/<[^>]*>/g, '').trim();
+    // Strip HTML tags iteratively (safe against polynomial backtracking)
+    const text = stripHtmlTags(match[3]).trim();
     const id = existingId || text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')

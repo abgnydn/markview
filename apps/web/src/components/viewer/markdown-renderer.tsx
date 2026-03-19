@@ -78,12 +78,13 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
       // Check for registered plugin
       const plugin = usePluginStore.getState().getPlugin(lang);
       if (plugin) {
+        // Decode &amp; LAST to prevent double-decoding (e.g. &amp;lt; → &lt; → <)
         const decoded = code
-          .replace(/&amp;/g, '&')
           .replace(/&lt;/g, '<')
           .replace(/&gt;/g, '>')
           .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'");
+          .replace(/&#39;/g, "'")
+          .replace(/&amp;/g, '&');
         try {
           return plugin.render(decoded, theme);
         } catch {
@@ -91,13 +92,13 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
         }
       }
 
-      // Decode HTML entities
+      // Decode HTML entities — &amp; LAST to prevent double-decoding
       const decoded = code
-        .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'");
+        .replace(/&#39;/g, "'")
+        .replace(/&amp;/g, '&');
 
       try {
         const loadedLangs = shikiHighlighter!.getLoadedLanguages();
@@ -140,12 +141,13 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
     let m;
     while ((m = regex.exec(html)) !== null) {
       const encoded = m[1];
+      // Decode &amp; LAST to prevent double-decoding
       const code = encoded
-        .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'");
+        .replace(/&#39;/g, "'")
+        .replace(/&amp;/g, '&');
 
       const id = `mermaid-${Date.now()}-${counter++}`;
 
@@ -280,13 +282,13 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
       const code = wrapper.dataset.code || '';
 
       (btn as HTMLButtonElement).onclick = () => {
-        // Decode the stored code
+        // Decode the stored code — &amp; LAST to prevent double-decoding
         const decoded = code
-          .replace(/&amp;/g, '&')
           .replace(/&lt;/g, '<')
           .replace(/&gt;/g, '>')
           .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'");
+          .replace(/&#39;/g, "'")
+          .replace(/&amp;/g, '&');
 
         navigator.clipboard.writeText(decoded).then(() => {
           btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -557,6 +559,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
 
   return (
     <div className="markdown-content" ref={contentRef} style={{ fontSize: 'var(--content-font-size, 16px)' }}>
+      {/* SECURITY: html is sanitized via rehype-sanitize in the rendering pipeline */}
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );

@@ -76,12 +76,13 @@ async function ensureMermaid() {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function decodeEntities(str: string): string {
+  // Decode &amp; LAST to prevent double-decoding (e.g. &amp;lt; → &lt; → <)
   return str
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&');
 }
 
 function escapeForAttr(str: string): string {

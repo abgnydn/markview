@@ -1160,26 +1160,209 @@
 }
 
 /* === Responsive === */
+
+/* Reduce motion for battery/performance on mobile */
+@media (prefers-reduced-motion: reduce) {
+  .landing-preview { animation: none; }
+  .landing-feature-card,
+  .landing-back-btn,
+  .landing-cta-primary,
+  .landing-cta-secondary { transition: none; }
+}
+
+/* --- Tablet (≤1024px) --- */
+@media (max-width: 1024px) {
+  .landing-mcp-section,
+  .landing-npm-section {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+/* --- Small tablet (≤900px) --- */
 @media (max-width: 900px) {
-  .landing-title { font-size: 38px; }
+  .landing-title { font-size: 42px; }
+  .landing-subtitle { font-size: 16px; }
   .landing-features-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-mcp-grid { grid-template-columns: repeat(2, 1fr); }
   .landing-bottom-grid { grid-template-columns: 1fr; }
   .landing-preview-toc { display: none; }
   .landing-preview-sidebar { width: 130px; }
-  .landing-pricing-grid { grid-template-columns: 1fr; max-width: 380px; }
+  .landing-pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
 }
 
-@media (max-width: 600px) {
-  .landing-hero { padding: 48px 20px 40px; }
-  .landing-section { padding: 48px 20px; }
-  .landing-title { font-size: 30px; }
-  .landing-subtitle { font-size: 15px; }
-  .landing-features-grid { grid-template-columns: 1fr; }
-  .landing-mcp-grid { grid-template-columns: 1fr; }
-  .landing-cta-group { flex-direction: column; align-items: center; }
+/* --- Tablet portrait / large mobile (≤768px) --- */
+@media (max-width: 768px) {
+  .landing-hero { padding: 60px 24px 48px; }
+  .landing-section { padding: 56px 24px; }
+  .landing-title { font-size: 36px; }
+  .landing-section-title { font-size: 28px; }
+
+  .landing-nav-bar {
+    top: 12px;
+    right: 16px;
+    gap: 8px;
+  }
+
+  .landing-back-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .landing-clear-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .landing-preview { animation: none; }
   .landing-preview-sidebar { display: none; }
   .landing-preview-body { min-height: 200px; }
+  .landing-preview-content { padding: 16px 20px; }
+
+  .landing-mcp-section,
+  .landing-npm-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .landing-mcp-install {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .landing-npm-install-box {
+    max-width: 100%;
+  }
+
+  .landing-pricing-grid { max-width: 100%; }
+
+  .landing-footer-links {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+
+  .landing-github-import { max-width: 100%; }
+}
+
+/* --- Mobile (≤600px) --- */
+@media (max-width: 600px) {
+  .landing-hero { padding: 48px 20px 36px; }
+  .landing-section { padding: 44px 16px; }
+  .landing-title { font-size: 30px; }
+  .landing-subtitle { font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
+  .landing-section-title { font-size: 24px; }
+  .landing-section-subtitle { font-size: 14px; margin-bottom: 32px; }
+
+  .landing-badge { font-size: 11px; padding: 5px 12px; margin-bottom: 20px; }
+
+  .landing-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .landing-cta-primary,
+  .landing-cta-secondary {
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+
+  .landing-github-input-row {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .landing-github-input {
+    width: 100%;
+    min-height: 40px;
+    font-size: 14px;
+  }
+
+  .landing-github-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+    min-height: 44px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .landing-features-grid { grid-template-columns: 1fr; gap: 14px; }
+  .landing-mcp-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  .landing-feature-card { padding: 20px; }
+  .landing-mcp-tool { padding: 14px; min-height: 44px; }
+
+  .landing-preview { margin-top: 32px; }
+  .landing-preview-h1 { font-size: 18px; }
+  .landing-preview-h2 { font-size: 14px; }
+  .landing-preview-text { font-size: 12px; }
+  .landing-preview-code { font-size: 11px; padding: 8px 10px; }
+
   .landing-npm-features { flex-direction: column; align-items: center; }
+  .landing-npm-cmd { font-size: 12px; }
+
+  .landing-privacy-card,
+  .landing-extension-card {
+    padding: 24px 20px;
+  }
+
+  .landing-privacy-card h3,
+  .landing-extension-card h3 { font-size: 18px; }
+
+  .landing-pricing-card { padding: 24px 20px; }
+  .landing-pricing-price { font-size: 36px; }
+  .landing-pricing-name { font-size: 16px; }
+
+  .landing-github-star { padding: 8px 16px; font-size: 12px; }
+
+  .landing-footer { padding: 36px 20px; }
+  .landing-footer p { font-size: 13px; }
+}
+
+/* --- Small mobile (≤400px) --- */
+@media (max-width: 400px) {
+  .landing-hero { padding: 40px 16px 32px; }
+  .landing-section { padding: 36px 14px; }
+  .landing-title { font-size: 26px; }
+  .landing-subtitle { font-size: 13px; }
+
+  .landing-templates-grid { grid-template-columns: 1fr; }
+  .landing-template-card { min-height: 44px; padding: 12px 14px; }
+
+  .landing-nav-bar { top: 8px; right: 10px; gap: 6px; }
+  .landing-back-btn { padding: 6px 10px; font-size: 11px; }
+  .landing-clear-btn { padding: 6px 8px; font-size: 10px; }
+
+  .landing-hero-glow { width: 400px; height: 400px; }
+
+  .landing-mcp-install-code { font-size: 10px; padding: 6px 10px; }
+  .landing-mcp-tool-name { font-size: 12px; }
+  .landing-mcp-tool-desc { font-size: 11px; }
+
+  .landing-pricing-price { font-size: 32px; }
+  .landing-pricing-features li { font-size: 12px; }
+}
+
+/* --- Safe area insets for notched devices --- */
+@supports (padding: env(safe-area-inset-top)) {
+  .landing {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .landing-nav-bar {
+    top: calc(12px + env(safe-area-inset-top));
+    right: calc(16px + env(safe-area-inset-right));
+  }
+
+  .landing-footer {
+    padding-bottom: calc(48px + env(safe-area-inset-bottom));
+  }
 }
 

@@ -20,7 +20,12 @@ def process_html_file(html_path: Path):
 
     def replace_inline_script(match):
         nonlocal counter
-        script_content = match.group(1)
+        script_content = match.group(2)
+
+        # Skip scripts that have a src attribute (already external)
+        attrs = match.group(1) or ''
+        if 'src=' in attrs or 'src =' in attrs:
+            return match.group(0)
 
         # Skip empty scripts
         if not script_content.strip():
@@ -34,9 +39,10 @@ def process_html_file(html_path: Path):
 
         return f'<script src="./{js_filename}"></script>'
 
-    # Replace inline scripts (but not ones that already have src)
+    # Replace inline scripts — matches <script> with or without attributes,
+    # but the callback skips any that already have a src attribute.
     new_content = re.sub(
-        r'<script>(.*?)</script>',
+        r'<script(\s[^>]*)?>(.+?)</script>',
         replace_inline_script,
         content,
         flags=re.DOTALL,

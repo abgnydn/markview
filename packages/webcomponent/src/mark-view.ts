@@ -43,7 +43,8 @@ async function ensureMermaid() {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function decodeEntities(s: string): string {
-  return s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  // Decode &amp; LAST to prevent double-decoding (e.g. &amp;lt; → &lt; → <)
+  return s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
 }
 
 function escapeForAttr(s: string): string {

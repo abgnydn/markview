@@ -155,12 +155,13 @@ function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string):
 // ---- HTML Entity Helpers ----
 
 function decodeHtmlEntities(code: string): string {
+  // Decode &amp; LAST to prevent double-decoding (e.g. &amp;lt; → &lt; → <)
   return code
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&');
 }
 
 // ---- Shiki Highlighting ----
@@ -336,9 +337,25 @@ async function renderKatexInHtml(html: string): Promise<string> {
 
 // ---- Heading ID Injection ----
 
+/** Strip HTML tags iteratively (no backtracking risk). */
+function stripHtmlTags(input: string): string {
+  let result = '';
+  let inTag = false;
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === '<') {
+      inTag = true;
+    } else if (input[i] === '>') {
+      inTag = false;
+    } else if (!inTag) {
+      result += input[i];
+    }
+  }
+  return result;
+}
+
 function injectHeadingIds(html: string): string {
   return html.replace(/\<(h[1-6])\>(.*?)\<\/\1\>/gs, (_match, tag, inner) => {
-    const text = inner.replace(/<[^>]*>/g, '').trim();
+    const text = stripHtmlTags(inner).trim();
     const id = text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')

@@ -33,7 +33,12 @@ function youtubeEmbed(url: string): string | null {
 }
 
 function figmaEmbed(url: string): string | null {
-  if (url.includes('figma.com')) return url;
+  try {
+    const hostname = new URL(url).hostname;
+    if (hostname === 'figma.com' || hostname.endsWith('.figma.com')) return url;
+  } catch {
+    // Invalid URL
+  }
   return null;
 }
 
