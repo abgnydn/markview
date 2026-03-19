@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette } from 'lucide-react';
+import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2 } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { ExportMenu } from './export-menu';
@@ -32,8 +32,10 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
 
   const [showOverflow, setShowOverflow] = useState(false);
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [showModePicker, setShowModePicker] = useState(false);
   const overflowRef = useRef<HTMLDivElement>(null);
   const themePickerRef = useRef<HTMLDivElement>(null);
+  const modePickerRef = useRef<HTMLDivElement>(null);
 
   // Close overflow menu on click outside
   useEffect(() => {
@@ -44,18 +46,18 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
       if (themePickerRef.current && !themePickerRef.current.contains(e.target as Node)) {
         setShowThemePicker(false);
       }
+      if (modePickerRef.current && !modePickerRef.current.contains(e.target as Node)) {
+        setShowModePicker(false);
+      }
     };
-    if (showOverflow || showThemePicker) document.addEventListener('mousedown', handleClick);
+    if (showOverflow || showThemePicker || showModePicker) document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, [showOverflow, showThemePicker]);
+  }, [showOverflow, showThemePicker, showModePicker]);
 
-  const cycleTheme = () => {
-    const next: Record<string, 'dark' | 'light' | 'system'> = {
-      system: 'light',
-      light: 'dark',
-      dark: 'system',
-    };
-    setMode(next[mode]);
+
+  const handleClearAll = () => {
+    workspaces.forEach(ws => deleteWorkspace(ws.id));
+    if (onGoHome) onGoHome();
   };
 
   const ThemeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;
@@ -74,7 +76,7 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
           </button>
         )}
         <button className="toolbar-home-btn" onClick={onGoHome} title="Back to home" aria-label="Back to home">
-          <span className="toolbar-logo">📄</span>
+          <img src="/icon-192.png" alt="MarkView Logo" className="toolbar-logo" style={{ width: 24, height: 24, borderRadius: 6 }} />
           <h1 className="toolbar-brand">MarkView</h1>
         </button>
         {activeWorkspace && (
@@ -111,14 +113,14 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
               <Search size={18} />
             </button>
             <button
-              className="toolbar-btn"
+              className="toolbar-btn toolbar-secondary"
               onClick={onTogglePresentation}
               title="Presentation mode (P)"
             >
               <Presentation size={18} />
             </button>
             <button
-              className="toolbar-btn"
+              className="toolbar-btn toolbar-secondary"
               onClick={onAddFiles}
               title="Add new workspace"
             >
@@ -157,6 +159,14 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
             >
               <FolderOpen size={18} />
             </button>
+            <button
+              className="toolbar-btn toolbar-secondary"
+              onClick={handleClearAll}
+              title="Clear all workspaces"
+              style={{ color: '#f87171' }}
+            >
+              <Trash2 size={18} />
+            </button>
 
             {/* Overflow menu button — mobile only */}
             <div className="toolbar-overflow-container" ref={overflowRef}>
@@ -170,17 +180,34 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
               </button>
               {showOverflow && (
                 <div className="toolbar-overflow-menu">
+                  <button className="toolbar-overflow-item" onClick={() => { onAddFiles?.(); setShowOverflow(false); }}>
+                    <Plus size={16} /> Add Workspace
+                  </button>
+                  <button className="toolbar-overflow-item" onClick={() => { onTogglePresentation?.(); setShowOverflow(false); }}>
+                    <Presentation size={16} /> Presentation Base
+                  </button>
                   <button className="toolbar-overflow-item" onClick={() => { onToggleEditor?.(); setShowOverflow(false); }}>
-                    <Edit3 size={16} /> Edit
+                    <Edit3 size={16} /> Edit File
                   </button>
                   <button className="toolbar-overflow-item" onClick={() => { onToggleSplitView?.(); setShowOverflow(false); }}>
                     <Columns2 size={16} /> Split View
                   </button>
                   <button className="toolbar-overflow-item" onClick={() => { onToggleDiffView?.(); setShowOverflow(false); }}>
-                    <FileCode2 size={16} /> Compare
+                    <FileCode2 size={16} /> Compare Git Diff
                   </button>
+                  <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid var(--border-muted)' }} />
+                  <button className="toolbar-overflow-item" onClick={() => { setShowModePicker(true); setShowOverflow(false); }}>
+                    <ThemeIcon size={16} /> Toggle Appearance
+                  </button>
+                  <button className="toolbar-overflow-item" onClick={() => { setShowThemePicker(true); setShowOverflow(false); }}>
+                    <Palette size={16} /> Color Scheme
+                  </button>
+                  <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid var(--border-muted)' }} />
                   <button className="toolbar-overflow-item" onClick={() => { onGoHome?.(); setShowOverflow(false); }}>
-                    <FolderOpen size={16} /> Home
+                    <FolderOpen size={16} /> Go Home
+                  </button>
+                  <button className="toolbar-overflow-item" onClick={() => { handleClearAll(); setShowOverflow(false); }} style={{ color: '#f87171' }}>
+                    <Trash2 size={16} /> Clear All Workspaces
                   </button>
                 </div>
               )}
@@ -189,7 +216,7 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
         )}
 
         {/* Theme picker */}
-        <div className="toolbar-theme-picker-container" ref={themePickerRef}>
+        <div className="toolbar-theme-picker-container toolbar-secondary" ref={themePickerRef}>
           <button
             className="toolbar-btn toolbar-theme-picker-btn"
             onClick={() => setShowThemePicker(!showThemePicker)}
@@ -220,15 +247,40 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
           )}
         </div>
 
-        <span className="toolbar-font-size">{fontSize}px</span>
-        <button
-          className="toolbar-btn toolbar-theme-btn"
-          onClick={cycleTheme}
-          title={`Theme: ${mode}`}
-        >
-          <ThemeIcon size={18} />
-          <span className="toolbar-theme-label">{mode}</span>
-        </button>
+        <span className="toolbar-font-size toolbar-secondary">{fontSize}px</span>
+        
+        <div className="toolbar-theme-picker-container toolbar-secondary" ref={modePickerRef}>
+          <button
+            className="toolbar-btn toolbar-theme-btn"
+            onClick={() => setShowModePicker(!showModePicker)}
+            title={`Theme: ${mode}`}
+          >
+            <ThemeIcon size={18} />
+            <span className="toolbar-theme-label">{mode}</span>
+          </button>
+          {showModePicker && (
+            <div className="toolbar-theme-picker">
+              <div className="theme-picker-header">Appearance</div>
+              {['light', 'dark', 'system'].map((m) => {
+                const ItemIcon = m === 'dark' ? Moon : m === 'light' ? Sun : Monitor;
+                return (
+                  <button
+                    key={m}
+                    className={`theme-picker-item ${mode === m ? 'theme-picker-active' : ''}`}
+                    onClick={() => {
+                      setMode(m as any);
+                      setShowModePicker(false);
+                    }}
+                  >
+                    <ItemIcon size={14} style={{ marginRight: 4, color: 'var(--text-secondary)' }} />
+                    <span className="theme-picker-name" style={{ textTransform: 'capitalize' }}>{m}</span>
+                    {mode === m && <span className="theme-picker-check">✓</span>}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
