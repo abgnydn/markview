@@ -34,7 +34,7 @@
   "devDependencies": {
     "@markview/core": "file:../core",
     "typescript": "^5",
-    "shiki": "^3",
+    "shiki": "^4",
     "mermaid": "^11",
     "katex": "^0.16",
     "@types/katex": "^0.16",
