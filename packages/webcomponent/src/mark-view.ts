@@ -266,7 +266,8 @@ export class MarkViewElement extends HTMLElement {
 
     } catch (e) {
       console.warn('MarkView render error:', e);
-      const fallback = await renderMarkdown(content).catch(() => `<pre>${content}</pre>`);
+      const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const fallback = await renderMarkdown(content).catch(() => `<pre>${escaped}</pre>`);
       this._container.innerHTML = fallback;
     }
 

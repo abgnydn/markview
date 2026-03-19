@@ -257,7 +257,8 @@ export function MarkView({
       } catch (e) {
         console.warn('MarkView: render error:', e);
         if (!cancelled) {
-          const fallback = await renderMarkdown(content).catch(() => `<pre>${content}</pre>`);
+          const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          const fallback = await renderMarkdown(content).catch(() => `<pre>${escaped}</pre>`);
           setHtml(fallback);
         }
       }

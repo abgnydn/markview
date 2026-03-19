@@ -252,7 +252,8 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         console.warn('Markdown processing error:', e);
         // Fallback: render raw markdown as-is
         if (!cancelled) {
-          const rawHtml = await renderMarkdown(content).catch(() => `<pre>${content}</pre>`);
+          const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          const rawHtml = await renderMarkdown(content).catch(() => `<pre>${escaped}</pre>`);
           setHtml(rawHtml);
         }
       }

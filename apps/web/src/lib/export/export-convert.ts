@@ -113,7 +113,7 @@ export function markdownToAsciidoc(md: string): string {
 
   // Task lists
   adoc = adoc.replace(/^\* \[x\]/gm, '* [*]');
-  adoc = adoc.replace(/^\* \[ \]/gm, '* [ ]');
+  // Note: unchecked task lists (- [ ]) are already valid AsciiDoc after list conversion (* [ ])
 
   // ── Restore code blocks ──
   codeBlocks.forEach((block, i) => {
