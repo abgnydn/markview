@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Plus, Pencil } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 export function WorkspaceTabs() {
   const workspaces = useWorkspaceStore((s) => s.workspaces);
@@ -13,6 +14,7 @@ export function WorkspaceTabs() {
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
+  const [workspaceToClose, setWorkspaceToClose] = useState<string | null>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -39,9 +41,7 @@ export function WorkspaceTabs() {
 
   const handleClose = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to close this workspace?')) {
-      deleteWorkspace(id);
-    }
+    setWorkspaceToClose(id);
   };
 
   const formatSize = (bytes: number): string => {
@@ -51,7 +51,8 @@ export function WorkspaceTabs() {
   };
 
   return (
-    <div className="workspace-tabs">
+    <>
+      <div className="workspace-tabs">
       <div className="workspace-tabs-scroll">
         {workspaces.map((ws) => (
           <div
@@ -96,6 +97,18 @@ export function WorkspaceTabs() {
           </div>
         ))}
       </div>
-    </div>
+      </div>
+      <ConfirmDialog
+        isOpen={workspaceToClose !== null}
+        title="Close Workspace"
+        description="Are you sure you want to close this workspace and remove it from your sessions? You can always recreate it later by reopening the folder."
+        confirmText="Close Workspace"
+        onConfirm={() => {
+          if (workspaceToClose) deleteWorkspace(workspaceToClose);
+          setWorkspaceToClose(null);
+        }}
+        onCancel={() => setWorkspaceToClose(null)}
+      />
+    </>
   );
 }

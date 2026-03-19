@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2 } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { ExportMenu } from './export-menu';
 import { THEME_PRESETS } from '@/lib/themes/presets';
@@ -33,6 +34,7 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
   const [showOverflow, setShowOverflow] = useState(false);
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [showModePicker, setShowModePicker] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const overflowRef = useRef<HTMLDivElement>(null);
   const themePickerRef = useRef<HTMLDivElement>(null);
   const modePickerRef = useRef<HTMLDivElement>(null);
@@ -56,16 +58,14 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
 
 
   const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all workspaces?')) {
-      workspaces.forEach(ws => deleteWorkspace(ws.id));
-      if (onGoHome) onGoHome();
-    }
+    setShowClearConfirm(true);
   };
 
   const ThemeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;
 
   return (
-    <header className="toolbar">
+    <>
+      <header className="toolbar">
       <div className="toolbar-left">
         {onToggleSidebar && (
           <button
@@ -277,6 +277,21 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
           )}
         </div>
       </div>
-    </header>
+      </header>
+      <ConfirmDialog
+        isOpen={showClearConfirm}
+        title="Clear All Workspaces"
+        description="This will permanently remove all downloaded packages and workspace sessions from your local browser cache. Are you sure?"
+        confirmText="Clear All"
+        cancelText="Cancel"
+        onConfirm={() => {
+          workspaces.forEach(ws => deleteWorkspace(ws.id));
+          if (onGoHome) onGoHome();
+          setShowClearConfirm(false);
+          setShowOverflow(false);
+        }}
+        onCancel={() => setShowClearConfirm(false)}
+      />
+    </>
   );
 }

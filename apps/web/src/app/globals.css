@@ -3349,3 +3349,98 @@
 .version-delete-btn:hover {
   color: var(--accent-red);
 }
+
+/* ============================================
+   CONFIRM DIALOG
+   ============================================ */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 150ms ease;
+}
+
+.confirm-dialog {
+  width: 90vw;
+  max-width: 400px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  animation: slideDown 200ms ease;
+}
+
+.confirm-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 16px;
+}
+
+.confirm-icon {
+  color: var(--accent-red);
+}
+
+.confirm-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.confirm-body {
+  padding: 0 24px 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.confirm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-muted);
+}
+
+.confirm-cancel-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-cancel-btn:hover {
+  background: var(--bg-hover);
+}
+
+.confirm-action-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: var(--accent-red);
+  border: 1px solid transparent;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-action-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
