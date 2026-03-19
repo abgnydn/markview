@@ -155,8 +155,10 @@ function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string):
 // ---- HTML Entity Helpers ----
 
 function decodeHtmlEntities(code: string): string {
-  // Decode &amp; LAST to prevent double-decoding (e.g. &amp;lt; → &lt; → <)
+  // Decode hex entities FIRST, then named entities, &amp; LAST to prevent double-decoding
   return code
+    .replace(/&#x3C;/g, '<')
+    .replace(/&#x3E;/g, '>')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')

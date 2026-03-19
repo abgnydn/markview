@@ -80,6 +80,8 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
       if (plugin) {
         // Decode &amp; LAST to prevent double-decoding (e.g. &amp;lt; → &lt; → <)
         const decoded = code
+          .replace(/&#x3C;/g, '<')
+          .replace(/&#x3E;/g, '>')
           .replace(/&lt;/g, '<')
           .replace(/&gt;/g, '>')
           .replace(/&quot;/g, '"')
@@ -94,6 +96,8 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
 
       // Decode HTML entities — &amp; LAST to prevent double-decoding
       const decoded = code
+        .replace(/&#x3C;/g, '<')
+        .replace(/&#x3E;/g, '>')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
@@ -143,6 +147,8 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
       const encoded = m[1];
       // Decode &amp; LAST to prevent double-decoding
       const code = encoded
+        .replace(/&#x3C;/g, '<')
+        .replace(/&#x3E;/g, '>')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
@@ -285,6 +291,8 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
       (btn as HTMLButtonElement).onclick = () => {
         // Decode the stored code — &amp; LAST to prevent double-decoding
         const decoded = code
+          .replace(/&#x3C;/g, '<')
+          .replace(/&#x3E;/g, '>')
           .replace(/&lt;/g, '<')
           .replace(/&gt;/g, '>')
           .replace(/&quot;/g, '"')

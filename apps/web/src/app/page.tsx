@@ -21,6 +21,7 @@ export default function HomePage() {
   const initialize = useWorkspaceStore((s) => s.initialize);
   const createWorkspace = useWorkspaceStore((s) => s.createWorkspace);
   const addFiles = useWorkspaceStore((s) => s.addFiles);
+  const switchWorkspace = useWorkspaceStore((s) => s.switchWorkspace);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const deleteWorkspace = useWorkspaceStore((s) => s.deleteWorkspace);
   const initializeTheme = useThemeStore((s) => s.initialize);
@@ -46,6 +47,36 @@ export default function HomePage() {
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, [initializeTheme, initialize]);
+
+  // ── Chrome Extension integration ───────────────────────────────────
+  useEffect(() => {
+    if (!isLoaded || typeof window === 'undefined') return;
+    const chrome = (window as any).chrome;
+    if (chrome?.runtime?.onMessage) {
+      const listener = (message: any) => {
+        if (message.type === 'LOAD_URL' && message.url) {
+          fetch(message.url)
+            .then(res => res.text())
+            .then(async text => {
+              const filename = message.originalUrl?.split('/').pop() || 'extension-file.md';
+              const inputFiles = [{ filename, content: text }];
+              
+              let extWorkspace = workspaces.find(w => w.title === 'Extension View');
+              if (!extWorkspace) {
+                await createWorkspace('Extension View', inputFiles);
+              } else {
+                await switchWorkspace(extWorkspace.id);
+                await addFiles(inputFiles);
+              }
+              setShowLanding(false);
+            })
+            .catch(err => console.error('MarkView extension fetch error:', err));
+        }
+      };
+      chrome.runtime.onMessage.addListener(listener);
+      return () => chrome.runtime.onMessage.removeListener(listener);
+    }
+  }, [isLoaded, workspaces, createWorkspace, switchWorkspace, addFiles]);
 
   // Capture #md= before React clears the hash, then process after isLoaded
   const pendingHashRef = useRef<string | null>(null);

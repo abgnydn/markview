@@ -135,41 +135,48 @@
 /* ============================================
    BASE STYLES
    ============================================ */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  font-family: var(--font-inter);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    font-family: var(--font-inter);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-::selection {
-  background: rgba(88, 166, 255, 0.3);
-}
+  ::selection {
+    background: color-mix(in srgb, var(--accent-blue) 30%, transparent);
+  }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+  :focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+  }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border-default);
-  border-radius: 4px;
-}
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--border-hover);
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-default);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-hover);
+  }
 }
 
 .hidden {
@@ -1067,7 +1074,7 @@ body {
 }
 
 .mermaid-wrapper:hover {
-  border-color: var(--accent-primary);
+  border-color: var(--accent-blue);
 }
 
 .mermaid-wrapper svg:not(.mermaid-toolbar svg) {
@@ -1111,8 +1118,8 @@ body {
 
 .mermaid-btn:hover {
   background: var(--bg-hover);
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
 }
 
@@ -2089,9 +2096,7 @@ body {
   color: var(--accent-orange);
 }
 
-.tree-children {
-  /* Subtle left line for tree structure */
-}
+/* .tree-children: styled via JS or inline when tree structure is active */
 
 /* ============================================
    GITHUB IMPORT
@@ -2261,11 +2266,6 @@ body {
 /* Spin animation for loading */
 .spin {
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 /* ============================================

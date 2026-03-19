@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@markview/core": "^0.1.0",
-    "@sentry/nextjs": "^10.44.0",
     "@tauri-apps/api": "^2.10.1",
     "@types/katex": "^0.16.8",
     "dexie": "^4.3.0",

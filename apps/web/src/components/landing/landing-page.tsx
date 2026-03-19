@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor } from 'lucide-react';
+import Link from 'next/link';
+import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor, Users } from 'lucide-react';
 import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
 import './landing.css';
 
@@ -96,7 +97,8 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
     { icon: Plug, title: 'Plugin System', desc: 'Extend rendering with custom code fences — built-in: alert boxes, bar charts, tabs, timelines, embeds' },
     { icon: History, title: 'Version History', desc: 'Auto-snapshots on editor save, stored in IndexedDB — browse, restore, or delete any previous version' },
     { icon: BookOpen, title: 'Reading Experience', desc: 'Table of contents, reading progress, word count, breadcrumbs, frontmatter cards' },
-    { icon: FileText, title: 'Export Everywhere', desc: 'PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc — export to 10+ formats or generate a full static site' },
+    { icon: Users, title: 'P2P Collaboration', desc: 'Real-time multiplayer editing using WebRTC — collaborate seamlessly via a direct local connection, zero servers required' },
+    { icon: FileText, title: 'Export Everywhere', desc: 'PDF, Microsoft Word (.docx), PowerPoint (.pptx), PNG, HTML — generate presentation-ready files directly from the browser' },
     { icon: Github, title: 'GitHub Import', desc: 'Paste any GitHub repo URL and instantly load its markdown documentation' },
     { icon: Keyboard, title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard' },
     { icon: Zap, title: 'Focus Mode', desc: 'Distraction-free reading that hides sidebar and TOC — just you and the content' },
@@ -117,23 +119,23 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
 
   return (
     <div className="landing">
-      {/* Back to workspace / Clear all */}
-      {hasExistingWorkspace && (
-        <div className="landing-nav-bar">
-          {onBackToWorkspace && (
-            <button className="landing-back-btn" onClick={onBackToWorkspace}>
-              <ArrowLeft size={16} />
-              Back to workspace
-            </button>
-          )}
-          {onClearAll && (
-            <button className="landing-clear-btn" onClick={onClearAll}>
-              <Trash2 size={14} />
-              Clear all
-            </button>
-          )}
-        </div>
-      )}
+      {/* Navigation */}
+      <div className="landing-nav-bar">
+        <Link href="/pricing" className="landing-back-btn" style={{ textDecoration: 'none' }}>Pricing</Link>
+        <Link href="/docs" className="landing-back-btn" style={{ textDecoration: 'none' }}>Documentation</Link>
+        {hasExistingWorkspace && onBackToWorkspace && (
+          <button className="landing-back-btn" onClick={onBackToWorkspace}>
+            <ArrowLeft size={16} />
+            Back to workspace
+          </button>
+        )}
+        {hasExistingWorkspace && onClearAll && (
+          <button className="landing-clear-btn" onClick={onClearAll}>
+            <Trash2 size={14} />
+            Clear all
+          </button>
+        )}
+      </div>
       {/* Hero */}
       <section className="landing-hero">
         <div className="landing-hero-glow" />
@@ -602,9 +604,13 @@ const html = await
           <strong>MarkView</strong> — Open source markdown documentation viewer
         </p>
         <p className="landing-footer-sub">
-          Built with Next.js · Shiki · Mermaid · KaTeX · MCP
+          Built with Next.js · WebRTC (Yjs) · Shiki · Mermaid · KaTeX · MCP
         </p>
         <p className="landing-footer-links">
+          <a href="/pricing" className="text-[var(--accent-blue)]">Pricing</a>
+          <span>·</span>
+          <a href="/docs" className="text-[var(--accent-blue)]">Documentation</a>
+          <span>·</span>
           <a href="https://www.npmjs.com/package/@markview/core" target="_blank" rel="noopener noreferrer">npm</a>
           <span>·</span>
           <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">GitHub</a>
