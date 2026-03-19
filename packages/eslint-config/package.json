@@ -11,10 +11,10 @@
     "./library": "./library.js"
   },
   "peerDependencies": {
-    "eslint": "^9"
+    "eslint": "^10"
   },
   "devDependencies": {
-    "eslint": "^9",
+    "eslint": "^10",
     "typescript-eslint": "^8"
   }
 }
