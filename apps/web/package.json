@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@markview/core": "^0.1.0",
+    "@markview/tsconfig": "file:../../packages/tsconfig",
     "@sentry/nextjs": "^10.44.0",
     "@tauri-apps/api": "^2.10.1",
     "@types/katex": "^0.16.8",
@@ -44,7 +45,6 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.0",
-    "@markview/tsconfig": "file:../../packages/tsconfig",
     "@markview/eslint-config": "file:../../packages/eslint-config"
   }
 }
