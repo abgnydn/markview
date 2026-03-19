@@ -540,7 +540,13 @@ const html = await
         <div className="landing-pricing-app-row">
           <div className="landing-pricing-app-card">
             <div className="landing-pricing-app-left">
-              <div className="landing-pricing-app-icon">📝</div>
+              <div className="landing-pricing-app-icon" style={{ display: 'flex', alignItems: 'center' }}>
+                <img 
+                  src="/icon-192.png" 
+                  alt="MarkView macOS App" 
+                  style={{ width: 44, height: 44, borderRadius: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.05)' }} 
+                />
+              </div>
               <div>
                 <div className="landing-pricing-app-name">MarkView for Mac</div>
                 <div className="landing-pricing-app-desc">
