@@ -196,6 +196,7 @@
    TOOLBAR
    ============================================ */
 .toolbar {
+  position: relative;
   height: var(--toolbar-height);
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-default);
@@ -205,13 +206,14 @@
   padding: 0 20px;
   flex-shrink: 0;
   z-index: 100;
-  backdrop-filter: blur(12px);
 }
 
 .toolbar-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .toolbar-home-btn {
@@ -256,6 +258,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .toolbar-btn {
@@ -1677,18 +1680,18 @@
 
   /* Toolbar adjustments */
   .toolbar {
-    padding: 0 12px;
-    gap: 4px;
-  }
-
-  .toolbar-right {
+    padding: 0 10px;
     gap: 2px;
   }
 
+  .toolbar-right {
+    gap: 1px;
+  }
+
   .toolbar-btn {
-    padding: 10px;
-    min-width: 44px;
-    min-height: 44px;
+    padding: 8px;
+    min-width: 40px;
+    min-height: 40px;
     justify-content: center;
   }
 
@@ -1710,6 +1713,14 @@
 
   .toolbar-brand {
     font-size: 16px;
+  }
+
+  .toolbar-theme-btn {
+    padding: 6px 8px;
+  }
+
+  .toolbar-theme-picker-btn {
+    padding: 6px 8px;
   }
 
   /* Sidebar: off-screen drawer */
@@ -1805,9 +1816,8 @@
   .viewer-content li { line-height: 1.7; }
 
   .code-block-wrapper {
-    margin-left: -14px;
-    margin-right: -14px;
-    border-radius: 0;
+    /* removed mobile full-bleed to keep the rounded card look */
+    border-radius: var(--mv-radius-md, 8px);
   }
 
   .viewer-filename {
