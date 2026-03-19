@@ -585,6 +585,11 @@ const html = await
 
       {/* Footer */}
       <footer className="landing-footer">
+        <img 
+          src="/icon-192.png" 
+          alt="MarkView Logo" 
+          style={{ width: 44, height: 44, borderRadius: 10, margin: '0 auto 20px auto', display: 'block', opacity: 0.9 }} 
+        />
         <p>
           <strong>MarkView</strong> — Open source markdown documentation viewer
         </p>
