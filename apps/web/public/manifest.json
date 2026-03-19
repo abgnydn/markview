@@ -1,7 +1,7 @@
 {
   "name": "MarkView",
   "short_name": "MarkView",
-  "description": "Zero-account, privacy-first markdown viewer with beautiful rendering",
+  "description": "High-performance embeddable markdown rendering stack & native offline viewer",
   "id": "/",
   "start_url": "/",
   "scope": "/",

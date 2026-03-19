@@ -11,10 +11,9 @@ interface LandingPageProps {
   onGitHubImport: (files: { filename: string; content: string }[], title?: string) => void;
   hasExistingWorkspace?: boolean;
   onBackToWorkspace?: () => void;
-  onClearAll?: () => void;
 }
 
-export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorkspace, onBackToWorkspace, onClearAll }: LandingPageProps) {
+export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorkspace, onBackToWorkspace }: LandingPageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [githubUrl, setGithubUrl] = useState('');
   const [isImporting, setIsImporting] = useState(false);
@@ -119,22 +118,20 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
 
   return (
     <div className="landing">
+      {hasExistingWorkspace && onBackToWorkspace && (
+        <button 
+          className="landing-top-right-floating-btn" 
+          onClick={onBackToWorkspace}
+          title="Back to workspace"
+          aria-label="Back to workspace"
+        >
+          <Monitor size={18} />
+        </button>
+      )}
       {/* Navigation */}
       <div className="landing-nav-bar">
         <Link href="/pricing" className="landing-back-btn" style={{ textDecoration: 'none' }}>Pricing</Link>
         <Link href="/docs" className="landing-back-btn" style={{ textDecoration: 'none' }}>Documentation</Link>
-        {hasExistingWorkspace && onBackToWorkspace && (
-          <button className="landing-back-btn" onClick={onBackToWorkspace}>
-            <ArrowLeft size={16} />
-            Back to workspace
-          </button>
-        )}
-        {hasExistingWorkspace && onClearAll && (
-          <button className="landing-clear-btn" onClick={onClearAll}>
-            <Trash2 size={14} />
-            Clear all
-          </button>
-        )}
       </div>
       {/* Hero */}
       <section className="landing-hero">
@@ -145,15 +142,14 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             <span>Zero-account · Privacy-first · Native macOS app · Offline-ready</span>
           </div>
           <h1 className="landing-title">
-            The markdown viewer
+            The embeddable Markdown
             <br />
-            <span className="landing-title-accent">your docs deserve</span>
+            <span className="landing-title-accent">rendering stack</span>
           </h1>
           <p className="landing-subtitle">
-            Beautiful rendering, WYSIWYG editor, custom themes, annotations,
-            plugin system, and 15 MCP tools for AI assistants.
+            A high-performance markdown engine available as a React SDK, Web Component, and native macOS App. Built with Shiki, Mermaid, KaTeX, and MCP for AI assistants.
             <br />
-            Your files never leave the browser.
+            Private, offline, and ready to embed.
           </p>
 
           <div className="landing-cta-group">

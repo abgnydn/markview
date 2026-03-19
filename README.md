@@ -2,9 +2,9 @@
 
 # MarkView
 
-**The markdown viewer your docs deserve.**
+**The embeddable Markdown rendering stack & native macOS app.**
 
-**Beautiful rendering, WYSIWYG editor, custom themes, annotations, plugin system, and 15 MCP tools for AI assistants. Your files never leave the browser.**
+**A high-performance markdown engine available as a React Component, Web Component, and native Desktop App. Features GitHub-flavored rendering, WYSIWYG editing, Custom Themes, and 15 MCP tools for AI assistants.**
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
 [![core](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=%40markview%2Fcore)](https://www.npmjs.com/package/@markview/core)
