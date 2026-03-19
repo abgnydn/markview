@@ -1201,6 +1201,13 @@
   margin-bottom: 12px;
 }
 
+.landing-pricing-app-store-note {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #6ee7b7;
+  font-weight: 600;
+}
+
 /* === Pricing FAQ === */
 .landing-pricing-faq {
   max-width: 800px;
