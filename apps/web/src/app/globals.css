@@ -1661,7 +1661,15 @@
 }
 
 /* --- Mobile (≤768px) --- */
+.mobile-only {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
+  .mobile-only {
+    display: block !important;
+  }
+
   /* Hamburger visible */
   .toolbar-hamburger {
     display: flex;

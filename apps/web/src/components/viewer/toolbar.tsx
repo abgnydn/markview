@@ -196,13 +196,6 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
                     <FileCode2 size={16} /> Compare Git Diff
                   </button>
                   <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid var(--border-muted)' }} />
-                  <button className="toolbar-overflow-item" onClick={() => { setShowModePicker(true); setShowOverflow(false); }}>
-                    <ThemeIcon size={16} /> Toggle Appearance
-                  </button>
-                  <button className="toolbar-overflow-item" onClick={() => { setShowThemePicker(true); setShowOverflow(false); }}>
-                    <Palette size={16} /> Color Scheme
-                  </button>
-                  <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid var(--border-muted)' }} />
                   <button className="toolbar-overflow-item" onClick={() => { onGoHome?.(); setShowOverflow(false); }}>
                     <FolderOpen size={16} /> Go Home
                   </button>

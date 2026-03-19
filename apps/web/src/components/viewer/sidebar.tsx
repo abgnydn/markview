@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useMemo, useRef, useCallback } from 'react';
-import { FileText, Trash2, ChevronRight, ChevronDown, Folder, FolderOpen, Share2, GripVertical } from 'lucide-react';
+import { FileText, Trash2, ChevronRight, ChevronDown, Folder, FolderOpen, Share2, GripVertical, Sun, Moon, Monitor } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useCollabStore } from '@/stores/collab-store';
+import { useThemeStore } from '@/stores/theme-store';
+import { THEME_PRESETS } from '@/lib/themes/presets';
 import { ShareDialog } from '@/components/collab/share-dialog';
 import '@/components/collab/collab.css';
 
@@ -138,6 +140,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   const reorderFiles = useWorkspaceStore((s) => s.reorderFiles);
   const collabIsActive = useCollabStore((s) => s.isActive);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const { mode, setMode, colorScheme, setColorScheme } = useThemeStore();
 
   // Drag state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -266,6 +269,34 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
           ))
         )}
       </nav>
+      
+      {/* Inline settings (hidden on desktop via css or just acting as footer settings) */}
+      <div className="sidebar-mobile-settings mobile-only" style={{ marginTop: 'auto', paddingTop: 20, paddingBottom: 24, borderTop: '1px solid var(--border-muted)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: '0 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Appearance</span>
+            <div style={{ display: 'flex', gap: 4, background: 'var(--bg-elevated)', padding: 4, borderRadius: 8, border: '1px solid var(--border-muted)' }}>
+              {['light', 'dark', 'system'].map((m) => {
+                const ItemIcon = m === 'dark' ? Moon : m === 'light' ? Sun : Monitor;
+                return (
+                  <button key={m} onClick={() => setMode(m as any)} style={{ padding: '6px 12px', borderRadius: 4, background: mode === m ? 'var(--bg-hover)' : 'transparent', color: mode === m ? 'var(--text-primary)' : 'var(--text-muted)', border: 'none', cursor: 'pointer' }} title={m}>
+                    <ItemIcon size={14} />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Theme</span>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: 140 }}>
+              {THEME_PRESETS.map((preset) => (
+                <button key={preset.id} onClick={() => setColorScheme(preset.id)} style={{ width: 24, height: 24, borderRadius: '50%', background: `linear-gradient(135deg, ${preset.dark['--bg-primary'] || '#0d1117'} 50%, ${preset.dark['--accent-blue'] || '#58a6ff'} 50%)`, border: colorScheme === preset.id ? '2px solid var(--text-primary)' : '2px solid transparent', boxShadow: '0 0 0 1px var(--border-muted)', cursor: 'pointer' }} title={preset.name} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </aside>
     {showShareDialog && <ShareDialog onClose={() => setShowShareDialog(false)} />}
     </>
