@@ -477,8 +477,14 @@ const html = await
       <section className="landing-section">
         <h2 className="landing-section-title">Simple pricing</h2>
         <p className="landing-section-subtitle">
-          Free for open source. Commercial licenses for proprietary use.
+          Two ways to use MarkView — embed the SDK in your product, or get the desktop app.
         </p>
+
+        {/* SDK / Component Licensing */}
+        <div className="landing-pricing-channel-label">
+          <Code2 size={14} />
+          <span>For Developers — SDK &amp; Component Licensing</span>
+        </div>
         <div className="landing-pricing-grid">
           <div className="landing-pricing-card">
             <div className="landing-pricing-name">Open Source</div>
@@ -497,8 +503,8 @@ const html = await
           <div className="landing-pricing-card landing-pricing-featured">
             <div className="landing-pricing-popular">Most Popular</div>
             <div className="landing-pricing-name">Indie</div>
-            <div className="landing-pricing-price">$99<span>/year</span></div>
-            <div className="landing-pricing-period">1 developer, 1 project</div>
+            <div className="landing-pricing-price">$149<span>/year</span></div>
+            <div className="landing-pricing-period">1 developer, 3 projects</div>
             <ul className="landing-pricing-features">
               <li><Check size={14} /> Use in proprietary apps</li>
               <li><Check size={14} /> No AGPL obligations</li>
@@ -510,18 +516,81 @@ const html = await
             </a>
           </div>
           <div className="landing-pricing-card">
-            <div className="landing-pricing-name">Team</div>
-            <div className="landing-pricing-price">$299<span>/year</span></div>
-            <div className="landing-pricing-period">Up to 5 developers</div>
+            <div className="landing-pricing-name">Business</div>
+            <div className="landing-pricing-price">$499<span>/year</span></div>
+            <div className="landing-pricing-period">Up to 15 developers</div>
             <ul className="landing-pricing-features">
               <li><Check size={14} /> Unlimited projects</li>
               <li><Check size={14} /> No AGPL obligations</li>
               <li><Check size={14} /> All future updates</li>
               <li><Check size={14} /> Priority support</li>
             </ul>
-            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Team%20License">
+            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Business%20License">
               <Mail size={14} /> Contact Us
             </a>
+          </div>
+          <div className="landing-pricing-card">
+            <div className="landing-pricing-name">Enterprise</div>
+            <div className="landing-pricing-price">Custom</div>
+            <div className="landing-pricing-period">Unlimited developers</div>
+            <ul className="landing-pricing-features">
+              <li><Check size={14} /> Everything in Business</li>
+              <li><Check size={14} /> Dedicated support &amp; SLA</li>
+              <li><Check size={14} /> Custom integrations</li>
+              <li><Check size={14} /> Legal review &amp; invoicing</li>
+            </ul>
+            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Enterprise%20License">
+              <Mail size={14} /> Contact Sales
+            </a>
+          </div>
+        </div>
+
+        {/* Desktop App */}
+        <div className="landing-pricing-channel-label landing-pricing-channel-label-app">
+          <Monitor size={14} />
+          <span>Desktop App — Mac App Store</span>
+        </div>
+        <div className="landing-pricing-app-row">
+          <div className="landing-pricing-app-card">
+            <div className="landing-pricing-app-left">
+              <div className="landing-pricing-app-icon">📝</div>
+              <div>
+                <div className="landing-pricing-app-name">MarkView for Mac</div>
+                <div className="landing-pricing-app-desc">
+                  Native Tauri v2 app — set as your default .md opener. Fast, private, offline.
+                </div>
+              </div>
+            </div>
+            <div className="landing-pricing-app-right">
+              <div className="landing-pricing-app-price">$4.99</div>
+              <div className="landing-pricing-app-note">One-time purchase</div>
+              <a className="landing-pricing-btn landing-pricing-btn-primary" href="https://github.com/abgnydn/markview/releases/latest" target="_blank" rel="noopener noreferrer">
+                <Monitor size={14} /> Download
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="landing-pricing-faq">
+          <h3 className="landing-pricing-faq-title">Frequently asked questions</h3>
+          <div className="landing-pricing-faq-grid">
+            <div className="landing-pricing-faq-item">
+              <div className="landing-pricing-faq-q">Can I use MarkView for free in an open-source project?</div>
+              <div className="landing-pricing-faq-a">Yes! If your project is open-source under an AGPL-compatible license, you can use it freely.</div>
+            </div>
+            <div className="landing-pricing-faq-item">
+              <div className="landing-pricing-faq-q">Can I evaluate before purchasing?</div>
+              <div className="landing-pricing-faq-a">Absolutely. Use the AGPL version for development and testing. You only need a commercial license when you deploy to production in a closed-source application.</div>
+            </div>
+            <div className="landing-pricing-faq-item">
+              <div className="landing-pricing-faq-q">What if I&apos;m building an internal tool?</div>
+              <div className="landing-pricing-faq-a">Internal tools not distributed to external users may not trigger AGPL obligations, but we recommend a commercial license for clarity.</div>
+            </div>
+            <div className="landing-pricing-faq-item">
+              <div className="landing-pricing-faq-q">Is the desktop app the same as the web app?</div>
+              <div className="landing-pricing-faq-a">Yes — the desktop app wraps the full MarkView experience in a native macOS shell. It can be set as your default .md file opener.</div>
+            </div>
           </div>
         </div>
       </section>

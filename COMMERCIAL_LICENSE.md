@@ -26,8 +26,8 @@ You need a commercial license if you want to:
 
 | Tier | Price | Includes |
 |------|-------|----------|
-| **Indie** | $99/year | 1 developer, 1 commercial project |
-| **Team** | $299/year | Up to 5 developers, unlimited projects |
+| **Indie** | $149/year | 1 developer, 3 commercial projects |
+| **Business** | $499/year | Up to 15 developers, unlimited projects, priority support |
 | **Enterprise** | Custom | Unlimited developers, priority support, SLA |
 
 All commercial licenses include:

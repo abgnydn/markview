@@ -1788,16 +1788,18 @@ body {
 /* --- Small mobile (≤480px) --- */
 @media (max-width: 480px) {
   .viewer-content {
-    padding: 16px 12px 80px;
+    padding: 16px 14px 80px;
   }
 
-  .viewer-content h1 { font-size: 24px; }
-  .viewer-content h2 { font-size: 20px; }
-  .viewer-content h3 { font-size: 17px; }
+  .viewer-content h1 { font-size: 24px; line-height: 1.25; }
+  .viewer-content h2 { font-size: 20px; line-height: 1.3; }
+  .viewer-content h3 { font-size: 17px; line-height: 1.35; }
+  .viewer-content p { line-height: 1.75; }
+  .viewer-content li { line-height: 1.7; }
 
   .code-block-wrapper {
-    margin-left: -12px;
-    margin-right: -12px;
+    margin-left: -14px;
+    margin-right: -14px;
     border-radius: 0;
   }
 
@@ -1807,6 +1809,73 @@ body {
 
   .frontmatter-card {
     padding: 12px;
+  }
+
+  /* Search dialog full-width on small mobile */
+  .search-dialog {
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    margin: 0;
+  }
+
+  .search-results {
+    max-height: 50vh;
+  }
+
+  .search-result-item {
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  /* Export dropdown: full-width bottom sheet */
+  .export-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    min-width: auto;
+  }
+
+  .export-dropdown-item {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* Overflow menu touch targets */
+  .toolbar-overflow-item {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+
+  /* Theme picker as bottom sheet */
+  .toolbar-theme-picker {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .theme-picker-item {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+
+  /* Viewer images responsive */
+  .viewer-content img {
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -1850,10 +1919,30 @@ body {
   .toolbar {
     padding-left: max(12px, env(safe-area-inset-left));
     padding-right: max(12px, env(safe-area-inset-right));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .sidebar {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .viewer-content {
     padding-bottom: max(80px, calc(env(safe-area-inset-bottom) + 40px));
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .toolbar-theme-picker,
+  .export-dropdown,
+  .toolbar-overflow-menu,
+  .search-dialog {
+    animation: none;
+  }
+
+  .sidebar {
+    transition: none;
   }
 }
 
