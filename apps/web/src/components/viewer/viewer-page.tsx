@@ -169,8 +169,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 workspaceFiles={workspaceFileNames}
               />
             ) : (
-              <div className="content-loading">
-                <p>No content available</p>
+              <div className="viewer-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh', opacity: 0.15, userSelect: 'none', pointerEvents: 'none' }}>
+                <img src="/icon-512.png" alt="" style={{ width: 120, height: 120, filter: 'grayscale(100%) drop-shadow(0 0 40px rgba(255,255,255,0.1))' }} />
+                <h3 style={{ marginTop: 24, fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em' }}>MarkView</h3>
               </div>
             )}
             {activeFileId && (
