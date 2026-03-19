@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Copy, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor, Users } from 'lucide-react';
 import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
@@ -18,12 +18,58 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
   const [githubUrl, setGithubUrl] = useState('');
   const [isImporting, setIsImporting] = useState(false);
   const [copiedPkg, setCopiedPkg] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
 
   const handleCopy = (pkg: string, cmd: string) => {
     navigator.clipboard.writeText(cmd);
     setCopiedPkg(pkg);
     setTimeout(() => setCopiedPkg(null), 2000);
   };
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragging(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current = 0;
+    setIsDragging(false);
+
+    const droppedFiles = e.dataTransfer.files;
+    if (!droppedFiles || droppedFiles.length === 0) return;
+
+    const results: { filename: string; content: string }[] = [];
+    for (const file of Array.from(droppedFiles)) {
+      if (file.name.match(/\.(md|markdown)$/i)) {
+        const content = await file.text();
+        results.push({ filename: file.name, content });
+      }
+    }
+    if (results.length > 0) {
+      onFilesSelected(results);
+    }
+  }, [onFilesSelected]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
@@ -124,7 +170,22 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
   ];
 
   return (
-    <div className="landing">
+    <div
+      className="landing"
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {isDragging && (
+        <div className="landing-drop-overlay">
+          <div className="landing-drop-content">
+            <Upload size={48} className="landing-drop-icon" />
+            <h2 className="landing-drop-title">Drop your .md files here</h2>
+            <p className="landing-drop-subtitle">Release to instantly render your markdown — no upload, no server, fully private</p>
+          </div>
+        </div>
+      )}
       {hasExistingWorkspace && onBackToWorkspace && (
         <button 
           className="landing-top-right-floating-btn" 
