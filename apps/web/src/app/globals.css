@@ -2608,8 +2608,7 @@
 .diff-view-header {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 12px;
   padding: 12px 48px 12px 16px;
   background: var(--bg-secondary);
@@ -2628,7 +2627,6 @@
 .diff-view-files {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
   flex: 1;
 }
@@ -2651,6 +2649,24 @@
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .diff-view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .diff-view-files {
+    width: 100%;
+    flex: none;
+  }
+  
+  .diff-view-select {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .diff-view-stats {
