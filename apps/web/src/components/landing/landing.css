@@ -598,12 +598,101 @@
 
 .landing-feature-card {
   padding: 24px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  transition: all 0.25s;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Base glowing gradient border - hidden by default */
+.landing-feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: transparent;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+/* Background glow - hidden by default */
+.landing-feature-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at top left, var(--feature-glow, rgba(255,255,255,0.05)), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Category Colors */
+.landing-feature-indigo {
+  --feature-glow: rgba(99, 102, 241, 0.15);
+  --feature-border-start: rgba(99, 102, 241, 0.8);
+  --feature-border-end: rgba(99, 102, 241, 0.1);
+  --feature-icon-bg: rgba(99, 102, 241, 0.15);
+  --feature-icon-color: #a5b4fc;
+  --feature-shadow: rgba(99, 102, 241, 0.2);
+}
+
+.landing-feature-purple {
+  --feature-glow: rgba(168, 85, 247, 0.15);
+  --feature-border-start: rgba(168, 85, 247, 0.8);
+  --feature-border-end: rgba(168, 85, 247, 0.1);
+  --feature-icon-bg: rgba(168, 85, 247, 0.15);
+  --feature-icon-color: #d8b4fe;
+  --feature-shadow: rgba(168, 85, 247, 0.2);
+}
+
+.landing-feature-emerald {
+  --feature-glow: rgba(16, 185, 129, 0.15);
+  --feature-border-start: rgba(16, 185, 129, 0.8);
+  --feature-border-end: rgba(16, 185, 129, 0.1);
+  --feature-icon-bg: rgba(16, 185, 129, 0.15);
+  --feature-icon-color: #6ee7b7;
+  --feature-shadow: rgba(16, 185, 129, 0.2);
+}
+
+.landing-feature-amber {
+  --feature-glow: rgba(245, 158, 11, 0.15);
+  --feature-border-start: rgba(245, 158, 11, 0.8);
+  --feature-border-end: rgba(245, 158, 11, 0.1);
+  --feature-icon-bg: rgba(245, 158, 11, 0.15);
+  --feature-icon-color: #fcd34d;
+  --feature-shadow: rgba(245, 158, 11, 0.2);
+}
+
+.landing-feature-blue {
+  --feature-glow: rgba(59, 130, 246, 0.15);
+  --feature-border-start: rgba(59, 130, 246, 0.8);
+  --feature-border-end: rgba(59, 130, 246, 0.1);
+  --feature-icon-bg: rgba(59, 130, 246, 0.15);
+  --feature-icon-color: #93c5fd;
+  --feature-shadow: rgba(59, 130, 246, 0.2);
+}
+
+.landing-feature-rose {
+  --feature-glow: rgba(244, 63, 94, 0.15);
+  --feature-border-start: rgba(244, 63, 94, 0.8);
+  --feature-border-end: rgba(244, 63, 94, 0.1);
+  --feature-icon-bg: rgba(244, 63, 94, 0.15);
+  --feature-icon-color: #fda4af;
+  --feature-shadow: rgba(244, 63, 94, 0.2);
 }
 
 /* Bento Asymmetry */
@@ -611,8 +700,13 @@
   grid-column: span 2;
   grid-row: span 2;
   padding: 32px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-  border-color: rgba(99, 102, 241, 0.2);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.landing-feature-card:nth-child(1)::after {
+  background: radial-gradient(800px circle at center, var(--feature-glow, rgba(255,255,255,0.05)), transparent 50%);
+  opacity: 0.5; /* Hero card is always slightly glowing */
 }
 
 .landing-feature-card:nth-child(1) .landing-feature-icon {
@@ -637,10 +731,19 @@
 }
 
 .landing-feature-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(99, 102, 241, 0.3);
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 40px -10px var(--feature-shadow, rgba(0, 0, 0, 0.4));
+  background: rgba(20, 20, 25, 0.4);
+  border-color: transparent;
+}
+
+.landing-feature-card:hover::before {
+  opacity: 1;
+  background: linear-gradient(135deg, var(--feature-border-start), var(--feature-border-end));
+}
+
+.landing-feature-card:hover::after {
+  opacity: 1;
 }
 
 .landing-feature-icon {
