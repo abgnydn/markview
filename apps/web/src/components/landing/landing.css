@@ -1605,10 +1605,20 @@
     min-height: 48px;
   }
 
+  .landing-github-import {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+
   .landing-github-input-row {
     flex-direction: column;
     gap: 8px;
-    padding: 10px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .landing-github-input-row > svg {
+    display: none;
   }
 
   .landing-github-input {
@@ -1619,11 +1629,12 @@
 
   .landing-github-btn {
     width: 100%;
-    padding: 10px;
-    font-size: 13px;
+    padding: 12px;
+    font-size: 14px;
     min-height: 44px;
     text-align: center;
     justify-content: center;
+    border-radius: 10px;
   }
 
   .landing-features-grid { grid-template-columns: 1fr; gap: 14px; }
