@@ -58,7 +58,7 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-      </head>
+        <script defer data-domain="markview.ai" src="https://plausible.io/js/script.js" /></head>
       <body className={`${inter.variable} antialiased`}>
         {children}
         <script

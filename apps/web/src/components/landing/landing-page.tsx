@@ -692,6 +692,10 @@ const html = await
           <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">GitHub</a>
           <span>·</span>
           <a href="https://github.com/abgnydn/markview/blob/main/COMMERCIAL_LICENSE.md" target="_blank" rel="noopener noreferrer">Commercial License</a>
+          <span>·</span>
+          <a href="/terms">Terms</a>
+          <span>·</span>
+          <a href="/privacy">Privacy</a>
         </p>
       </footer>
     </div>

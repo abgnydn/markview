@@ -2041,3 +2041,42 @@
   }
 }
 
+/* Legal Pages (Terms, Privacy) */
+.landing-legal-content h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fafafa;
+  margin: 40px 0 12px;
+}
+
+.landing-legal-content h2:first-child {
+  margin-top: 0;
+}
+
+.landing-legal-content p {
+  font-size: 15px;
+  color: #a1a1aa;
+  line-height: 1.8;
+  margin: 0 0 16px;
+}
+
+.landing-legal-content ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 0 0 16px;
+}
+
+.landing-legal-content ul li {
+  font-size: 15px;
+  color: #a1a1aa;
+  line-height: 2;
+}
+
+.landing-legal-content a {
+  color: #a5b4fc;
+  text-decoration: none;
+}
+
+.landing-legal-content a:hover {
+  text-decoration: underline;
+}
