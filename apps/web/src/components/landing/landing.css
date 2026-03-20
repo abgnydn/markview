@@ -1741,9 +1741,20 @@
   }
 
   .landing-features-grid { grid-template-columns: 1fr; gap: 14px; }
+
+  .landing-feature-card:nth-child(1),
+  .landing-feature-card:nth-child(4),
+  .landing-feature-card:nth-child(8),
+  .landing-feature-card:nth-child(9) {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
   .landing-mcp-grid { grid-template-columns: 1fr; gap: 10px; }
 
   .landing-feature-card { padding: 20px; }
+  .landing-feature-card:nth-child(1) { padding: 24px; }
+
   .landing-mcp-tool { padding: 14px; min-height: 44px; }
 
   .landing-preview { margin-top: 32px; }
