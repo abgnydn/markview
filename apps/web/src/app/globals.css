@@ -615,6 +615,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
 }
 
 .sidebar-title {
@@ -623,6 +625,10 @@
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .sidebar-count {
@@ -743,6 +749,70 @@
 
 .sidebar-item-draggable {
   transition: background var(--transition-fast), border-top 0.1s ease;
+}
+
+/* ============================================
+   VIEWER DROP OVERLAY
+   ============================================ */
+.viewer-drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(var(--bg-primary-rgb, 13, 17, 23), 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: viewerDropFadein 150ms ease;
+  pointer-events: none;
+}
+
+@keyframes viewerDropFadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.viewer-drop-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 64px;
+  border: 2px dashed var(--accent-blue, #58a6ff);
+  border-radius: 24px;
+  background: rgba(56, 139, 253, 0.06);
+  animation: viewerDropPulse 2s ease-in-out infinite;
+}
+
+@keyframes viewerDropPulse {
+  0%, 100% { border-color: rgba(56, 139, 253, 0.3); box-shadow: 0 0 40px rgba(56, 139, 253, 0.1); }
+  50% { border-color: rgba(56, 139, 253, 0.7); box-shadow: 0 0 80px rgba(56, 139, 253, 0.25); }
+}
+
+.viewer-drop-icon {
+  color: var(--accent-blue, #58a6ff);
+  animation: viewerDropBounce 1s ease infinite;
+}
+
+@keyframes viewerDropBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.viewer-drop-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.viewer-drop-subtitle {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
 }
 
 /* ============================================

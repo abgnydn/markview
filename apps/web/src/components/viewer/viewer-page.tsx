@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState, useCallback } from 'react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { useCollabStore } from '@/stores/collab-store';
@@ -22,6 +22,7 @@ import { PresenceBar } from '@/components/collab/presence-bar';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 import { useViewerState } from '@/hooks/use-viewer-state';
 import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
+import { Upload } from 'lucide-react';
 import type { TocHeading } from '@/lib/markdown/pipeline';
 
 function calculateReadingStats(content: string) {
@@ -48,6 +49,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const focusMode = useThemeStore((s) => s.focusMode);
 
   // Workspace data
+  const addFiles = useWorkspaceStore((s) => s.addFiles);
   const files = useWorkspaceStore((s) => s.files);
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
   const activeFileContent = useWorkspaceStore((s) => s.activeFileContent);
@@ -59,6 +61,54 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const syncedFiles = useCollabStore((s) => s.syncedFiles);
   const syncedActiveFileId = useCollabStore((s) => s.syncedActiveFileId);
   const syncedActiveFileContent = useCollabStore((s) => s.syncedActiveFileContent);
+
+  // ── Drag-and-drop state ──────────────────────────────────────────
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragging(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current = 0;
+    setIsDragging(false);
+
+    const droppedFiles = e.dataTransfer.files;
+    if (!droppedFiles || droppedFiles.length === 0) return;
+
+    const results: { filename: string; content: string }[] = [];
+    for (const file of Array.from(droppedFiles)) {
+      if (file.name.match(/\.(md|markdown)$/i)) {
+        const content = await file.text();
+        results.push({ filename: file.name, content });
+      }
+    }
+    if (results.length > 0) {
+      addFiles(results);
+    }
+  }, [addFiles]);
 
   // All overlay/panel state from the hook
   const {
@@ -111,7 +161,22 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const displayFilename = effectiveActiveFile?.filename || 'untitled';
 
   return (
-    <div className={`app ${focusMode ? 'focus-mode' : ''}`}>
+    <div
+      className={`app ${focusMode ? 'focus-mode' : ''}`}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {isDragging && (
+        <div className="viewer-drop-overlay">
+          <div className="viewer-drop-content">
+            <Upload size={48} className="viewer-drop-icon" />
+            <h2 className="viewer-drop-title">Drop your .md files here</h2>
+            <p className="viewer-drop-subtitle">Files will be added to the current workspace</p>
+          </div>
+        </div>
+      )}
       <Toolbar
         onAddFiles={() => addFilesInputRef.current?.click()}
         readingStats={readingStats}
