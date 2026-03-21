@@ -181,6 +181,92 @@ export const timelinePlugin: CodeFencePlugin = {
 
     return `<div class="plugin-timeline" style="padding: 12px; margin: 12px 0;">${items}</div>`;
   },
+}
+
+/** ```csv — render CSV data as a beautiful sortable/searchable table */
+export const csvPlugin: CodeFencePlugin = {
+  id: 'csv',
+  name: 'CSV Table',
+  render: (content, theme) => {
+    const lines = content.trim().split('\n').filter(Boolean);
+    if (lines.length === 0) return '<p>No CSV data</p>';
+
+    const parseRow = (line: string): string[] => {
+      const cells: string[] = [];
+      let current = '';
+      let inQuotes = false;
+      for (const ch of line) {
+        if (ch === '"') { inQuotes = !inQuotes; continue; }
+        if (ch === ',' && !inQuotes) { cells.push(current.trim()); current = ''; continue; }
+        current += ch;
+      }
+      cells.push(current.trim());
+      return cells;
+    };
+
+    const headers = parseRow(lines[0]);
+    const rows = lines.slice(1).map(parseRow);
+
+    const borderColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+    const hdrBg = theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
+    const stripeBg = theme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)';
+    const textColor = theme === 'dark' ? '#c9d1d9' : '#24292f';
+    const mutedColor = theme === 'dark' ? '#8b949e' : '#656d76';
+
+    const tableId = `csv-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`;
+
+    const thCells = headers.map((h, i) =>
+      `<th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: ${textColor}; border-bottom: 2px solid ${borderColor}; cursor: pointer; user-select: none;" title="Click to sort">${h} <span style="opacity: 0.3; font-size: 10px;">⇅</span></th>`
+    ).join('');
+
+    const bodyRows = rows.map((row, ri) =>
+      `<tr style="${ri % 2 === 1 ? `background: ${stripeBg};` : ''}">${row.map(cell =>
+        `<td style="padding: 6px 12px; font-size: 13px; color: ${textColor}; border-bottom: 1px solid ${borderColor};">${cell}</td>`
+      ).join('')}</tr>`
+    ).join('');
+
+    return `<div class="plugin-csv" style="border: 1px solid ${borderColor}; border-radius: 8px; overflow: hidden; margin: 12px 0;">
+      <div style="padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; background: ${hdrBg}; border-bottom: 1px solid ${borderColor};">
+        <span style="font-size: 11px; font-weight: 600; color: ${mutedColor}; text-transform: uppercase; letter-spacing: 0.05em;">📊 ${rows.length} rows · ${headers.length} columns</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead><tr style="background: ${hdrBg};">${thCells}</tr></thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  },
+};
+
+/** ```map — render an OpenStreetMap embed from lat/lng */
+export const mapPlugin: CodeFencePlugin = {
+  id: 'map',
+  name: 'Map',
+  render: (content, theme) => {
+    const lines = content.trim().split('\n');
+    const props: Record<string, string> = {};
+    for (const line of lines) {
+      const idx = line.indexOf(':');
+      if (idx > -1) {
+        props[line.slice(0, idx).trim().toLowerCase()] = line.slice(idx + 1).trim();
+      }
+    }
+
+    const lat = parseFloat(props['lat'] || props['latitude'] || '0');
+    const lng = parseFloat(props['lng'] || props['lon'] || props['longitude'] || '0');
+    const zoom = parseInt(props['zoom'] || '13', 10);
+    const label = props['label'] || props['title'] || '';
+
+    if (lat === 0 && lng === 0) return '<p style="color: rgba(128,128,128,0.8); font-size: 0.85rem; font-style: italic;">Map: specify lat and lng values</p>';
+
+    const borderColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+
+    return `<div class="plugin-map" style="border: 1px solid ${borderColor}; border-radius: 10px; overflow: hidden; margin: 12px 0;">
+      ${label ? `<div style="padding: 6px 12px; font-size: 12px; font-weight: 600; color: ${theme === 'dark' ? '#c9d1d9' : '#24292f'}; background: ${theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'}; border-bottom: 1px solid ${borderColor};">📍 ${label}</div>` : ''}
+      <iframe width="100%" height="300" frameborder="0" style="display: block;" src="https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.02}%2C${lat - 0.015}%2C${lng + 0.02}%2C${lat + 0.015}&layer=mapnik&marker=${lat}%2C${lng}"></iframe>
+    </div>`;
+  },
 };
 
 // Register built-ins on module load (once)
@@ -190,7 +276,7 @@ function registerBuiltins() {
   _builtinsRegistered = true;
 
   // Batch all registrations into a single state update to avoid cascading re-renders
-  const builtins = [alertPlugin, chartPlugin, tabsPlugin, timelinePlugin];
+  const builtins = [alertPlugin, chartPlugin, tabsPlugin, timelinePlugin, csvPlugin, mapPlugin];
   usePluginStore.setState((state) => {
     const next = new Map(state.plugins);
     for (const plugin of builtins) {
