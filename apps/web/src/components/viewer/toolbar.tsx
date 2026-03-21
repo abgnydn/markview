@@ -263,7 +263,7 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
                     key={m}
                     className={`theme-picker-item ${mode === m ? 'theme-picker-active' : ''}`}
                     onClick={() => {
-                      setMode(m as any);
+                      setMode(m as 'dark' | 'light' | 'system');
                       setShowModePicker(false);
                     }}
                   >

@@ -279,7 +279,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
               {['light', 'dark', 'system'].map((m) => {
                 const ItemIcon = m === 'dark' ? Moon : m === 'light' ? Sun : Monitor;
                 return (
-                  <button key={m} onClick={() => setMode(m as any)} style={{ padding: '6px 12px', borderRadius: 4, background: mode === m ? 'var(--bg-hover)' : 'transparent', color: mode === m ? 'var(--text-primary)' : 'var(--text-muted)', border: 'none', cursor: 'pointer' }} title={m}>
+                  <button key={m} onClick={() => setMode(m as 'dark' | 'light' | 'system')} style={{ padding: '6px 12px', borderRadius: 4, background: mode === m ? 'var(--bg-hover)' : 'transparent', color: mode === m ? 'var(--text-primary)' : 'var(--text-muted)', border: 'none', cursor: 'pointer' }} title={m}>
                     <ItemIcon size={14} />
                   </button>
                 );

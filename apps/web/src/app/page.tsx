@@ -51,8 +51,10 @@ export default function HomePage() {
   // ── Chrome Extension integration ───────────────────────────────────
   useEffect(() => {
     if (!isLoaded || typeof window === 'undefined') return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const chrome = (window as any).chrome;
     if (chrome?.runtime?.onMessage) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const listener = (message: any) => {
         if (message.type === 'LOAD_URL' && message.url) {
           fetch(message.url)
@@ -61,7 +63,7 @@ export default function HomePage() {
               const filename = message.originalUrl?.split('/').pop() || 'extension-file.md';
               const inputFiles = [{ filename, content: text }];
               
-              let extWorkspace = workspaces.find(w => w.title === 'Extension View');
+              const extWorkspace = workspaces.find(w => w.title === 'Extension View');
               if (!extWorkspace) {
                 await createWorkspace('Extension View', inputFiles);
               } else {

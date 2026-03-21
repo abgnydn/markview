@@ -66,7 +66,7 @@ export default function InvestorsPage() {
             </span>
           </h1>
           <p className="investor-hero-subtitle">
-            MarkView isn't just a markdown viewer. It's a headless, zero-cloud platform 
+            MarkView isn&apos;t just a markdown viewer. It&apos;s a headless, zero-cloud platform 
             engineered to power the next generation of LLMs, enterprise workflows, and developer productivity.
           </p>
         </div>
