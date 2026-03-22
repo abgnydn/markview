@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MarkView — The Embeddable Markdown Rendering Stack",
     description: "A high-performance markdown engine available as a React SDK, Web Component, and native macOS App. Ready to embed in your closed-source applications.",
-    url: "https://github.com/abgnydn/markview",
+    url: "https://markview.ai",
     siteName: "MarkView",
     type: "website",
     locale: "en_US",
