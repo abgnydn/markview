@@ -8,6 +8,160 @@
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
+  scroll-behavior: smooth;
+}
+
+/* === Sticky Navbar === */
+.landing-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.landing-navbar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.landing-navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.landing-navbar-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.landing-navbar-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fafafa;
+  letter-spacing: -0.01em;
+}
+
+.landing-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.landing-navbar-link {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a1a1aa;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.landing-navbar-link:hover {
+  color: #fafafa;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.landing-navbar-github {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fafafa;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.landing-navbar-github:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.landing-navbar-workspace-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #a5b4fc;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.landing-navbar-workspace-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Subtle secondary CTA row */
+.landing-cta-secondary-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+  margin-top: 12px;
+}
+
+.landing-cta-subtle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: transparent;
+  color: #71717a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.landing-cta-subtle:hover {
+  color: #e4e4e7;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+  .landing-navbar-inner {
+    padding: 0 16px;
+  }
+
+  .landing-navbar-link {
+    display: none;
+  }
+
+  .landing-navbar-github span {
+    display: none;
+  }
+
+  .landing-navbar-workspace-btn span {
+    display: none;
+  }
 }
 
 /* Full-page drag-and-drop overlay */

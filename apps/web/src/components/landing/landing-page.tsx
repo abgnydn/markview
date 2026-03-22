@@ -186,18 +186,34 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
           </div>
         </div>
       )}
-      {hasExistingWorkspace && onBackToWorkspace && (
-        <button 
-          className="landing-top-right-floating-btn" 
-          onClick={onBackToWorkspace}
-          title="Back to workspace"
-          aria-label="Back to workspace"
-        >
-          <Monitor size={18} />
-        </button>
-      )}
+      {/* Sticky Nav Bar */}
+      <nav className="landing-navbar">
+        <div className="landing-navbar-inner">
+          <div className="landing-navbar-brand">
+            <img src="/icon-192.png" alt="MarkView" className="landing-navbar-logo" />
+            <span className="landing-navbar-name">MarkView</span>
+          </div>
+          <div className="landing-navbar-links">
+            <a href="#features" className="landing-navbar-link">Features</a>
+            <a href="#pricing" className="landing-navbar-link">Pricing</a>
+            <Link href="/docs" className="landing-navbar-link">Docs</Link>
+            <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer" className="landing-navbar-github">
+              <Github size={16} />
+              <span>GitHub</span>
+            </a>
+            {hasExistingWorkspace && onBackToWorkspace && (
+              <button className="landing-navbar-workspace-btn" onClick={onBackToWorkspace}>
+                <Monitor size={14} />
+                <span>Workspace</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </nav>
 
       {/* Hero */}
+      {/* spacer for fixed navbar */}
+      <div style={{ height: 64 }} />
       <section className="landing-hero">
         <div className="landing-hero-glow" />
         <div className="landing-hero-content">
@@ -231,46 +247,6 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
           <div className="landing-cta-group">
             <button
               className="landing-cta-primary"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload size={18} />
-              Open Markdown Files
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".md,.markdown,.zip"
-              multiple
-              style={{ display: 'none' }}
-              onChange={handleFileChange}
-            />
-            <button
-              className="landing-cta-secondary"
-              onClick={() => {
-                const folderInput = document.createElement('input');
-                folderInput.type = 'file';
-                folderInput.setAttribute('webkitdirectory', '');
-                folderInput.setAttribute('directory', '');
-                folderInput.onchange = async (e) => {
-                  const target = e.target as HTMLInputElement;
-                  if (!target.files) return;
-                  const results: { filename: string; content: string }[] = [];
-                  for (const file of Array.from(target.files)) {
-                    if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
-                      const content = await file.text();
-                      results.push({ filename: (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name, content });
-                    }
-                  }
-                  if (results.length > 0) onFilesSelected(results);
-                };
-                folderInput.click();
-              }}
-            >
-              <Layers size={18} />
-              Open Folder
-            </button>
-            <button
-              className="landing-cta-secondary"
               onClick={async () => {
                 const demoFiles = ['welcome.md', 'architecture.md', 'api-reference.md'];
                 try {
@@ -302,10 +278,48 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             </a>
           </div>
 
-          <a className="landing-github-star" href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">
-            <Github size={16} />
-            <span>Star on GitHub</span>
-          </a>
+          <div className="landing-cta-secondary-row">
+            <button
+              className="landing-cta-subtle"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload size={16} />
+              Open Files
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".md,.markdown,.zip"
+              multiple
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+            <button
+              className="landing-cta-subtle"
+              onClick={() => {
+                const folderInput = document.createElement('input');
+                folderInput.type = 'file';
+                folderInput.setAttribute('webkitdirectory', '');
+                folderInput.setAttribute('directory', '');
+                folderInput.onchange = async (e) => {
+                  const target = e.target as HTMLInputElement;
+                  if (!target.files) return;
+                  const results: { filename: string; content: string }[] = [];
+                  for (const file of Array.from(target.files)) {
+                    if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
+                      const content = await file.text();
+                      results.push({ filename: (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name, content });
+                    }
+                  }
+                  if (results.length > 0) onFilesSelected(results);
+                };
+                folderInput.click();
+              }}
+            >
+              <Layers size={16} />
+              Open Folder
+            </button>
+          </div>
 
           <div className="landing-github-import">
             <div className="landing-github-input-row">
@@ -368,7 +382,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
       </section>
 
       {/* Features */}
-      <section className="landing-section">
+      <section id="features" className="landing-section">
         <h2 className="landing-section-title">Everything you need</h2>
         <p className="landing-section-subtitle">
           A complete documentation viewing experience — no sign-up, no cloud, no compromise.
@@ -541,7 +555,7 @@ const html = await
       </section>
 
       {/* Pricing */}
-      <section className="landing-section">
+      <section id="pricing" className="landing-section">
         <h2 className="landing-section-title">Simple pricing</h2>
         <p className="landing-section-subtitle">
           Two ways to use MarkView — embed the SDK in your product, or get the desktop app.
