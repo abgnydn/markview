@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Calculator, Cpu, Globe2, Shield } from 'lucide-react';
+import { Calculator, Cpu, Globe2, Shield, Github } from 'lucide-react';
 import '@/components/landing/landing.css';
 
 export default function InvestorsPage() {
@@ -44,15 +44,26 @@ export default function InvestorsPage() {
 
   return (
     <div className="landing">
-      {/* Top Navbar Header */}
-      <div className="landing-nav-bar">
-        <Link href="/docs" className="landing-back-btn" style={{ textDecoration: 'none' }}>Documentation</Link>
-        <Link href="/pricing" className="landing-back-btn" style={{ textDecoration: 'none' }}>Pricing</Link>
-        <Link href="/" className="landing-back-btn" style={{ textDecoration: 'none' }}>
-          <ArrowLeft size={16} />
-          Back to MarkView
-        </Link>
-      </div>
+      {/* Sticky Nav Bar */}
+      <nav className="landing-navbar">
+        <div className="landing-navbar-inner">
+          <Link href="/" className="landing-navbar-brand" style={{ textDecoration: 'none' }}>
+            <img src="/icon-192.png" alt="MarkView" className="landing-navbar-logo" />
+            <span className="landing-navbar-name">MarkView</span>
+          </Link>
+          <div className="landing-navbar-links">
+            <Link href="/pricing" className="landing-navbar-link">Pricing</Link>
+            <Link href="/docs" className="landing-navbar-link">Docs</Link>
+            <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer" className="landing-navbar-github">
+              <Github size={16} />
+              <span>GitHub</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Spacer for fixed navbar */}
+      <div style={{ height: 64 }} />
 
       {/* Hero Section */}
       <header className="investor-hero">
@@ -198,8 +209,20 @@ export default function InvestorsPage() {
 
       {/* Footer */}
       <footer className="landing-footer" style={{ marginTop: '96px' }}>
+        <img src="/icon-192.png" alt="MarkView Logo" style={{ width: 44, height: 44, borderRadius: 10, margin: '0 auto 20px auto', display: 'block', opacity: 0.9 }} />
         <p style={{ marginBottom: '8px' }}>Confidential Interactive Projections • MarkView Team</p>
         <p className="landing-footer-sub">This does not constitute an official solicitation of investment. Projections are based on theoretical B2B expansion scale.</p>
+        <p className="landing-footer-links">
+          <Link href="/pricing">Pricing</Link>
+          <span>·</span>
+          <Link href="/docs">Documentation</Link>
+          <span>·</span>
+          <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <span>·</span>
+          <Link href="/terms">Terms</Link>
+          <span>·</span>
+          <Link href="/privacy">Privacy</Link>
+        </p>
       </footer>
     </div>
   );

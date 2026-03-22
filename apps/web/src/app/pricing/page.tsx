@@ -1,22 +1,33 @@
 import Link from 'next/link';
-import { ArrowLeft, Check, Mail } from 'lucide-react';
+import { Check, Mail, Github } from 'lucide-react';
 import '@/components/landing/landing.css';
 
 export default function PricingPage() {
   return (
     <div className="landing">
-      {/* Top Navbar Header */}
-      <div className="landing-nav-bar">
-        <Link href="/docs" className="landing-back-btn" style={{ textDecoration: 'none' }}>Documentation</Link>
-        <Link href="/investors" className="landing-back-btn" style={{ textDecoration: 'none' }}>Investors</Link>
-        <Link href="/" className="landing-back-btn" style={{ textDecoration: 'none' }}>
-          <ArrowLeft size={16} />
-          Back to MarkView
-        </Link>
-      </div>
+      {/* Sticky Nav Bar */}
+      <nav className="landing-navbar">
+        <div className="landing-navbar-inner">
+          <Link href="/" className="landing-navbar-brand" style={{ textDecoration: 'none' }}>
+            <img src="/icon-192.png" alt="MarkView" className="landing-navbar-logo" />
+            <span className="landing-navbar-name">MarkView</span>
+          </Link>
+          <div className="landing-navbar-links">
+            <Link href="/pricing" className="landing-navbar-link" style={{ color: '#fafafa' }}>Pricing</Link>
+            <Link href="/docs" className="landing-navbar-link">Docs</Link>
+            <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer" className="landing-navbar-github">
+              <Github size={16} />
+              <span>GitHub</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Spacer for fixed navbar */}
+      <div style={{ height: 64 }} />
 
       {/* Main Pricing Content */}
-      <div style={{ padding: '80px 20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+      <div style={{ padding: '40px 20px 80px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         
         <h2 className="landing-section-title" style={{ fontSize: '3rem', marginBottom: '16px' }}>Simple, transparent pricing.</h2>
         <p className="landing-section-subtitle" style={{ maxWidth: '800px', margin: '0 auto 64px auto', fontSize: '1.25rem', lineHeight: '1.6' }}>
@@ -90,7 +101,7 @@ export default function PricingPage() {
           
         </div>
 
-        {/* FAQ Section Extracted from Global CSS Rules */}
+        {/* FAQ Section */}
         <div className="landing-pricing-faq" style={{ marginTop: '120px' }}>
           <h3 className="landing-pricing-faq-title">Frequently asked questions</h3>
           <div className="landing-pricing-faq-grid">
@@ -120,11 +131,23 @@ export default function PricingPage() {
 
       </div>
       
-      {/* Global Landing Footer Styling Match */}
-      <footer className="landing-footer" style={{ marginTop: '64px' }}>
-        <p className="landing-footer-text">
-          MarkView is an open source project. <br/>
-          Built with Next.js · WebRTC · Shiki · Mermaid · KaTeX · MCP
+      {/* Footer */}
+      <footer className="landing-footer">
+        <img src="/icon-192.png" alt="MarkView Logo" style={{ width: 44, height: 44, borderRadius: 10, margin: '0 auto 20px auto', display: 'block', opacity: 0.9 }} />
+        <p><strong>MarkView</strong> — Open source markdown documentation viewer</p>
+        <p className="landing-footer-sub">Built with Next.js · WebRTC (Yjs) · Shiki · Mermaid · KaTeX · MCP</p>
+        <p className="landing-footer-links">
+          <Link href="/pricing">Pricing</Link>
+          <span>·</span>
+          <Link href="/docs">Documentation</Link>
+          <span>·</span>
+          <a href="https://www.npmjs.com/package/@markview/core" target="_blank" rel="noopener noreferrer">npm</a>
+          <span>·</span>
+          <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <span>·</span>
+          <Link href="/terms">Terms</Link>
+          <span>·</span>
+          <Link href="/privacy">Privacy</Link>
         </p>
       </footer>
     </div>
