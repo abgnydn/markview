@@ -290,7 +290,6 @@ docker run -p 3000:3000 markview
 
 | Variable | Default | Description |
 |---|---|---|
-| `NEXT_PUBLIC_SENTRY_DSN` | *(empty)* | [Sentry](https://sentry.io) DSN for error monitoring |
 | `NEXT_PUBLIC_YJS_SIGNALING_SERVER` | `wss://signaling.yjs.dev` | WebRTC signaling server for collaboration |
 
 > [!NOTE]
