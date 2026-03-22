@@ -181,7 +181,7 @@ export default function HomePage() {
   if ((!hasWorkspace && !isGuestMode) || showLanding) {
     return (
       <LandingPage
-        onFilesSelected={(files) => { setShowLanding(false); handleFilesSelected(files); }}
+        onFilesSelected={(files, title) => { setShowLanding(false); handleNewWorkspace(files, title); }}
         onGitHubImport={(files, title) => { setShowLanding(false); handleNewWorkspace(files, title); }}
         hasExistingWorkspace={hasWorkspace ? true : false}
         onBackToWorkspace={() => setShowLanding(false)}
