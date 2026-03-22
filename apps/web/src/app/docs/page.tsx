@@ -20,8 +20,7 @@ export default async function DocsPage() {
             <span className="landing-navbar-name">MarkView</span>
           </Link>
           <div className="landing-navbar-links">
-            <Link href="/#features" className="landing-navbar-link">Features</Link>
-            <Link href="/#pricing" className="landing-navbar-link">Pricing</Link>
+            <Link href="/pricing" className="landing-navbar-link">Pricing</Link>
             <Link href="/docs" className="landing-navbar-link" style={{ color: '#fafafa' }}>Docs</Link>
             <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer" className="landing-navbar-github">
               <Github size={16} />
@@ -53,7 +52,7 @@ export default async function DocsPage() {
           Built with Next.js · WebRTC (Yjs) · Shiki · Mermaid · KaTeX · MCP
         </p>
         <p className="landing-footer-links">
-          <Link href="/#pricing">Pricing</Link>
+          <Link href="/pricing">Pricing</Link>
           <span>·</span>
           <Link href="/docs">Documentation</Link>
           <span>·</span>

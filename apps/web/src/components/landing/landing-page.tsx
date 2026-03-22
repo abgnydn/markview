@@ -194,8 +194,8 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
             <span className="landing-navbar-name">MarkView</span>
           </div>
           <div className="landing-navbar-links">
-            <a href="#features" className="landing-navbar-link">Features</a>
-            <a href="#pricing" className="landing-navbar-link">Pricing</a>
+            <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="landing-navbar-link">Features</button>
+            <button onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} className="landing-navbar-link">Pricing</button>
             <Link href="/docs" className="landing-navbar-link">Docs</Link>
             <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer" className="landing-navbar-github">
               <Github size={16} />
