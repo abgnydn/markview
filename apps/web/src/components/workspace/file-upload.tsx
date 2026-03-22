@@ -106,10 +106,10 @@ export function FileUpload({ onFilesSelected, onGitHubImport, recentWorkspaces }
     <div className="upload-container">
       <div className="upload-hero">
         <div className="upload-logo">
-          <span className="upload-logo-icon">📄</span>
+          <img src="/icon-192.png" alt="MarkView Logo" className="upload-logo-icon" style={{ width: 64, height: 64, borderRadius: 16, margin: '0 auto 16px', display: 'block' }} />
           <h1 className="upload-title">MarkView</h1>
           <p className="upload-subtitle">
-            Zero-account, privacy-first markdown viewer
+            High-performance markdown rendering stack & offline viewer
           </p>
         </div>
 

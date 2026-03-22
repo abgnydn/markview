@@ -18,7 +18,7 @@ import { PresentationMode } from '@/components/viewer/presentation-mode';
 import { SplitView } from '@/components/viewer/split-view';
 import { DiffView } from '@/components/viewer/diff-view';
 import { MarkdownEditor } from '@/components/viewer/markdown-editor';
-import { AiSummary } from '@/components/viewer/ai-summary';
+
 import { PresenceBar } from '@/components/collab/presence-bar';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 import { useViewerState } from '@/hooks/use-viewer-state';
@@ -213,9 +213,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
             {frontmatterResult && Object.keys(frontmatterResult.data).length > 0 && (
               <FrontmatterCard data={frontmatterResult.data} />
             )}
-            {activeFileContent && (
-              <AiSummary content={activeFileContent} />
-            )}
+
             {isContentLoading ? (
               <div className="content-loading">
                 <div className="skeleton-line skeleton-title" />

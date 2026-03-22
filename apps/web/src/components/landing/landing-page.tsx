@@ -635,7 +635,7 @@ const html = await
               </div>
             </div>
             <div className="landing-pricing-app-right">
-              <div className="landing-pricing-app-price">$4.99</div>
+              <div className="landing-pricing-app-price">$14.99</div>
               <div className="landing-pricing-app-note">One-time purchase</div>
               <a className="landing-pricing-btn landing-pricing-btn-primary" href="https://github.com/abgnydn/markview#-quick-start" target="_blank" rel="noopener noreferrer">
                 <Monitor size={14} /> Setup Instructions

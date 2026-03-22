@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, startTransition } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';
 import { useThemeStore } from '@/stores/theme-store';
 import { usePluginStore } from '@/lib/plugins/plugin-registry';
@@ -62,6 +62,11 @@ async function ensureMermaid() {
     return m.default;
   });
   return mermaidPromise;
+}
+
+/** Yield to the browser to prevent long-task INP violations */
+function yieldToMain(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 function highlightHtml(html: string, theme: 'dark' | 'light'): string {
@@ -240,18 +245,31 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
       try {
         // Render markdown
         const rawHtml = await renderMarkdown(content, { codeBlockToolbar: false });
+        if (cancelled) return;
 
         // Ensure shiki is loaded (fails gracefully in extension context)
         await ensureShiki();
+        if (cancelled) return;
 
-        // Highlight code blocks in HTML string (before DOM)
+        // Yield to browser before heavy sync work (prevents INP violations)
+        await yieldToMain();
+        if (cancelled) return;
+
+        // Highlight code blocks in HTML string (sync, CPU-heavy)
         const highlighted = highlightHtml(rawHtml, resolved);
+
+        // Yield again before mermaid rendering
+        await yieldToMain();
+        if (cancelled) return;
 
         // Render mermaid diagrams in the HTML string (before DOM)
         const withMermaid = await renderMermaidInHtml(highlighted, resolved);
 
         if (!cancelled) {
-          setHtml(withMermaid);
+          // Use startTransition so this low-priority update doesn't block interactions
+          startTransition(() => {
+            setHtml(withMermaid);
+          });
           onHtmlRendered?.(withMermaid);
         }
       } catch (e) {
@@ -260,7 +278,9 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         if (!cancelled) {
           const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
           const rawHtml = await renderMarkdown(content).catch(() => `<pre>${escaped}</pre>`);
-          setHtml(rawHtml);
+          startTransition(() => {
+            setHtml(rawHtml);
+          });
         }
       }
     };
