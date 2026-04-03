@@ -2,9 +2,11 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { WebRTCServerTransport } from './webrtc-transport.js';
 import { z } from 'zod';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as zlib from 'zlib';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -143,11 +145,163 @@ function extractTables(content: string): Array<{ headers: string[]; rows: string
   return tables;
 }
 
+/** Extract Mermaid diagrams from markdown */
+function extractMermaidDiagrams(content: string): Array<{ type: string; code: string; line: number }> {
+  const blocks = extractCodeBlocks(content);
+  return blocks
+    .filter((b) => b.language.toLowerCase() === 'mermaid')
+    .map((b) => {
+      const firstLine = b.code.trim().split('\n')[0].trim().toLowerCase();
+      let type = 'unknown';
+      if (firstLine.startsWith('graph') || firstLine.startsWith('flowchart')) type = 'flowchart';
+      else if (firstLine.startsWith('sequencediagram')) type = 'sequence';
+      else if (firstLine.startsWith('classdiagram')) type = 'class';
+      else if (firstLine.startsWith('statediagram')) type = 'state';
+      else if (firstLine.startsWith('erdiagram')) type = 'er';
+      else if (firstLine.startsWith('gantt')) type = 'gantt';
+      else if (firstLine.startsWith('pie')) type = 'pie';
+      else if (firstLine.startsWith('gitgraph')) type = 'gitgraph';
+      else if (firstLine.startsWith('journey')) type = 'journey';
+      else if (firstLine.startsWith('mindmap')) type = 'mindmap';
+      else if (firstLine.startsWith('timeline')) type = 'timeline';
+      else if (firstLine.startsWith('sankey')) type = 'sankey';
+      else if (firstLine.startsWith('xychart')) type = 'xychart';
+      else if (firstLine.startsWith('block')) type = 'block';
+      return { type, code: b.code, line: b.line };
+    });
+}
+
+/** Extract math blocks (KaTeX/LaTeX) from markdown */
+function extractMathBlocks(content: string): Array<{ expression: string; type: 'inline' | 'display'; line: number }> {
+  const results: Array<{ expression: string; type: 'inline' | 'display'; line: number }> = [];
+  const lines = content.split('\n');
+
+  // Display math: $$...$$
+  let inDisplay = false;
+  let displayStart = 0;
+  let displayLines: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (!inDisplay && line.trim().startsWith('$$')) {
+      // Check for single-line display math: $$...$$
+      const singleLine = line.trim();
+      if (singleLine.endsWith('$$') && singleLine.length > 4) {
+        results.push({ expression: singleLine.slice(2, -2).trim(), type: 'display', line: i + 1 });
+        continue;
+      }
+      inDisplay = true;
+      displayStart = i;
+      displayLines = [line.trim().slice(2)];
+    } else if (inDisplay && line.trim().endsWith('$$')) {
+      displayLines.push(line.trim().slice(0, -2));
+      results.push({ expression: displayLines.join('\n').trim(), type: 'display', line: displayStart + 1 });
+      inDisplay = false;
+      displayLines = [];
+    } else if (inDisplay) {
+      displayLines.push(line);
+    } else {
+      // Inline math: $...$
+      const inlineRegex = /(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)/g;
+      let match;
+      while ((match = inlineRegex.exec(line)) !== null) {
+        results.push({ expression: match[1].trim(), type: 'inline', line: i + 1 });
+      }
+    }
+  }
+  return results;
+}
+
+/** Generate table of contents markdown from headings */
+function generateTocMarkdown(content: string, maxDepth: number = 3): string {
+  const headings = extractHeadings(content);
+  if (headings.length === 0) return '';
+
+  const minLevel = Math.min(...headings.map((h) => h.level));
+  const tocLines: string[] = [];
+
+  for (const h of headings) {
+    const relativeLevel = h.level - minLevel;
+    if (relativeLevel >= maxDepth) continue;
+    const indent = '  '.repeat(relativeLevel);
+    const slug = h.text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+    tocLines.push(`${indent}- [${h.text}](#${slug})`);
+  }
+
+  return tocLines.join('\n');
+}
+
+/** Calculate Flesch-Kincaid readability scores */
+function fleschKincaid(text: string): { gradeLevel: number; readingEase: number; avgSentenceLength: number; avgSyllablesPerWord: number } {
+  // Strip markdown syntax
+  const clean = text.replace(/```[\s\S]*?```/g, '').replace(/[#*`\[\]()>-]/g, '').trim();
+  if (!clean) return { gradeLevel: 0, readingEase: 0, avgSentenceLength: 0, avgSyllablesPerWord: 0 };
+
+  const sentences = clean.split(/[.!?]+/).filter((s) => s.trim().length > 0);
+  const words = clean.split(/\s+/).filter(Boolean);
+  if (words.length === 0 || sentences.length === 0) {
+    return { gradeLevel: 0, readingEase: 0, avgSentenceLength: 0, avgSyllablesPerWord: 0 };
+  }
+
+  // Count syllables (simple heuristic)
+  function countSyllables(word: string): number {
+    word = word.toLowerCase().replace(/[^a-z]/g, '');
+    if (word.length <= 2) return 1;
+    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+    word = word.replace(/^y/, '');
+    const matches = word.match(/[aeiouy]{1,2}/g);
+    return matches ? Math.max(1, matches.length) : 1;
+  }
+
+  const totalSyllables = words.reduce((sum, w) => sum + countSyllables(w), 0);
+  const avgSentenceLength = words.length / sentences.length;
+  const avgSyllablesPerWord = totalSyllables / words.length;
+
+  const gradeLevel = 0.39 * avgSentenceLength + 11.8 * avgSyllablesPerWord - 15.59;
+  const readingEase = 206.835 - 1.015 * avgSentenceLength - 84.6 * avgSyllablesPerWord;
+
+  return {
+    gradeLevel: Math.round(gradeLevel * 10) / 10,
+    readingEase: Math.round(readingEase * 10) / 10,
+    avgSentenceLength: Math.round(avgSentenceLength * 10) / 10,
+    avgSyllablesPerWord: Math.round(avgSyllablesPerWord * 10) / 10,
+  };
+}
+
+/** Compress markdown content into a MarkView share URL */
+function compressToShareUrl(content: string, title?: string): string {
+  const compressed = zlib.gzipSync(Buffer.from(content, 'utf-8'));
+  const base64 = compressed.toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+
+  const params = new URLSearchParams();
+  params.set('md', base64);
+  if (title) params.set('title', title);
+
+  return `https://markview.ai/#${params.toString()}`;
+}
+
 // ---------------------------------------------------------------------------
 // Server
 // ---------------------------------------------------------------------------
 
-const docsDir = process.argv[2] || '.';
+// Parse arguments
+let docsDir = '.';
+let useWebRtc = false;
+let webrtcRoom = '';
+let signalingUrl = 'ws://localhost:4445';
+
+for (let i = 2; i < process.argv.length; i++) {
+  const arg = process.argv[i];
+  if (arg === '--webrtc') useWebRtc = true;
+  else if (arg === '--room') webrtcRoom = process.argv[++i];
+  else if (arg === '--signaling') signalingUrl = process.argv[++i];
+  else if (!arg.startsWith('-')) docsDir = arg;
+}
+
 const resolvedDir = path.resolve(docsDir);
 
 if (!fs.existsSync(resolvedDir)) {
@@ -1025,12 +1179,574 @@ server.tool(
 );
 
 // ---------------------------------------------------------------------------
+// Tool: delete_document
+// ---------------------------------------------------------------------------
+server.tool(
+  'delete_document',
+  'Delete a markdown document from the workspace. Returns the document stats before deletion.',
+  {
+    path: z.string().describe('Relative path to the document to delete'),
+  },
+  async ({ path: filePath }) => {
+    const fullPath = safePath(filePath);
+    if (!fs.existsSync(fullPath)) {
+      return { content: [{ type: 'text' as const, text: `Error: File not found: ${filePath}` }], isError: true };
+    }
+
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const stats = getStats(content);
+    fs.unlinkSync(fullPath);
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({ deleted: filePath, ...stats }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: get_mermaid_diagrams
+// ---------------------------------------------------------------------------
+server.tool(
+  'get_mermaid_diagrams',
+  'Extract all Mermaid diagrams from a document or workspace. Returns diagram type (flowchart, sequence, etc.), code, and line numbers.',
+  {
+    path: z.string().optional().describe('Relative path to a specific document. If omitted, scans all documents.'),
+    type: z.string().optional().describe('Filter by diagram type, e.g. "flowchart", "sequence", "gantt"'),
+  },
+  async ({ path: filePath, type: diagramType }) => {
+    const filesToScan = filePath
+      ? [path.resolve(resolvedDir, filePath)]
+      : findMarkdownFiles(resolvedDir);
+
+    if (filePath && !fs.existsSync(filesToScan[0])) {
+      return { content: [{ type: 'text' as const, text: `Error: File not found: ${filePath}` }], isError: true };
+    }
+
+    const results = filesToScan.map((f) => {
+      const content = fs.readFileSync(f, 'utf-8');
+      let diagrams = extractMermaidDiagrams(content);
+      if (diagramType) {
+        diagrams = diagrams.filter((d) => d.type === diagramType.toLowerCase());
+      }
+      return { file: path.relative(resolvedDir, f), diagrams };
+    }).filter((r) => r.diagrams.length > 0);
+
+    const totalDiagrams = results.reduce((a, r) => a + r.diagrams.length, 0);
+    const types = [...new Set(results.flatMap((r) => r.diagrams.map((d) => d.type)))];
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({ totalDiagrams, diagramTypes: types, files: results }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: get_math_blocks
+// ---------------------------------------------------------------------------
+server.tool(
+  'get_math_blocks',
+  'Extract all KaTeX/LaTeX math expressions from a document or workspace. Returns inline ($...$) and display ($$...$$) math with line numbers.',
+  {
+    path: z.string().optional().describe('Relative path to a specific document. If omitted, scans all documents.'),
+    type: z.enum(['inline', 'display']).optional().describe('Filter by math type'),
+  },
+  async ({ path: filePath, type: mathType }) => {
+    const filesToScan = filePath
+      ? [path.resolve(resolvedDir, filePath)]
+      : findMarkdownFiles(resolvedDir);
+
+    if (filePath && !fs.existsSync(filesToScan[0])) {
+      return { content: [{ type: 'text' as const, text: `Error: File not found: ${filePath}` }], isError: true };
+    }
+
+    const results = filesToScan.map((f) => {
+      const content = fs.readFileSync(f, 'utf-8');
+      let blocks = extractMathBlocks(content);
+      if (mathType) blocks = blocks.filter((b) => b.type === mathType);
+      return { file: path.relative(resolvedDir, f), blocks };
+    }).filter((r) => r.blocks.length > 0);
+
+    const totalBlocks = results.reduce((a, r) => a + r.blocks.length, 0);
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({ totalBlocks, files: results }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: generate_toc
+// ---------------------------------------------------------------------------
+server.tool(
+  'generate_toc',
+  'Generate a table of contents for a markdown document. Can return the TOC markdown or insert it into the document.',
+  {
+    path: z.string().describe('Relative path to the document'),
+    maxDepth: z.number().optional().describe('Maximum heading depth to include (default: 3)'),
+    insert: z.boolean().optional().describe('If true, insert the TOC at the top of the document (after the first H1)'),
+  },
+  async ({ path: filePath, maxDepth = 3, insert }) => {
+    const fullPath = safePath(filePath);
+    if (!fs.existsSync(fullPath)) {
+      return { content: [{ type: 'text' as const, text: `Error: File not found: ${filePath}` }], isError: true };
+    }
+
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const toc = generateTocMarkdown(content, maxDepth);
+
+    if (!toc) {
+      return { content: [{ type: 'text' as const, text: `No headings found in ${filePath}` }] };
+    }
+
+    const tocBlock = `<!-- TOC -->\n## Table of Contents\n\n${toc}\n<!-- /TOC -->`;
+
+    if (insert) {
+      const lines = content.split('\n');
+      // Find first H1 and insert after it
+      let insertIdx = 0;
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].match(/^#\s+/)) {
+          insertIdx = i + 1;
+          break;
+        }
+      }
+      // Remove existing TOC if present
+      const existingTocStart = lines.findIndex((l) => l.trim() === '<!-- TOC -->');
+      const existingTocEnd = lines.findIndex((l) => l.trim() === '<!-- /TOC -->');
+      if (existingTocStart !== -1 && existingTocEnd !== -1) {
+        lines.splice(existingTocStart, existingTocEnd - existingTocStart + 1);
+        if (insertIdx > existingTocStart) insertIdx -= (existingTocEnd - existingTocStart + 1);
+      }
+
+      lines.splice(insertIdx, 0, '', tocBlock, '');
+      fs.writeFileSync(fullPath, lines.join('\n'), 'utf-8');
+
+      return {
+        content: [{
+          type: 'text' as const,
+          text: JSON.stringify({ file: filePath, inserted: true, toc: tocBlock }, null, 2),
+        }],
+      };
+    }
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({ file: filePath, toc: tocBlock }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: merge_documents
+// ---------------------------------------------------------------------------
+server.tool(
+  'merge_documents',
+  'Merge multiple markdown documents into a single document.',
+  {
+    paths: z.array(z.string()).describe('Array of relative paths to merge, in order'),
+    outputPath: z.string().describe('Relative path for the merged output document'),
+    separator: z.string().optional().describe('Separator between merged documents (default: "\n\n---\n\n")'),
+  },
+  async ({ paths: filePaths, outputPath, separator = '\n\n---\n\n' }) => {
+    const outputFull = safePath(outputPath);
+    const parts: string[] = [];
+    const merged: string[] = [];
+
+    for (const fp of filePaths) {
+      const fullPath = safePath(fp);
+      if (!fs.existsSync(fullPath)) {
+        return { content: [{ type: 'text' as const, text: `Error: File not found: ${fp}` }], isError: true };
+      }
+      parts.push(fs.readFileSync(fullPath, 'utf-8'));
+      merged.push(fp);
+    }
+
+    const result = parts.join(separator);
+    fs.mkdirSync(path.dirname(outputFull), { recursive: true });
+    fs.writeFileSync(outputFull, result, 'utf-8');
+    const stats = getStats(result);
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          outputPath,
+          mergedFiles: merged,
+          ...stats,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: share_document
+// ---------------------------------------------------------------------------
+server.tool(
+  'share_document',
+  'Generate a MarkView share URL for a markdown document. The URL contains the compressed content and can be opened by anyone in their browser — no server needed.',
+  {
+    path: z.string().describe('Relative path to the document to share'),
+    title: z.string().optional().describe('Optional title override for the shared document'),
+  },
+  async ({ path: filePath, title }) => {
+    const fullPath = safePath(filePath);
+    if (!fs.existsSync(fullPath)) {
+      return { content: [{ type: 'text' as const, text: `Error: File not found: ${filePath}` }], isError: true };
+    }
+
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const docTitle = title || path.basename(filePath, '.md');
+    const url = compressToShareUrl(content, docTitle);
+    const stats = getStats(content);
+
+    const MAX_SAFE_LENGTH = 15000;
+    const warning = content.length > MAX_SAFE_LENGTH
+      ? 'Warning: Document is large. The URL may not work in all browsers due to URL length limits.'
+      : undefined;
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          url,
+          title: docTitle,
+          contentLength: content.length,
+          urlLength: url.length,
+          ...stats,
+          ...(warning ? { warning } : {}),
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: render_document
+// ---------------------------------------------------------------------------
+server.tool(
+  'render_document',
+  'Render a markdown document to a standalone HTML file with support for Mermaid diagrams, KaTeX math, and syntax highlighting via CDN scripts.',
+  {
+    path: z.string().describe('Relative path to the markdown document'),
+    outputPath: z.string().optional().describe('Output HTML file path (default: same name with .html extension)'),
+    theme: z.enum(['light', 'dark']).optional().describe('Color theme (default: dark)'),
+    title: z.string().optional().describe('HTML page title override'),
+  },
+  async ({ path: filePath, outputPath, theme = 'dark', title }) => {
+    const fullPath = safePath(filePath);
+    if (!fs.existsSync(fullPath)) {
+      return { content: [{ type: 'text' as const, text: `Error: File not found: ${filePath}` }], isError: true };
+    }
+
+    const content = fs.readFileSync(fullPath, 'utf-8');
+    const docTitle = title || path.basename(filePath, '.md');
+    const hasMermaid = content.includes('```mermaid');
+    const hasMath = content.includes('$');
+
+    const isDark = theme === 'dark';
+    const bg = isDark ? '#0a0a0a' : '#ffffff';
+    const fg = isDark ? '#fafafa' : '#18181b';
+    const mutedFg = isDark ? '#a1a1aa' : '#71717a';
+    const codeBg = isDark ? '#18181b' : '#f4f4f5';
+    const borderColor = isDark ? '#27272a' : '#e4e4e7';
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${docTitle} — MarkView</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: ${bg}; color: ${fg}; line-height: 1.7; padding: 48px 24px; max-width: 820px; margin: 0 auto; }
+    h1, h2, h3, h4, h5, h6 { margin: 1.5em 0 0.5em; font-weight: 600; line-height: 1.3; }
+    h1 { font-size: 2.2em; border-bottom: 1px solid ${borderColor}; padding-bottom: 0.3em; }
+    h2 { font-size: 1.6em; border-bottom: 1px solid ${borderColor}; padding-bottom: 0.2em; }
+    h3 { font-size: 1.3em; }
+    p { margin: 0.8em 0; }
+    a { color: #818cf8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; background: ${codeBg}; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    pre { background: ${codeBg}; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 1em 0; border: 1px solid ${borderColor}; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #818cf8; padding: 0.5em 1em; margin: 1em 0; color: ${mutedFg}; background: ${codeBg}; border-radius: 0 8px 8px 0; }
+    ul, ol { padding-left: 1.5em; margin: 0.5em 0; }
+    li { margin: 0.3em 0; }
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    th, td { border: 1px solid ${borderColor}; padding: 8px 12px; text-align: left; }
+    th { background: ${codeBg}; font-weight: 600; }
+    img { max-width: 100%; height: auto; border-radius: 8px; }
+    hr { border: none; border-top: 1px solid ${borderColor}; margin: 2em 0; }
+    .mermaid { text-align: center; margin: 1.5em 0; }
+    .markview-footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid ${borderColor}; text-align: center; color: ${mutedFg}; font-size: 0.85em; }
+    .markview-footer a { color: #818cf8; }
+  </style>
+  ${hasMath ? '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">' : ''}
+</head>
+<body>
+  <div id="content">${escapeHtml(content)}</div>
+  <div class="markview-footer">
+    <p>Rendered by <a href="https://markview.ai" target="_blank">MarkView</a></p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  ${hasMermaid ? '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>' : ''}
+  ${hasMath ? '<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>\n  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>' : ''}
+  <script>
+    const raw = document.getElementById('content').textContent;
+    document.getElementById('content').innerHTML = marked.parse(raw);
+    ${hasMermaid ? `mermaid.initialize({ startOnLoad: false, theme: '${isDark ? 'dark' : 'default'}' });
+    document.querySelectorAll('pre code.language-mermaid, pre code').forEach(el => {
+      if (el.className.includes('mermaid') || el.parentElement.previousElementSibling?.textContent?.includes('mermaid')) return;
+    });
+    mermaid.run();` : ''}
+    ${hasMath ? "renderMathInElement(document.getElementById('content'), { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }] });" : ''}
+  </script>
+</body>
+</html>`;
+
+    const outFile = outputPath
+      ? safePath(outputPath)
+      : fullPath.replace(/\.md$/i, '.html');
+
+    fs.mkdirSync(path.dirname(outFile), { recursive: true });
+    fs.writeFileSync(outFile, html, 'utf-8');
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          rendered: path.relative(resolvedDir, outFile),
+          source: filePath,
+          theme,
+          hasMermaid,
+          hasMath,
+          htmlSize: html.length,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+/** Escape HTML entities for safe embedding */
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ---------------------------------------------------------------------------
+// Tool: analyze_reading_level
+// ---------------------------------------------------------------------------
+server.tool(
+  'analyze_reading_level',
+  'Analyze the readability of a document or the entire workspace using Flesch-Kincaid scoring. Returns grade level, reading ease, and related metrics.',
+  {
+    path: z.string().optional().describe('Relative path to a specific document. If omitted, analyzes all documents.'),
+  },
+  async ({ path: filePath }) => {
+    const filesToScan = filePath
+      ? [path.resolve(resolvedDir, filePath)]
+      : findMarkdownFiles(resolvedDir);
+
+    if (filePath && !fs.existsSync(filesToScan[0])) {
+      return { content: [{ type: 'text' as const, text: `Error: File not found: ${filePath}` }], isError: true };
+    }
+
+    const results = filesToScan.map((f) => {
+      const content = fs.readFileSync(f, 'utf-8');
+      const scores = fleschKincaid(content);
+      let level = 'Unknown';
+      if (scores.readingEase >= 90) level = 'Very Easy (5th grade)';
+      else if (scores.readingEase >= 80) level = 'Easy (6th grade)';
+      else if (scores.readingEase >= 70) level = 'Fairly Easy (7th grade)';
+      else if (scores.readingEase >= 60) level = 'Standard (8-9th grade)';
+      else if (scores.readingEase >= 50) level = 'Fairly Difficult (10-12th grade)';
+      else if (scores.readingEase >= 30) level = 'Difficult (College)';
+      else level = 'Very Difficult (Graduate)';
+
+      return { file: path.relative(resolvedDir, f), ...scores, level };
+    });
+
+    if (results.length === 1) {
+      return { content: [{ type: 'text' as const, text: JSON.stringify(results[0], null, 2) }] };
+    }
+
+    const avgEase = results.reduce((a, r) => a + r.readingEase, 0) / results.length;
+    const avgGrade = results.reduce((a, r) => a + r.gradeLevel, 0) / results.length;
+
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          totalFiles: results.length,
+          averageReadingEase: Math.round(avgEase * 10) / 10,
+          averageGradeLevel: Math.round(avgGrade * 10) / 10,
+          documents: results,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// MCP Resources
+// ---------------------------------------------------------------------------
+server.resource(
+  'workspace-overview',
+  'markview://workspace/overview',
+  { mimeType: 'application/json', description: 'Overview of the documentation workspace: file count, total words, languages, and health summary' },
+  async () => {
+    const files = findMarkdownFiles(resolvedDir);
+    let totalWords = 0;
+    const allLanguages = new Set<string>();
+    let totalHeadings = 0;
+
+    for (const f of files) {
+      const content = fs.readFileSync(f, 'utf-8');
+      totalWords += getStats(content).words;
+      extractCodeBlocks(content).forEach((b) => allLanguages.add(b.language));
+      totalHeadings += extractHeadings(content).length;
+    }
+
+    return {
+      contents: [{
+        uri: 'markview://workspace/overview',
+        mimeType: 'application/json',
+        text: JSON.stringify({
+          directory: resolvedDir,
+          totalFiles: files.length,
+          totalWords,
+          totalReadingTimeMinutes: Math.max(1, Math.ceil(totalWords / 230)),
+          totalHeadings,
+          codeLanguages: [...allLanguages].sort(),
+          files: files.map((f) => path.relative(resolvedDir, f)),
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// MCP Prompts
+// ---------------------------------------------------------------------------
+server.prompt(
+  'review-docs',
+  'Run a comprehensive quality audit on the documentation workspace. Checks for broken links, missing titles, readability, and suggests improvements.',
+  {},
+  async () => ({
+    messages: [{
+      role: 'user' as const,
+      content: {
+        type: 'text' as const,
+        text: `Please perform a thorough documentation quality review of my workspace. Use the following tools in order:
+
+1. Call \`validate_workspace\` to find structural issues (broken links, orphans, missing titles, empty docs)
+2. Call \`analyze_reading_level\` to check readability across all documents
+3. Call \`get_stats\` for overall workspace metrics
+4. Call \`get_links\` to audit the link graph
+
+Then provide a structured report with:
+- **Critical Issues**: Broken links, empty documents
+- **Warnings**: Missing titles, orphan pages, readability concerns
+- **Suggestions**: Improvements for structure, content, and consistency
+- **Summary**: Overall health score and top 3 priority actions`,
+      },
+    }],
+  })
+);
+
+server.prompt(
+  'summarize-workspace',
+  'Generate an executive summary of all documentation in the workspace.',
+  {},
+  async () => ({
+    messages: [{
+      role: 'user' as const,
+      content: {
+        type: 'text' as const,
+        text: `Please create a concise executive summary of my documentation workspace. Use the following tools:
+
+1. Call \`list_documents\` to see all available documents
+2. Call \`get_stats\` for workspace-wide metrics
+3. Call \`get_headings\` to understand the structure of each document
+4. Read the most important documents using \`get_document\` (start with README, index, or getting-started files)
+
+Then provide:
+- **Overview**: What this documentation covers (1-2 sentences)
+- **Key Documents**: List and briefly describe the most important documents
+- **Structure**: How the docs are organized
+- **Coverage**: Topics well-covered vs. potential gaps
+- **Quick Reference**: A condensed table of contents across all docs`,
+      },
+    }],
+  })
+);
+
+server.prompt(
+  'generate-api-docs',
+  'Generate API documentation by analyzing code blocks and existing documentation patterns in the workspace.',
+  {
+    topic: z.string().optional().describe('Specific API or feature area to document'),
+  },
+  async ({ topic }) => ({
+    messages: [{
+      role: 'user' as const,
+      content: {
+        type: 'text' as const,
+        text: `Please help me generate API documentation${topic ? ` for: ${topic}` : ''}. Use the following tools:
+
+1. Call \`get_code_blocks\` on relevant documents to find existing code examples
+2. Call \`search_docs\` for any existing API references${topic ? ` related to "${topic}"` : ''}
+3. Call \`get_frontmatter\` to understand the metadata conventions used
+4. Call \`get_headings\` to see the existing documentation structure
+
+Then generate comprehensive API documentation that includes:
+- **Endpoint/Function signatures** with parameters and return types
+- **Code examples** in the primary languages found in the workspace
+- **Error handling** documentation
+- **Usage notes** and best practices
+
+Use \`create_document\` to write the generated documentation to an appropriate file path.`,
+      },
+    }],
+  })
+);
+
+// ---------------------------------------------------------------------------
 // Start
 // ---------------------------------------------------------------------------
 async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error(`markview-mcp server running on ${resolvedDir} — 15 tools available`);
+  if (useWebRtc) {
+    if (!webrtcRoom) {
+      // Generate a random room ID if not provided
+      const bytes = new Uint8Array(4);
+      crypto.getRandomValues(bytes);
+      webrtcRoom = 'mkv-' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    
+    console.error(`Starting MarkView MCP server in WebRTC mode`);
+    console.error(`Signaling server: ${signalingUrl}`);
+    console.error(`Room ID: ${webrtcRoom}`);
+    console.error(`Waiting for remote AI agents to connect...`);
+    
+    const transport = new WebRTCServerTransport(webrtcRoom, signalingUrl);
+    await server.connect(transport);
+    console.error(`markview-mcp WebRTC server running on ${resolvedDir} — 23 tools, 1 resource, 3 prompts available`);
+  } else {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error(`markview-mcp stdio server running on ${resolvedDir} — 23 tools, 1 resource, 3 prompts available`);
+  }
 }
 
 main().catch((err) => {

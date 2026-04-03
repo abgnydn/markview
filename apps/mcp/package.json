@@ -38,13 +38,16 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
+    "werift": "^0.22.9",
+    "ws": "^8.20.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@markview/tsconfig": "file:../../packages/tsconfig",
     "@types/node": "^25.5.0",
+    "@types/ws": "^8.18.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
-    "vitest": "^4.1.0",
-    "@markview/tsconfig": "file:../../packages/tsconfig"
+    "vitest": "^4.1.0"
   }
 }

@@ -21,6 +21,11 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only intercept GET requests from the same origin
+  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return; // Let the browser handle cross-origin and POST requests directly
+  }
+
   // Network-first for navigation, cache-first for assets
   if (event.request.mode === 'navigate') {
     event.respondWith(
@@ -28,7 +33,12 @@ self.addEventListener('fetch', (event) => {
     );
   } else {
     event.respondWith(
-      caches.match(event.request).then((cached) => cached || fetch(event.request))
+      caches.match(event.request).then((cached) => {
+        return cached || fetch(event.request).catch((err) => {
+          console.error('[SW] Fetch failed:', event.request.url, err);
+          throw err;
+        });
+      })
     );
   }
 });

@@ -9,7 +9,7 @@ Expose your local markdown documentation to AI assistants via the [Model Context
 npx tsx apps/mcp/src/index.ts ./docs
 ```
 
-## 15 Tools
+## 23 Tools
 
 ### Read & Analyze
 | Tool | Description |
@@ -24,12 +24,16 @@ npx tsx apps/mcp/src/index.ts ./docs
 | `get_tables` | Extract tables as structured JSON (headers + rows) |
 | `get_related_docs` | Find related documents by shared links/headings/content |
 | `get_glossary` | Extract key terms and definitions |
+| `get_mermaid_diagrams` | Extract Mermaid diagrams with type detection (flowchart, sequence, gantt, etc.) |
+| `get_math_blocks` | Extract KaTeX/LaTeX math expressions (inline + display) |
+| `analyze_reading_level` | Flesch-Kincaid readability scoring per document or workspace |
 
 ### Workspace Health
 | Tool | Description |
 |------|-------------|
 | `validate_workspace` | Full health check: broken links, orphans, missing titles, empty docs |
 | `get_stats` | Total words, reading time, languages, link density, tables |
+| `generate_toc` | Generate or insert table of contents from headings |
 
 ### Write & Manage
 | Tool | Description |
@@ -37,6 +41,28 @@ npx tsx apps/mcp/src/index.ts ./docs
 | `create_document` | Create a new `.md` file (with auto-directory creation) |
 | `update_document` | Edit: replace, append, prepend, or find-and-replace |
 | `rename_document` | Move a file and auto-update all internal links |
+| `delete_document` | Delete a document (with path traversal protection) |
+| `merge_documents` | Combine multiple documents into one |
+
+### Share & Export
+| Tool | Description |
+|------|-------------|
+| `share_document` | Generate a `markview.ai` share URL (gzip + base64url, no server needed) |
+| `render_document` | Export to standalone HTML with Mermaid, KaTeX, and syntax highlighting |
+
+## MCP Resources
+
+| Resource | URI | Description |
+|----------|-----|-------------|
+| Workspace Overview | `markview://workspace/overview` | File count, total words, languages, reading time |
+
+## MCP Prompts
+
+| Prompt | Description |
+|--------|-------------|
+| `review-docs` | Full quality audit: broken links, readability, structure |
+| `summarize-workspace` | Executive summary of all documentation |
+| `generate-api-docs` | Generate API docs from existing code blocks and patterns |
 
 ## Connect to AI Clients
 
@@ -55,6 +81,33 @@ Add to your MCP config (`~/.cursor/mcp.json`, etc.):
 }
 ```
 
+### WebRTC P2P Mode (Experimental)
+
+Connect cloud AI agents to your local files over an encrypted peer-to-peer WebRTC tunnel. Zero uploads, zero cloud storage.
+
+```bash
+# Terminal 1: Start the signaling relay
+npx tsx apps/mcp/scripts/signaling-server.ts
+
+# Terminal 2: Start the MCP server in WebRTC mode
+npx tsx apps/mcp/src/index.ts ./docs --webrtc --room my-room
+```
+
+Any WebRTC client (browser, Chrome Extension, or another Node.js process) can now connect to `my-room` via the signaling server and invoke all 23 tools over a P2P Data Channel.
+
+**Architecture:**
+```
+┌─────────────────┐       WebSocket        ┌─────────────────┐
+│   MCP Server    │◄── Signaling Relay ──►│    AI Agent      │
+│ (your laptop)   │       (broker)        │ (cloud/browser)  │
+└───────┬─────────┘                       └───────┬──────────┘
+        │                                         │
+        └───── WebRTC Data Channel (P2P) ─────────┘
+                  (MCP JSON-RPC messages)
+```
+
+See [PROTOCOL.md](./PROTOCOL.md) for the full specification.
+
 ### Build
 
 ```bash
@@ -67,8 +120,10 @@ npm run build
 > "Search my docs for anything about authentication"
 > "What's the table of contents for api.md?"
 > "Are there any broken links in my documentation?"
-> "Extract all Python code examples from the tutorial"
+> "Extract all Mermaid diagrams from my workspace"
+> "Generate a share link for my README"
+> "Render my API docs as an HTML file"
+> "What's the reading level of my documentation?"
+> "Merge the setup and config docs into one guide"
 > "Find docs related to the auth spec"
-> "What terms are defined in my glossary?"
 > "Add a new document at api/webhooks.md with..."
-> "Rename setup.md to getting-started.md and update all links"

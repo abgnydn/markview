@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Upload, Github, Shield, Zap, Layers, Code2, Eye, Columns2, FileCode2, Presentation as PresentationIcon, Search, Keyboard, BookOpen, FileText, Terminal, Puzzle, Chrome, ArrowLeft, Trash2, Package, Check, Copy, Mail, LayoutTemplate, Palette, Link2, Type, MessageSquarePlus, History, Plug, Monitor, Users } from 'lucide-react';
+import { Upload, Github, Shield, Eye, Layers, Code2, Terminal, Chrome, ArrowLeft, Trash2, Package, Check, Copy, Mail, LayoutTemplate, Monitor } from 'lucide-react';
 import { WORKSPACE_TEMPLATES } from '@/lib/templates/workspace-templates';
 import './landing.css';
 
@@ -136,26 +136,26 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
   };
 
   const features = [
-    { icon: Eye, title: 'Rich Rendering', desc: 'GitHub-flavored markdown, Mermaid diagrams, KaTeX math, syntax-highlighted code blocks', color: 'purple' },
-    { icon: Layers, title: 'Workspace Management', desc: 'Multi-tab workspaces with nested file trees, drag to reorder, persistent sessions via IndexedDB', color: 'blue' },
-    { icon: Search, title: 'Instant Search', desc: 'Full-text search across all documents with keyboard shortcut (⌘K) and highlighted results', color: 'amber' },
-    { icon: Columns2, title: 'Split & Compare', desc: 'Side-by-side file viewing and unified diff comparison with line-by-line highlighting', color: 'blue' },
-    { icon: Type, title: 'WYSIWYG Editor', desc: '13 formatting buttons (bold, italic, headings, lists, links), ⌘B/⌘I/⌘K shortcuts, Tab indent', color: 'emerald' },
-    { icon: PresentationIcon, title: 'Presentation Mode', desc: 'Transform markdown into navigable slides based on headings — instant slide decks', color: 'purple' },
-    { icon: Palette, title: 'Custom Themes', desc: '6 curated presets — Dracula, Nord, Monokai, Solarized, Rosé Pine, GitHub — with dark/light variants', color: 'rose' },
-    { icon: Link2, title: 'URL Sharing', desc: 'Share any workspace via URL — content is gzip-compressed and base64-encoded in the hash, zero server needed', color: 'emerald' },
-    { icon: LayoutTemplate, title: 'Starter Templates', desc: '6 pre-built templates — README, API Docs, Changelog, Meeting Notes, Tech Spec, Blog Post', color: 'amber' },
-    { icon: MessageSquarePlus, title: 'Annotations', desc: 'Highlight text, pick a color, add notes — annotations are persisted per file and shown in a panel', color: 'rose' },
-    { icon: Plug, title: 'Plugin System', desc: 'Extend rendering with custom code fences — built-in: alert boxes, bar charts, tabs, timelines, embeds', color: 'purple' },
-    { icon: History, title: 'Version History', desc: 'Auto-snapshots on editor save, stored in IndexedDB — browse, restore, or delete any previous version', color: 'blue' },
-    { icon: BookOpen, title: 'Reading Experience', desc: 'Table of contents, reading progress, word count, breadcrumbs, frontmatter cards', color: 'emerald' },
-    { icon: Users, title: 'P2P Collaboration', desc: 'Real-time multiplayer editing using WebRTC — collaborate seamlessly via a direct local connection, zero servers required', color: 'indigo' },
-    { icon: FileText, title: 'Export Everywhere', desc: 'PDF, Microsoft Word (.docx), PowerPoint (.pptx), PNG, HTML — generate presentation-ready files directly from the browser', color: 'amber' },
-    { icon: Github, title: 'GitHub Import', desc: 'Paste any GitHub repo URL and instantly load its markdown documentation', color: 'indigo' },
-    { icon: Keyboard, title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard', color: 'blue' },
-    { icon: Zap, title: 'Focus Mode', desc: 'Distraction-free reading that hides sidebar and TOC — just you and the content', color: 'rose' },
-    { icon: Puzzle, title: 'Native macOS App', desc: 'Native Tauri v2 desktop app — set as your default .md opener, ships as a proper .app + .dmg bundle', color: 'indigo' },
-    { icon: Chrome, title: 'PWA & Extension', desc: 'Install as a PWA from Chrome/Edge or use the Chrome extension to view .md files in the browser', color: 'amber' },
+    { iconImg: '/icons/features/rich-rendering.png', title: 'Rich Rendering', desc: 'GitHub-flavored markdown, Mermaid diagrams, KaTeX math, syntax-highlighted code blocks', color: 'purple' },
+    { iconImg: '/icons/features/workspace-management.png', title: 'Workspace Management', desc: 'Multi-tab workspaces with nested file trees, drag to reorder, persistent sessions via IndexedDB', color: 'blue' },
+    { iconImg: '/icons/features/instant-search.png', title: 'Instant Search', desc: 'Full-text search across all documents with keyboard shortcut (⌘K) and highlighted results', color: 'amber' },
+    { iconImg: '/icons/features/split-compare.png', title: 'Split & Compare', desc: 'Side-by-side file viewing and unified diff comparison with line-by-line highlighting', color: 'blue' },
+    { iconImg: '/icons/features/wysiwyg-editor.png', title: 'WYSIWYG Editor', desc: '13 formatting buttons (bold, italic, headings, lists, links), ⌘B/⌘I/⌘K shortcuts, Tab indent', color: 'emerald' },
+    { iconImg: '/icons/features/presentation-mode.png', title: 'Presentation Mode', desc: 'Transform markdown into navigable slides based on headings — instant slide decks', color: 'purple' },
+    { iconImg: '/icons/features/custom-themes.png', title: 'Custom Themes', desc: '6 curated presets — Dracula, Nord, Monokai, Solarized, Rosé Pine, GitHub — with dark/light variants', color: 'rose' },
+    { iconImg: '/icons/features/url-sharing.png', title: 'URL Sharing', desc: 'Share any workspace via URL — content is gzip-compressed and base64-encoded in the hash, zero server needed', color: 'emerald' },
+    { iconImg: '/icons/features/starter-templates.png', title: 'Starter Templates', desc: '6 pre-built templates — README, API Docs, Changelog, Meeting Notes, Tech Spec, Blog Post', color: 'amber' },
+    { iconImg: '/icons/features/annotations.png', title: 'Annotations', desc: 'Highlight text, pick a color, add notes — annotations are persisted per file and shown in a panel', color: 'rose' },
+    { iconImg: '/icons/features/plugin-system.png', title: 'Plugin System', desc: 'Extend rendering with custom code fences — built-in: alert boxes, bar charts, tabs, timelines, embeds', color: 'purple' },
+    { iconImg: '/icons/features/version-history.png', title: 'Version History', desc: 'Auto-snapshots on editor save, stored in IndexedDB — browse, restore, or delete any previous version', color: 'blue' },
+    { iconImg: '/icons/features/reading-experience.png', title: 'Reading Experience', desc: 'Table of contents, reading progress, word count, breadcrumbs, frontmatter cards', color: 'emerald' },
+    { iconImg: '/icons/features/p2p-collaboration.png', title: 'P2P Collaboration', desc: 'Real-time multiplayer editing using WebRTC — collaborate seamlessly via a direct local connection, zero servers required', color: 'indigo' },
+    { iconImg: '/icons/features/export-everywhere.png', title: 'Export Everywhere', desc: 'PDF, Microsoft Word (.docx), PowerPoint (.pptx), PNG, HTML — generate presentation-ready files directly from the browser', color: 'amber' },
+    { iconImg: '/icons/features/github-import.png', title: 'GitHub Import', desc: 'Paste any GitHub repo URL and instantly load its markdown documentation', color: 'indigo' },
+    { iconImg: '/icons/features/keyboard-first.png', title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard', color: 'blue' },
+    { iconImg: '/icons/features/focus-mode.png', title: 'Focus Mode', desc: 'Distraction-free reading that hides sidebar and TOC — just you and the content', color: 'rose' },
+    { iconImg: '/icons/features/native-macos.png', title: 'Native macOS App', desc: 'Native Tauri v2 desktop app — set as your default .md opener, ships as a proper .app + .dmg bundle', color: 'indigo' },
+    { iconImg: '/icons/features/pwa-extension.png', title: 'PWA & Extension', desc: 'Install as a PWA from Chrome/Edge or use the Chrome extension to view .md files in the browser', color: 'amber' },
   ];
 
   const mcpTools = [
@@ -390,8 +390,8 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
         <div className="landing-features-grid">
           {features.map((f) => (
             <div className={`landing-feature-card landing-feature-${f.color}`} key={f.title}>
-              <div className="landing-feature-icon">
-                <f.icon size={22} />
+              <div className="landing-feature-icon landing-feature-icon-custom">
+                <img src={f.iconImg} alt={f.title} className="landing-feature-icon-img" />
               </div>
               <h3 className="landing-feature-title">{f.title}</h3>
               <p className="landing-feature-desc">{f.desc}</p>
