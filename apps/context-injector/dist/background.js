@@ -1,5 +1,20 @@
 let offscreenCreated = false;
 chrome.storage.local.set({ connectionState: "disconnected", tools: [] });
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "markview-ask-brain",
+    title: 'Ask Brain about "%s"',
+    contexts: ["selection"]
+  });
+});
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "markview-ask-brain" && tab?.id && info.selectionText) {
+    chrome.tabs.sendMessage(tab.id, {
+      type: "CONTEXT_MENU_ASK",
+      text: info.selectionText
+    });
+  }
+});
 async function ensureOffscreen() {
   if (offscreenCreated) return;
   const existingContexts = await chrome.runtime.getContexts({

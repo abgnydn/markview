@@ -14,6 +14,15 @@ chrome.runtime.onMessage.addListener((msg) => {
     updateButton();
   } else if (msg.type === "RENDER_AI_UI") {
     renderAIOverlay(msg.payload);
+  } else if (msg.type === "CONTEXT_MENU_ASK") {
+    if (!currentPageContext) {
+      currentPageContext = document.body.innerText.substring(0, 2e3);
+      currentPageUrl = window.location.href;
+    }
+    const selectedText = msg.text || "";
+    const question = `Explain this: "${selectedText}"`;
+    renderAIOverlay(`<div style="text-align:center; padding:12px 0; color:#4b5563; font-size:12px;">Asking Brain about selected text...</div>`);
+    setTimeout(() => handleChatMessage(question), 200);
   }
 });
 chrome.storage.local.get(["connectionState"], (result) => {

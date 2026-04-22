@@ -35,7 +35,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "offscreen"
+    "offscreen",
+    "contextMenus"
   ],
   "host_permissions": [
     "https://chatgpt.com/*",

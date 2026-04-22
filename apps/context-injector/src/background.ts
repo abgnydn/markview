@@ -10,9 +10,25 @@ import type { ExtensionMessage } from './types';
 let offscreenCreated = false;
 
 // Clear stale connection state on service worker startup.
-// Without this, content scripts read 'connected' from storage
-// even though the offscreen DataChannel is dead.
 chrome.storage.local.set({ connectionState: 'disconnected', tools: [] });
+
+// Context menu: "Ask Brain about this"
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'markview-ask-brain',
+    title: 'Ask Brain about "%s"',
+    contexts: ['selection'],
+  });
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === 'markview-ask-brain' && tab?.id && info.selectionText) {
+    chrome.tabs.sendMessage(tab.id, {
+      type: 'CONTEXT_MENU_ASK',
+      text: info.selectionText,
+    });
+  }
+});
 
 async function ensureOffscreen(): Promise<void> {
   if (offscreenCreated) return;
