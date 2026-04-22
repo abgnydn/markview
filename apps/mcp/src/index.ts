@@ -1790,6 +1790,289 @@ ${content}
 );
 
 // ---------------------------------------------------------------------------
+// AI Pipeline Helpers
+// ---------------------------------------------------------------------------
+
+const STOP_WORDS = new Set([
+  'the','a','an','is','are','was','were','be','been','being','have','has','had',
+  'do','does','did','will','would','could','should','may','might','can','shall',
+  'to','of','in','for','on','with','at','by','from','this','that','these','those',
+  'it','its','and','or','but','not','no','if','then','else','so','as','up','out',
+  'about','into','over','after','before','skip','content','sign','log','you','your',
+  'more','all','new','code','file','files','what','how','why','when','where','which',
+  'who','tell','explain','describe','also','just','like','very','really','some',
+  'than','them','they','their','there','here','only','even','each','every',
+]);
+
+function detectPageType(url: string): string {
+  if (url.includes('github.com') && url.includes('/pull/')) return 'github-pr';
+  if (url.includes('github.com') && url.includes('/issues/')) return 'github-issue';
+  if (url.includes('github.com') && (url.includes('/blob/') || url.includes('/tree/'))) return 'github-code';
+  if (url.includes('github.com')) return 'github-repo';
+  if (url.includes('claude.ai') || url.includes('chatgpt.com')) return 'ai-chat';
+  if (url.includes('arxiv.org')) return 'paper';
+  if (url.includes('stackoverflow.com')) return 'stackoverflow';
+  if (url.includes('docs.') || url.includes('documentation')) return 'docs';
+  return 'generic';
+}
+
+/** Strip GitHub/web chrome noise and extract the meaningful content */
+function extractSmartContext(url: string, raw: string, pageType: string): string {
+  // Remove common noise patterns
+  const noisePatterns = [
+    /Skip to content/gi, /Navigation Menu/gi, /Sign in/gi, /Sign up/gi,
+    /Footer navigation/gi, /Terms\s+Privacy/gi, /Cookie\s+policy/gi,
+    /©\s*\d{4}/g, /Toggle navigation/gi, /Type\s*\/\s*to search/gi,
+    /Dismiss\s*alert/gi, /You signed in with another tab/gi,
+    /Notifications\s+Fork\s+Star/gi, /Watch\s+\d+/gi,
+  ];
+
+  let clean = raw;
+  for (const p of noisePatterns) { clean = clean.replace(p, ''); }
+
+  // Collapse whitespace
+  clean = clean.replace(/\n{3,}/g, '\n\n').replace(/[ \t]+/g, ' ').trim();
+  const lines = clean.split('\n').filter(l => l.trim().length > 2);
+
+  switch (pageType) {
+    case 'github-pr': {
+      const title = lines.find(l => l.length > 15 && !l.includes('Conversation') && !l.includes('Commits'))?.trim() || '';
+      const fileLines = lines.filter(l => l.match(/\.(ts|js|py|go|rs|tsx|jsx|css|md|json|yaml|yml)\b/));
+      const commentLines = lines.filter(l =>
+        l.includes('commented') || l.includes('review') || l.includes('approved') ||
+        l.includes('changes requested') || l.includes('merged')
+      );
+      const bodyLines = lines.filter(l =>
+        l.length > 30 && !l.includes('Conversation') && !l.includes('Checks') &&
+        !l.includes('Files changed') && !fileLines.includes(l)
+      );
+      return [
+        `PR: ${title.substring(0, 200)}`,
+        `Files: ${fileLines.slice(0, 15).join(', ').substring(0, 400)}`,
+        `Reviews: ${commentLines.slice(0, 8).join(' | ').substring(0, 300)}`,
+        `Body: ${bodyLines.slice(0, 10).join(' ').substring(0, 500)}`,
+      ].join('\n');
+    }
+    case 'github-issue': {
+      const title = lines.find(l => l.length > 15)?.trim() || '';
+      const body = lines.filter(l => l.length > 20).slice(0, 20).join(' ');
+      return `Issue: ${title.substring(0, 200)}\n${body.substring(0, 1200)}`;
+    }
+    case 'github-code': {
+      // Extract the actual code content, skip navigation
+      const codeStart = lines.findIndex(l => l.includes('lines') || l.match(/^\d+$/));
+      const codeLines = codeStart > 0 ? lines.slice(codeStart) : lines.slice(Math.floor(lines.length * 0.3));
+      return codeLines.join('\n').substring(0, 1500);
+    }
+    case 'ai-chat': {
+      // Extract the conversation, skip UI chrome
+      const msgLines = lines.filter(l => l.length > 15);
+      return msgLines.slice(-30).join('\n').substring(0, 1500);
+    }
+    default:
+      return lines.join('\n').substring(0, 1500);
+  }
+}
+
+interface VaultSearchResult {
+  files: string[];
+  context: string;
+  status: string;
+}
+
+/** TF-IDF-weighted vault search with relevant snippet extraction */
+function searchVault(vaultRoot: string, searchText: string, maxResults: number): VaultSearchResult {
+  // Extract and weight keywords
+  const words = searchText.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !STOP_WORDS.has(w));
+
+  const freq: Record<string, number> = {};
+  for (const w of words) { freq[w] = (freq[w] || 0) + 1; }
+  const keywords = Object.entries(freq)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 20)
+    .map(([w]) => w);
+
+  if (keywords.length === 0) {
+    return { files: [], context: '', status: '❌ No keywords extracted' };
+  }
+
+  console.log(`[Brain] Search keywords: ${keywords.slice(0, 10).join(', ')}`);
+
+  const allFiles = fs.readdirSync(vaultRoot, { recursive: true }) as string[];
+  const mdFiles = allFiles
+    .filter(f => typeof f === 'string' && f.endsWith('.md'))
+    .map(f => path.join(vaultRoot, f));
+
+  const scored: { file: string; score: number; snippet: string }[] = [];
+
+  for (const filePath of mdFiles) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const lower = content.toLowerCase();
+      let score = 0;
+
+      // TF-IDF-like scoring: weight by keyword rarity (fewer matches = more specific = higher weight)
+      for (const kw of keywords) {
+        const matches = (lower.match(new RegExp(kw, 'g')) || []).length;
+        if (matches > 0) {
+          // Boost for exact matches in title/headers
+          const inTitle = lower.split('\n')[0]?.includes(kw) ? 3 : 0;
+          const inHeaders = (lower.match(new RegExp(`^#+.*${kw}`, 'gm')) || []).length * 2;
+          score += matches + inTitle + inHeaders;
+        }
+      }
+
+      if (score > 0) {
+        // Extract the RELEVANT snippet — find the paragraph with highest keyword density
+        const paragraphs = content.split(/\n\n+/);
+        let bestPara = '';
+        let bestParaScore = 0;
+        for (const para of paragraphs) {
+          if (para.length < 20) continue;
+          const paraLower = para.toLowerCase();
+          let pScore = 0;
+          for (const kw of keywords) {
+            if (paraLower.includes(kw)) pScore++;
+          }
+          if (pScore > bestParaScore) {
+            bestParaScore = pScore;
+            bestPara = para;
+          }
+        }
+
+        scored.push({
+          file: path.relative(vaultRoot, filePath),
+          score,
+          snippet: (bestPara || content.substring(0, 300)).substring(0, 400),
+        });
+      }
+    } catch {}
+  }
+
+  scored.sort((a, b) => b.score - a.score);
+  const topFiles = scored.slice(0, maxResults);
+
+  if (topFiles.length === 0) {
+    // Fallback to AGENTS.md
+    try {
+      const agentDoc = fs.readFileSync(path.join(vaultRoot, 'AGENTS.md'), 'utf-8');
+      return {
+        files: ['AGENTS.md'],
+        context: agentDoc.substring(0, 500),
+        status: '✅ AGENTS.md (fallback)',
+      };
+    } catch {
+      return { files: [], context: '', status: '❌ No matches' };
+    }
+  }
+
+  const vaultContext = topFiles.map(f =>
+    `[${f.file}] (score: ${f.score})\n${f.snippet}`
+  ).join('\n\n');
+
+  return {
+    files: topFiles.map(f => f.file),
+    context: vaultContext,
+    status: `✅ ${topFiles.length} matched (${scored.length} total)`,
+  };
+}
+
+interface PromptParams {
+  pageType: string; url: string; cleanedContext: string; vaultContext: string;
+  isChat: boolean; question: string; history: string;
+}
+
+function buildPrompt(p: PromptParams): string {
+  // Summarize long chat history to save tokens
+  let historyBlock = '';
+  if (p.isChat && p.history) {
+    try {
+      const msgs = JSON.parse(p.history) as { role: string; content: string }[];
+      // Keep last 4 exchanges, summarize older ones
+      if (msgs.length > 8) {
+        const older = msgs.slice(0, -8);
+        const recent = msgs.slice(-8);
+        const olderSummary = older.map(m => `${m.role}: ${m.content.substring(0, 50)}`).join('; ');
+        historyBlock = `Earlier: ${olderSummary}\n\n` +
+          recent.map(m => `${m.role === 'user' ? 'User' : 'Brain'}: ${m.content}`).join('\n');
+      } else {
+        historyBlock = msgs.map(m =>
+          `${m.role === 'user' ? 'User' : 'Brain'}: ${m.content}`
+        ).join('\n');
+      }
+    } catch {}
+  }
+
+  const systemPreamble = `/no_think\nYou are Brain, a concise research assistant. You analyze web pages and connect them to the user's Obsidian research vault. Rules:\n- Be specific and direct. No filler.\n- Reference actual content from the page and vault.\n- 2-4 sentences max unless asked for more.\n- No markdown formatting, no bullet points. Plain text only.\n`;
+
+  if (p.isChat) {
+    return `${systemPreamble}
+Page (${p.pageType}): ${p.url}
+Content: ${p.cleanedContext.substring(0, 800)}
+
+${p.vaultContext ? `Vault notes:\n${p.vaultContext.substring(0, 600)}\n` : ''}
+${historyBlock ? `Chat history:\n${historyBlock}\n` : ''}
+User: ${p.question}
+Brain:`;
+  }
+
+  // Page-type-specific analysis prompts
+  const typeInstructions: Record<string, string> = {
+    'github-pr': 'Analyze this PR: what it changes, its impact, risks, and how it connects to the vault notes.',
+    'github-issue': 'Summarize this issue: the problem, current status, and relevance to the vault research.',
+    'github-repo': 'Describe this project: purpose, tech stack, and relevance to the vault research.',
+    'github-code': 'Analyze this code: what it does, key patterns, and connection to vault notes.',
+    'ai-chat': 'Summarize the key points from this AI conversation and their relevance to the vault.',
+    'paper': 'Summarize this paper: key contribution, methodology, and connection to vault research.',
+    'docs': 'Extract the key technical details and their relevance to vault research.',
+    'generic': 'Analyze this page: what it\'s about and how it connects to the vault research.',
+  };
+
+  return `${systemPreamble}
+Page (${p.pageType}): ${p.url}
+Content:
+${p.cleanedContext.substring(0, 1200)}
+
+${p.vaultContext ? `Vault notes:\n${p.vaultContext.substring(0, 800)}\n` : ''}
+Task: ${typeInstructions[p.pageType] || typeInstructions.generic}
+Brain:`;
+}
+
+/** Strip <think> tags, clean repetition, trim whitespace */
+function postProcessResponse(raw: string): string {
+  let text = raw;
+
+  // Strip qwen3 thinking tags
+  text = text.replace(/<think>[\s\S]*?<\/think>/g, '');
+  text = text.replace(/<\/?think>/g, '');
+
+  // Remove common LLM artifacts
+  text = text.replace(/^(Brain|Assistant|AI):\s*/i, '');
+  text = text.replace(/\*\*/g, '');  // Remove bold markdown
+  text = text.replace(/^[-•]\s+/gm, ''); // Remove bullet points
+
+  // Collapse repeated sentences
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  const seen = new Set<string>();
+  const deduped: string[] = [];
+  for (const s of sentences) {
+    const normalized = s.toLowerCase().trim();
+    if (normalized.length > 10 && seen.has(normalized)) continue;
+    seen.add(normalized);
+    deduped.push(s);
+  }
+  text = deduped.join(' ');
+
+  // Clean whitespace
+  text = text.replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+
+  return text;
+}
+
+// ---------------------------------------------------------------------------
 // Tool: process_browser_context
 // ---------------------------------------------------------------------------
 server.tool(
@@ -1802,145 +2085,57 @@ server.tool(
     history: z.string().optional().describe('Optional JSON array of previous chat messages [{role,content}]'),
   },
   async ({ url, context, question, history }) => {
+    const startTime = Date.now();
     const isChat = !!question;
     console.log(`[Brain] ${isChat ? 'CHAT' : 'ANALYZE'}: ${isChat ? question : `${context.length} chars from ${url}`}`);
-    
-    // 1. SMART VAULT SEARCH — scan all vault files for keyword relevance
+
+    // -----------------------------------------------------------------------
+    // 1. PAGE TYPE DETECTION + SMART CONTEXT EXTRACTION
+    // -----------------------------------------------------------------------
+    const pageType = detectPageType(url);
+    const cleanedContext = extractSmartContext(url, context, pageType);
+    console.log(`[Brain] Page type: ${pageType}, cleaned context: ${cleanedContext.length} chars`);
+
+    // -----------------------------------------------------------------------
+    // 2. VAULT SEARCH — TF-IDF weighted with relevant snippet extraction
+    // -----------------------------------------------------------------------
     const vaultRoot = '/Users/ahmetbarisgunaydin2/Documents/research-vault';
-    let vaultMemory = '';
+    let vaultContext = '';
     let vaultStatus = '❌ Not Found';
     let vaultFiles: string[] = [];
-    
+
     try {
-      // Extract keywords from question (if chat) or page context
-      const searchText = isChat ? `${question} ${context.substring(0, 500)}` : context;
-      const stopWords = new Set(['the','a','an','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','can','shall','to','of','in','for','on','with','at','by','from','this','that','these','those','it','its','and','or','but','not','no','if','then','else','so','as','up','out','about','into','over','after','skip','content','sign','log','you','your','more','all','new','code','file','files','what','how','why','when','where','which','who','tell','explain','describe']);
-      
-      const words = searchText.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, ' ')
-        .split(/\s+/)
-        .filter(w => w.length > 3 && !stopWords.has(w));
-      
-      const freq: Record<string, number> = {};
-      for (const w of words) { freq[w] = (freq[w] || 0) + 1; }
-      const keywords = Object.entries(freq)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 15)
-        .map(([w]) => w);
-      
-      console.log(`[Brain] Keywords: ${keywords.join(', ')}`);
-      
-      const allFiles = fs.readdirSync(vaultRoot, { recursive: true }) as string[];
-      const mdFiles = allFiles
-        .filter(f => typeof f === 'string' && f.endsWith('.md'))
-        .map(f => path.join(vaultRoot, f));
-      
-      const scored: { file: string; score: number; snippet: string }[] = [];
-      
-      for (const filePath of mdFiles) {
-        try {
-          const content_file = fs.readFileSync(filePath, 'utf-8');
-          const lower = content_file.toLowerCase();
-          let score = 0;
-          for (const kw of keywords) {
-            const matches = lower.split(kw).length - 1;
-            score += matches;
-          }
-          if (score > 0) {
-            scored.push({ 
-              file: path.relative(vaultRoot, filePath), 
-              score, 
-              snippet: content_file.substring(0, 300) 
-            });
-          }
-        } catch {}
-      }
-      
-      scored.sort((a, b) => b.score - a.score);
-      const topFiles = scored.slice(0, 3);
-      vaultFiles = topFiles.map(f => f.file);
-      
-      if (topFiles.length > 0) {
-        vaultMemory = topFiles.map(f => 
-          `--- ${f.file} (relevance: ${f.score}) ---\n${f.snippet}`
-        ).join('\n\n');
-        vaultStatus = `✅ ${topFiles.length} files matched (${scored.length} total)`;
-      } else {
-        const agentDoc = fs.readFileSync(path.join(vaultRoot, 'AGENTS.md'), 'utf-8');
-        vaultMemory = agentDoc.substring(0, 500);
-        vaultStatus = `✅ AGENTS.md (fallback)`;
-      }
+      const searchText = isChat
+        ? `${question} ${cleanedContext.substring(0, 300)}`
+        : cleanedContext;
+
+      const searchResult = searchVault(vaultRoot, searchText, 5);
+      vaultFiles = searchResult.files;
+      vaultContext = searchResult.context;
+      vaultStatus = searchResult.status;
+      console.log(`[Brain] Vault: ${vaultStatus}`);
     } catch (e) {
       console.log(`[Brain] Vault search failed:`, (e as Error).message);
     }
 
-    // 2. SMART CONTEXT EXTRACTION
-    let pageType = 'generic';
-    let structuredContext = context.substring(0, 800);
-    
-    if (url.includes('github.com') && url.includes('/pull/')) {
-      pageType = 'github-pr';
-      const lines = context.split('\n').filter(l => l.trim().length > 0);
-      const prTitle = lines.find(l => l.length > 10 && !l.includes('Skip to') && !l.includes('Navigation')) || '';
-      const fileChanges = lines.filter(l => l.match(/\.(ts|js|py|go|rs|tsx|jsx|css|md)\b/));
-      const comments = lines.filter(l => l.includes('commented') || l.includes('review') || l.includes('approved'));
-      structuredContext = [
-        `PR Title: ${prTitle.substring(0, 200)}`,
-        `Files changed: ${fileChanges.slice(0, 10).join(', ').substring(0, 300)}`,
-        `Discussion: ${comments.slice(0, 5).join(' | ').substring(0, 200)}`,
-        `Raw context: ${context.substring(0, 300)}`,
-      ].join('\n');
-    } else if (url.includes('github.com')) {
-      pageType = 'github-repo';
-    } else if (url.includes('claude.ai') || url.includes('chatgpt.com')) {
-      pageType = 'ai-chat';
-    }
-
-    // 3. LLM QUERY — analysis or chat mode
+    // -----------------------------------------------------------------------
+    // 3. LLM QUERY — with optimized prompting
+    // -----------------------------------------------------------------------
     let llmResponse = '';
     let llmStatus = 'Skipped';
-    
+    let inferenceMs = 0;
+
     try {
+      const prompt = buildPrompt({
+        pageType, url, cleanedContext, vaultContext,
+        isChat, question: question || '', history: history || '',
+      });
+
+      console.log(`[Brain] Prompt: ${prompt.length} chars, querying qwen3:0.6b...`);
+
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      
-      let prompt: string;
-      
-      if (isChat) {
-        // Parse chat history
-        let historyText = '';
-        try {
-          const msgs = JSON.parse(history || '[]');
-          historyText = msgs.map((m: any) => `${m.role === 'user' ? 'Baris' : 'Brain'}: ${m.content}`).join('\n');
-        } catch {}
-        
-        prompt = `You are Baris's personal research assistant. He is browsing: ${url}
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-Page content (summary):
-${structuredContext.substring(0, 400)}
-
-Relevant vault notes:
-${vaultMemory.substring(0, 300)}
-
-${historyText ? `Previous conversation:\n${historyText}\n` : ''}
-Baris asks: ${question}
-
-Answer concisely (2-4 sentences). Be specific, reference the page content and vault notes when relevant. Do not use markdown formatting.`;
-      } else {
-        prompt = `You are Baris's personal research assistant. Analyze what he is looking at and connect it to his work.
-
-Page type: ${pageType}
-URL: ${url}
-Page content:
-${structuredContext.substring(0, 600)}
-
-Relevant notes from his Obsidian research vault:
-${vaultMemory.substring(0, 400)}
-
-Give a concise 2-3 sentence analysis. Focus on: what this is about, why it matters to Baris's work, and any connections to his vault notes. Be specific, not generic.`;
-      }
-
-      console.log(`[Brain] Querying Ollama (qwen3:0.6b)...`);
       const response = await fetch('http://localhost:11434/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1948,78 +2143,61 @@ Give a concise 2-3 sentence analysis. Focus on: what this is about, why it matte
           model: 'qwen3:0.6b',
           prompt,
           stream: false,
-          num_predict: 200,
+          options: {
+            num_predict: 300,
+            temperature: 0.4,
+            top_p: 0.9,
+            repeat_penalty: 1.15,
+          },
         }),
         signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
       const data = await response.json() as any;
-      llmResponse = data.response || '';
-      const evalDuration = data.eval_duration ? `${(data.eval_duration / 1e9).toFixed(1)}s` : '?';
-      llmStatus = `✅ ${llmResponse.length} chars in ${evalDuration}`;
-      console.log(`[Brain] LLM response: ${llmResponse}`);
+      llmResponse = postProcessResponse(data.response || '');
+      inferenceMs = data.eval_duration ? Math.round(data.eval_duration / 1e6) : 0;
+      const inferenceS = (inferenceMs / 1000).toFixed(1);
+      llmStatus = `✅ ${llmResponse.length} chars in ${inferenceS}s`;
+      console.log(`[Brain] LLM: ${llmResponse.substring(0, 200)}`);
     } catch (e: any) {
       console.log(`[Brain] Ollama error: ${e.message}`);
-      llmStatus = `⚠️ ${e.name === 'AbortError' ? 'Timeout (15s)' : e.message}`;
+      llmStatus = `⚠️ ${e.name === 'AbortError' ? 'Timeout (30s)' : e.message}`;
     }
 
-    // 4. Build the UI Payload
-    const analysisContent = llmResponse 
-      ? `<p style="color: #e5e7eb; font-size: 14px; line-height: 1.6; margin: 0;">${llmResponse}</p>`
-      : `<p style="color: #e5e7eb; font-size: 14px; line-height: 1.6; margin: 0;">
-           Scraped ${context.length} chars from <strong style="color: #60a5fa;">${url}</strong>. 
-           LLM unavailable — showing pipeline status only.
-         </p>`;
+    // -----------------------------------------------------------------------
+    // 4. BUILD UI PAYLOAD
+    // -----------------------------------------------------------------------
+    const totalMs = Date.now() - startTime;
 
-    const vaultFilesHtml = vaultFiles.length > 0 
-      ? vaultFiles.map(f => `<span style="display:inline-block; background:rgba(167,139,250,0.15); color:#c4b5fd; padding:2px 8px; border-radius:4px; font-size:11px; margin:2px 4px 2px 0;">📄 ${f}</span>`).join('')
-      : '<span style="color:#6b7280; font-size:11px;">No matches</span>';
+    const analysisContent = llmResponse
+      ? `<p style="color: #e5e7eb; font-size: 14px; line-height: 1.7; margin: 0;">${llmResponse}</p>`
+      : `<p style="color: #9ca3af; font-size: 13px;">LLM unavailable. Pipeline status below.</p>`;
+
+    const vaultFilesHtml = vaultFiles.length > 0
+      ? vaultFiles.map(f => `<span style="display:inline-block; background:rgba(167,139,250,0.12); color:#c4b5fd; padding:2px 8px; border-radius:4px; font-size:11px; margin:2px 4px 2px 0;">📄 ${f}</span>`).join('')
+      : '<span style="color:#6b7280; font-size:11px;">No vault matches</span>';
 
     const uiPayload = `
-      <div style="font-family: system-ui, -apple-system, sans-serif;">
-        <h3 style="margin: 0 0 12px 0; color: #a78bfa; font-size: 15px; display: flex; align-items: center; gap: 8px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-          MarkView Brain Analysis
-        </h3>
+      <div style="font-family: -apple-system, system-ui, sans-serif;">
         ${analysisContent}
-        
+
         <div style="margin-top: 12px;">
-          <div style="font-size: 11px; color: #9ca3af; margin-bottom: 6px;">Vault files matched:</div>
+          <div style="font-size: 11px; color: #6b7280; margin-bottom: 4px;">Vault context:</div>
           <div style="display: flex; flex-wrap: wrap;">${vaultFilesHtml}</div>
         </div>
-        
-        <div style="margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
-          <div style="display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12px;">
-            <span style="color: #9ca3af;">Pipeline:</span>
-            <span style="color: #34d399;">✅ WebRTC → MCP → Browser</span>
-            
-            <span style="color: #9ca3af;">Context:</span>
-            <span style="color: #34d399;">✅ ${context.length} chars (${pageType})</span>
-            
-            <span style="color: #9ca3af;">Vault:</span>
-            <span style="color: ${vaultStatus.startsWith('✅') ? '#34d399' : '#f59e0b'};">${vaultStatus}</span>
-            
-            <span style="color: #9ca3af;">LLM:</span>
-            <span style="color: ${llmStatus.startsWith('✅') ? '#34d399' : '#f59e0b'};">${llmStatus}</span>
-          </div>
-        </div>
-        
-        <div style="margin-top: 6px; padding: 6px 12px; font-size: 10px; color: #4b5563; border-top: 1px solid rgba(255,255,255,0.03);">
-          qwen3:0.6b · Apple M2 Pro · Zero cloud uploads
+
+        <div style="margin-top: 10px; padding: 8px 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-size: 11px; color: #4b5563; display: flex; gap: 12px; flex-wrap: wrap;">
+          <span>${pageType}</span>
+          <span>${context.length}→${cleanedContext.length} chars</span>
+          <span>${vaultFiles.length} vault files</span>
+          <span>${(totalMs / 1000).toFixed(1)}s total</span>
         </div>
       </div>
     `;
 
-    console.log(`[Brain] UI payload ready (${uiPayload.length} chars)`);
-
     return {
-      content: [
-        {
-          type: 'text' as const,
-          text: JSON.stringify({ uiPayload }),
-        },
-      ],
+      content: [{ type: 'text' as const, text: JSON.stringify({ uiPayload }) }],
     };
   }
 );
@@ -2043,7 +2221,7 @@ async function main() {
     
     const transport = new WebRTCServerTransport(webrtcRoom, signalingUrl);
     await server.connect(transport);
-    console.error(`markview-mcp WebRTC server running on ${resolvedDir} — 23 tools, 1 resource, 3 prompts available`);
+    console.error(`markview-mcp WebRTC server running on ${resolvedDir} — 24 tools, 1 resource, 3 prompts available`);
   } else {
     const transport = new StdioServerTransport();
     await server.connect(transport);
