@@ -33,7 +33,7 @@ async function ensureOffscreen() {
 }
 chrome.runtime.onMessage.addListener(
   (msg, _sender, sendResponse) => {
-    if (msg.type === "CONNECTION_STATE" || msg.type === "LOG" || msg.type === "TOOLS_DISCOVERED") {
+    if (msg.type === "CONNECTION_STATE" || msg.type === "LOG" || msg.type === "TOOLS_DISCOVERED" || msg.type === "STREAM_TOKEN" || msg.type === "STREAM_END") {
       if (msg.type === "CONNECTION_STATE") {
         chrome.storage.local.set({ connectionState: msg.state });
       }

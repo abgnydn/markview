@@ -24,6 +24,8 @@ let currentPageContext = '';
 let currentPageUrl = '';
 let lastAnalysisPayload = '';
 let detectedPageType = 'generic';
+let streamingMsgId = '';  // ID of the message div currently being streamed into
+let streamedText = '';    // Accumulated streamed text
 
 
 // ---------------------------------------------------------------------------
@@ -64,6 +66,11 @@ chrome.runtime.onMessage.addListener((msg: ExtensionMessage) => {
     updateButton();
   } else if (msg.type === 'RENDER_AI_UI') {
     renderAIOverlay(msg.payload);
+  } else if (msg.type === 'STREAM_TOKEN') {
+    // Real-time streaming token from LLM
+    handleStreamToken((msg as any).token || '');
+  } else if (msg.type === 'STREAM_END') {
+    handleStreamEnd();
   } else if (msg.type === 'CONTEXT_MENU_ASK') {
     // Right-click → "Ask Brain about this"
     if (!currentPageContext) {
@@ -699,6 +706,7 @@ function injectKeyframes(): void {
 function handleChatMessage(question: string): void {
   console.log('[MV Content] Chat:', question);
   isSending = true;
+  streamedText = '';
 
   const messagesDiv = shadowRoot!.getElementById('mv-chat-messages');
   const sendBtn = shadowRoot!.getElementById('mv-chat-send');
@@ -714,6 +722,9 @@ function handleChatMessage(question: string): void {
     quickActions.style.display = 'none';
   }
 
+  // Create a unique ID for the streaming message
+  streamingMsgId = `mv-stream-${Date.now()}`;
+
   if (messagesDiv) {
     messagesDiv.innerHTML += `
       <div style="margin-top:10px; padding:8px 12px; background:rgba(96,165,250,0.06); border:1px solid rgba(96,165,250,0.12); border-radius:10px; animation: mvFadeIn 0.3s ease;">
@@ -723,11 +734,15 @@ function handleChatMessage(question: string): void {
         </div>
         <div style="font-size:13px; color:#d1d5db; line-height:1.6;">${escapeHtml(question)}</div>
       </div>
-      <div id="mv-thinking" style="margin-top:6px; padding:8px 12px; animation: mvFadeIn 0.3s ease;">
-        <div style="display:flex; align-items:center; gap:6px;">
+      <div style="margin-top:6px; padding:8px 12px; background:rgba(139,92,246,0.05); border:1px solid rgba(139,92,246,0.1); border-radius:10px; animation: mvFadeIn 0.3s ease;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <div style="font-size:10px; color:#a78bfa; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Brain</div>
+            <div style="font-size:9px; color:#374151;">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+          </div>
+        </div>
+        <div id="${streamingMsgId}" style="font-size:13px; color:#d1d5db; line-height:1.6;">
           <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6; animation: mvPulse 1s infinite;"></span>
-          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6; animation: mvPulse 1s infinite 0.2s;"></span>
-          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6; animation: mvPulse 1s infinite 0.4s;"></span>
         </div>
       </div>
     `;
@@ -752,17 +767,28 @@ function handleChatMessage(question: string): void {
     },
     (response) => {
       isSending = false;
-      shadowRoot!.getElementById('mv-thinking')?.remove();
 
       // Re-enable input
       if (sendBtn) { sendBtn.style.opacity = '1'; sendBtn.style.pointerEvents = 'auto'; }
       if (input) { input.disabled = false; input.style.opacity = '1'; input.focus(); }
 
+      // If streaming already populated the message, just finalize
+      if (streamedText.trim()) {
+        chatHistory.push({ role: 'assistant', content: streamedText });
+        streamingMsgId = '';
+        streamedText = '';
+        return;
+      }
+
+      // Fallback: if streaming didn't work, use the full response
       let responseText = '';
 
       if (!response || response.error) {
         responseText = response?.error || 'No response received';
-        appendBrainMessage(`<span style="color:#ef4444;">${escapeHtml(responseText)}</span>`);
+        const el = shadowRoot!.getElementById(streamingMsgId);
+        if (el) el.innerHTML = `<span style="color:#ef4444;">${escapeHtml(responseText)}</span>`;
+        streamingMsgId = '';
+        streamedText = '';
         return;
       }
 
@@ -782,9 +808,37 @@ function handleChatMessage(question: string): void {
       }
 
       chatHistory.push({ role: 'assistant', content: responseText });
-      appendBrainMessage(escapeHtml(responseText));
+      const el = shadowRoot!.getElementById(streamingMsgId);
+      if (el) el.textContent = responseText;
+      streamingMsgId = '';
+      streamedText = '';
     }
   );
+}
+
+// ---------------------------------------------------------------------------
+// Streaming Token Handlers
+// ---------------------------------------------------------------------------
+
+function handleStreamToken(token: string): void {
+  if (!streamingMsgId) return;
+  streamedText += token;
+  const el = shadowRoot?.getElementById(streamingMsgId);
+  if (el) {
+    el.textContent = streamedText;
+    // Auto-scroll
+    const messagesDiv = shadowRoot?.getElementById('mv-chat-messages');
+    if (messagesDiv) messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+}
+
+function handleStreamEnd(): void {
+  // Streaming is done — finalize visual state
+  if (!streamingMsgId) return;
+  const el = shadowRoot?.getElementById(streamingMsgId);
+  if (el && streamedText.trim()) {
+    el.textContent = streamedText;
+  }
 }
 
 function appendBrainMessage(text: string): void {

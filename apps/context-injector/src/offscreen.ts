@@ -211,6 +211,16 @@ function setupDataChannel(channel: RTCDataChannel): void {
         } else {
           resolve(msg.result);
         }
+      } else if (!msg.id && (msg as any).method === 'notifications/message') {
+        // MCP server-initiated logging notification — handle streaming tokens
+        try {
+          const logData = JSON.parse((msg as any).params?.data || '{}');
+          if (logData.type === 'stream_token') {
+            broadcast('STREAM_TOKEN', { token: logData.token });
+          } else if (logData.type === 'stream_end') {
+            broadcast('STREAM_END', {});
+          }
+        } catch { /* ignore parse errors */ }
       }
     } catch (e) {
       log(`DC parse error: ${(e as Error).message}`, 'error');

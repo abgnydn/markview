@@ -56,7 +56,9 @@ chrome.runtime.onMessage.addListener(
     if (
       msg.type === 'CONNECTION_STATE' ||
       msg.type === 'LOG' ||
-      msg.type === 'TOOLS_DISCOVERED'
+      msg.type === 'TOOLS_DISCOVERED' ||
+      msg.type === 'STREAM_TOKEN' ||
+      msg.type === 'STREAM_END'
     ) {
       if (msg.type === 'CONNECTION_STATE') {
         chrome.storage.local.set({ connectionState: msg.state });

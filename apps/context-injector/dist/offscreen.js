@@ -144,6 +144,16 @@ function setupDataChannel(channel) {
         } else {
           resolve(msg.result);
         }
+      } else if (!msg.id && msg.method === "notifications/message") {
+        try {
+          const logData = JSON.parse(msg.params?.data || "{}");
+          if (logData.type === "stream_token") {
+            broadcast("STREAM_TOKEN", { token: logData.token });
+          } else if (logData.type === "stream_end") {
+            broadcast("STREAM_END", {});
+          }
+        } catch {
+        }
       }
     } catch (e) {
       log(`DC parse error: ${e.message}`, "error");

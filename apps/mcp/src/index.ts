@@ -2142,7 +2142,7 @@ server.tool(
         body: JSON.stringify({
           model: 'qwen3:0.6b',
           prompt,
-          stream: false,
+          stream: true,
           options: {
             num_predict: 300,
             temperature: 0.4,
@@ -2154,9 +2154,53 @@ server.tool(
       });
 
       clearTimeout(timeoutId);
-      const data = await response.json() as any;
-      llmResponse = postProcessResponse(data.response || '');
-      inferenceMs = data.eval_duration ? Math.round(data.eval_duration / 1e6) : 0;
+
+      // Stream NDJSON tokens from Ollama
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = '';
+      let buffer = '';
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // keep incomplete line in buffer
+
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const chunk = JSON.parse(line);
+              if (chunk.response) {
+                accumulated += chunk.response;
+                // Send streaming token via MCP logging notification
+                try {
+                  server.sendLoggingMessage({
+                    level: 'info',
+                    data: JSON.stringify({ type: 'stream_token', token: chunk.response }),
+                  });
+                } catch { /* client may not be listening yet */ }
+              }
+              if (chunk.done && chunk.eval_duration) {
+                inferenceMs = Math.round(chunk.eval_duration / 1e6);
+              }
+            } catch { /* skip malformed lines */ }
+          }
+        }
+      }
+
+      llmResponse = postProcessResponse(accumulated);
+      // Signal stream end
+      try {
+        server.sendLoggingMessage({
+          level: 'info',
+          data: JSON.stringify({ type: 'stream_end' }),
+        });
+      } catch { /* ok */ }
+
       const inferenceS = (inferenceMs / 1000).toFixed(1);
       llmStatus = `✅ ${llmResponse.length} chars in ${inferenceS}s`;
       console.log(`[Brain] LLM: ${llmResponse.substring(0, 200)}`);
