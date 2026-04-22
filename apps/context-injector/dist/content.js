@@ -17,12 +17,22 @@ chrome.storage.local.get(["connectionState"], (result) => {
   if (result.connectionState === "connected") {
     isConnected = true;
   } else {
+    chrome.runtime.sendMessage({
+      type: "CONNECT",
+      roomId: "local-vault",
+      signalingUrl: "ws://localhost:4445"
+    });
     chrome.runtime.sendMessage({ type: "GET_STATE" }, (response) => {
       if (response?.state === "connected") isConnected = true;
       updateButton();
     });
   }
   waitForInjectionPoints();
+  setTimeout(() => {
+    if (isConnected && !document.getElementById("mv-ai-overlay")) {
+      autoAnalyze();
+    }
+  }, 3e3);
 });
 document.addEventListener("keydown", (e) => {
   if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "b") {
@@ -445,13 +455,124 @@ function handleChatMessage(question) {
 function appendBrainMessage(text) {
   const messagesDiv = document.getElementById("mv-chat-messages");
   if (!messagesDiv) return;
+  const msgId = `mv-msg-${Date.now()}`;
   messagesDiv.innerHTML += `
     <div style="margin-top:6px; padding:8px 12px; background:rgba(139,92,246,0.05); border:1px solid rgba(139,92,246,0.1); border-radius:10px; animation: mvFadeIn 0.3s ease;">
-      <div style="font-size:10px; color:#a78bfa; margin-bottom:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Brain</div>
-      <div style="font-size:13px; color:#d1d5db; line-height:1.6;">${text}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+        <div style="font-size:10px; color:#a78bfa; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Brain</div>
+        <div style="display:flex; gap:4px;">
+          <button class="mv-copy-btn" data-msg-id="${msgId}" style="background:none; border:none; color:#4b5563; cursor:pointer; font-size:11px; padding:1px 4px; border-radius:3px; transition:color 0.2s;" title="Copy">\u{1F4CB}</button>
+          <button class="mv-save-btn" data-msg-id="${msgId}" style="background:none; border:none; color:#4b5563; cursor:pointer; font-size:11px; padding:1px 4px; border-radius:3px; transition:color 0.2s;" title="Save to Vault">\u{1F4BE}</button>
+        </div>
+      </div>
+      <div id="${msgId}" style="font-size:13px; color:#d1d5db; line-height:1.6;">${text}</div>
     </div>
   `;
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  messagesDiv.querySelector(`.mv-copy-btn[data-msg-id="${msgId}"]`)?.addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const msgEl = document.getElementById(msgId);
+    if (msgEl) {
+      navigator.clipboard.writeText(msgEl.textContent || "");
+      btn.textContent = "\u2705";
+      setTimeout(() => {
+        btn.textContent = "\u{1F4CB}";
+      }, 1500);
+    }
+  });
+  messagesDiv.querySelector(`.mv-save-btn[data-msg-id="${msgId}"]`)?.addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const msgEl = document.getElementById(msgId);
+    if (msgEl) {
+      saveToVault(msgEl.textContent || "");
+      btn.textContent = "\u2705";
+      setTimeout(() => {
+        btn.textContent = "\u{1F4BE}";
+      }, 2e3);
+    }
+  });
+}
+function autoAnalyze() {
+  const context = document.body.innerText.substring(0, 2e3);
+  const url = window.location.href;
+  currentPageContext = context;
+  currentPageUrl = url;
+  chatHistory = [];
+  chrome.runtime.sendMessage(
+    {
+      type: "CALL_TOOL",
+      toolName: "process_browser_context",
+      args: { url, context }
+    },
+    (response) => {
+      if (!response || response.error) return;
+      try {
+        const resultText = response?.content?.[0]?.text;
+        if (resultText) {
+          const data = JSON.parse(resultText);
+          if (data.uiPayload) {
+            showAutoAnalyzePill(data.uiPayload);
+          }
+        }
+      } catch {
+      }
+    }
+  );
+}
+function showAutoAnalyzePill(payload) {
+  if (document.getElementById("mv-auto-pill")) return;
+  const pill = document.createElement("div");
+  pill.id = "mv-auto-pill";
+  pill.style.cssText = `
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 14px !important;
+    background: rgba(10, 10, 20, 0.95) !important;
+    border: 1px solid rgba(139, 92, 246, 0.25) !important;
+    border-radius: 24px !important;
+    color: #c4b5fd !important;
+    font-family: -apple-system, system-ui, sans-serif !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4) !important;
+    backdrop-filter: blur(20px) !important;
+    animation: mvFadeIn 0.4s ease !important;
+    transition: all 0.2s !important;
+  `;
+  pill.innerHTML = `
+    <div style="width:8px; height:8px; border-radius:50%; background:#22c55e; box-shadow:0 0 6px rgba(34,197,94,0.4);"></div>
+    <span>\u{1F9E0} Brain ready \u2014 click to expand</span>
+  `;
+  pill._payload = payload;
+  pill.addEventListener("click", () => {
+    pill.remove();
+    renderAIOverlay(pill._payload);
+  });
+  setTimeout(() => {
+    pill.style.opacity = "0";
+    setTimeout(() => pill.remove(), 300);
+  }, 8e3);
+  injectKeyframes();
+  document.body.appendChild(pill);
+}
+function saveToVault(content) {
+  const url = currentPageUrl || window.location.href;
+  const title = document.title.substring(0, 80) || "Brain Capture";
+  chrome.runtime.sendMessage(
+    {
+      type: "CALL_TOOL",
+      toolName: "save_to_vault",
+      args: { title, content, url, tags: "brain-capture,auto" }
+    },
+    (response) => {
+      console.log("[MV Content] Save to vault:", response);
+    }
+  );
 }
 function escapeHtml(text) {
   const div = document.createElement("div");

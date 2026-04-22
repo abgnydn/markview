@@ -1723,6 +1723,73 @@ Use \`create_document\` to write the generated documentation to an appropriate f
 );
 
 // ---------------------------------------------------------------------------
+// Tool: save_to_vault
+// ---------------------------------------------------------------------------
+server.tool(
+  'save_to_vault',
+  'Save a Brain analysis or note to the Obsidian research vault',
+  {
+    title: z.string().describe('Title for the note'),
+    content: z.string().describe('The analysis content to save'),
+    url: z.string().describe('Source URL'),
+    tags: z.string().optional().describe('Comma-separated tags'),
+  },
+  async ({ title, content, url, tags }) => {
+    const vaultRoot = '/Users/ahmetbarisgunaydin2/Documents/research-vault';
+    const brainDir = path.join(vaultRoot, 'brain-captures');
+
+    // Ensure directory exists
+    if (!fs.existsSync(brainDir)) {
+      fs.mkdirSync(brainDir, { recursive: true });
+    }
+
+    const date = new Date();
+    const dateStr = date.toISOString().split('T')[0];
+    const timeStr = date.toTimeString().split(' ')[0].replace(/:/g, '');
+    const safeTitle = title.replace(/[^a-zA-Z0-9\s-]/g, '').substring(0, 60).trim().replace(/\s+/g, '-');
+    const filename = `${dateStr}-${safeTitle}.md`;
+    const filepath = path.join(brainDir, filename);
+
+    const tagList = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const tagYaml = tagList.length > 0 ? `tags: [${tagList.map(t => `"${t}"`).join(', ')}]` : '';
+
+    const note = `---
+title: "${title}"
+source: "${url}"
+captured: "${date.toISOString()}"
+tool: "markview-brain"
+${tagYaml}
+---
+
+# ${title}
+
+> Captured from [${url}](${url}) on ${dateStr} at ${date.toLocaleTimeString()}
+
+${content}
+
+---
+*Auto-captured by MarkView Brain · qwen3:0.6b · local inference*
+`;
+
+    fs.writeFileSync(filepath, note, 'utf-8');
+    console.log(`[Brain] Saved to vault: ${filepath}`);
+
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            saved: true,
+            path: `brain-captures/${filename}`,
+            message: `Saved to vault: ${filename}`,
+          }),
+        },
+      ],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
 // Tool: process_browser_context
 // ---------------------------------------------------------------------------
 server.tool(
