@@ -13,6 +13,7 @@ import type { ChatMessage, ExtensionMessage } from './types';
 
 let isConnected = false;
 let injectedButton: HTMLElement | null = null;
+let isSending = false;
 
 // Chat state
 let chatHistory: ChatMessage[] = [];
@@ -47,6 +48,23 @@ chrome.storage.local.get(['connectionState'], (result) => {
 });
 
 // ---------------------------------------------------------------------------
+// Keyboard Shortcut — Cmd/Ctrl + Shift + B
+// ---------------------------------------------------------------------------
+
+document.addEventListener('keydown', (e: KeyboardEvent) => {
+  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'b') {
+    e.preventDefault();
+    const overlay = document.getElementById('mv-ai-overlay');
+    if (overlay) {
+      overlay.remove();
+      chatHistory = [];
+    } else {
+      handleBrainClick(e);
+    }
+  }
+});
+
+// ---------------------------------------------------------------------------
 // DOM Injection
 // ---------------------------------------------------------------------------
 
@@ -59,14 +77,11 @@ function waitForInjectionPoints(): void {
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
-
-  // Try immediately
   const container = findInputContainer();
   if (container) injectButton(container);
 }
 
 function findInputContainer(): HTMLElement | null {
-  // GitHub PR pages
   if (window.location.hostname === 'github.com') {
     return (
       document.querySelector('.gh-header-actions') ||
@@ -74,7 +89,6 @@ function findInputContainer(): HTMLElement | null {
       document.querySelector('.gh-header-show .flex-md-row')
     ) as HTMLElement | null;
   }
-  // ChatGPT / Claude
   return (
     document.querySelector('form[class*="stretch"]') ||
     document.querySelector('[class*="composer"]') ||
@@ -102,7 +116,7 @@ function injectButton(container: HTMLElement): void {
         background: #ef4444; display: inline-block;
         transition: background 0.3s ease;
       "></span>
-      <span class="mv-label">⚡ MarkView Brain</span>
+      <span class="mv-label">⚡ Brain</span>
     </button>
   `;
 
@@ -123,18 +137,14 @@ async function handleBrainClick(e: Event): Promise<void> {
   e.preventDefault();
   e.stopPropagation();
 
-  console.log('[MV Content] Button clicked. isConnected:', isConnected);
-
-  // Live state check — chrome.storage can be stale from previous sessions
+  // Live state check
   const liveState = await new Promise<string>((resolve) => {
     chrome.runtime.sendMessage({ type: 'GET_STATE' }, (response) => {
-      console.log('[MV Content] Live state check:', response);
       resolve(response?.state || 'disconnected');
     });
   });
 
   if (liveState !== 'connected') {
-    console.log('[MV Content] DataChannel not open. Auto-reconnecting...');
     isConnected = false;
     updateButton();
 
@@ -145,10 +155,11 @@ async function handleBrainClick(e: Event): Promise<void> {
     });
 
     renderAIOverlay(`
-      <p style="color:#f59e0b; font-size:14px;">
-        ⚠️ DataChannel was stale. Auto-reconnecting...<br>
-        <span style="color:#9ca3af; font-size:12px;">Wait 3 seconds, then click MarkView Brain again.</span>
-      </p>
+      <div style="text-align:center; padding:20px 0;">
+        <div style="font-size:24px; margin-bottom:8px;">🔄</div>
+        <p style="color:#f59e0b; font-size:14px; margin:0 0 4px;">Reconnecting to Brain...</p>
+        <p style="color:#6b7280; font-size:12px; margin:0;">Click again in 3 seconds</p>
+      </div>
     `);
     return;
   }
@@ -161,13 +172,20 @@ async function handleBrainClick(e: Event): Promise<void> {
   currentPageUrl = url;
   chatHistory = [];
 
-  console.log('[MV Content] Sending CALL_TOOL, context length:', context.length);
-
   // Visual feedback
   const dot = document.querySelector('.mv-dot') as HTMLElement | null;
   const label = document.querySelector('.mv-label') as HTMLElement | null;
   if (dot) dot.classList.add('pulsing');
-  if (label) label.textContent = 'Thinking...';
+  if (label) label.textContent = '⚡ Thinking...';
+
+  // Show immediate loading state in overlay
+  renderAIOverlay(`
+    <div style="text-align:center; padding:30px 0;">
+      <div style="font-size:20px; margin-bottom:12px; animation: mvPulse 1.5s infinite;">🧠</div>
+      <p style="color:#a78bfa; font-size:13px; margin:0;">Analyzing page...</p>
+      <p style="color:#4b5563; font-size:11px; margin:4px 0 0;">Scanning vault · Querying LLM</p>
+    </div>
+  `);
 
   chrome.runtime.sendMessage(
     {
@@ -176,25 +194,19 @@ async function handleBrainClick(e: Event): Promise<void> {
       args: { url, context },
     },
     (response) => {
-      console.log(
-        '[MV Content] Response:',
-        JSON.stringify(response).substring(0, 300)
-      );
-
       if (dot) dot.classList.remove('pulsing');
-      if (label) label.textContent = 'Brain · Linked';
+      if (label) label.textContent = '⚡ Brain';
 
       if (!response) {
-        console.error('[MV Content] Response is null');
         renderAIOverlay(
-          '<p style="color:#ef4444;">No response from Brain. Check MCP server.</p>'
+          '<p style="color:#ef4444; text-align:center; padding:16px 0;">No response from Brain. Is the MCP server running?</p>'
         );
         return;
       }
 
       if (response.error) {
         renderAIOverlay(
-          `<p style="color:#ef4444;">Error: ${response.error}</p>`
+          `<p style="color:#ef4444; text-align:center; padding:16px 0;">Error: ${escapeHtml(response.error)}</p>`
         );
         return;
       }
@@ -211,9 +223,7 @@ async function handleBrainClick(e: Event): Promise<void> {
         if (data.uiPayload) {
           renderAIOverlay(data.uiPayload);
         } else {
-          renderAIOverlay(
-            `<p style="color:#e5e7eb;">${resultText}</p>`
-          );
+          renderAIOverlay(`<p style="color:#e5e7eb;">${resultText}</p>`);
         }
       } catch (err) {
         renderAIOverlay(
@@ -234,11 +244,13 @@ function updateButton(): void {
   if (!dot || !label) return;
 
   if (isConnected) {
-    dot.classList.add('connected');
-    label.textContent = 'Brain · Linked';
+    dot.style.background = '#22c55e';
+    dot.style.boxShadow = '0 0 6px rgba(34,197,94,0.5)';
+    label.textContent = '⚡ Brain';
   } else {
-    dot.classList.remove('connected');
-    label.textContent = 'Brain · Offline';
+    dot.style.background = '#ef4444';
+    dot.style.boxShadow = 'none';
+    label.textContent = '⚡ Offline';
   }
 }
 
@@ -247,8 +259,6 @@ function updateButton(): void {
 // ---------------------------------------------------------------------------
 
 function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
-  console.log('[MV Content] renderAIOverlay, isFollowUp:', isFollowUp);
-
   let overlay = document.getElementById('mv-ai-overlay');
 
   if (!overlay) {
@@ -257,41 +267,62 @@ function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
 
     overlay.style.cssText = `
       position: fixed !important;
-      top: 20px !important;
-      right: 20px !important;
+      top: 16px !important;
+      right: 16px !important;
       z-index: 2147483647 !important;
-      width: 420px !important;
-      max-height: 85vh !important;
+      width: 400px !important;
+      max-height: 80vh !important;
       display: flex !important;
       flex-direction: column !important;
-      background: rgba(15, 23, 42, 0.97) !important;
-      border: 1px solid rgba(167, 139, 250, 0.3) !important;
-      border-radius: 12px !important;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6),
-                  0 0 30px rgba(167, 139, 250, 0.1) !important;
+      background: rgba(10, 10, 20, 0.96) !important;
+      border: 1px solid rgba(139, 92, 246, 0.25) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.7),
+                  0 0 40px rgba(139, 92, 246, 0.08) !important;
       color: white !important;
-      font-family: system-ui, -apple-system, sans-serif !important;
-      animation: mvSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
+      animation: mvSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
     `;
 
     injectKeyframes();
 
     overlay.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.3); border-radius:12px 12px 0 0; flex-shrink:0;">
-        <span style="font-size:13px; font-weight:700; color:#a78bfa; letter-spacing:0.5px;">⚡ MarkView Brain</span>
-        <button id="mv-overlay-close-btn" style="background:none; border:none; color:#9ca3af; cursor:pointer; font-size:18px; padding:2px 6px; border-radius:4px;">✕</button>
+      <!-- Header — draggable -->
+      <div id="mv-header" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.03); border-radius:16px 16px 0 0; flex-shrink:0; cursor:grab; user-select:none;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="width:20px; height:20px; background:linear-gradient(135deg, #8b5cf6, #6366f1); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px;">🧠</div>
+          <span style="font-size:12px; font-weight:600; color:#c4b5fd; letter-spacing:0.3px;">MarkView Brain</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <span style="font-size:9px; color:#4b5563; padding:2px 6px; background:rgba(255,255,255,0.04); border-radius:4px;">⌘⇧B</span>
+          <button id="mv-overlay-close-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:16px; padding:2px 4px; border-radius:4px; transition:color 0.2s; line-height:1;">✕</button>
+        </div>
       </div>
-      <div id="mv-chat-messages" style="flex:1; overflow-y:auto; padding:16px; min-height:100px;"></div>
-      <div style="padding:12px 16px; border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0;">
-        <div style="display:flex; gap:8px;">
-          <input id="mv-chat-input" type="text" placeholder="Ask about this page..."
-            style="flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:8px 12px; color:white; font-size:13px; outline:none; font-family:inherit;"
+
+      <!-- Messages -->
+      <div id="mv-chat-messages" style="flex:1; overflow-y:auto; padding:14px; min-height:80px; scroll-behavior:smooth;"></div>
+
+      <!-- Quick actions -->
+      <div id="mv-quick-actions" style="padding:0 14px 8px; flex-shrink:0; display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="mv-chip" data-q="Summarize this page in 3 bullets" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Summarize</button>
+        <button class="mv-chip" data-q="What are the key risks or concerns?" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Key risks</button>
+        <button class="mv-chip" data-q="How does this connect to my vault research?" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Vault links</button>
+        <button class="mv-chip" data-q="What should I do next based on this?" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Next steps</button>
+      </div>
+
+      <!-- Input -->
+      <div style="padding:8px 14px 12px; border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0;">
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input id="mv-chat-input" type="text" placeholder="Ask anything about this page..."
+            style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:9px 12px; color:white; font-size:13px; outline:none; font-family:inherit; transition:border-color 0.2s;"
           />
-          <button id="mv-chat-send" style="background:rgba(167,139,250,0.2); border:1px solid rgba(167,139,250,0.3); border-radius:8px; padding:8px 12px; color:#a78bfa; font-size:13px; cursor:pointer; font-weight:600; white-space:nowrap;">
-            Send
+          <button id="mv-chat-send" style="background:linear-gradient(135deg, rgba(139,92,246,0.3), rgba(99,102,241,0.3)); border:1px solid rgba(139,92,246,0.3); border-radius:10px; padding:9px 14px; color:#c4b5fd; font-size:13px; cursor:pointer; font-weight:600; white-space:nowrap; transition:all 0.2s; font-family:inherit;">
+            ↑
           </button>
         </div>
-        <div style="font-size:10px; color:#4b5563; margin-top:6px; text-align:center;">qwen3:0.6b · local · zero cloud</div>
+        <div style="font-size:9px; color:#3f3f46; margin-top:5px; text-align:center;">qwen3:0.6b · Apple M2 Pro · 100% local</div>
       </div>
     `;
 
@@ -312,29 +343,85 @@ function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
 
   // Auto-focus input
   setTimeout(() => {
-    (document.getElementById('mv-chat-input') as HTMLInputElement)?.focus();
-  }, 100);
+    const input = document.getElementById('mv-chat-input') as HTMLInputElement;
+    if (input && !isSending) input.focus();
+  }, 150);
 }
 
 function wireOverlayEvents(overlay: HTMLElement): void {
+  // Close button
   document.getElementById('mv-overlay-close-btn')!.addEventListener('click', () => {
-    overlay.remove();
-    chatHistory = [];
+    overlay.style.animation = 'mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)';
+    setTimeout(() => { overlay.remove(); chatHistory = []; }, 230);
   });
 
+  // Chat input
   const input = document.getElementById('mv-chat-input') as HTMLInputElement;
   const sendBtn = document.getElementById('mv-chat-send')!;
 
   const sendChat = (): void => {
     const q = input.value.trim();
-    if (!q) return;
+    if (!q || isSending) return;
     input.value = '';
     handleChatMessage(q);
   };
 
   sendBtn.addEventListener('click', sendChat);
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); sendChat(); }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+  });
+
+  // Focus glow
+  input.addEventListener('focus', () => {
+    input.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+    input.style.boxShadow = '0 0 0 2px rgba(139, 92, 246, 0.1)';
+  });
+  input.addEventListener('blur', () => {
+    input.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+    input.style.boxShadow = 'none';
+  });
+
+  // Quick action chips
+  document.querySelectorAll('.mv-chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const q = (chip as HTMLElement).dataset.q;
+      if (q && !isSending) handleChatMessage(q);
+    });
+  });
+
+  // Draggable header
+  const header = document.getElementById('mv-header')!;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let overlayStartX = 0;
+  let overlayStartY = 0;
+
+  header.addEventListener('mousedown', (e: MouseEvent) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    const rect = overlay.getBoundingClientRect();
+    overlayStartX = rect.left;
+    overlayStartY = rect.top;
+    header.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e: MouseEvent) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    overlay.style.left = `${overlayStartX + dx}px`;
+    overlay.style.top = `${overlayStartY + dy}px`;
+    overlay.style.right = 'auto';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      header.style.cursor = 'grab';
+    }
   });
 }
 
@@ -344,17 +431,28 @@ function injectKeyframes(): void {
   style.id = 'mv-keyframes';
   style.textContent = `
     @keyframes mvSlideIn {
-      from { transform: translateX(440px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from { transform: translateX(440px) scale(0.95); opacity: 0; }
+      to { transform: translateX(0) scale(1); opacity: 1; }
+    }
+    @keyframes mvSlideOut {
+      from { transform: translateX(0) scale(1); opacity: 1; }
+      to { transform: translateX(440px) scale(0.95); opacity: 0; }
     }
     @keyframes mvPulse {
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
     }
     @keyframes mvFadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    #mv-ai-overlay *::-webkit-scrollbar { width: 4px; }
+    #mv-ai-overlay *::-webkit-scrollbar-track { background: transparent; }
+    #mv-ai-overlay *::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.2); border-radius: 4px; }
+    #mv-ai-overlay *::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.4); }
+    .mv-chip:hover { background: rgba(139,92,246,0.15) !important; border-color: rgba(139,92,246,0.3) !important; }
+    #mv-chat-send:hover { background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(99,102,241,0.5)) !important; color: white !important; }
+    #mv-overlay-close-btn:hover { color: #ef4444 !important; }
   `;
   document.head.appendChild(style);
 }
@@ -365,16 +463,34 @@ function injectKeyframes(): void {
 
 function handleChatMessage(question: string): void {
   console.log('[MV Content] Chat:', question);
+  isSending = true;
 
   const messagesDiv = document.getElementById('mv-chat-messages');
+  const sendBtn = document.getElementById('mv-chat-send');
+  const input = document.getElementById('mv-chat-input') as HTMLInputElement;
+
+  // Disable input while sending
+  if (sendBtn) { sendBtn.style.opacity = '0.4'; sendBtn.style.pointerEvents = 'none'; }
+  if (input) { input.disabled = true; input.style.opacity = '0.5'; }
+
+  // Hide quick actions after first message
+  const quickActions = document.getElementById('mv-quick-actions');
+  if (quickActions && chatHistory.length > 0) {
+    quickActions.style.display = 'none';
+  }
+
   if (messagesDiv) {
     messagesDiv.innerHTML += `
-      <div style="margin-top:12px; padding:8px 12px; background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.2); border-radius:8px; animation: mvFadeIn 0.3s ease;">
-        <div style="font-size:11px; color:#60a5fa; margin-bottom:4px; font-weight:600;">You</div>
-        <div style="font-size:13px; color:#e5e7eb; line-height:1.5;">${escapeHtml(question)}</div>
+      <div style="margin-top:10px; padding:8px 12px; background:rgba(96,165,250,0.06); border:1px solid rgba(96,165,250,0.12); border-radius:10px; animation: mvFadeIn 0.3s ease;">
+        <div style="font-size:10px; color:#60a5fa; margin-bottom:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">You</div>
+        <div style="font-size:13px; color:#d1d5db; line-height:1.6;">${escapeHtml(question)}</div>
       </div>
-      <div id="mv-thinking" style="margin-top:8px; padding:8px 12px;">
-        <span style="font-size:12px; color:#a78bfa; animation: mvPulse 1.5s infinite;">Thinking...</span>
+      <div id="mv-thinking" style="margin-top:6px; padding:8px 12px; animation: mvFadeIn 0.3s ease;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6; animation: mvPulse 1s infinite;"></span>
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6; animation: mvPulse 1s infinite 0.2s;"></span>
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#8b5cf6; animation: mvPulse 1s infinite 0.4s;"></span>
+        </div>
       </div>
     `;
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -397,14 +513,18 @@ function handleChatMessage(question: string): void {
       },
     },
     (response) => {
-      console.log('[MV Content] Chat response received');
+      isSending = false;
       document.getElementById('mv-thinking')?.remove();
+
+      // Re-enable input
+      if (sendBtn) { sendBtn.style.opacity = '1'; sendBtn.style.pointerEvents = 'auto'; }
+      if (input) { input.disabled = false; input.style.opacity = '1'; input.focus(); }
 
       let responseText = '';
 
       if (!response || response.error) {
         responseText = response?.error || 'No response received';
-        appendBrainMessage(`<span style="color:#ef4444;">${responseText}</span>`);
+        appendBrainMessage(`<span style="color:#ef4444;">${escapeHtml(responseText)}</span>`);
         return;
       }
 
@@ -434,9 +554,9 @@ function appendBrainMessage(text: string): void {
   if (!messagesDiv) return;
 
   messagesDiv.innerHTML += `
-    <div style="margin-top:8px; padding:8px 12px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.15); border-radius:8px; animation: mvFadeIn 0.3s ease;">
-      <div style="font-size:11px; color:#a78bfa; margin-bottom:4px; font-weight:600;">Brain</div>
-      <div style="font-size:13px; color:#e5e7eb; line-height:1.5;">${text}</div>
+    <div style="margin-top:6px; padding:8px 12px; background:rgba(139,92,246,0.05); border:1px solid rgba(139,92,246,0.1); border-radius:10px; animation: mvFadeIn 0.3s ease;">
+      <div style="font-size:10px; color:#a78bfa; margin-bottom:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Brain</div>
+      <div style="font-size:13px; color:#d1d5db; line-height:1.6;">${text}</div>
     </div>
   `;
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
