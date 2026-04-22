@@ -51,10 +51,35 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault();
     const overlay = document.getElementById("mv-ai-overlay");
     if (overlay) {
-      overlay.remove();
-      chatHistory = [];
+      overlay.style.animation = "mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)";
+      setTimeout(() => {
+        overlay.remove();
+        chatHistory = [];
+        isMinimized = false;
+      }, 230);
+      return;
+    }
+    const selected = window.getSelection()?.toString().trim();
+    if (selected && selected.length > 3) {
+      if (!currentPageContext) {
+        currentPageContext = document.body.innerText.substring(0, 2e3);
+        currentPageUrl = window.location.href;
+      }
+      renderAIOverlay(`<div style="text-align:center; padding:12px 0; color:#4b5563; font-size:12px;">Asking Brain about selection...</div>`);
+      setTimeout(() => handleChatMessage(`Explain this: "${selected.substring(0, 500)}"`), 200);
     } else {
       handleBrainClick(e);
+    }
+  }
+  if (e.key === "Escape") {
+    const overlay = document.getElementById("mv-ai-overlay");
+    if (overlay) {
+      overlay.style.animation = "mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)";
+      setTimeout(() => {
+        overlay.remove();
+        chatHistory = [];
+        isMinimized = false;
+      }, 230);
     }
   }
 });
@@ -199,6 +224,34 @@ function updateButton() {
     dot.style.boxShadow = "none";
     label.textContent = "\u26A1 Offline";
   }
+}
+function showButtonBadge() {
+  const btn = document.getElementById("mvContextBtn");
+  if (!btn) return;
+  let badge = btn.querySelector(".mv-badge");
+  if (!badge) {
+    badge = document.createElement("span");
+    badge.className = "mv-badge";
+    badge.style.cssText = `
+      position: absolute; top: -2px; right: -2px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #f59e0b; border: 2px solid rgba(10,10,20,0.9);
+      animation: mvPulse 1.5s infinite;
+    `;
+    btn.style.position = "relative";
+    btn.appendChild(badge);
+  }
+  setTimeout(() => badge?.remove(), 1e4);
+}
+function flashButton() {
+  const btn = document.getElementById("mvContextBtn");
+  if (!btn) return;
+  btn.style.background = "rgba(139, 92, 246, 0.3)";
+  btn.style.borderColor = "rgba(139, 92, 246, 0.6)";
+  setTimeout(() => {
+    btn.style.background = "rgba(139, 92, 246, 0.1)";
+    btn.style.borderColor = "rgba(139, 92, 246, 0.3)";
+  }, 2e3);
 }
 function renderAIOverlay(htmlPayload, isFollowUp = false) {
   let overlay = document.getElementById("mv-ai-overlay");
@@ -649,6 +702,9 @@ function autoAnalyze() {
 }
 function showAutoAnalyzePill(payload) {
   if (document.getElementById("mv-auto-pill")) return;
+  lastAnalysisPayload = payload;
+  showButtonBadge();
+  flashButton();
   const pill = document.createElement("div");
   pill.id = "mv-auto-pill";
   pill.style.cssText = `

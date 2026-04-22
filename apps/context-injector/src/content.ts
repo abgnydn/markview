@@ -78,14 +78,35 @@ chrome.storage.local.get(['connectionState'], (result) => {
 // ---------------------------------------------------------------------------
 
 document.addEventListener('keydown', (e: KeyboardEvent) => {
+  // Cmd/Ctrl + Shift + B — toggle Brain (selection-aware)
   if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'b') {
     e.preventDefault();
     const overlay = document.getElementById('mv-ai-overlay');
     if (overlay) {
-      overlay.remove();
-      chatHistory = [];
+      overlay.style.animation = 'mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)';
+      setTimeout(() => { overlay.remove(); chatHistory = []; isMinimized = false; }, 230);
+      return;
+    }
+    // If text is selected, auto-ask about it
+    const selected = window.getSelection()?.toString().trim();
+    if (selected && selected.length > 3) {
+      if (!currentPageContext) {
+        currentPageContext = document.body.innerText.substring(0, 2000);
+        currentPageUrl = window.location.href;
+      }
+      renderAIOverlay(`<div style="text-align:center; padding:12px 0; color:#4b5563; font-size:12px;">Asking Brain about selection...</div>`);
+      setTimeout(() => handleChatMessage(`Explain this: "${selected.substring(0, 500)}"`), 200);
     } else {
       handleBrainClick(e);
+    }
+  }
+
+  // Escape — close Brain panel
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('mv-ai-overlay');
+    if (overlay) {
+      overlay.style.animation = 'mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)';
+      setTimeout(() => { overlay.remove(); chatHistory = []; isMinimized = false; }, 230);
     }
   }
 });
@@ -278,6 +299,38 @@ function updateButton(): void {
     dot.style.boxShadow = 'none';
     label.textContent = '⚡ Offline';
   }
+}
+
+function showButtonBadge(): void {
+  const btn = document.getElementById('mvContextBtn');
+  if (!btn) return;
+  // Add a small notification dot
+  let badge = btn.querySelector('.mv-badge') as HTMLElement | null;
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.className = 'mv-badge';
+    badge.style.cssText = `
+      position: absolute; top: -2px; right: -2px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #f59e0b; border: 2px solid rgba(10,10,20,0.9);
+      animation: mvPulse 1.5s infinite;
+    `;
+    btn.style.position = 'relative';
+    btn.appendChild(badge);
+  }
+  // Remove badge after 10s
+  setTimeout(() => badge?.remove(), 10000);
+}
+
+function flashButton(): void {
+  const btn = document.getElementById('mvContextBtn');
+  if (!btn) return;
+  btn.style.background = 'rgba(139, 92, 246, 0.3)';
+  btn.style.borderColor = 'rgba(139, 92, 246, 0.6)';
+  setTimeout(() => {
+    btn.style.background = 'rgba(139, 92, 246, 0.1)';
+    btn.style.borderColor = 'rgba(139, 92, 246, 0.3)';
+  }, 2000);
 }
 
 // ---------------------------------------------------------------------------
@@ -785,6 +838,9 @@ function autoAnalyze(): void {
 
 function showAutoAnalyzePill(payload: string): void {
   if (document.getElementById('mv-auto-pill')) return;
+  lastAnalysisPayload = payload;
+  showButtonBadge();
+  flashButton();
 
   const pill = document.createElement('div');
   pill.id = 'mv-auto-pill';
