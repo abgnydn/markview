@@ -25,7 +25,6 @@
         "<all_urls>"
       ],
       "js": ["dist/content.js"],
-      "css": ["content.css"],
       "run_at": "document_idle"
     }
   ],
@@ -37,6 +36,12 @@
   ],
   "host_permissions": [
     "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content.css"],
+      "matches": ["<all_urls>"]
+    }
   ],
   "minimum_chrome_version": "116"
 }

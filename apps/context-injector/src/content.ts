@@ -16,12 +16,42 @@ let injectedButton: HTMLElement | null = null;
 let isSending = false;
 let isMinimized = false;
 
+let shadowRoot: ShadowRoot | null = null;
+
 // Chat state
 let chatHistory: ChatMessage[] = [];
 let currentPageContext = '';
 let currentPageUrl = '';
 let lastAnalysisPayload = '';
 let detectedPageType = 'generic';
+
+
+// ---------------------------------------------------------------------------
+// Shadow DOM Setup
+// ---------------------------------------------------------------------------
+{
+  const existingHost = document.getElementById('mv-brain-host');
+  if (!existingHost) {
+    const host = document.createElement('div');
+    host.id = 'mv-brain-host';
+    host.style.cssText = 'position: fixed; top: 0; left: 0; width: 0; height: 0; z-index: 2147483647 !important; overflow: visible;';
+    document.documentElement.appendChild(host);
+    shadowRoot = host.attachShadow({ mode: 'open' });
+
+    // Inject keyframes style into shadow root
+    const style = document.createElement('style');
+    style.id = 'mv-keyframes';
+    shadowRoot.appendChild(style);
+
+    // Inject stylesheet for content.css into shadow root
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = chrome.runtime.getURL('content.css');
+    shadowRoot.appendChild(link);
+  } else {
+    shadowRoot = existingHost.shadowRoot;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Message listeners
@@ -67,7 +97,7 @@ chrome.storage.local.get(['connectionState'], (result) => {
 
   // Auto-analyze after a short delay (let connection establish)
   setTimeout(() => {
-    if (isConnected && !document.getElementById('mv-ai-overlay')) {
+    if (isConnected && !shadowRoot!.getElementById('mv-ai-overlay')) {
       autoAnalyze();
     }
   }, 3000);
@@ -81,7 +111,7 @@ document.addEventListener('keydown', (e: KeyboardEvent) => {
   // Cmd/Ctrl + Shift + B — toggle Brain (selection-aware)
   if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'b') {
     e.preventDefault();
-    const overlay = document.getElementById('mv-ai-overlay');
+    const overlay = shadowRoot!.getElementById('mv-ai-overlay');
     if (overlay) {
       overlay.style.animation = 'mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)';
       setTimeout(() => { overlay.remove(); chatHistory = []; isMinimized = false; }, 230);
@@ -103,7 +133,7 @@ document.addEventListener('keydown', (e: KeyboardEvent) => {
 
   // Escape — close Brain panel
   if (e.key === 'Escape') {
-    const overlay = document.getElementById('mv-ai-overlay');
+    const overlay = shadowRoot!.getElementById('mv-ai-overlay');
     if (overlay) {
       overlay.style.animation = 'mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)';
       setTimeout(() => { overlay.remove(); chatHistory = []; isMinimized = false; }, 230);
@@ -338,7 +368,7 @@ function flashButton(): void {
 // ---------------------------------------------------------------------------
 
 function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
-  let overlay = document.getElementById('mv-ai-overlay');
+  let overlay = shadowRoot!.getElementById('mv-ai-overlay');
 
   if (!overlay) {
     overlay = document.createElement('div');
@@ -402,12 +432,12 @@ function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
       </div>
     `;
 
-    document.body.appendChild(overlay);
+    shadowRoot!.appendChild(overlay);
     wireOverlayEvents(overlay);
   }
 
   // Update messages area
-  const messagesDiv = document.getElementById('mv-chat-messages');
+  const messagesDiv = shadowRoot!.getElementById('mv-chat-messages');
   if (messagesDiv) {
     if (isFollowUp) {
       messagesDiv.innerHTML += htmlPayload;
@@ -419,23 +449,23 @@ function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
 
   // Auto-focus input
   setTimeout(() => {
-    const input = document.getElementById('mv-chat-input') as HTMLInputElement;
+    const input = shadowRoot!.getElementById('mv-chat-input') as HTMLInputElement;
     if (input && !isSending) input.focus();
   }, 150);
 }
 
 function wireOverlayEvents(overlay: HTMLElement): void {
   // Close button
-  document.getElementById('mv-overlay-close-btn')!.addEventListener('click', () => {
+  shadowRoot!.getElementById('mv-overlay-close-btn')!.addEventListener('click', () => {
     overlay.style.animation = 'mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)';
     setTimeout(() => { overlay.remove(); chatHistory = []; isMinimized = false; }, 230);
   });
 
   // Minimize button
-  document.getElementById('mv-minimize-btn')!.addEventListener('click', () => {
-    const msgs = document.getElementById('mv-chat-messages')!;
-    const quickAct = document.getElementById('mv-quick-actions')!;
-    const inputArea = document.getElementById('mv-input-area')!;
+  shadowRoot!.getElementById('mv-minimize-btn')!.addEventListener('click', () => {
+    const msgs = shadowRoot!.getElementById('mv-chat-messages')!;
+    const quickAct = shadowRoot!.getElementById('mv-quick-actions')!;
+    const inputArea = shadowRoot!.getElementById('mv-input-area')!;
     isMinimized = !isMinimized;
     msgs.style.display = isMinimized ? 'none' : 'block';
     quickAct.style.display = isMinimized ? 'none' : 'flex';
@@ -444,7 +474,7 @@ function wireOverlayEvents(overlay: HTMLElement): void {
   });
 
   // Export chat as markdown
-  document.getElementById('mv-export-btn')!.addEventListener('click', () => {
+  shadowRoot!.getElementById('mv-export-btn')!.addEventListener('click', () => {
     if (chatHistory.length === 0) return;
     const url = currentPageUrl || window.location.href;
     const lines = [
@@ -464,21 +494,21 @@ function wireOverlayEvents(overlay: HTMLElement): void {
     a.click();
     URL.revokeObjectURL(a.href);
     // Flash feedback
-    const btn = document.getElementById('mv-export-btn')!;
+    const btn = shadowRoot!.getElementById('mv-export-btn')!;
     btn.textContent = '✅'; setTimeout(() => { btn.textContent = '📤'; }, 1500);
   });
 
   // Clear chat
-  document.getElementById('mv-clear-btn')!.addEventListener('click', () => {
+  shadowRoot!.getElementById('mv-clear-btn')!.addEventListener('click', () => {
     chatHistory = [];
-    const msgs = document.getElementById('mv-chat-messages');
+    const msgs = shadowRoot!.getElementById('mv-chat-messages');
     if (msgs) msgs.innerHTML = '<div style="text-align:center; padding:20px 0; color:#4b5563; font-size:12px;">Chat cleared. Ask something new!</div>';
     populateSmartChips();
   });
 
   // Chat input
-  const input = document.getElementById('mv-chat-input') as HTMLInputElement;
-  const sendBtn = document.getElementById('mv-chat-send')!;
+  const input = shadowRoot!.getElementById('mv-chat-input') as HTMLInputElement;
+  const sendBtn = shadowRoot!.getElementById('mv-chat-send')!;
 
   const sendChat = (): void => {
     const q = input.value.trim();
@@ -506,7 +536,7 @@ function wireOverlayEvents(overlay: HTMLElement): void {
   populateSmartChips();
 
   // Draggable header
-  const header = document.getElementById('mv-header')!;
+  const header = shadowRoot!.getElementById('mv-header')!;
   let isDragging = false;
   let dragStartX = 0;
   let dragStartY = 0;
@@ -609,7 +639,7 @@ function getChipsForPageType(type: string): ChipDef[] {
 }
 
 function populateSmartChips(): void {
-  const container = document.getElementById('mv-quick-actions');
+  const container = shadowRoot!.getElementById('mv-quick-actions');
   if (!container) return;
 
   detectedPageType = detectPageType();
@@ -629,9 +659,9 @@ function populateSmartChips(): void {
 }
 
 function injectKeyframes(): void {
-  if (document.getElementById('mv-keyframes')) return;
-  const style = document.createElement('style');
-  style.id = 'mv-keyframes';
+  const style = shadowRoot!.getElementById('mv-keyframes') as HTMLStyleElement;
+  if (style.innerHTML) return;
+  
   style.textContent = `
     @keyframes mvSlideIn {
       from { transform: translateX(440px) scale(0.95); opacity: 0; }
@@ -659,7 +689,7 @@ function injectKeyframes(): void {
     #mv-minimize-btn:hover, #mv-export-btn:hover, #mv-clear-btn:hover { color: #a78bfa !important; }
     .mv-copy-btn:hover, .mv-save-btn:hover { color: #a78bfa !important; }
   `;
-  document.head.appendChild(style);
+  
 }
 
 // ---------------------------------------------------------------------------
@@ -670,16 +700,16 @@ function handleChatMessage(question: string): void {
   console.log('[MV Content] Chat:', question);
   isSending = true;
 
-  const messagesDiv = document.getElementById('mv-chat-messages');
-  const sendBtn = document.getElementById('mv-chat-send');
-  const input = document.getElementById('mv-chat-input') as HTMLInputElement;
+  const messagesDiv = shadowRoot!.getElementById('mv-chat-messages');
+  const sendBtn = shadowRoot!.getElementById('mv-chat-send');
+  const input = shadowRoot!.getElementById('mv-chat-input') as HTMLInputElement;
 
   // Disable input while sending
   if (sendBtn) { sendBtn.style.opacity = '0.4'; sendBtn.style.pointerEvents = 'none'; }
   if (input) { input.disabled = true; input.style.opacity = '0.5'; }
 
   // Hide quick actions after first message
-  const quickActions = document.getElementById('mv-quick-actions');
+  const quickActions = shadowRoot!.getElementById('mv-quick-actions');
   if (quickActions && chatHistory.length > 0) {
     quickActions.style.display = 'none';
   }
@@ -722,7 +752,7 @@ function handleChatMessage(question: string): void {
     },
     (response) => {
       isSending = false;
-      document.getElementById('mv-thinking')?.remove();
+      shadowRoot!.getElementById('mv-thinking')?.remove();
 
       // Re-enable input
       if (sendBtn) { sendBtn.style.opacity = '1'; sendBtn.style.pointerEvents = 'auto'; }
@@ -758,7 +788,7 @@ function handleChatMessage(question: string): void {
 }
 
 function appendBrainMessage(text: string): void {
-  const messagesDiv = document.getElementById('mv-chat-messages');
+  const messagesDiv = shadowRoot!.getElementById('mv-chat-messages');
   if (!messagesDiv) return;
 
   const msgId = `mv-msg-${Date.now()}`;
@@ -783,7 +813,7 @@ function appendBrainMessage(text: string): void {
   // Wire copy button
   messagesDiv.querySelector(`.mv-copy-btn[data-msg-id="${msgId}"]`)?.addEventListener('click', (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
-    const msgEl = document.getElementById(msgId);
+    const msgEl = shadowRoot!.getElementById(msgId);
     if (msgEl) {
       navigator.clipboard.writeText(msgEl.textContent || '');
       btn.textContent = '✅';
@@ -794,7 +824,7 @@ function appendBrainMessage(text: string): void {
   // Wire save button
   messagesDiv.querySelector(`.mv-save-btn[data-msg-id="${msgId}"]`)?.addEventListener('click', (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
-    const msgEl = document.getElementById(msgId);
+    const msgEl = shadowRoot!.getElementById(msgId);
     if (msgEl) {
       saveToVault(msgEl.textContent || '');
       btn.textContent = '✅';
@@ -837,7 +867,7 @@ function autoAnalyze(): void {
 }
 
 function showAutoAnalyzePill(payload: string): void {
-  if (document.getElementById('mv-auto-pill')) return;
+  if (shadowRoot!.getElementById('mv-auto-pill')) return;
   lastAnalysisPayload = payload;
   showButtonBadge();
   flashButton();
@@ -882,7 +912,7 @@ function showAutoAnalyzePill(payload: string): void {
   setTimeout(() => { pill.style.opacity = '0'; setTimeout(() => pill.remove(), 300); }, 8000);
 
   injectKeyframes();
-  document.body.appendChild(pill);
+  shadowRoot!.appendChild(pill);
 }
 
 // ---------------------------------------------------------------------------

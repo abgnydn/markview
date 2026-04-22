@@ -2,11 +2,31 @@ let isConnected = false;
 let injectedButton = null;
 let isSending = false;
 let isMinimized = false;
+let shadowRoot = null;
 let chatHistory = [];
 let currentPageContext = "";
 let currentPageUrl = "";
 let lastAnalysisPayload = "";
 let detectedPageType = "generic";
+{
+  const existingHost = document.getElementById("mv-brain-host");
+  if (!existingHost) {
+    const host = document.createElement("div");
+    host.id = "mv-brain-host";
+    host.style.cssText = "position: fixed; top: 0; left: 0; width: 0; height: 0; z-index: 2147483647 !important; overflow: visible;";
+    document.documentElement.appendChild(host);
+    shadowRoot = host.attachShadow({ mode: "open" });
+    const style = document.createElement("style");
+    style.id = "mv-keyframes";
+    shadowRoot.appendChild(style);
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = chrome.runtime.getURL("content.css");
+    shadowRoot.appendChild(link);
+  } else {
+    shadowRoot = existingHost.shadowRoot;
+  }
+}
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "CONNECTION_STATE") {
     isConnected = msg.state === "connected";
@@ -41,7 +61,7 @@ chrome.storage.local.get(["connectionState"], (result) => {
   }
   waitForInjectionPoints();
   setTimeout(() => {
-    if (isConnected && !document.getElementById("mv-ai-overlay")) {
+    if (isConnected && !shadowRoot.getElementById("mv-ai-overlay")) {
       autoAnalyze();
     }
   }, 3e3);
@@ -49,7 +69,7 @@ chrome.storage.local.get(["connectionState"], (result) => {
 document.addEventListener("keydown", (e) => {
   if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "b") {
     e.preventDefault();
-    const overlay = document.getElementById("mv-ai-overlay");
+    const overlay = shadowRoot.getElementById("mv-ai-overlay");
     if (overlay) {
       overlay.style.animation = "mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)";
       setTimeout(() => {
@@ -72,7 +92,7 @@ document.addEventListener("keydown", (e) => {
     }
   }
   if (e.key === "Escape") {
-    const overlay = document.getElementById("mv-ai-overlay");
+    const overlay = shadowRoot.getElementById("mv-ai-overlay");
     if (overlay) {
       overlay.style.animation = "mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)";
       setTimeout(() => {
@@ -254,7 +274,7 @@ function flashButton() {
   }, 2e3);
 }
 function renderAIOverlay(htmlPayload, isFollowUp = false) {
-  let overlay = document.getElementById("mv-ai-overlay");
+  let overlay = shadowRoot.getElementById("mv-ai-overlay");
   if (!overlay) {
     overlay = document.createElement("div");
     overlay.id = "mv-ai-overlay";
@@ -313,10 +333,10 @@ function renderAIOverlay(htmlPayload, isFollowUp = false) {
         <div style="font-size:9px; color:#3f3f46; margin-top:5px; text-align:center;">qwen3:0.6b \xB7 Apple M2 Pro \xB7 100% local</div>
       </div>
     `;
-    document.body.appendChild(overlay);
+    shadowRoot.appendChild(overlay);
     wireOverlayEvents(overlay);
   }
-  const messagesDiv = document.getElementById("mv-chat-messages");
+  const messagesDiv = shadowRoot.getElementById("mv-chat-messages");
   if (messagesDiv) {
     if (isFollowUp) {
       messagesDiv.innerHTML += htmlPayload;
@@ -326,12 +346,12 @@ function renderAIOverlay(htmlPayload, isFollowUp = false) {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
   setTimeout(() => {
-    const input = document.getElementById("mv-chat-input");
+    const input = shadowRoot.getElementById("mv-chat-input");
     if (input && !isSending) input.focus();
   }, 150);
 }
 function wireOverlayEvents(overlay) {
-  document.getElementById("mv-overlay-close-btn").addEventListener("click", () => {
+  shadowRoot.getElementById("mv-overlay-close-btn").addEventListener("click", () => {
     overlay.style.animation = "mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)";
     setTimeout(() => {
       overlay.remove();
@@ -339,17 +359,17 @@ function wireOverlayEvents(overlay) {
       isMinimized = false;
     }, 230);
   });
-  document.getElementById("mv-minimize-btn").addEventListener("click", () => {
-    const msgs = document.getElementById("mv-chat-messages");
-    const quickAct = document.getElementById("mv-quick-actions");
-    const inputArea = document.getElementById("mv-input-area");
+  shadowRoot.getElementById("mv-minimize-btn").addEventListener("click", () => {
+    const msgs = shadowRoot.getElementById("mv-chat-messages");
+    const quickAct = shadowRoot.getElementById("mv-quick-actions");
+    const inputArea = shadowRoot.getElementById("mv-input-area");
     isMinimized = !isMinimized;
     msgs.style.display = isMinimized ? "none" : "block";
     quickAct.style.display = isMinimized ? "none" : "flex";
     inputArea.style.display = isMinimized ? "none" : "block";
     overlay.style.maxHeight = isMinimized ? "auto" : "80vh";
   });
-  document.getElementById("mv-export-btn").addEventListener("click", () => {
+  shadowRoot.getElementById("mv-export-btn").addEventListener("click", () => {
     if (chatHistory.length === 0) return;
     const url = currentPageUrl || window.location.href;
     const lines = [
@@ -368,20 +388,20 @@ function wireOverlayEvents(overlay) {
     a.download = `brain-chat-${Date.now()}.md`;
     a.click();
     URL.revokeObjectURL(a.href);
-    const btn = document.getElementById("mv-export-btn");
+    const btn = shadowRoot.getElementById("mv-export-btn");
     btn.textContent = "\u2705";
     setTimeout(() => {
       btn.textContent = "\u{1F4E4}";
     }, 1500);
   });
-  document.getElementById("mv-clear-btn").addEventListener("click", () => {
+  shadowRoot.getElementById("mv-clear-btn").addEventListener("click", () => {
     chatHistory = [];
-    const msgs = document.getElementById("mv-chat-messages");
+    const msgs = shadowRoot.getElementById("mv-chat-messages");
     if (msgs) msgs.innerHTML = '<div style="text-align:center; padding:20px 0; color:#4b5563; font-size:12px;">Chat cleared. Ask something new!</div>';
     populateSmartChips();
   });
-  const input = document.getElementById("mv-chat-input");
-  const sendBtn = document.getElementById("mv-chat-send");
+  const input = shadowRoot.getElementById("mv-chat-input");
+  const sendBtn = shadowRoot.getElementById("mv-chat-send");
   const sendChat = () => {
     const q = input.value.trim();
     if (!q || isSending) return;
@@ -404,7 +424,7 @@ function wireOverlayEvents(overlay) {
     input.style.boxShadow = "none";
   });
   populateSmartChips();
-  const header = document.getElementById("mv-header");
+  const header = shadowRoot.getElementById("mv-header");
   let isDragging = false;
   let dragStartX = 0;
   let dragStartY = 0;
@@ -494,7 +514,7 @@ function getChipsForPageType(type) {
   }
 }
 function populateSmartChips() {
-  const container = document.getElementById("mv-quick-actions");
+  const container = shadowRoot.getElementById("mv-quick-actions");
   if (!container) return;
   detectedPageType = detectPageType();
   const chips = getChipsForPageType(detectedPageType);
@@ -510,9 +530,8 @@ function populateSmartChips() {
   });
 }
 function injectKeyframes() {
-  if (document.getElementById("mv-keyframes")) return;
-  const style = document.createElement("style");
-  style.id = "mv-keyframes";
+  const style = shadowRoot.getElementById("mv-keyframes");
+  if (style.innerHTML) return;
   style.textContent = `
     @keyframes mvSlideIn {
       from { transform: translateX(440px) scale(0.95); opacity: 0; }
@@ -540,14 +559,13 @@ function injectKeyframes() {
     #mv-minimize-btn:hover, #mv-export-btn:hover, #mv-clear-btn:hover { color: #a78bfa !important; }
     .mv-copy-btn:hover, .mv-save-btn:hover { color: #a78bfa !important; }
   `;
-  document.head.appendChild(style);
 }
 function handleChatMessage(question) {
   console.log("[MV Content] Chat:", question);
   isSending = true;
-  const messagesDiv = document.getElementById("mv-chat-messages");
-  const sendBtn = document.getElementById("mv-chat-send");
-  const input = document.getElementById("mv-chat-input");
+  const messagesDiv = shadowRoot.getElementById("mv-chat-messages");
+  const sendBtn = shadowRoot.getElementById("mv-chat-send");
+  const input = shadowRoot.getElementById("mv-chat-input");
   if (sendBtn) {
     sendBtn.style.opacity = "0.4";
     sendBtn.style.pointerEvents = "none";
@@ -556,7 +574,7 @@ function handleChatMessage(question) {
     input.disabled = true;
     input.style.opacity = "0.5";
   }
-  const quickActions = document.getElementById("mv-quick-actions");
+  const quickActions = shadowRoot.getElementById("mv-quick-actions");
   if (quickActions && chatHistory.length > 0) {
     quickActions.style.display = "none";
   }
@@ -595,7 +613,7 @@ function handleChatMessage(question) {
     },
     (response) => {
       isSending = false;
-      document.getElementById("mv-thinking")?.remove();
+      shadowRoot.getElementById("mv-thinking")?.remove();
       if (sendBtn) {
         sendBtn.style.opacity = "1";
         sendBtn.style.pointerEvents = "auto";
@@ -631,7 +649,7 @@ function handleChatMessage(question) {
   );
 }
 function appendBrainMessage(text) {
-  const messagesDiv = document.getElementById("mv-chat-messages");
+  const messagesDiv = shadowRoot.getElementById("mv-chat-messages");
   if (!messagesDiv) return;
   const msgId = `mv-msg-${Date.now()}`;
   messagesDiv.innerHTML += `
@@ -652,7 +670,7 @@ function appendBrainMessage(text) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
   messagesDiv.querySelector(`.mv-copy-btn[data-msg-id="${msgId}"]`)?.addEventListener("click", (e) => {
     const btn = e.currentTarget;
-    const msgEl = document.getElementById(msgId);
+    const msgEl = shadowRoot.getElementById(msgId);
     if (msgEl) {
       navigator.clipboard.writeText(msgEl.textContent || "");
       btn.textContent = "\u2705";
@@ -663,7 +681,7 @@ function appendBrainMessage(text) {
   });
   messagesDiv.querySelector(`.mv-save-btn[data-msg-id="${msgId}"]`)?.addEventListener("click", (e) => {
     const btn = e.currentTarget;
-    const msgEl = document.getElementById(msgId);
+    const msgEl = shadowRoot.getElementById(msgId);
     if (msgEl) {
       saveToVault(msgEl.textContent || "");
       btn.textContent = "\u2705";
@@ -701,7 +719,7 @@ function autoAnalyze() {
   );
 }
 function showAutoAnalyzePill(payload) {
-  if (document.getElementById("mv-auto-pill")) return;
+  if (shadowRoot.getElementById("mv-auto-pill")) return;
   lastAnalysisPayload = payload;
   showButtonBadge();
   flashButton();
@@ -742,7 +760,7 @@ function showAutoAnalyzePill(payload) {
     setTimeout(() => pill.remove(), 300);
   }, 8e3);
   injectKeyframes();
-  document.body.appendChild(pill);
+  shadowRoot.appendChild(pill);
 }
 function saveToVault(content) {
   const url = currentPageUrl || window.location.href;
