@@ -14,11 +14,14 @@ import type { ChatMessage, ExtensionMessage } from './types';
 let isConnected = false;
 let injectedButton: HTMLElement | null = null;
 let isSending = false;
+let isMinimized = false;
 
 // Chat state
 let chatHistory: ChatMessage[] = [];
 let currentPageContext = '';
 let currentPageUrl = '';
+let lastAnalysisPayload = '';
+let detectedPageType = 'generic';
 
 // ---------------------------------------------------------------------------
 // Message listeners
@@ -308,8 +311,10 @@ function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
           <div style="width:20px; height:20px; background:linear-gradient(135deg, #8b5cf6, #6366f1); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px;">🧠</div>
           <span style="font-size:12px; font-weight:600; color:#c4b5fd; letter-spacing:0.3px;">MarkView Brain</span>
         </div>
-        <div style="display:flex; align-items:center; gap:4px;">
-          <span style="font-size:9px; color:#4b5563; padding:2px 6px; background:rgba(255,255,255,0.04); border-radius:4px;">⌘⇧B</span>
+        <div style="display:flex; align-items:center; gap:2px;">
+          <button id="mv-minimize-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:13px; padding:2px 4px; border-radius:4px; transition:color 0.2s;" title="Minimize">▬</button>
+          <button id="mv-export-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:13px; padding:2px 4px; border-radius:4px; transition:color 0.2s;" title="Export chat">📤</button>
+          <button id="mv-clear-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:13px; padding:2px 4px; border-radius:4px; transition:color 0.2s;" title="Clear chat">🗑</button>
           <button id="mv-overlay-close-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:16px; padding:2px 4px; border-radius:4px; transition:color 0.2s; line-height:1;">✕</button>
         </div>
       </div>
@@ -317,16 +322,11 @@ function renderAIOverlay(htmlPayload: string, isFollowUp = false): void {
       <!-- Messages -->
       <div id="mv-chat-messages" style="flex:1; overflow-y:auto; padding:14px; min-height:80px; scroll-behavior:smooth;"></div>
 
-      <!-- Quick actions -->
-      <div id="mv-quick-actions" style="padding:0 14px 8px; flex-shrink:0; display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="mv-chip" data-q="Summarize this page in 3 bullets" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Summarize</button>
-        <button class="mv-chip" data-q="What are the key risks or concerns?" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Key risks</button>
-        <button class="mv-chip" data-q="How does this connect to my vault research?" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Vault links</button>
-        <button class="mv-chip" data-q="What should I do next based on this?" style="font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;">Next steps</button>
-      </div>
+      <!-- Quick actions (dynamic per page type) -->
+      <div id="mv-quick-actions" style="padding:0 14px 8px; flex-shrink:0; display:flex; gap:6px; flex-wrap:wrap;"></div>
 
       <!-- Input -->
-      <div style="padding:8px 14px 12px; border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0;">
+      <div id="mv-input-area" style="padding:8px 14px 12px; border-top:1px solid rgba(255,255,255,0.06); flex-shrink:0;">
         <div style="display:flex; gap:6px; align-items:center;">
           <input id="mv-chat-input" type="text" placeholder="Ask anything about this page..."
             style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:9px 12px; color:white; font-size:13px; outline:none; font-family:inherit; transition:border-color 0.2s;"
@@ -365,7 +365,52 @@ function wireOverlayEvents(overlay: HTMLElement): void {
   // Close button
   document.getElementById('mv-overlay-close-btn')!.addEventListener('click', () => {
     overlay.style.animation = 'mvSlideOut 0.25s cubic-bezier(0.55, 0, 1, 0.45)';
-    setTimeout(() => { overlay.remove(); chatHistory = []; }, 230);
+    setTimeout(() => { overlay.remove(); chatHistory = []; isMinimized = false; }, 230);
+  });
+
+  // Minimize button
+  document.getElementById('mv-minimize-btn')!.addEventListener('click', () => {
+    const msgs = document.getElementById('mv-chat-messages')!;
+    const quickAct = document.getElementById('mv-quick-actions')!;
+    const inputArea = document.getElementById('mv-input-area')!;
+    isMinimized = !isMinimized;
+    msgs.style.display = isMinimized ? 'none' : 'block';
+    quickAct.style.display = isMinimized ? 'none' : 'flex';
+    inputArea.style.display = isMinimized ? 'none' : 'block';
+    overlay.style.maxHeight = isMinimized ? 'auto' : '80vh';
+  });
+
+  // Export chat as markdown
+  document.getElementById('mv-export-btn')!.addEventListener('click', () => {
+    if (chatHistory.length === 0) return;
+    const url = currentPageUrl || window.location.href;
+    const lines = [
+      `# Brain Chat — ${document.title}`,
+      `> ${url}`,
+      `> ${new Date().toLocaleString()}`,
+      '',
+    ];
+    chatHistory.forEach((m) => {
+      lines.push(`**${m.role === 'user' ? 'You' : 'Brain'}:** ${m.content}`);
+      lines.push('');
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `brain-chat-${Date.now()}.md`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    // Flash feedback
+    const btn = document.getElementById('mv-export-btn')!;
+    btn.textContent = '✅'; setTimeout(() => { btn.textContent = '📤'; }, 1500);
+  });
+
+  // Clear chat
+  document.getElementById('mv-clear-btn')!.addEventListener('click', () => {
+    chatHistory = [];
+    const msgs = document.getElementById('mv-chat-messages');
+    if (msgs) msgs.innerHTML = '<div style="text-align:center; padding:20px 0; color:#4b5563; font-size:12px;">Chat cleared. Ask something new!</div>';
+    populateSmartChips();
   });
 
   // Chat input
@@ -394,13 +439,8 @@ function wireOverlayEvents(overlay: HTMLElement): void {
     input.style.boxShadow = 'none';
   });
 
-  // Quick action chips
-  document.querySelectorAll('.mv-chip').forEach((chip) => {
-    chip.addEventListener('click', () => {
-      const q = (chip as HTMLElement).dataset.q;
-      if (q && !isSending) handleChatMessage(q);
-    });
-  });
+  // Populate smart chips
+  populateSmartChips();
 
   // Draggable header
   const header = document.getElementById('mv-header')!;
@@ -438,6 +478,93 @@ function wireOverlayEvents(overlay: HTMLElement): void {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Smart Chips (page-type-aware)
+// ---------------------------------------------------------------------------
+
+function detectPageType(): string {
+  const url = window.location.href;
+  if (url.includes('github.com') && url.includes('/pull/')) return 'github-pr';
+  if (url.includes('github.com') && url.includes('/issues/')) return 'github-issue';
+  if (url.includes('github.com')) return 'github-repo';
+  if (url.includes('claude.ai') || url.includes('chatgpt.com')) return 'ai-chat';
+  if (url.includes('arxiv.org')) return 'paper';
+  if (url.includes('stackoverflow.com')) return 'stackoverflow';
+  return 'generic';
+}
+
+interface ChipDef { label: string; q: string }
+
+function getChipsForPageType(type: string): ChipDef[] {
+  const base: ChipDef[] = [
+    { label: '📝 Summarize', q: 'Summarize this page in 3 concise bullets' },
+    { label: '🔗 Vault links', q: 'How does this connect to my vault research?' },
+  ];
+
+  switch (type) {
+    case 'github-pr':
+      return [
+        { label: '📝 PR Summary', q: 'Summarize this PR: what it changes, why, and impact' },
+        { label: '⚠️ Risks', q: 'What are the risks or potential issues with this PR?' },
+        { label: '📂 Files', q: 'What files does this PR change and why?' },
+        { label: '✅ Review', q: 'Give me a code review checklist for this PR' },
+        { label: '🔗 Vault', q: 'How does this PR relate to my vault research?' },
+      ];
+    case 'github-issue':
+      return [
+        { label: '📝 Summary', q: 'Summarize this issue and its current status' },
+        { label: '🛠 Solution', q: 'Suggest a solution approach for this issue' },
+        ...base,
+      ];
+    case 'github-repo':
+      return [
+        { label: '📝 Overview', q: 'What is this project about and what problem does it solve?' },
+        { label: '🏗 Architecture', q: 'Describe the tech stack and architecture' },
+        { label: '⭐ Value', q: 'Why would this be useful for my work?' },
+        { label: '🔗 Vault', q: 'How does this relate to my vault research?' },
+      ];
+    case 'ai-chat':
+      return [
+        { label: '📝 Summary', q: 'Summarize the key points from this conversation' },
+        { label: '💡 Extract', q: 'Extract actionable items and decisions from this chat' },
+        ...base,
+      ];
+    case 'paper':
+      return [
+        { label: '📝 Abstract', q: 'Summarize this paper\'s key contribution' },
+        { label: '🧪 Methods', q: 'What methodology does this paper use?' },
+        { label: '💡 Impact', q: 'How is this relevant to my research?' },
+        { label: '🔗 Vault', q: 'Connect this to my vault notes' },
+      ];
+    default:
+      return [
+        ...base,
+        { label: '⚠️ Key risks', q: 'What are the key risks or concerns here?' },
+        { label: '➡️ Next steps', q: 'What should I do next based on this?' },
+      ];
+  }
+}
+
+function populateSmartChips(): void {
+  const container = document.getElementById('mv-quick-actions');
+  if (!container) return;
+
+  detectedPageType = detectPageType();
+  const chips = getChipsForPageType(detectedPageType);
+  const chipStyle = 'font-size:11px; padding:4px 10px; background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); border-radius:20px; color:#a78bfa; cursor:pointer; font-family:inherit; transition:all 0.2s;';
+
+  container.innerHTML = chips.map(c =>
+    `<button class="mv-chip" data-q="${escapeHtml(c.q)}" style="${chipStyle}">${c.label}</button>`
+  ).join('');
+
+  container.querySelectorAll('.mv-chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const q = (chip as HTMLElement).dataset.q;
+      if (q && !isSending) handleChatMessage(q);
+    });
+  });
+}
+
 function injectKeyframes(): void {
   if (document.getElementById('mv-keyframes')) return;
   const style = document.createElement('style');
@@ -466,6 +593,8 @@ function injectKeyframes(): void {
     .mv-chip:hover { background: rgba(139,92,246,0.15) !important; border-color: rgba(139,92,246,0.3) !important; }
     #mv-chat-send:hover { background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(99,102,241,0.5)) !important; color: white !important; }
     #mv-overlay-close-btn:hover { color: #ef4444 !important; }
+    #mv-minimize-btn:hover, #mv-export-btn:hover, #mv-clear-btn:hover { color: #a78bfa !important; }
+    .mv-copy-btn:hover, .mv-save-btn:hover { color: #a78bfa !important; }
   `;
   document.head.appendChild(style);
 }
@@ -495,7 +624,10 @@ function handleChatMessage(question: string): void {
   if (messagesDiv) {
     messagesDiv.innerHTML += `
       <div style="margin-top:10px; padding:8px 12px; background:rgba(96,165,250,0.06); border:1px solid rgba(96,165,250,0.12); border-radius:10px; animation: mvFadeIn 0.3s ease;">
-        <div style="font-size:10px; color:#60a5fa; margin-bottom:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">You</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+          <div style="font-size:10px; color:#60a5fa; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">You</div>
+          <div style="font-size:9px; color:#374151;">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+        </div>
         <div style="font-size:13px; color:#d1d5db; line-height:1.6;">${escapeHtml(question)}</div>
       </div>
       <div id="mv-thinking" style="margin-top:6px; padding:8px 12px; animation: mvFadeIn 0.3s ease;">
@@ -571,7 +703,10 @@ function appendBrainMessage(text: string): void {
   messagesDiv.innerHTML += `
     <div style="margin-top:6px; padding:8px 12px; background:rgba(139,92,246,0.05); border:1px solid rgba(139,92,246,0.1); border-radius:10px; animation: mvFadeIn 0.3s ease;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-        <div style="font-size:10px; color:#a78bfa; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Brain</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <div style="font-size:10px; color:#a78bfa; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Brain</div>
+          <div style="font-size:9px; color:#374151;">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+        </div>
         <div style="display:flex; gap:4px;">
           <button class="mv-copy-btn" data-msg-id="${msgId}" style="background:none; border:none; color:#4b5563; cursor:pointer; font-size:11px; padding:1px 4px; border-radius:3px; transition:color 0.2s;" title="Copy">📋</button>
           <button class="mv-save-btn" data-msg-id="${msgId}" style="background:none; border:none; color:#4b5563; cursor:pointer; font-size:11px; padding:1px 4px; border-radius:3px; transition:color 0.2s;" title="Save to Vault">💾</button>
