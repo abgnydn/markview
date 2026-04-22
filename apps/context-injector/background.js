@@ -8,6 +8,11 @@
 
 let offscreenCreated = false;
 
+// Clear stale connection state on service worker startup.
+// Without this, content scripts read 'connected' from storage
+// even though the offscreen DataChannel is dead.
+chrome.storage.local.set({ connectionState: 'disconnected', tools: [] });
+
 async function ensureOffscreen() {
   if (offscreenCreated) return;
   

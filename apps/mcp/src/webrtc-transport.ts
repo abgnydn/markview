@@ -46,6 +46,10 @@ class SignalingClient {
         // Ignore parsing errors
       }
     });
+
+    this.ws.on('error', (err) => {
+      console.error(`[Signaling] WebSocket error:`, err.message);
+    });
   }
 
   send(msg: any) {
@@ -64,6 +68,10 @@ class SignalingClient {
 /**
  * Server transport for WebRTC.
  * Acts as the offerer. Listens for connections and sets up the data channel.
+ * 
+ * IMPORTANT: This transport supports client reconnects. When a peer_joined
+ * signal is received, the server tears down the old PeerConnection and creates
+ * a fresh one. This is critical for extension reloads.
  */
 export class WebRTCServerTransport implements Transport {
   public onclose?: () => void;
@@ -88,10 +96,10 @@ export class WebRTCServerTransport implements Transport {
       }
     });
 
+    // DO NOT call this.close() on connection state changes — 
+    // that kills the signaling server and makes reconnects impossible.
     this.pc.connectionStateChange.subscribe((state) => {
-      if (state === 'failed' || state === 'closed') {
-        this.close();
-      }
+      console.log(`[Server] PeerConnection state: ${state}`);
     });
   }
 
@@ -115,14 +123,44 @@ export class WebRTCServerTransport implements Transport {
         console.log(`[Server] Received candidate`);
         await this.pc.addIceCandidate(msg.candidate);
       } else if (msg.type === 'peer_joined') {
-        console.log(`[Server] Peer joined, creating and sending offer`);
-        if (this.started) {
-          const offer = await this.pc.createOffer();
-          await this.pc.setLocalDescription(offer);
-          this.signaling.send({ type: 'offer', offer: this.pc.localDescription });
+        console.log(`[Server] Peer joined, recreating PeerConnection for fresh handshake`);
+
+        // Tear down old connection gracefully
+        try {
+          this.dc?.close();
+          await this.pc.close();
+        } catch (e) {
+          console.log(`[Server] Cleanup of old PC (expected):`, (e as Error).message);
         }
+
+        // Create a brand new PeerConnection
+        this.pc = new RTCPeerConnection({
+          iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+        });
+
+        this.pc.onIceCandidate.subscribe((candidate) => {
+          if (candidate) {
+            this.signaling.send({ type: 'candidate', candidate: candidate.toJSON() });
+          }
+        });
+
+        this.pc.connectionStateChange.subscribe((state) => {
+          console.log(`[Server] PeerConnection state: ${state}`);
+        });
+
+        // Create a new DataChannel and wire it up
+        this.dc = this.pc.createDataChannel('mcp');
+        this.setupDataChannel(this.dc);
+        console.log(`[Server] New DataChannel created`);
+
+        // Now create and send the offer
+        const offer = await this.pc.createOffer();
+        await this.pc.setLocalDescription(offer);
+        this.signaling.send({ type: 'offer', offer: this.pc.localDescription });
+        console.log(`[Server] Offer sent to peer`);
       }
     } catch (e: any) {
+      console.error(`[Server] handleSignalingMessage error:`, e);
       this.onerror?.(e);
     }
   }
@@ -138,9 +176,9 @@ export class WebRTCServerTransport implements Transport {
     });
 
     dc.stateChanged.subscribe((state) => {
-      if (state === 'closed') {
-        this.close();
-      }
+      console.log(`[Server] DataChannel state: ${state}`);
+      // DO NOT call this.close() here — it kills the signaling server.
+      // Just log the state change. A new peer_joined will reset everything.
     });
   }
 

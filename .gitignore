@@ -5,6 +5,7 @@ node_modules/
 
 # Build outputs
 dist/
+!apps/context-injector/dist/
 .next/
 .turbo/
 out/
@@ -56,3 +57,7 @@ apps/extension/app/
 
 # Lint results
 apps/web/lint-results.json
+# Claw Code local artifacts
+.claw/settings.local.json
+.claw/sessions/
+.clawhip/

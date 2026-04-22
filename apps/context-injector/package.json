@@ -1,0 +1,15 @@
+{
+  "name": "markview-context-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MarkView Context Bridge — WebRTC P2P tunnel for local AI",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0",
+    "chrome-types": "^0.1.327"
+  }
+}

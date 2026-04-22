@@ -23,9 +23,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   } else if (msg.type === 'GET_STATE') {
     sendResponse({ state: dc && dc.readyState === 'open' ? 'connected' : 'disconnected' });
   } else if (msg.type === 'CALL_TOOL') {
+    sendToBackground('LOG', { message: `[offscreen] CALL_TOOL received: ${msg.toolName}` });
     callTool(msg.toolName, msg.args || {}).then((result) => {
+      sendToBackground('LOG', { message: `[offscreen] CALL_TOOL success, sending response back` });
       sendResponse(result);
     }).catch((err) => {
+      sendToBackground('LOG', { message: `[offscreen] CALL_TOOL error: ${err.message}`, logType: 'error' });
       sendResponse({ error: err.message });
     });
     return true; // async
@@ -50,6 +53,7 @@ async function connect(roomId, signalingUrl) {
 
     // We are the "client" (answerer) — wait for the server's data channel
     pc.ondatachannel = (event) => {
+      sendToBackground('LOG', { message: `[offscreen] ondatachannel fired, label=${event.channel.label}` });
       dc = event.channel;
       setupDataChannel(dc);
     };
@@ -66,6 +70,9 @@ async function connect(roomId, signalingUrl) {
 
     pc.onconnectionstatechange = () => {
       sendToBackground('LOG', { message: `Connection state: ${pc.connectionState}` });
+      if (pc.connectionState === 'connected') {
+        sendToBackground('LOG', { message: '[offscreen] ICE connected! Waiting for DataChannel...' });
+      }
       if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
         sendToBackground('CONNECTION_STATE', { state: 'disconnected' });
       }
@@ -156,6 +163,7 @@ function setupDataChannel(channel) {
   channel.onmessage = (event) => {
     try {
       const msg = JSON.parse(event.data);
+      sendToBackground('LOG', { message: `[offscreen] DC message received, id=${msg.id}, has result=${!!msg.result}, has error=${!!msg.error}` });
       if (msg.id && pendingRequests.has(msg.id)) {
         const { resolve, reject } = pendingRequests.get(msg.id);
         pendingRequests.delete(msg.id);
@@ -165,7 +173,9 @@ function setupDataChannel(channel) {
           resolve(msg.result);
         }
       }
-    } catch (e) { /* ignore */ }
+    } catch (e) {
+      sendToBackground('LOG', { message: `[offscreen] DC parse error: ${e.message}`, logType: 'error' });
+    }
   };
 
   channel.onclose = () => {
@@ -182,13 +192,19 @@ function sendMCPRequest(method, params) {
     }
     const id = nextId++;
     pendingRequests.set(id, { resolve, reject });
-    dc.send(JSON.stringify({ jsonrpc: '2.0', id, method, params }));
+    const payload = JSON.stringify({ jsonrpc: '2.0', id, method, params });
+    sendToBackground('LOG', { message: `[offscreen] Sending MCP request id=${id} method=${method}` });
+    dc.send(payload);
+
+    // CRITICAL FIX: Increase timeout from 10s to 120s.
+    // Ollama on M2 can take 30-60s for large prompts.
     setTimeout(() => {
       if (pendingRequests.has(id)) {
         pendingRequests.delete(id);
-        reject(new Error('Request timed out'));
+        sendToBackground('LOG', { message: `[offscreen] MCP request id=${id} TIMED OUT after 120s`, logType: 'error' });
+        reject(new Error('Request timed out after 120s'));
       }
-    }, 10000);
+    }, 120000);
   });
 }
 
