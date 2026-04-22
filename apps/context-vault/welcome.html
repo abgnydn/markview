@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarkView Context Vault</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    ::-webkit-scrollbar { display: none; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #08061a;
+      color: #e2e0f0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Draggable title bar area only */
+    .titlebar {
+      -webkit-app-region: drag;
+      height: 32px;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    /* Background glow */
+    .bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 30% 10%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 90%, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 36px 28px;
+    }
+
+    /* Logo */
+    .logo-area {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .logo-area img {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
+    }
+
+    h1 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-top: 12px;
+      color: #ffffff;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #c4b5fd, #818cf8);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #6b6990;
+      margin-top: 3px;
+    }
+
+    /* Status */
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 197, 94, 0.06);
+      border: 1px solid rgba(34, 197, 94, 0.12);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #4ade80;
+      margin: 12px 0 16px;
+    }
+
+    .status .dot {
+      width: 5px;
+      height: 5px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+      box-shadow: 0 0 6px rgba(74, 222, 128, 0.3);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Feature list */
+    .features {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.035);
+      border-radius: 10px;
+    }
+
+    .fi {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .fi.a { background: rgba(99, 102, 241, 0.1); }
+    .fi.b { background: rgba(244, 63, 94, 0.07); }
+    .fi.c { background: rgba(34, 197, 94, 0.07); }
+    .fi.d { background: rgba(251, 191, 36, 0.07); }
+
+    .ft strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #dddcf0;
+      margin-bottom: 1px;
+    }
+
+    .ft span {
+      font-size: 10.5px;
+      color: #7b7999;
+      line-height: 1.3;
+    }
+
+    .badges {
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+
+    .badge {
+      font-size: 8px;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #6b6990;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* Hint */
+    .hint {
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      background: rgba(124, 58, 237, 0.03);
+      border: 1px solid rgba(124, 58, 237, 0.06);
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 11px;
+      color: #7b7999;
+      line-height: 1.4;
+    }
+
+    .hint strong { color: #a5b4fc; }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 11px 0;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+      color: white;
+      letter-spacing: 0.2px;
+      transition: all 0.15s;
+    }
+
+    .btn:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+    }
+
+    .btn:active {
+      filter: brightness(0.95);
+      transform: scale(0.99);
+    }
+  </style>
+</head>
+<body>
+  <div class="titlebar"></div>
+  <div class="bg"></div>
+  <div class="container">
+    <div class="logo-area">
+      <img src="assets/icon.png" alt="MarkView" onerror="this.style.display='none'">
+      <h1>MarkView <span>Context Vault</span></h1>
+      <p class="subtitle">Privacy-first AI document bridge</p>
+    </div>
+
+    <div class="status">
+      <span class="dot"></span>
+      Vault is active
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="fi a">👁️</div>
+        <div class="ft">
+          <strong>Read-Only Access</strong>
+          <span>AI reads your files locally. Nothing uploaded.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="fi b">🛡️</div>
+        <div class="ft">
+          <strong>Sensitive Files Blocked</strong>
+          <span>.env, keys, passwords — auto-blocked.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="fi c">📋</div>
+        <div class="ft">
+          <strong>Access Logging</strong>
+          <span>Every file access logged in Privacy Dashboard.</span>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="fi d">📄</div>
+        <div class="ft">
+          <strong>40+ Formats</strong>
+          <div class="badges">
+            <span class="badge">pdf</span>
+            <span class="badge">docx</span>
+            <span class="badge">xlsx</span>
+            <span class="badge">py</span>
+            <span class="badge">ts</span>
+            <span class="badge">ipynb</span>
+            <span class="badge">+34</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">
+      Find <strong>MarkView Context Vault</strong> in your menu bar ↗
+    </div>
+
+    <button class="btn" id="close-btn">Got it</button>
+  </div>
+
+  <script>
+    document.getElementById('close-btn').addEventListener('click', () => {
+      if (window.vault && window.vault.closeWindow) {
+        window.vault.closeWindow();
+      } else {
+        window.close();
+      }
+    });
+  </script>
+</body>
+</html>

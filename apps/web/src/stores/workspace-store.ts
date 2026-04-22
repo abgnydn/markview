@@ -50,6 +50,7 @@ interface WorkspaceState {
   addFiles: (files: { filename: string; content: string }[]) => Promise<void>;
   removeFile: (fileId: string) => Promise<void>;
   reorderFiles: (fromIndex: number, toIndex: number) => void;
+  reorderWorkspaces: (fromIndex: number, toIndex: number) => void;
 }
 
 function generateId(): string {
@@ -387,5 +388,28 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const [moved] = newFiles.splice(fromIndex, 1);
     newFiles.splice(toIndex, 0, moved);
     set({ files: newFiles });
+  },
+
+  // ---------- Reorder Workspaces ----------
+  reorderWorkspaces: (fromIndex, toIndex) => {
+    const { workspaces } = get();
+    if (fromIndex < 0 || fromIndex >= workspaces.length) return;
+    if (toIndex < 0 || toIndex >= workspaces.length) return;
+    if (fromIndex === toIndex) return;
+
+    const updated = [...workspaces];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+    set({ workspaces: updated });
+
+    // Persist order by updating timestamps so most-recently-ordered stays first
+    const now = Date.now();
+    db.transaction('rw', db.workspaces, async () => {
+      for (let i = 0; i < updated.length; i++) {
+        await db.workspaces.update(updated[i].id, {
+          updatedAt: new Date(now - i),
+        });
+      }
+    });
   },
 }));

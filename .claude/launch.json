@@ -1,0 +1,50 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "markview-web",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["/Users/ahmetbarisgunaydin2/Documents/GitHub/markview/node_modules/.bin/next", "dev", "--port", "3000"],
+      "cwd": "/Users/ahmetbarisgunaydin2/Documents/GitHub/markview/apps/web",
+      "port": 3000,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    },
+    {
+      "name": "swarm-platform",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/ahmetbarisgunaydin2/swarm-platform",
+      "port": 3001
+    },
+    {
+      "name": "kernelfusion",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/ahmetbarisgunaydin2/kernelfusion",
+      "port": 3002
+    },
+    {
+      "name": "webgpu-transformer-fusion",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "5173"],
+      "cwd": "/Users/ahmetbarisgunaydin2/webgpu-transformer-fusion",
+      "port": 5173
+    },
+    {
+      "name": "webgpu-fusion-max",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "5174"],
+      "cwd": "/Users/ahmetbarisgunaydin2/webgpu-fusion-max",
+      "port": 5174
+    },
+    {
+      "name": "webgpu-fusion-chat",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--port", "5175"],
+      "cwd": "/Users/ahmetbarisgunaydin2/webgpu-fusion-chat",
+      "port": 5175
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 
 **The embeddable Markdown rendering stack & native macOS app.**
 
-**A high-performance markdown engine available as a React Component, Web Component, and native Desktop App. Features GitHub-flavored rendering, WYSIWYG editing, Custom Themes, and 15 MCP tools for AI assistants.**
+**A high-performance markdown engine available as a React Component, Web Component, and native Desktop App. Features GitHub-flavored rendering, WYSIWYG editing, Custom Themes, and 23 MCP tools for AI assistants.**
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
 [![core](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=%40markview%2Fcore)](https://www.npmjs.com/package/@markview/core)
@@ -12,10 +12,10 @@
 [![webcomponent](https://img.shields.io/npm/v/@markview/webcomponent?color=f7df1e&label=%40markview%2Fwebcomponent)](https://www.npmjs.com/package/@markview/webcomponent)
 [![mcp](https://img.shields.io/npm/v/@markview/mcp?color=10b981&label=%40markview%2Fmcp)](https://www.npmjs.com/package/@markview/mcp)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-79_passing-22c55e)](apps/web/src/__tests__)
+[![Tests](https://img.shields.io/badge/tests-84_passing-22c55e)](apps/web/src/__tests__)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
-[![MCP Tools](https://img.shields.io/badge/MCP_Tools-15-10b981)](apps/mcp)
+[![MCP Tools](https://img.shields.io/badge/MCP_Tools-23-10b981)](apps/mcp)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-▶-ff6b6b)](https://getmarkview.vercel.app)
 
 <br />
@@ -56,7 +56,7 @@
 - 📋 **Export everywhere** — PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc, static site, or print
 - 💬 **Annotations** — highlight text, add color-coded notes, persisted per file
 - 📜 **Version history** — automatic snapshots on save, restore previous versions
-- 🎨 **Custom themes** — 6 curated presets (Dracula, Nord, Monokai, Solarized, Rosé Pine)
+- 🎨 **Custom themes** — 6 curated presets (GitHub, Dracula, Nord, Monokai, Solarized, Rosé Pine)
 
 ### Extensibility
 - 🔌 **Plugin system** — register custom code-fence renderers (alert, chart, tabs, timeline built-in)
@@ -65,7 +65,7 @@
 ### Desktop App
 - 🖥️ **Native macOS app** — built with Tauri v2, fast and lightweight
 - 📂 **Default opener** — set MarkView as your system-default `.md` file handler
-- 🍏 **Mac App Store** — Coming soon for a one-time purchase of $4.99
+- 🍏 **Mac App Store** — Coming soon for a one-time purchase of $14.99
 - 🚀 **Build from source** — completely un-gated for developers to compile locally
 
 ### Privacy & Offline
@@ -192,17 +192,55 @@ Go to **Settings → MCP Servers → Add Server** and use:
 
 ---
 
-## 🤖 MCP Tools (15)
+## 🤖 MCP Tools (23)
 
 The Model Context Protocol server lets AI assistants interact with your documentation workspace:
 
 | Category | Tools |
 |----------|-------|
-| **Read & Analyze** | `list_documents` `get_document` `search_docs` `get_headings` `get_links` `get_code_blocks` `get_frontmatter` `get_tables` `get_related_docs` `get_glossary` |
-| **Workspace Health** | `validate_workspace` `get_stats` |
-| **Write & Manage** | `create_document` `update_document` `rename_document` |
+| **Read & Analyze** | `list_documents` `get_document` `search_docs` `get_headings` `get_links` `get_code_blocks` `get_frontmatter` `get_tables` `get_related_docs` `get_glossary` `get_mermaid_diagrams` `get_math_blocks` `analyze_reading_level` |
+| **Workspace Health** | `validate_workspace` `get_stats` `generate_toc` |
+| **Write & Manage** | `create_document` `update_document` `rename_document` `delete_document` `merge_documents` |
+| **Share & Export** | `share_document` `render_document` |
 
 See [apps/mcp/README.md](apps/mcp/README.md) for full documentation.
+
+---
+
+## 🌐 WebRTC Context Bridge
+
+Stream your local documentation context to any browser-based AI tool via a peer-to-peer WebRTC data channel — **zero cloud, zero uploads, zero trust required**.
+
+```
+┌─────────────────┐     WebRTC DataChannel     ┌──────────────────────┐
+│  Browser Agent  │◄──────────────────────────►│  Local MCP Server    │
+│  (/agent page)  │   Encrypted P2P tunnel     │  (your terminal)     │
+└─────────────────┘                            └──────────────────────┘
+```
+
+**Quick start:**
+```bash
+# 1. Start the signaling relay
+npx tsx apps/mcp/scripts/signaling-server.ts
+
+# 2. Launch MCP in WebRTC mode
+npx markview-mcp ./docs --webrtc --room my-room
+
+# 3. Open the Agent Bridge in your browser
+#    → http://localhost:3000/agent
+```
+
+Once connected, the browser has direct read/execute access to all 23 MCP tools running on your local machine. No files ever leave your device.
+
+| Feature | Detail |
+|---------|--------|
+| **Transport** | RTCPeerConnection + RTCDataChannel |
+| **Signaling** | Lightweight WebSocket relay (localhost) |
+| **Encryption** | DTLS 1.2 (built into WebRTC) |
+| **Latency** | Sub-millisecond on localhost |
+| **Dependencies** | Zero — uses browser-native WebRTC APIs |
+
+See the [live demo](/agent) or the [Agent Demo source](apps/web/src/components/agent/agent-demo.tsx).
 
 ---
 
@@ -213,7 +251,7 @@ markview/
 ├── apps/
 │   ├── web/          # Next.js 16 documentation viewer
 │   ├── desktop/      # Native macOS app (Tauri v2)
-│   ├── mcp/          # MCP server (15 tools)
+│   ├── mcp/          # MCP server (23 tools)
 │   └── extension/    # Chrome extension
 ├── packages/
 │   └── core/         # Framework-agnostic rendering engine
@@ -240,7 +278,8 @@ MarkView is actively maintained. Here's what's shipped and what's next:
 | ✅ | Rich rendering | GFM, Mermaid, KaTeX, Shiki, alerts, tables |
 | ✅ | Workspace management | Multi-tab, file trees, IndexedDB persistence |
 | ✅ | Productivity suite | Search, split view, diff, editor, presentation, export |
-| ✅ | MCP server | 15 AI documentation tools |
+| ✅ | MCP server | 23 AI documentation tools |
+| ✅ | WebRTC Context Bridge | P2P browser-to-local AI tool execution |
 | ✅ | Chrome extension | View .md files in the browser |
 | ✅ | PWA & offline | Install as desktop app, works without internet |
 | ✅ | Import workspace ZIP | Load shared workspace archives |
@@ -326,7 +365,7 @@ For integrating `@markview/core`, `@markview/react`, or `@markview/webcomponent`
 To purchase a commercial license to embed MarkView into a closed-source product, see the [Pricing Section on our Website](https://getmarkview.vercel.app/#pricing).
 
 ### 2. Desktop App (Consumers)
-The native macOS Tauri app will soon be available on the **Mac App Store** for a one-time purchase of **$4.99**, giving you lifetime updates and unparalleled native integration. 
+The native macOS Tauri app will soon be available on the **Mac App Store** for a one-time purchase of **$14.99**, giving you lifetime updates and unparalleled native integration. 
 
 You can always compile the desktop app from source for free (see "Quick Start" guidelines).
 

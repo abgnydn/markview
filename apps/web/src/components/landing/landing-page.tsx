@@ -150,7 +150,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
     { iconImg: '/icons/features/version-history.png', title: 'Version History', desc: 'Auto-snapshots on editor save, stored in IndexedDB — browse, restore, or delete any previous version', color: 'blue' },
     { iconImg: '/icons/features/reading-experience.png', title: 'Reading Experience', desc: 'Table of contents, reading progress, word count, breadcrumbs, frontmatter cards', color: 'emerald' },
     { iconImg: '/icons/features/p2p-collaboration.png', title: 'P2P Collaboration', desc: 'Real-time multiplayer editing using WebRTC — collaborate seamlessly via a direct local connection, zero servers required', color: 'indigo' },
-    { iconImg: '/icons/features/export-everywhere.png', title: 'Export Everywhere', desc: 'PDF, Microsoft Word (.docx), PowerPoint (.pptx), PNG, HTML — generate presentation-ready files directly from the browser', color: 'amber' },
+    { iconImg: '/icons/features/export-everywhere.png', title: 'Export Everywhere', desc: 'PDF, Word (.docx), PowerPoint (.pptx), PNG, SVG, HTML, RST, AsciiDoc, static site — generate presentation-ready files directly from the browser', color: 'amber' },
     { iconImg: '/icons/features/github-import.png', title: 'GitHub Import', desc: 'Paste any GitHub repo URL and instantly load its markdown documentation', color: 'indigo' },
     { iconImg: '/icons/features/keyboard-first.png', title: 'Keyboard-First', desc: 'Navigate files, switch workspaces, toggle focus mode, adjust font size — all from the keyboard', color: 'blue' },
     { iconImg: '/icons/features/focus-mode.png', title: 'Focus Mode', desc: 'Distraction-free reading that hides sidebar and TOC — just you and the content', color: 'rose' },
@@ -406,7 +406,7 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
           <Terminal size={14} />
           <span>Model Context Protocol</span>
         </div>
-        <h2 className="landing-section-title">15 MCP tools for AI</h2>
+        <h2 className="landing-section-title">23 MCP tools for AI</h2>
         <p className="landing-section-subtitle">
           Let Claude, Cursor, or any MCP-compatible AI assistant read, search, and manage your documentation.
         </p>
@@ -421,6 +421,89 @@ export function LandingPage({ onFilesSelected, onGitHubImport, hasExistingWorksp
         <div className="landing-mcp-install">
           <span className="landing-mcp-install-label">Add to your AI config:</span>
           <code className="landing-mcp-install-code">node markview/apps/mcp/dist/index.js ./your-docs</code>
+        </div>
+      </section>
+
+      {/* WebRTC Context Bridge */}
+      <section className="landing-section landing-bridge-section">
+        <div className="landing-bridge-badge">
+          <Layers size={14} />
+          <span>WebRTC Context Bridge</span>
+        </div>
+        <h2 className="landing-section-title">Your local files. Any AI. Zero cloud.</h2>
+        <p className="landing-section-subtitle">
+          A peer-to-peer bridge that streams your local documentation context directly to browser-based AI tools via WebRTC — no uploads, no servers, no trust required.
+        </p>
+
+        <div className="landing-bridge-layout">
+          <div className="landing-bridge-content">
+            <h3>The &ldquo;Plaid for AI&rdquo; layer for your docs</h3>
+            <p>
+              Run the MCP server locally in WebRTC mode. It opens a peer-to-peer data channel
+              that any browser tab can connect to — letting AI agents read, search, and analyze
+              your markdown files without uploading a single byte to the cloud.
+            </p>
+            <div className="landing-bridge-steps">
+              <div className="landing-bridge-step">
+                <div className="landing-bridge-step-num">1</div>
+                <div className="landing-bridge-step-text">
+                  Start the MCP server with <code>npx markview-mcp ./docs --webrtc</code>
+                </div>
+              </div>
+              <div className="landing-bridge-step">
+                <div className="landing-bridge-step-num">2</div>
+                <div className="landing-bridge-step-text">
+                  Open the <a href="/agent" style={{ color: '#67e8f9', textDecoration: 'underline' }}>Agent Bridge</a> page and enter your room ID
+                </div>
+              </div>
+              <div className="landing-bridge-step">
+                <div className="landing-bridge-step-num">3</div>
+                <div className="landing-bridge-step-text">
+                  AI tools execute locally — results stream back over the encrypted data channel
+                </div>
+              </div>
+            </div>
+            <div className="landing-bridge-pills">
+              <span className="landing-bridge-pill">🔒 End-to-end encrypted</span>
+              <span className="landing-bridge-pill">⚡ Sub-millisecond latency</span>
+              <span className="landing-bridge-pill">🌐 Works on localhost</span>
+              <span className="landing-bridge-pill">🚫 No accounts</span>
+            </div>
+          </div>
+
+          <div className="landing-bridge-terminal">
+            <div className="landing-bridge-terminal-header">
+              <div className="landing-bridge-terminal-dot" />
+              <div className="landing-bridge-terminal-dot" />
+              <div className="landing-bridge-terminal-dot" />
+              <div className="landing-bridge-terminal-title">MarkView WebRTC Terminal</div>
+            </div>
+            <div className="landing-bridge-terminal-body">
+              <div className="bridge-comment">{'// Connecting to local MCP server...'}</div>
+              <div><span className="bridge-cyan">Connecting to local room:</span> demo-room...</div>
+              <div>Waiting for WebRTC Data Channel to open...</div>
+              <div className="bridge-success">✅ Zero-Trust WebRTC connection established!</div>
+              <br />
+              <div><span className="bridge-cyan">{'> Executing tool:'}</span> list_documents</div>
+              <div className="bridge-data">
+{`{
+  "totalFiles": 124,
+  "documents": [
+    { "path": "README.md", "words": 1711 },
+    { "path": "CONTRIBUTING.md", "words": 471 },
+    { "path": "apps/mcp/README.md", "words": 395 }
+  ]
+}`}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="landing-bridge-cta">
+          <a href="/agent">
+            <Terminal size={14} />
+            Try the Live Demo →
+          </a>
         </div>
       </section>
 
@@ -536,7 +619,7 @@ const html = await
               </button>
             </div>
             <pre className="landing-npm-code-content">
-{`// 15 tools for Claude,
+{`// 23 tools for Claude,
 // Cursor, and any
 // MCP-compatible client
 // Zero config needed`}
@@ -550,7 +633,7 @@ const html = await
           <div className="landing-npm-feature"><Check size={14} /> KaTeX math equations</div>
           <div className="landing-npm-feature"><Check size={14} /> GitHub-style alerts</div>
           <div className="landing-npm-feature"><Check size={14} /> XSS sanitization</div>
-          <div className="landing-npm-feature"><Check size={14} /> 15 MCP tools for AI</div>
+          <div className="landing-npm-feature"><Check size={14} /> 23 MCP tools for AI</div>
         </div>
       </section>
 

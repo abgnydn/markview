@@ -1,0 +1,51 @@
+{
+  "name": "markview-context-vault",
+  "version": "0.2.0",
+  "description": "MarkView Context Vault — Privacy-first, read-only AI document bridge",
+  "author": "MarkView <hello@markview.ai>",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/e2e.js",
+    "build": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "ai.markview.context-vault",
+    "productName": "MarkView Context Vault",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "assets/icon.icns",
+      "target": [
+        "dmg",
+        "dir"
+      ]
+    },
+    "dmg": {
+      "title": "MarkView Context Vault",
+      "iconSize": 80
+    },
+    "files": [
+      "main.js",
+      "signaling.js",
+      "mcp-bridge.js",
+      "mcp-bridge-testable.js",
+      "privacy-dashboard.html",
+      "dashboard-preload.js",
+      "assets/**/*"
+    ]
+  },
+  "dependencies": {
+    "mammoth": "^1.12.0",
+    "pdf-parse": "^2.4.5",
+    "werift": "^0.19.0",
+    "ws": "^8.18.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@electron/packager": "^19.1.0",
+    "electron": "33.4.11",
+    "electron-builder": "^25.0.0"
+  }
+}

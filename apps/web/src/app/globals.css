@@ -502,6 +502,15 @@
   color: var(--accent-red);
 }
 
+.workspace-tab-dragging {
+  opacity: 0.4;
+}
+
+.workspace-tab-drop-target {
+  border-left: 2px solid var(--accent-blue);
+  margin-left: -2px;
+}
+
 .workspace-tab-edit {
   background: var(--bg-tertiary);
   border: 1px solid var(--accent-blue);

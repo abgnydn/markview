@@ -23,7 +23,7 @@ export function AgentDemo() {
     addLog(`Connecting to local room: ${roomId}...`);
 
     try {
-      const transport = new BrowserWebRTCClientTransport(roomId, 'ws://localhost:4444');
+      const transport = new BrowserWebRTCClientTransport(roomId, 'ws://localhost:4445');
       
       const client = new Client({
         name: 'markview-web-agent',

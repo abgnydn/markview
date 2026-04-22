@@ -426,10 +426,9 @@
         };
 
         // Connect to signaling server
-        ws = new WebSocket('ws://localhost:4444');
-        
+        ws = new WebSocket('ws://localhost:4445');
         ws.onopen = () => {
-          addLog('[Signaling] Connected to ws://localhost:4444');
+          addLog('[Signaling] Connected to ws://localhost:4445');
           ws.send(JSON.stringify({ type: 'join', room: roomId }));
           ws.send(JSON.stringify({ type: 'peer_joined', room: roomId }));
         };

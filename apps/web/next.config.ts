@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   assetPrefix: './',
+  turbopack: {
+    root: '../../',
+  },
 };
 
 export default nextConfig;
