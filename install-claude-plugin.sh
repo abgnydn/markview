@@ -15,12 +15,12 @@ if ! command -v claude &> /dev/null; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-MCP_SCRIPT="$SCRIPT_DIR/apps/mcp/src/index.ts"
+MCP_SCRIPT="$SCRIPT_DIR/apps/mcp/dist/index.js"
 VAULT_DIR="$HOME/Documents/research-vault"
 
 # Add it globally to Claude Code
 echo -e "${DIM}Running: claude mcp add markview-brain...${NC}"
-claude mcp add markview-brain --scope user -- npx tsx "$MCP_SCRIPT" "$VAULT_DIR"
+claude mcp add markview-brain --scope user -- node "$MCP_SCRIPT" "$VAULT_DIR"
 
 echo ""
 echo -e "${GREEN}✓${NC} MarkView Brain installed globally in Claude Code!"
