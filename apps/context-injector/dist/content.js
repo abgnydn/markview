@@ -406,6 +406,7 @@ function wireOverlayEvents(overlay) {
   });
   shadowRoot.getElementById("mv-clear-btn").addEventListener("click", () => {
     chatHistory = [];
+    clearChatStorage();
     const msgs = shadowRoot.getElementById("mv-chat-messages");
     if (msgs) msgs.innerHTML = '<div style="text-align:center; padding:20px 0; color:#4b5563; font-size:12px;">Chat cleared. Ask something new!</div>';
     populateSmartChips();
@@ -444,6 +445,12 @@ function wireOverlayEvents(overlay) {
       if (label) label.textContent = selectedModel;
     });
   }
+  loadChatHistory((loaded) => {
+    if (loaded) {
+      const qa = shadowRoot?.getElementById("mv-quick-actions");
+      if (qa) qa.style.display = "none";
+    }
+  });
   const header = shadowRoot.getElementById("mv-header");
   let isDragging = false;
   let dragStartX = 0;
@@ -719,6 +726,7 @@ function handleChatMessage(question) {
       }
       if (streamedText.trim()) {
         chatHistory.push({ role: "assistant", content: streamedText });
+        saveChatHistory();
         streamingMsgId = "";
         streamedText = "";
         return;
@@ -747,6 +755,7 @@ function handleChatMessage(question) {
         responseText = "Failed to parse response";
       }
       chatHistory.push({ role: "assistant", content: responseText });
+      saveChatHistory();
       const el = shadowRoot.getElementById(streamingMsgId);
       if (el) el.textContent = responseText;
       streamingMsgId = "";
@@ -959,4 +968,53 @@ function updateTokenCounter(prompt, completion, ms) {
   }
   const label = shadowRoot?.getElementById("mv-model-label");
   if (label) label.textContent = selectedModel;
+}
+function chatStorageKey() {
+  try {
+    const url = new URL(currentPageUrl || window.location.href);
+    return `mv-chat:${url.origin}${url.pathname}`;
+  } catch {
+    return `mv-chat:${window.location.href}`;
+  }
+}
+function saveChatHistory() {
+  const key = chatStorageKey();
+  chrome.storage.local.set({ [key]: { messages: chatHistory, model: selectedModel, ts: Date.now() } });
+}
+function loadChatHistory(callback) {
+  const key = chatStorageKey();
+  chrome.storage.local.get([key], (result) => {
+    const data = result[key];
+    if (data && data.messages && data.messages.length > 0) {
+      chatHistory = data.messages;
+      if (data.model) selectedModel = data.model;
+      const messagesDiv = shadowRoot?.getElementById("mv-chat-messages");
+      if (messagesDiv) {
+        messagesDiv.innerHTML = "";
+        chatHistory.forEach((msg) => {
+          if (msg.role === "user") {
+            messagesDiv.innerHTML += `
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(96,165,250,0.06); border:1px solid rgba(96,165,250,0.12); border-radius:10px;">
+                <div style="font-size:10px; color:#60a5fa; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:3px;">You</div>
+                <div style="font-size:13px; color:#d1d5db; line-height:1.6;">${escapeHtml(msg.content)}</div>
+              </div>`;
+          } else {
+            messagesDiv.innerHTML += `
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(139,92,246,0.05); border:1px solid rgba(139,92,246,0.1); border-radius:10px;">
+                <div style="font-size:10px; color:#a78bfa; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:3px;">Brain</div>
+                <div class="mv-md" style="font-size:13px; color:#d1d5db; line-height:1.6;">${renderMarkdown(msg.content)}</div>
+              </div>`;
+          }
+        });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+}
+function clearChatStorage() {
+  const key = chatStorageKey();
+  chrome.storage.local.remove(key);
 }
