@@ -2083,8 +2083,10 @@ server.tool(
     context: z.string().describe('The raw text content of the DOM'),
     question: z.string().optional().describe('Optional follow-up question from the user'),
     history: z.string().optional().describe('Optional JSON array of previous chat messages [{role,content}]'),
+    model: z.string().optional().describe('Ollama model name to use (default: qwen3:0.6b)'),
   },
-  async ({ url, context, question, history }) => {
+  async ({ url, context, question, history, model }) => {
+    const ollamaModel = model || 'qwen3:0.6b';
     const startTime = Date.now();
     const isChat = !!question;
     console.log(`[Brain] ${isChat ? 'CHAT' : 'ANALYZE'}: ${isChat ? question : `${context.length} chars from ${url}`}`);
@@ -2131,7 +2133,7 @@ server.tool(
         isChat, question: question || '', history: history || '',
       });
 
-      console.log(`[Brain] Prompt: ${prompt.length} chars, querying qwen3:0.6b...`);
+      console.log(`[Brain] Prompt: ${prompt.length} chars, querying ${ollamaModel}...`);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -2140,7 +2142,7 @@ server.tool(
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'qwen3:0.6b',
+          model: ollamaModel,
           prompt,
           stream: true,
           options: {
@@ -2160,6 +2162,8 @@ server.tool(
       const decoder = new TextDecoder();
       let accumulated = '';
       let buffer = '';
+      let promptTokens = 0;
+      let completionTokens = 0;
 
       if (reader) {
         while (true) {
@@ -2187,6 +2191,8 @@ server.tool(
               if (chunk.done && chunk.eval_duration) {
                 inferenceMs = Math.round(chunk.eval_duration / 1e6);
               }
+              if (chunk.prompt_eval_count) promptTokens = chunk.prompt_eval_count;
+              if (chunk.eval_count) completionTokens = chunk.eval_count;
             } catch { /* skip malformed lines */ }
           }
         }
@@ -2197,7 +2203,7 @@ server.tool(
       try {
         server.sendLoggingMessage({
           level: 'info',
-          data: JSON.stringify({ type: 'stream_end' }),
+          data: JSON.stringify({ type: 'stream_end', promptTokens, completionTokens, inferenceMs }),
         });
       } catch { /* ok */ }
 

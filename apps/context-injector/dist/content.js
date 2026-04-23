@@ -10,6 +10,9 @@ let lastAnalysisPayload = "";
 let detectedPageType = "generic";
 let streamingMsgId = "";
 let streamedText = "";
+let selectedModel = "qwen3:0.6b";
+let availableModels = ["qwen3:0.6b"];
+let lastTokenCount = { prompt: 0, completion: 0, durationMs: 0 };
 {
   const existingHost = document.getElementById("mv-brain-host");
   if (!existingHost) {
@@ -39,7 +42,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   } else if (msg.type === "STREAM_TOKEN") {
     handleStreamToken(msg.token || "");
   } else if (msg.type === "STREAM_END") {
-    handleStreamEnd();
+    handleStreamEnd(msg.promptTokens || 0, msg.completionTokens || 0, msg.inferenceMs || 0);
   } else if (msg.type === "CONTEXT_MENU_ASK") {
     if (!currentPageContext) {
       currentPageContext = document.body.innerText.substring(0, 2e3);
@@ -313,6 +316,7 @@ function renderAIOverlay(htmlPayload, isFollowUp = false) {
           <span style="font-size:12px; font-weight:600; color:#c4b5fd; letter-spacing:0.3px;">MarkView Brain</span>
         </div>
         <div style="display:flex; align-items:center; gap:2px;">
+          <select id="mv-model-picker" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#a78bfa; font-size:10px; padding:2px 4px; cursor:pointer; outline:none; font-family:inherit; max-width:110px;" title="Switch model"></select>
           <button id="mv-minimize-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:13px; padding:2px 4px; border-radius:4px; transition:color 0.2s;" title="Minimize">\u25AC</button>
           <button id="mv-export-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:13px; padding:2px 4px; border-radius:4px; transition:color 0.2s;" title="Export chat">\u{1F4E4}</button>
           <button id="mv-clear-btn" style="background:none; border:none; color:#6b7280; cursor:pointer; font-size:13px; padding:2px 4px; border-radius:4px; transition:color 0.2s;" title="Clear chat">\u{1F5D1}</button>
@@ -336,7 +340,7 @@ function renderAIOverlay(htmlPayload, isFollowUp = false) {
             \u2191
           </button>
         </div>
-        <div style="font-size:9px; color:#3f3f46; margin-top:5px; text-align:center;">qwen3:0.6b \xB7 Apple M2 Pro \xB7 100% local</div>
+        <div id="mv-status-bar" style="font-size:9px; color:#3f3f46; margin-top:5px; text-align:center;"><span id="mv-model-label">${selectedModel}</span> \xB7 local \xB7 <span id="mv-token-info">ready</span></div>
       </div>
     `;
     shadowRoot.appendChild(overlay);
@@ -430,6 +434,16 @@ function wireOverlayEvents(overlay) {
     input.style.boxShadow = "none";
   });
   populateSmartChips();
+  const modelPicker = shadowRoot.getElementById("mv-model-picker");
+  if (modelPicker) {
+    populateModelPicker();
+    fetchOllamaModels();
+    modelPicker.addEventListener("change", () => {
+      selectedModel = modelPicker.value;
+      const label = shadowRoot?.getElementById("mv-model-label");
+      if (label) label.textContent = selectedModel;
+    });
+  }
   const header = shadowRoot.getElementById("mv-header");
   let isDragging = false;
   let dragStartX = 0;
@@ -564,6 +578,74 @@ function injectKeyframes() {
     #mv-overlay-close-btn:hover { color: #ef4444 !important; }
     #mv-minimize-btn:hover, #mv-export-btn:hover, #mv-clear-btn:hover { color: #a78bfa !important; }
     .mv-copy-btn:hover, .mv-save-btn:hover { color: #a78bfa !important; }
+
+    /* Markdown rendering styles */
+    .mv-md p { margin: 0 0 8px 0; }
+    .mv-md p:last-child { margin-bottom: 0; }
+    .mv-md strong { color: #e5e7eb; font-weight: 600; }
+    .mv-md em { color: #c4b5fd; font-style: italic; }
+    .mv-md code {
+      background: rgba(139,92,246,0.15);
+      color: #e0d4fa;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    }
+    .mv-md pre {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      margin: 8px 0;
+      position: relative;
+    }
+    .mv-md pre code {
+      background: none;
+      padding: 0;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #d4d4d8;
+    }
+    .mv-md ul, .mv-md ol {
+      margin: 4px 0;
+      padding-left: 20px;
+    }
+    .mv-md li { margin: 2px 0; }
+    .mv-md li::marker { color: #8b5cf6; }
+    .mv-md blockquote {
+      border-left: 3px solid rgba(139,92,246,0.4);
+      margin: 6px 0;
+      padding: 4px 10px;
+      color: #9ca3af;
+      font-style: italic;
+    }
+    .mv-md h1, .mv-md h2, .mv-md h3 {
+      color: #e5e7eb;
+      margin: 10px 0 4px 0;
+      font-weight: 600;
+    }
+    .mv-md h1 { font-size: 15px; }
+    .mv-md h2 { font-size: 14px; }
+    .mv-md h3 { font-size: 13px; }
+    .mv-md a { color: #818cf8; text-decoration: underline; }
+    .mv-md hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0; }
+    .mv-copy-code {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      color: #9ca3af;
+      font-size: 10px;
+      padding: 2px 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mv-copy-code:hover { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+    #mv-model-picker option { background: #1a1a2e; color: #c4b5fd; }
   `;
 }
 function handleChatMessage(question) {
@@ -620,7 +702,8 @@ function handleChatMessage(question) {
         url,
         context,
         question,
-        history: JSON.stringify(chatHistory)
+        history: JSON.stringify(chatHistory),
+        model: selectedModel
       }
     },
     (response) => {
@@ -676,16 +759,21 @@ function handleStreamToken(token) {
   streamedText += token;
   const el = shadowRoot?.getElementById(streamingMsgId);
   if (el) {
-    el.textContent = streamedText;
+    el.innerHTML = renderMarkdown(streamedText);
+    el.classList.add("mv-md");
     const messagesDiv = shadowRoot?.getElementById("mv-chat-messages");
     if (messagesDiv) messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 }
-function handleStreamEnd() {
+function handleStreamEnd(promptTokens, completionTokens, inferenceMs) {
   if (!streamingMsgId) return;
   const el = shadowRoot?.getElementById(streamingMsgId);
   if (el && streamedText.trim()) {
-    el.textContent = streamedText;
+    el.innerHTML = renderMarkdown(streamedText);
+    el.classList.add("mv-md");
+  }
+  if (promptTokens || completionTokens) {
+    updateTokenCounter(promptTokens, completionTokens, inferenceMs);
   }
 }
 function appendBrainMessage(text) {
@@ -820,4 +908,55 @@ function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
+}
+function renderMarkdown(text) {
+  let html = escapeHtml(text);
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_m, lang, code) => {
+    const langLabel = lang ? `<span style="position:absolute;top:4px;left:8px;font-size:9px;color:#6b7280;text-transform:uppercase;">${lang}</span>` : "";
+    return `<pre>${langLabel}<button class="mv-copy-code" onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent);this.textContent='\u2713';setTimeout(()=>this.textContent='Copy',1500)">Copy</button><code>${code.trim()}</code></pre>`;
+  });
+  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+  html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+  html = html.replace(/^&gt; (.+)$/gm, "<blockquote>$1</blockquote>");
+  html = html.replace(/^[\-\*] (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
+  html = html.replace(/^\d+\. (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/^---$/gm, "<hr>");
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  html = html.replace(/\n\n/g, "</p><p>");
+  html = html.replace(/\n/g, "<br>");
+  if (!html.startsWith("<h") && !html.startsWith("<pre") && !html.startsWith("<ul") && !html.startsWith("<blockquote")) {
+    html = `<p>${html}</p>`;
+  }
+  return html;
+}
+function fetchOllamaModels() {
+  fetch("http://localhost:11434/api/tags").then((r) => r.json()).then((data) => {
+    const models = (data.models || []).map((m) => m.name || m.model);
+    if (models.length > 0) {
+      availableModels = models;
+      populateModelPicker();
+    }
+  }).catch(() => {
+  });
+}
+function populateModelPicker() {
+  const picker = shadowRoot?.getElementById("mv-model-picker");
+  if (!picker) return;
+  picker.innerHTML = availableModels.map(
+    (m) => `<option value="${escapeHtml(m)}" ${m === selectedModel ? "selected" : ""}>${m}</option>`
+  ).join("");
+}
+function updateTokenCounter(prompt, completion, ms) {
+  lastTokenCount = { prompt, completion, durationMs: ms };
+  const el = shadowRoot?.getElementById("mv-token-info");
+  if (el) {
+    el.textContent = `${prompt}\u2192${completion} tok \xB7 ${(ms / 1e3).toFixed(1)}s`;
+  }
+  const label = shadowRoot?.getElementById("mv-model-label");
+  if (label) label.textContent = selectedModel;
 }

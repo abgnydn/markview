@@ -150,7 +150,11 @@ function setupDataChannel(channel) {
           if (logData.type === "stream_token") {
             broadcast("STREAM_TOKEN", { token: logData.token });
           } else if (logData.type === "stream_end") {
-            broadcast("STREAM_END", {});
+            broadcast("STREAM_END", {
+              promptTokens: logData.promptTokens || 0,
+              completionTokens: logData.completionTokens || 0,
+              inferenceMs: logData.inferenceMs || 0
+            });
           }
         } catch {
         }
