@@ -45,25 +45,73 @@ function extractHeadings(content: string): Array<{ level: number; text: string; 
   return headings;
 }
 
-/** Extract links from markdown content */
-function extractLinks(content: string): Array<{ text: string; href: string; line: number; isInternal: boolean }> {
-  const links: Array<{ text: string; href: string; line: number; isInternal: boolean }> = [];
+/** Extract links from markdown content.
+ *
+ * Recognises two link kinds:
+ *   - `inline` — standard markdown `[text](href)`
+ *   - `wiki`   — Obsidian-style `[[slug]]`, `[[slug|alias]]`, `[[slug#heading]]`, `![[embed]]`
+ *
+ * Lines inside fenced code blocks (``` … ```) are skipped to avoid false
+ * positives like `${var}` template literals or example URLs in code samples.
+ *
+ * For wiki links, `href` is the bare slug (no `.md`, no path). Resolution
+ * to a real file is the caller's job — the slug must be looked up against
+ * a basename index of the workspace.
+ */
+function extractLinks(content: string): Array<{ text: string; href: string; line: number; isInternal: boolean; kind: 'inline' | 'wiki' }> {
+  const links: Array<{ text: string; href: string; line: number; isInternal: boolean; kind: 'inline' | 'wiki' }> = [];
   const lines = content.split('\n');
-  const linkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+  const inlineRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+  // Match [[target]], [[target|alias]], [[target#heading]], and ![[embed]] forms.
+  const wikiRegex = /!?\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g;
+  let inFence = false;
   for (let i = 0; i < lines.length; i++) {
-    let match;
-    while ((match = linkRegex.exec(lines[i])) !== null) {
+    const line = lines[i];
+    // Toggle fenced-code-block state on lines that start with ``` or ~~~ (allowing leading whitespace).
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
+    let match: RegExpExecArray | null;
+
+    inlineRegex.lastIndex = 0;
+    while ((match = inlineRegex.exec(line)) !== null) {
       const href = match[2];
-      const isInternal = !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#');
-      links.push({
-        text: match[1],
-        href,
-        line: i + 1,
-        isInternal,
-      });
+      const isInternal = !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:');
+      links.push({ text: match[1], href, line: i + 1, isInternal, kind: 'inline' });
+    }
+
+    wikiRegex.lastIndex = 0;
+    while ((match = wikiRegex.exec(line)) !== null) {
+      const slug = match[1].trim();
+      const alias = match[2]?.trim();
+      links.push({ text: alias || slug, href: slug, line: i + 1, isInternal: true, kind: 'wiki' });
     }
   }
   return links;
+}
+
+/** Build a basename → relative-path index for wiki-link resolution.
+ *
+ * Wiki links reference notes by basename (e.g. `[[swarm-engine]]` → `projects/swarm-engine.md`).
+ * Multiple files may share a basename across the vault; we keep the first occurrence
+ * and surface ambiguity via the duplicates set so callers can warn.
+ */
+function buildSlugIndex(resolvedDir: string, allFiles: string[]): { byBase: Map<string, string>; duplicates: Set<string> } {
+  const byBase = new Map<string, string>();
+  const duplicates = new Set<string>();
+  for (const f of allFiles) {
+    const rel = path.relative(resolvedDir, f);
+    const base = path.basename(rel, path.extname(rel));
+    if (byBase.has(base)) {
+      duplicates.add(base);
+    } else {
+      byBase.set(base, rel);
+    }
+  }
+  return { byBase, duplicates };
 }
 
 /** Calculate word count and reading time */
@@ -524,6 +572,7 @@ server.tool(
   async ({ path: filePath, internalOnly }) => {
     const allFiles = findMarkdownFiles(resolvedDir);
     const allRelative = new Set(allFiles.map((f) => path.relative(resolvedDir, f)));
+    const slugIndex = buildSlugIndex(resolvedDir, allFiles);
 
     const processFile = (fPath: string) => {
       const content = fs.readFileSync(fPath, 'utf-8');
@@ -534,11 +583,14 @@ server.tool(
       return {
         file: relative,
         links: links.map((l) => {
-          if (l.isInternal) {
-            const resolved = path.normalize(path.join(path.dirname(relative), l.href));
-            return { ...l, resolvedPath: resolved, exists: allRelative.has(resolved) };
+          if (!l.isInternal) return l;
+          if (l.kind === 'wiki') {
+            const resolved = slugIndex.byBase.get(l.href);
+            return { ...l, resolvedPath: resolved ?? null, exists: resolved !== undefined };
           }
-          return l;
+          const cleanHref = l.href.split('#')[0].split('?')[0];
+          const resolved = path.normalize(path.join(path.dirname(relative), cleanHref));
+          return { ...l, resolvedPath: resolved, exists: allRelative.has(resolved) };
         }),
       };
     };
@@ -700,6 +752,7 @@ server.tool(
   async () => {
     const allFiles = findMarkdownFiles(resolvedDir);
     const allRelative = new Set(allFiles.map((f) => path.relative(resolvedDir, f)));
+    const slugIndex = buildSlugIndex(resolvedDir, allFiles);
 
     const issues: Array<{ type: string; severity: 'error' | 'warning' | 'info'; file: string; message: string }> = [];
     const linkedTo = new Set<string>();
@@ -723,8 +776,24 @@ server.tool(
 
       // Check: broken internal links
       for (const link of links) {
-        if (link.isInternal) {
-          const resolved = path.normalize(path.join(path.dirname(relative), link.href));
+        if (!link.isInternal) continue;
+        if (link.kind === 'wiki') {
+          const target = slugIndex.byBase.get(link.href);
+          if (target) {
+            linkedTo.add(target);
+          } else {
+            issues.push({
+              type: 'broken_link',
+              severity: 'error',
+              file: relative,
+              message: `Broken wiki link to "[[${link.href}]]" — no file matches that basename (line ${link.line})`,
+            });
+          }
+        } else {
+          // Inline [text](path.md) — strip URL fragment/query, then resolve relative to the source file.
+          const cleanHref = link.href.split('#')[0].split('?')[0];
+          if (!cleanHref) continue;
+          const resolved = path.normalize(path.join(path.dirname(relative), cleanHref));
           linkedTo.add(resolved);
           if (!allRelative.has(resolved)) {
             issues.push({
@@ -742,6 +811,16 @@ server.tool(
       if (h1s.length > 1) {
         issues.push({ type: 'duplicate_h1', severity: 'info', file: relative, message: `Multiple H1 headings (${h1s.length})` });
       }
+    }
+
+    // Surface basename ambiguity (multiple files share a slug → wiki links resolve nondeterministically).
+    for (const dup of slugIndex.duplicates) {
+      issues.push({
+        type: 'ambiguous_slug',
+        severity: 'warning',
+        file: slugIndex.byBase.get(dup) || dup,
+        message: `Basename "${dup}" is shared by multiple files; wiki links to [[${dup}]] resolve to only one of them`,
+      });
     }
 
     // Check: orphan files (not linked from any other doc)
@@ -960,9 +1039,16 @@ server.tool(
     // Move the file
     fs.renameSync(fullOld, fullNew);
 
-    // Update links in all other files
+    // Update links in all other files. Two link kinds need rewriting:
+    //   - inline `[text](path.md)` — resolve against the file's directory and match oldPath
+    //   - wiki `[[basename]]` (and aliased / anchored / embed forms) — match by basename
     const allFiles = findMarkdownFiles(resolvedDir);
     let updatedFiles = 0;
+    const oldBase = path.basename(oldPath, path.extname(oldPath));
+    const newBase = path.basename(newPath, path.extname(newPath));
+    const oldBaseEscaped = oldBase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Match the basename inside [[...]] or ![[...]], stopping at ], |, or # so aliases and headings are preserved.
+    const wikiBaseRegex = new RegExp(`(!?\\[\\[)${oldBaseEscaped}(?=[\\]|#])`, 'g');
 
     for (const f of allFiles) {
       const relative = path.relative(resolvedDir, f);
@@ -971,15 +1057,22 @@ server.tool(
       let modified = content;
       let changed = false;
 
+      // 1) Inline links — substring replace with the link's exact href.
       for (const link of links) {
-        if (link.isInternal) {
-          const resolved = path.normalize(path.join(path.dirname(relative), link.href));
-          if (resolved === oldPath) {
-            const newRelativeLink = path.relative(path.dirname(relative), newPath);
-            modified = modified.replace(`](${link.href})`, `](${newRelativeLink})`);
-            changed = true;
-          }
+        if (link.kind !== 'inline' || !link.isInternal) continue;
+        const cleanHref = link.href.split('#')[0].split('?')[0];
+        const resolved = path.normalize(path.join(path.dirname(relative), cleanHref));
+        if (resolved === oldPath) {
+          const newRelativeLink = path.relative(path.dirname(relative), newPath);
+          modified = modified.replace(`](${link.href})`, `](${newRelativeLink})`);
+          changed = true;
         }
+      }
+
+      // 2) Wiki links — rewrite by basename only if the rename changed the basename.
+      if (oldBase !== newBase && links.some((l) => l.kind === 'wiki' && l.href === oldBase)) {
+        modified = modified.replace(wikiBaseRegex, `$1${newBase}`);
+        changed = true;
       }
 
       if (changed) {
@@ -1592,6 +1685,329 @@ server.tool(
           averageReadingEase: Math.round(avgEase * 10) / 10,
           averageGradeLevel: Math.round(avgGrade * 10) / 10,
           documents: results,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Vault graph queries
+// ---------------------------------------------------------------------------
+// Plain BFS + label propagation over an in-memory undirected adjacency built
+// from wikilinks and relative markdown links. At workspace scale (<10k files)
+// this dwarfs anything fancier — no need for sparse-matrix or GPU paths here.
+// The adjacency is rebuilt per call so any file edit between tool invocations
+// is reflected; the underlying I/O dominates and is what we'd cache first if
+// it ever got slow.
+
+type Adjacency = Map<string, Set<string>>;
+
+const WIKILINK_RE = /\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]/g;
+const MD_LINK_RE = /\[[^\]]*\]\(([^)\s]+)\)/g;
+
+/** Lower-cased file stem (no extension, no path), used as the key for both
+ *  wikilink targets and absolute/relative markdown link targets. */
+function normStem(raw: string): string {
+  const noFragment = raw.split(/[#?]/)[0];
+  const parts = noFragment.split('/');
+  const last = parts[parts.length - 1] ?? noFragment;
+  return last.trim().replace(/\.(md|markdown)$/i, '').toLowerCase();
+}
+
+function buildVaultAdjacency(): { adjacency: Adjacency; paths: string[] } {
+  const files = findMarkdownFiles(resolvedDir);
+  const paths = files.map((f) => path.relative(resolvedDir, f));
+  const stemIndex = new Map<string, string>();
+  for (const rel of paths) stemIndex.set(normStem(rel), rel);
+
+  const adjacency: Adjacency = new Map();
+  for (const rel of paths) adjacency.set(rel, new Set());
+
+  for (let i = 0; i < files.length; i++) {
+    const self = paths[i];
+    const content = fs.readFileSync(files[i], 'utf-8');
+    const targets = new Set<string>();
+
+    WIKILINK_RE.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = WIKILINK_RE.exec(content))) {
+      const t = stemIndex.get(normStem(m[1]));
+      if (t && t !== self) targets.add(t);
+    }
+    MD_LINK_RE.lastIndex = 0;
+    while ((m = MD_LINK_RE.exec(content))) {
+      const href = m[1];
+      if (/^https?:/i.test(href) || /^mailto:/i.test(href) || href.startsWith('#')) continue;
+      const t = stemIndex.get(normStem(href));
+      if (t && t !== self) targets.add(t);
+    }
+
+    for (const t of targets) {
+      adjacency.get(self)!.add(t);
+      adjacency.get(t)!.add(self);
+    }
+  }
+
+  return { adjacency, paths };
+}
+
+function bfsKHop(adj: Adjacency, start: string, k: number): Array<{ path: string; hops: number }> {
+  if (k < 1 || !adj.has(start)) return [];
+  const visited = new Set<string>([start]);
+  const out: Array<{ path: string; hops: number }> = [];
+  let frontier: string[] = [start];
+  for (let depth = 1; depth <= k && frontier.length > 0; depth++) {
+    const next: string[] = [];
+    for (const u of frontier) {
+      for (const v of adj.get(u) ?? []) {
+        if (visited.has(v)) continue;
+        visited.add(v);
+        out.push({ path: v, hops: depth });
+        next.push(v);
+      }
+    }
+    frontier = next;
+  }
+  return out;
+}
+
+function bfsShortestPath(adj: Adjacency, source: string, target: string): string[] | null {
+  if (source === target) return adj.has(source) ? [source] : null;
+  if (!adj.has(source) || !adj.has(target)) return null;
+  const prev = new Map<string, string>();
+  const visited = new Set<string>([source]);
+  let frontier: string[] = [source];
+  while (frontier.length > 0) {
+    const next: string[] = [];
+    for (const u of frontier) {
+      for (const v of adj.get(u) ?? []) {
+        if (visited.has(v)) continue;
+        visited.add(v);
+        prev.set(v, u);
+        if (v === target) {
+          const path = [target];
+          let cur = u;
+          while (cur !== source) {
+            path.push(cur);
+            cur = prev.get(cur)!;
+          }
+          path.push(source);
+          return path.reverse();
+        }
+        next.push(v);
+      }
+    }
+    frontier = next;
+  }
+  return null;
+}
+
+function inducedEgoGraph(adj: Adjacency, center: string, k: number): { nodes: string[]; edges: Array<[string, string]> } {
+  if (!adj.has(center)) return { nodes: [], edges: [] };
+  const hits = bfsKHop(adj, center, k);
+  const nodes = [center, ...hits.map((h) => h.path)];
+  const set = new Set(nodes);
+  const edges: Array<[string, string]> = [];
+  const seen = new Set<string>();
+  for (const u of nodes) {
+    for (const v of adj.get(u) ?? []) {
+      if (!set.has(v)) continue;
+      const key = u < v ? `${u}|${v}` : `${v}|${u}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      edges.push([u, v]);
+    }
+  }
+  return { nodes, edges };
+}
+
+function labelPropagation(adj: Adjacency, maxIterations: number): Map<string, string> {
+  const nodes = Array.from(adj.keys()).sort();
+  const label = new Map<string, string>();
+  for (const id of nodes) label.set(id, id);
+  for (let iter = 0; iter < maxIterations; iter++) {
+    let changed = false;
+    for (const u of nodes) {
+      const nbrs = adj.get(u);
+      if (!nbrs || nbrs.size === 0) continue;
+      const counts = new Map<string, number>();
+      for (const v of nbrs) {
+        const lab = label.get(v)!;
+        counts.set(lab, (counts.get(lab) ?? 0) + 1);
+      }
+      let bestLabel = label.get(u)!;
+      let bestCount = -1;
+      for (const [lab, count] of counts) {
+        if (count > bestCount || (count === bestCount && lab < bestLabel)) {
+          bestLabel = lab;
+          bestCount = count;
+        }
+      }
+      if (label.get(u) !== bestLabel) {
+        label.set(u, bestLabel);
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  return label;
+}
+
+// ---------------------------------------------------------------------------
+// Tool: get_related_within_hops
+// ---------------------------------------------------------------------------
+server.tool(
+  'get_related_within_hops',
+  'List all documents reachable from a starting document within N link hops. Uses both [[wikilinks]] and relative markdown links to build the graph.',
+  {
+    path: z.string().describe('Relative path to the source document, e.g. "projects/x.md"'),
+    hops: z.number().int().min(1).max(6).optional().describe('Maximum hop distance (default: 2, max: 6)'),
+  },
+  async ({ path: filePath, hops = 2 }) => {
+    const { adjacency } = buildVaultAdjacency();
+    if (!adjacency.has(filePath)) {
+      return {
+        content: [{ type: 'text' as const, text: `Error: Document not found in vault: ${filePath}` }],
+        isError: true,
+      };
+    }
+    const hits = bfsKHop(adjacency, filePath, hops);
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          source: filePath,
+          hops,
+          totalRelated: hits.length,
+          related: hits,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: get_shortest_path
+// ---------------------------------------------------------------------------
+server.tool(
+  'get_shortest_path',
+  'Find the shortest hop-count path between two documents through the link graph. Returns the path inclusive of both endpoints, or null if unreachable.',
+  {
+    from: z.string().describe('Relative path to the source document'),
+    to: z.string().describe('Relative path to the target document'),
+  },
+  async ({ from, to }) => {
+    const { adjacency } = buildVaultAdjacency();
+    const path = bfsShortestPath(adjacency, from, to);
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          from,
+          to,
+          reachable: path !== null,
+          hops: path ? path.length - 1 : null,
+          path,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: get_ego_graph
+// ---------------------------------------------------------------------------
+server.tool(
+  'get_ego_graph',
+  'Return the induced subgraph (nodes + edges) within N hops of a center document. Useful for visualizing or summarizing a local neighborhood.',
+  {
+    path: z.string().describe('Relative path to the center document'),
+    hops: z.number().int().min(1).max(4).optional().describe('Hop radius (default: 2, max: 4)'),
+  },
+  async ({ path: filePath, hops = 2 }) => {
+    const { adjacency } = buildVaultAdjacency();
+    if (!adjacency.has(filePath)) {
+      return {
+        content: [{ type: 'text' as const, text: `Error: Document not found in vault: ${filePath}` }],
+        isError: true,
+      };
+    }
+    const ego = inducedEgoGraph(adjacency, filePath, hops);
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          center: filePath,
+          hops,
+          nodeCount: ego.nodes.length,
+          edgeCount: ego.edges.length,
+          nodes: ego.nodes,
+          edges: ego.edges,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: get_vault_hubs
+// ---------------------------------------------------------------------------
+server.tool(
+  'get_vault_hubs',
+  'List the most-connected documents in the vault by degree (number of incident wikilinks/markdown links). Surfaces hub notes and indices.',
+  {
+    limit: z.number().int().min(1).max(100).optional().describe('How many top hubs to return (default: 10, max: 100)'),
+  },
+  async ({ limit = 10 }) => {
+    const { adjacency } = buildVaultAdjacency();
+    const ranked = Array.from(adjacency, ([p, nbrs]) => ({ path: p, degree: nbrs.size }))
+      .sort((a, b) => (b.degree - a.degree) || (a.path < b.path ? -1 : a.path > b.path ? 1 : 0))
+      .slice(0, limit);
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          totalDocs: adjacency.size,
+          hubs: ranked,
+        }, null, 2),
+      }],
+    };
+  }
+);
+
+// ---------------------------------------------------------------------------
+// Tool: get_communities
+// ---------------------------------------------------------------------------
+server.tool(
+  'get_communities',
+  'Cluster vault documents into communities via label propagation over the link graph. Returns each community with its member paths. Deterministic.',
+  {
+    minSize: z.number().int().min(1).optional().describe('Drop communities smaller than this many members (default: 1)'),
+    maxIterations: z.number().int().min(1).max(100).optional().describe('Max label-propagation sweeps (default: 20)'),
+  },
+  async ({ minSize = 1, maxIterations = 20 }) => {
+    const { adjacency } = buildVaultAdjacency();
+    const labels = labelPropagation(adjacency, maxIterations);
+    const grouped = new Map<string, string[]>();
+    for (const [node, lab] of labels) {
+      if (!grouped.has(lab)) grouped.set(lab, []);
+      grouped.get(lab)!.push(node);
+    }
+    const communities = Array.from(grouped, ([label, members]) => ({
+      label,
+      size: members.length,
+      members: members.sort(),
+    }))
+      .filter((c) => c.size >= minSize)
+      .sort((a, b) => b.size - a.size || (a.label < b.label ? -1 : 1));
+    return {
+      content: [{
+        type: 'text' as const,
+        text: JSON.stringify({
+          totalDocs: adjacency.size,
+          communityCount: communities.length,
+          communities,
         }, null, 2),
       }],
     };
@@ -2271,11 +2687,11 @@ async function main() {
     
     const transport = new WebRTCServerTransport(webrtcRoom, signalingUrl);
     await server.connect(transport);
-    console.error(`markview-mcp WebRTC server running on ${resolvedDir} — 24 tools, 1 resource, 3 prompts available`);
+    console.error(`markview-mcp WebRTC server running on ${resolvedDir} — 29 tools, 1 resource, 3 prompts available`);
   } else {
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error(`markview-mcp stdio server running on ${resolvedDir} — 23 tools, 1 resource, 3 prompts available`);
+    console.error(`markview-mcp stdio server running on ${resolvedDir} — 28 tools, 1 resource, 3 prompts available`);
   }
 }
 

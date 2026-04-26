@@ -27,16 +27,34 @@ function extractHeadings(content: string): Array<{ level: number; text: string; 
   return headings;
 }
 
-function extractLinks(content: string): Array<{ text: string; href: string; line: number; isInternal: boolean }> {
-  const links: Array<{ text: string; href: string; line: number; isInternal: boolean }> = [];
+function extractLinks(content: string): Array<{ text: string; href: string; line: number; isInternal: boolean; kind: 'inline' | 'wiki' }> {
+  const links: Array<{ text: string; href: string; line: number; isInternal: boolean; kind: 'inline' | 'wiki' }> = [];
   const lines = content.split('\n');
-  const linkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+  const inlineRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+  const wikiRegex = /!?\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g;
+  let inFence = false;
   for (let i = 0; i < lines.length; i++) {
-    let match;
-    while ((match = linkRegex.exec(lines[i])) !== null) {
+    const line = lines[i];
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
+    let match: RegExpExecArray | null;
+
+    inlineRegex.lastIndex = 0;
+    while ((match = inlineRegex.exec(line)) !== null) {
       const href = match[2];
-      const isInternal = !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#');
-      links.push({ text: match[1], href, line: i + 1, isInternal });
+      const isInternal = !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:');
+      links.push({ text: match[1], href, line: i + 1, isInternal, kind: 'inline' });
+    }
+
+    wikiRegex.lastIndex = 0;
+    while ((match = wikiRegex.exec(line)) !== null) {
+      const slug = match[1].trim();
+      const alias = match[2]?.trim();
+      links.push({ text: alias || slug, href: slug, line: i + 1, isInternal: true, kind: 'wiki' });
     }
   }
   return links;
@@ -273,6 +291,64 @@ describe('extractLinks', () => {
 
   it('returns empty array for content without links', () => {
     expect(extractLinks('No links here')).toEqual([]);
+  });
+
+  it('extracts Obsidian wiki links', () => {
+    const md = 'See [[swarm-engine]] and [[zero-tvm]] for context.';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(2);
+    expect(links[0]).toMatchObject({ text: 'swarm-engine', href: 'swarm-engine', isInternal: true, kind: 'wiki' });
+    expect(links[1]).toMatchObject({ text: 'zero-tvm', href: 'zero-tvm', isInternal: true, kind: 'wiki' });
+  });
+
+  it('handles wiki link aliases [[target|display]]', () => {
+    const md = 'Refer to [[swarm-engine|the engine]] for details.';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ text: 'the engine', href: 'swarm-engine', kind: 'wiki' });
+  });
+
+  it('handles wiki link heading anchors [[target#heading]]', () => {
+    const md = 'Per [[design#api-shape]] we agreed on JSON.';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ href: 'design', kind: 'wiki' });
+  });
+
+  it('handles wiki embeds ![[target]]', () => {
+    const md = '![[architecture-diagram]]';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ href: 'architecture-diagram', kind: 'wiki' });
+  });
+
+  it('skips links inside fenced code blocks', () => {
+    const md = [
+      'Real link: [[real-target]]',
+      '```dataviewjs',
+      'const x = `[link](${p.url})` // not a real link',
+      'const y = "[[also-not-a-link]]"',
+      '```',
+      'Another real one: [outside](outside.md)',
+    ].join('\n');
+    const links = extractLinks(md);
+    expect(links).toHaveLength(2);
+    expect(links[0]).toMatchObject({ href: 'real-target', kind: 'wiki' });
+    expect(links[1]).toMatchObject({ href: 'outside.md', kind: 'inline' });
+  });
+
+  it('treats inline and wiki links as separate kinds', () => {
+    const md = '[markdown](file.md) and [[wiki-target]]';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(2);
+    expect(links.find((l) => l.kind === 'inline')?.href).toBe('file.md');
+    expect(links.find((l) => l.kind === 'wiki')?.href).toBe('wiki-target');
+  });
+
+  it('marks mailto: as external', () => {
+    const md = '[email](mailto:user@example.com)';
+    const links = extractLinks(md);
+    expect(links[0].isInternal).toBe(false);
   });
 });
 
