@@ -51,12 +51,15 @@ function extractHeadings(content: string): Array<{ level: number; text: string; 
  *   - `inline` — standard markdown `[text](href)`
  *   - `wiki`   — Obsidian-style `[[slug]]`, `[[slug|alias]]`, `[[slug#heading]]`, `![[embed]]`
  *
- * Lines inside fenced code blocks (``` … ```) are skipped to avoid false
- * positives like `${var}` template literals or example URLs in code samples.
+ * Lines inside fenced code blocks (``` … ```) are skipped, and inline code
+ * spans (`like this`) are masked out within each line, to avoid false
+ * positives like `${var}` template literals, example URLs in code samples,
+ * or framework-specific dynamic-route syntax such as Cloudflare Pages
+ * `functions/hf/[[path]].ts` (which is literal code, not a wiki link).
  *
  * For wiki links, `href` is the bare slug (no `.md`, no path). Resolution
  * to a real file is the caller's job — the slug must be looked up against
- * a basename index of the workspace.
+ * the workspace slug index (basename + permalink frontmatter).
  */
 function extractLinks(content: string): Array<{ text: string; href: string; line: number; isInternal: boolean; kind: 'inline' | 'wiki' }> {
   const links: Array<{ text: string; href: string; line: number; isInternal: boolean; kind: 'inline' | 'wiki' }> = [];
@@ -64,6 +67,8 @@ function extractLinks(content: string): Array<{ text: string; href: string; line
   const inlineRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
   // Match [[target]], [[target|alias]], [[target#heading]], and ![[embed]] forms.
   const wikiRegex = /!?\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g;
+  // Replace inline code spans with same-length whitespace so positions stay consistent.
+  const inlineCodeRegex = /`[^`\n]+`/g;
   let inFence = false;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -74,17 +79,22 @@ function extractLinks(content: string): Array<{ text: string; href: string; line
     }
     if (inFence) continue;
 
+    // Mask inline code spans before matching. Brackets inside `…` are literal
+    // text (e.g. `[[path]]` from CF Pages routes, `[[wikilinks]]` example prose),
+    // not real wiki links, so we erase them here.
+    const sanitized = line.replace(inlineCodeRegex, (m) => ' '.repeat(m.length));
+
     let match: RegExpExecArray | null;
 
     inlineRegex.lastIndex = 0;
-    while ((match = inlineRegex.exec(line)) !== null) {
+    while ((match = inlineRegex.exec(sanitized)) !== null) {
       const href = match[2];
       const isInternal = !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:');
       links.push({ text: match[1], href, line: i + 1, isInternal, kind: 'inline' });
     }
 
     wikiRegex.lastIndex = 0;
-    while ((match = wikiRegex.exec(line)) !== null) {
+    while ((match = wikiRegex.exec(sanitized)) !== null) {
       const slug = match[1].trim();
       const alias = match[2]?.trim();
       links.push({ text: alias || slug, href: slug, line: i + 1, isInternal: true, kind: 'wiki' });
@@ -93,14 +103,19 @@ function extractLinks(content: string): Array<{ text: string; href: string; line
   return links;
 }
 
-/** Build a basename → relative-path index for wiki-link resolution.
+/** Build a slug → relative-path index for wiki-link resolution.
  *
- * Wiki links reference notes by basename (e.g. `[[swarm-engine]]` → `projects/swarm-engine.md`).
- * Multiple files may share a basename across the vault; we keep the first occurrence
- * and surface ambiguity via the duplicates set so callers can warn.
+ * Wiki links reference notes by basename (e.g. `[[swarm-engine]]` → `projects/swarm-engine.md`)
+ * or by the canonical permalink declared in frontmatter (e.g. `permalink: html-in-canvas-session-001-stages-1-2`
+ * for a file at `projects/html-in-canvas/sessions/001-stages-1-2.md`).
+ *
+ * Resolution order at lookup time: basename first, then permalink fallback. Multiple files may
+ * share a basename or permalink; we keep the first occurrence and surface ambiguity via the
+ * duplicates set so callers can warn.
  */
-function buildSlugIndex(resolvedDir: string, allFiles: string[]): { byBase: Map<string, string>; duplicates: Set<string> } {
+function buildSlugIndex(resolvedDir: string, allFiles: string[]): { byBase: Map<string, string>; byPermalink: Map<string, string>; duplicates: Set<string> } {
   const byBase = new Map<string, string>();
+  const byPermalink = new Map<string, string>();
   const duplicates = new Set<string>();
   for (const f of allFiles) {
     const rel = path.relative(resolvedDir, f);
@@ -110,8 +125,24 @@ function buildSlugIndex(resolvedDir: string, allFiles: string[]): { byBase: Map<
     } else {
       byBase.set(base, rel);
     }
+
+    // Index by frontmatter `permalink` field, when present and distinct from basename.
+    try {
+      const content = fs.readFileSync(f, 'utf-8');
+      const fm = parseFrontmatter(content);
+      const permalink = fm?.data?.permalink?.trim();
+      if (permalink && permalink !== base) {
+        if (byPermalink.has(permalink)) {
+          duplicates.add(permalink);
+        } else {
+          byPermalink.set(permalink, rel);
+        }
+      }
+    } catch {
+      // Read errors are surfaced elsewhere; skip indexing this file's permalink.
+    }
   }
-  return { byBase, duplicates };
+  return { byBase, byPermalink, duplicates };
 }
 
 /** Calculate word count and reading time */
@@ -585,7 +616,7 @@ server.tool(
         links: links.map((l) => {
           if (!l.isInternal) return l;
           if (l.kind === 'wiki') {
-            const resolved = slugIndex.byBase.get(l.href);
+            const resolved = slugIndex.byBase.get(l.href) ?? slugIndex.byPermalink.get(l.href);
             return { ...l, resolvedPath: resolved ?? null, exists: resolved !== undefined };
           }
           const cleanHref = l.href.split('#')[0].split('?')[0];
@@ -778,7 +809,7 @@ server.tool(
       for (const link of links) {
         if (!link.isInternal) continue;
         if (link.kind === 'wiki') {
-          const target = slugIndex.byBase.get(link.href);
+          const target = slugIndex.byBase.get(link.href) ?? slugIndex.byPermalink.get(link.href);
           if (target) {
             linkedTo.add(target);
           } else {
@@ -786,7 +817,7 @@ server.tool(
               type: 'broken_link',
               severity: 'error',
               file: relative,
-              message: `Broken wiki link to "[[${link.href}]]" — no file matches that basename (line ${link.line})`,
+              message: `Broken wiki link to "[[${link.href}]]" — no file matches that basename or permalink (line ${link.line})`,
             });
           }
         } else {

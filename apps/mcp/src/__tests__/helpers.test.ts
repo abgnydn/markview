@@ -32,6 +32,7 @@ function extractLinks(content: string): Array<{ text: string; href: string; line
   const lines = content.split('\n');
   const inlineRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
   const wikiRegex = /!?\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g;
+  const inlineCodeRegex = /`[^`\n]+`/g;
   let inFence = false;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -41,17 +42,19 @@ function extractLinks(content: string): Array<{ text: string; href: string; line
     }
     if (inFence) continue;
 
+    const sanitized = line.replace(inlineCodeRegex, (m) => ' '.repeat(m.length));
+
     let match: RegExpExecArray | null;
 
     inlineRegex.lastIndex = 0;
-    while ((match = inlineRegex.exec(line)) !== null) {
+    while ((match = inlineRegex.exec(sanitized)) !== null) {
       const href = match[2];
       const isInternal = !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('#') && !href.startsWith('mailto:');
       links.push({ text: match[1], href, line: i + 1, isInternal, kind: 'inline' });
     }
 
     wikiRegex.lastIndex = 0;
-    while ((match = wikiRegex.exec(line)) !== null) {
+    while ((match = wikiRegex.exec(sanitized)) !== null) {
       const slug = match[1].trim();
       const alias = match[2]?.trim();
       links.push({ text: alias || slug, href: slug, line: i + 1, isInternal: true, kind: 'wiki' });
@@ -350,6 +353,37 @@ describe('extractLinks', () => {
     const links = extractLinks(md);
     expect(links[0].isInternal).toBe(false);
   });
+
+  it('skips wiki-link-shaped content inside inline code spans', () => {
+    // CF Pages dynamic-route syntax `[[path]].ts` is literal code, not a wiki link.
+    const md = 'See `functions/hf/[[path]].ts` for the proxy. Real link: [[real-target]].';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ href: 'real-target', kind: 'wiki' });
+  });
+
+  it('skips inline-link-shaped content inside inline code spans', () => {
+    // The `[click](./fake.md)` inside backticks is example prose, not a link.
+    const md = 'Use `[click](./fake.md)` syntax. Real one: [outside](real.md).';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ href: 'real.md', kind: 'inline' });
+  });
+
+  it('still picks up wiki links in the same line as inline code', () => {
+    // The code span only blocks parsing within its delimiters — the rest of the line is fair game.
+    const md = 'Per `note` about [[real-target]] elsewhere.';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ href: 'real-target', kind: 'wiki' });
+  });
+
+  it('handles multiple inline code spans on one line', () => {
+    const md = 'Files: `a/[[x]].ts` and `b/[[y]].ts`. Real: [[live]].';
+    const links = extractLinks(md);
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ href: 'live', kind: 'wiki' });
+  });
 });
 
 describe('getStats', () => {
@@ -631,6 +665,109 @@ describe('compressToShareUrl', () => {
     const compressed = Buffer.from(padded, 'base64');
     const decompressed = zlib.gunzipSync(compressed).toString('utf-8');
     expect(decompressed).toBe(original);
+  });
+});
+
+describe('buildSlugIndex (basename + permalink fallback)', () => {
+  let tmpDir: string;
+
+  function parseFrontmatter(content: string): { data: Record<string, string>; content: string } | null {
+    const trimmed = content.trimStart();
+    if (!trimmed.startsWith('---')) return null;
+    const endIdx = trimmed.indexOf('\n---', 3);
+    if (endIdx === -1) return null;
+    const yamlBlock = trimmed.slice(4, endIdx).trim();
+    const body = trimmed.slice(endIdx + 4).trimStart();
+    const data: Record<string, string> = {};
+    for (const line of yamlBlock.split('\n')) {
+      const m = line.match(/^(\w[\w\s-]*?):\s*(.+)$/);
+      if (m) data[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
+    }
+    return { data, content: body };
+  }
+
+  function buildSlugIndex(resolvedDir: string, allFiles: string[]): { byBase: Map<string, string>; byPermalink: Map<string, string>; duplicates: Set<string> } {
+    const byBase = new Map<string, string>();
+    const byPermalink = new Map<string, string>();
+    const duplicates = new Set<string>();
+    for (const f of allFiles) {
+      const rel = path.relative(resolvedDir, f);
+      const base = path.basename(rel, path.extname(rel));
+      if (byBase.has(base)) duplicates.add(base);
+      else byBase.set(base, rel);
+
+      try {
+        const content = fs.readFileSync(f, 'utf-8');
+        const fm = parseFrontmatter(content);
+        const permalink = fm?.data?.permalink?.trim();
+        if (permalink && permalink !== base) {
+          if (byPermalink.has(permalink)) duplicates.add(permalink);
+          else byPermalink.set(permalink, rel);
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return { byBase, byPermalink, duplicates };
+  }
+
+  beforeAll(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'markview-slug-'));
+    fs.writeFileSync(
+      path.join(tmpDir, '001-stages-1-2.md'),
+      '---\ntitle: stages 1-2\npermalink: html-in-canvas-session-001-stages-1-2\n---\n\n# Stages\n'
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, 'swarm-engine.md'),
+      '---\ntitle: swarm-engine\n---\n\n# Swarm\n'
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, 'no-fm.md'),
+      '# Plain doc\n\nNo frontmatter at all.\n'
+    );
+    // Permalink that equals basename — should NOT enter the permalink map (already in byBase).
+    fs.writeFileSync(
+      path.join(tmpDir, 'visit-claude.md'),
+      '---\ntitle: visit-claude\npermalink: visit-claude\n---\n\n# Visit\n'
+    );
+  });
+
+  afterAll(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it('indexes files by basename', () => {
+    const files = fs.readdirSync(tmpDir).map((n) => path.join(tmpDir, n));
+    const idx = buildSlugIndex(tmpDir, files);
+    expect(idx.byBase.get('swarm-engine')).toBe('swarm-engine.md');
+    expect(idx.byBase.get('001-stages-1-2')).toBe('001-stages-1-2.md');
+    expect(idx.byBase.get('no-fm')).toBe('no-fm.md');
+  });
+
+  it('indexes by permalink frontmatter when distinct from basename', () => {
+    const files = fs.readdirSync(tmpDir).map((n) => path.join(tmpDir, n));
+    const idx = buildSlugIndex(tmpDir, files);
+    expect(idx.byPermalink.get('html-in-canvas-session-001-stages-1-2')).toBe('001-stages-1-2.md');
+  });
+
+  it('does not duplicate permalink when it matches basename', () => {
+    const files = fs.readdirSync(tmpDir).map((n) => path.join(tmpDir, n));
+    const idx = buildSlugIndex(tmpDir, files);
+    // visit-claude has permalink === basename; only basename should resolve, no permalink entry.
+    expect(idx.byPermalink.has('visit-claude')).toBe(false);
+    expect(idx.byBase.get('visit-claude')).toBe('visit-claude.md');
+  });
+
+  it('basename-then-permalink resolution: caller pattern', () => {
+    const files = fs.readdirSync(tmpDir).map((n) => path.join(tmpDir, n));
+    const idx = buildSlugIndex(tmpDir, files);
+    const resolve = (slug: string) => idx.byBase.get(slug) ?? idx.byPermalink.get(slug);
+    // Basename hit
+    expect(resolve('swarm-engine')).toBe('swarm-engine.md');
+    // Permalink fallback
+    expect(resolve('html-in-canvas-session-001-stages-1-2')).toBe('001-stages-1-2.md');
+    // Neither
+    expect(resolve('does-not-exist')).toBeUndefined();
   });
 });
 
