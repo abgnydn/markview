@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>markview — merged product vision</title>
+<style>
+  :root {
+    --bg: #04050d;
+    --bg-soft: #090c1a;
+    --ink: #e7ecf6;
+    --ink-soft: rgba(231, 236, 246, 0.62);
+    --ink-faint: rgba(231, 236, 246, 0.32);
+    --accent-cool: #67e8f9;
+    --accent-warm: #ffd58c;
+    --accent-violet: #a78bfa;
+    --accent-rose: #ff7a94;
+    --line: rgba(255, 255, 255, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: ui-serif, "Iowan Old Style", "Apple Garamond", Palatino, "Times New Roman", serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body { min-height: 100vh; }
+
+  /* Background — slow shifting nebula across the whole page */
+  .nebula {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 18% 22%, rgba(167, 139, 250, 0.18) 0%, transparent 45%),
+      radial-gradient(ellipse at 82% 28%, rgba(103, 232, 249, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 78%, rgba(255, 122, 148, 0.10) 0%, transparent 55%),
+      var(--bg);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .stars {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 100%),
+      radial-gradient(1px 1px at 88% 24%, #c8d0ff 50%, transparent 100%),
+      radial-gradient(2px 2px at 24% 76%, #ffd6a0 50%, transparent 100%),
+      radial-gradient(1px 1px at 67% 84%, #fff 50%, transparent 100%),
+      radial-gradient(1px 1px at 47% 41%, #b0d8ff 50%, transparent 100%),
+      radial-gradient(2px 2px at 90% 64%, #fff 50%, transparent 100%),
+      radial-gradient(1px 1px at 7% 64%, #ffaaaa 50%, transparent 100%),
+      radial-gradient(1px 1px at 73% 11%, #c8d0ff 50%, transparent 100%);
+    background-repeat: repeat;
+    background-size: 100% 100%;
+  }
+
+  /* Top header */
+  header.brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 36px;
+    max-width: 1240px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: ui-sans-serif, system-ui, "Helvetica Neue", sans-serif;
+  }
+  .brand-mark .logo {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cool));
+    display: grid; place-items: center;
+    color: #0a0c14;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .brand-mark .name {
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+  .brand-side {
+    color: var(--ink-faint);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  /* Title */
+  .title-wrap {
+    max-width: 1240px;
+    margin: 64px auto 36px;
+    padding: 0 36px;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    margin-bottom: 24px;
+  }
+  h1.title {
+    margin: 0 0 14px;
+    font-size: clamp(34px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+  h1.title em {
+    font-style: italic;
+    color: var(--accent-warm);
+  }
+  .lede {
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 720px;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Storyboard — three scenes side-by-side on desktop, stacked on mobile */
+  .storyboard {
+    max-width: 1240px;
+    margin: 56px auto 0;
+    padding: 0 36px;
+    display: grid;
+    grid-template-columns: 1fr 64px 1fr 64px 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  @media (max-width: 1080px) {
+    .storyboard {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .storyboard .arrow { display: none; }
+  }
+  .scene {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(20, 24, 38, 0.55) 0%, rgba(8, 10, 22, 0.78) 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+  }
+  .scene-stage {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+  .scene-stage svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .scene-meta {
+    padding: 18px 20px 22px;
+    border-top: 1px solid var(--line);
+  }
+  .scene-step {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .scene-step .num {
+    color: var(--accent-cool);
+    margin-right: 8px;
+  }
+  .scene-title {
+    font-size: 19px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+  .scene-body {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .scene-tag {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 3px 10px;
+    border: 1px solid rgba(103, 232, 249, 0.35);
+    border-radius: 999px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-cool);
+  }
+
+  /* Connector arrows between scenes */
+  .arrow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .arrow svg {
+    width: 100%;
+    height: 64px;
+  }
+
+  /* Bottom: cast of characters */
+  .cast {
+    max-width: 1240px;
+    margin: 88px auto 0;
+    padding: 0 36px;
+  }
+  .cast-h {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 24px;
+  }
+  .cast-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+  }
+  .character {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 18px 22px;
+    background: rgba(255, 255, 255, 0.025);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .character svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 14px;
+  }
+  .character-name {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  .character-role {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+  .character-line {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Strategy notes panel */
+  .strategy {
+    max-width: 1240px;
+    margin: 88px auto 64px;
+    padding: 28px 36px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(167, 139, 250, 0.06) 0%, rgba(103, 232, 249, 0.03) 100%);
+  }
+  .strategy h3 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .strategy h3 em { color: var(--accent-cool); font-style: italic; }
+  .strategy p {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.65;
+    margin: 0 0 10px;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .strategy ul {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.75;
+    padding-left: 22px;
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .strategy ul li code {
+    color: var(--accent-warm);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    background: rgba(255, 213, 140, 0.08);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  footer.foot {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 32px 36px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* Animation */
+  @keyframes float-y { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+  @keyframes slow-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  .anim-float { animation: float-y 4s ease-in-out infinite; transform-origin: center; }
+  .anim-pulse { animation: pulse 2.4s ease-in-out infinite; }
+  .anim-breathe { animation: breathe 5s ease-in-out infinite; transform-origin: center; }
+  .anim-spin { animation: slow-spin 30s linear infinite; transform-origin: center; transform-box: fill-box; }
+</style>
+</head>
+<body>
+<div class="nebula"></div>
+<div class="stars"></div>
+
+<header class="brand">
+  <div class="brand-mark">
+    <div class="logo">M</div>
+    <div class="name">markview</div>
+  </div>
+  <div class="brand-side">vision · merge · 2026</div>
+</header>
+
+<section class="title-wrap">
+  <div class="eyebrow">storyboard · landing → vault → editor</div>
+  <h1 class="title">
+    One <em>continuous zoom</em> from cosmic landing to your<br>
+    note in 3D space.
+  </h1>
+  <p class="lede">
+    The existing markview.ai landing already promises a 3D semantic graph. The
+    "Open your vault" CTA shouldn't break that promise by dumping users into a
+    flat editor — it should <em>finish the dolly</em>. Here's the journey, with
+    the same character following all the way through.
+  </p>
+</section>
+
+<section class="storyboard">
+
+  <!-- ───── SCENE 1: Landing ───── -->
+  <article class="scene">
+    <div class="scene-stage">
+      <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="planet1" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#ffd58c" stop-opacity="1"/>
+            <stop offset="60%" stop-color="#a78bfa" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#04050d" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="planet2" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#67e8f9" stop-opacity="1"/>
+            <stop offset="70%" stop-color="#3b82f6" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#04050d" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="halo" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#ffd58c" stop-opacity="0.6"/>
+            <stop offset="60%" stop-color="#a78bfa" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#04050d" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Distant stars -->
+        <g fill="white" opacity="0.6">
+          <circle cx="40" cy="80" r="1"/>
+          <circle cx="120" cy="50" r="1.4"/>
+          <circle cx="220" cy="90" r="0.9"/>
+          <circle cx="310" cy="60" r="1.2"/>
+          <circle cx="360" cy="120" r="0.8"/>
+          <circle cx="80" cy="180" r="0.9"/>
+          <circle cx="180" cy="160" r="0.7"/>
+          <circle cx="280" cy="220" r="1.0"/>
+          <circle cx="340" cy="280" r="0.9"/>
+          <circle cx="60" cy="340" r="0.8"/>
+          <circle cx="160" cy="420" r="1.1"/>
+        </g>
+
+        <!-- Distant planets/orbits suggesting the cosmic backdrop -->
+        <ellipse cx="290" cy="170" rx="65" ry="58" fill="url(#planet1)" opacity="0.85" class="anim-breathe"/>
+        <ellipse cx="100" cy="280" rx="48" ry="42" fill="url(#planet2)" opacity="0.75" class="anim-float"/>
+
+        <!-- Floor / stage -->
+        <ellipse cx="200" cy="450" rx="170" ry="22" fill="url(#halo)"/>
+
+        <!-- The Writer (humanoid character) -->
+        <g class="anim-float" style="animation-duration:5s">
+          <!-- glow -->
+          <ellipse cx="200" cy="385" rx="38" ry="14" fill="#ffd58c" opacity="0.18"/>
+          <!-- legs -->
+          <rect x="190" y="385" width="7" height="34" rx="3" fill="#1a2030"/>
+          <rect x="203" y="385" width="7" height="34" rx="3" fill="#1a2030"/>
+          <!-- torso -->
+          <rect x="184" y="335" width="32" height="54" rx="14" fill="#b8c8e8"/>
+          <!-- belt -->
+          <rect x="184" y="358" width="32" height="3" fill="#ffd58c"/>
+          <!-- arms -->
+          <rect x="171" y="338" width="9" height="42" rx="4" fill="#b8c8e8"/>
+          <rect x="220" y="338" width="9" height="42" rx="4" fill="#b8c8e8"/>
+          <!-- head -->
+          <circle cx="200" cy="318" r="14" fill="#b8c8e8"/>
+          <!-- visor -->
+          <path d="M186 318 Q200 314 214 318 Q200 322 186 318 Z" fill="#ffd58c" opacity="0.95"/>
+          <!-- antenna of curiosity -->
+          <line x1="200" y1="304" x2="200" y2="295" stroke="#ffd58c" stroke-width="1.5"/>
+          <circle cx="200" cy="293" r="2" fill="#ffd58c"/>
+        </g>
+
+        <!-- Hero copy mock -->
+        <g font-family="ui-serif, Iowan Old Style, Palatino, serif" fill="white">
+          <text x="40" y="60" font-size="13" letter-spacing="2" opacity="0.55">·  COSMIC HERO  ·</text>
+          <text x="40" y="120" font-size="22" font-weight="600">Knowledge that</text>
+          <text x="40" y="148" font-size="22" font-weight="600">stays <tspan fill="#67e8f9">local</tspan>.</text>
+          <text x="40" y="172" font-size="22" font-weight="600">Agents that go</text>
+          <text x="40" y="196" font-size="22" font-weight="600">anywhere.</text>
+          <rect x="40" y="220" width="120" height="32" rx="16" fill="#a78bfa" opacity="0.85"/>
+          <text x="56" y="241" font-size="12" font-weight="600" fill="#04050d">Open your vault →</text>
+        </g>
+      </svg>
+    </div>
+    <div class="scene-meta">
+      <div class="scene-step"><span class="num">01</span>arrival</div>
+      <h3 class="scene-title">The cosmic landing</h3>
+      <p class="scene-body">
+        Visitor stands on the threshold. Two orbiting planets behind, the
+        existing copy in front: <em>"Knowledge that stays local. Agents that go
+        anywhere."</em> One CTA: <strong>Open your vault</strong>.
+      </p>
+      <span class="scene-tag">/  surface=app</span>
+    </div>
+  </article>
+
+  <div class="arrow">
+    <svg viewBox="0 0 64 64" preserveAspectRatio="xMidYMid meet">
+      <line x1="6" y1="32" x2="54" y2="32" stroke="#67e8f9" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+      <polygon points="50,26 60,32 50,38" fill="#67e8f9" opacity="0.85"/>
+      <text x="6" y="22" font-family="ui-monospace, monospace" font-size="9" fill="#67e8f9" opacity="0.85" letter-spacing="2">DOLLY</text>
+    </svg>
+  </div>
+
+  <!-- ───── SCENE 2: The zoom ───── -->
+  <article class="scene">
+    <div class="scene-stage">
+      <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="planet1b" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#ffd58c" stop-opacity="1"/>
+            <stop offset="55%" stop-color="#a78bfa" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#04050d" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="planet2b" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#67e8f9" stop-opacity="1"/>
+            <stop offset="65%" stop-color="#3b82f6" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#04050d" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Stars during transition (motion blur lines) -->
+        <g stroke="white" stroke-width="0.8" opacity="0.55">
+          <line x1="50" y1="100" x2="60" y2="100"/>
+          <line x1="350" y1="80" x2="362" y2="80"/>
+          <line x1="120" y1="180" x2="135" y2="180"/>
+          <line x1="280" y1="200" x2="296" y2="200"/>
+          <line x1="40" y1="300" x2="55" y2="300"/>
+          <line x1="370" y1="340" x2="384" y2="340"/>
+          <line x1="80" y1="430" x2="92" y2="430"/>
+          <line x1="320" y1="450" x2="335" y2="450"/>
+        </g>
+
+        <!-- Planets larger now — getting closer -->
+        <ellipse cx="280" cy="160" rx="100" ry="92" fill="url(#planet1b)" opacity="0.95" class="anim-breathe"/>
+        <ellipse cx="80" cy="320" rx="78" ry="68" fill="url(#planet2b)" opacity="0.85" class="anim-float"/>
+
+        <!-- Lines connecting hint of structure (the graph emerging) -->
+        <g stroke="#67e8f9" stroke-width="0.7" opacity="0.35" stroke-dasharray="3 3">
+          <line x1="280" y1="160" x2="80" y2="320"/>
+          <line x1="280" y1="160" x2="200" y2="430"/>
+          <line x1="80" y1="320" x2="200" y2="430"/>
+        </g>
+
+        <!-- Visitor smaller — pulling deeper into the scene -->
+        <g class="anim-float" style="animation-duration:4s; transform-origin: 200px 430px;">
+          <ellipse cx="200" cy="448" rx="22" ry="6" fill="#ffd58c" opacity="0.16"/>
+          <!-- legs -->
+          <rect x="194" y="421" width="5" height="20" rx="2" fill="#1a2030"/>
+          <rect x="203" y="421" width="5" height="20" rx="2" fill="#1a2030"/>
+          <!-- torso -->
+          <rect x="190" y="396" width="22" height="30" rx="9" fill="#b8c8e8"/>
+          <rect x="190" y="408" width="22" height="2" fill="#ffd58c"/>
+          <!-- arms — outstretched as if reaching -->
+          <rect x="183" y="397" width="6" height="26" rx="3" fill="#b8c8e8" transform="rotate(-12 186 410)"/>
+          <rect x="213" y="397" width="6" height="26" rx="3" fill="#b8c8e8" transform="rotate(12 216 410)"/>
+          <!-- head -->
+          <circle cx="201" cy="388" r="9" fill="#b8c8e8"/>
+          <path d="M192 388 Q201 386 210 388 Q201 390 192 388 Z" fill="#ffd58c"/>
+        </g>
+
+        <!-- Camera reticle showing the dolly -->
+        <g stroke="#67e8f9" stroke-width="1" fill="none" opacity="0.55">
+          <rect x="130" y="170" width="140" height="180" rx="6" stroke-dasharray="3 4"/>
+          <line x1="200" y1="170" x2="200" y2="190" />
+          <line x1="200" y1="330" x2="200" y2="350" />
+          <line x1="130" y1="260" x2="150" y2="260" />
+          <line x1="250" y1="260" x2="270" y2="260" />
+        </g>
+        <text x="138" y="166" font-family="ui-monospace, monospace" font-size="9" fill="#67e8f9" opacity="0.7">CAMERA · approaching</text>
+      </svg>
+    </div>
+    <div class="scene-meta">
+      <div class="scene-step"><span class="num">02</span>the dolly</div>
+      <h3 class="scene-title">The continuous zoom</h3>
+      <p class="scene-body">
+        Camera dollies into the same backdrop. Planets become real
+        nodes. Wikilink edges fade in between them. The visitor is still on the
+        same floor; the world they were looking at is now around them.
+      </p>
+      <span class="scene-tag">·  900ms ease-out</span>
+    </div>
+  </article>
+
+  <div class="arrow">
+    <svg viewBox="0 0 64 64" preserveAspectRatio="xMidYMid meet">
+      <line x1="6" y1="32" x2="54" y2="32" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+      <polygon points="50,26 60,32 50,38" fill="#a78bfa" opacity="0.85"/>
+      <text x="6" y="22" font-family="ui-monospace, monospace" font-size="9" fill="#a78bfa" opacity="0.85" letter-spacing="2">FOCUS</text>
+    </svg>
+  </div>
+
+  <!-- ───── SCENE 3: Inside the vault, editor expanded ───── -->
+  <article class="scene">
+    <div class="scene-stage">
+      <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="editor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(20,24,38,0.95)"/>
+            <stop offset="100%" stop-color="rgba(8,10,22,0.98)"/>
+          </linearGradient>
+          <radialGradient id="orbDot" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#67e8f9"/>
+            <stop offset="100%" stop-color="#67e8f9" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="orbDot2" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#a78bfa"/>
+            <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="orbDot3" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#ffd58c"/>
+            <stop offset="100%" stop-color="#ffd58c" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Ambient halo so it feels enclosed -->
+        <ellipse cx="200" cy="250" rx="220" ry="240" fill="rgba(167,139,250,0.05)"/>
+
+        <!-- Surrounding orbiting nodes (notes) -->
+        <g class="anim-spin" style="animation-duration:60s">
+          <circle cx="60" cy="120" r="7" fill="url(#orbDot)"/>
+          <circle cx="340" cy="100" r="8" fill="url(#orbDot2)"/>
+          <circle cx="370" cy="240" r="6" fill="url(#orbDot3)"/>
+          <circle cx="60" cy="280" r="6" fill="url(#orbDot2)"/>
+          <circle cx="100" cy="400" r="7" fill="url(#orbDot)"/>
+          <circle cx="320" cy="380" r="9" fill="url(#orbDot3)"/>
+        </g>
+
+        <!-- Faint edges connecting orbital nodes to the central card -->
+        <g stroke="#67e8f9" stroke-width="0.6" opacity="0.30" stroke-dasharray="2 4">
+          <line x1="60" y1="120" x2="200" y2="250"/>
+          <line x1="340" y1="100" x2="200" y2="250"/>
+          <line x1="370" y1="240" x2="200" y2="250"/>
+          <line x1="60" y1="280" x2="200" y2="250"/>
+          <line x1="100" y1="400" x2="200" y2="250"/>
+          <line x1="320" y1="380" x2="200" y2="250"/>
+        </g>
+
+        <!-- Central editor card (focused note) -->
+        <g class="anim-breathe" style="animation-duration:6s">
+          <rect x="80" y="155" width="240" height="190" rx="14" fill="url(#editor)" stroke="rgba(255,255,255,0.10)"/>
+          <!-- traffic lights / chrome -->
+          <circle cx="98" cy="173" r="3" fill="#ff7a94"/>
+          <circle cx="108" cy="173" r="3" fill="#ffd58c"/>
+          <circle cx="118" cy="173" r="3" fill="#67e8f9"/>
+          <text x="200" y="177" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="rgba(231,236,246,0.45)" letter-spacing="1.5">my-thinking.md</text>
+          <!-- "text" lines -->
+          <rect x="96" y="195" width="160" height="5" rx="2" fill="#67e8f9" opacity="0.85"/>
+          <rect x="96" y="208" width="200" height="3" rx="1.5" fill="rgba(231,236,246,0.55)"/>
+          <rect x="96" y="216" width="184" height="3" rx="1.5" fill="rgba(231,236,246,0.45)"/>
+          <rect x="96" y="224" width="208" height="3" rx="1.5" fill="rgba(231,236,246,0.45)"/>
+          <rect x="96" y="232" width="118" height="3" rx="1.5" fill="rgba(231,236,246,0.4)"/>
+          <rect x="96" y="248" width="50" height="3" rx="1.5" fill="#ffd58c" opacity="0.85"/>
+          <rect x="96" y="260" width="200" height="3" rx="1.5" fill="rgba(231,236,246,0.45)"/>
+          <rect x="96" y="268" width="174" height="3" rx="1.5" fill="rgba(231,236,246,0.4)"/>
+          <rect x="96" y="276" width="196" height="3" rx="1.5" fill="rgba(231,236,246,0.4)"/>
+          <rect x="96" y="284" width="92" height="3" rx="1.5" fill="rgba(231,236,246,0.35)"/>
+          <!-- code-block hint -->
+          <rect x="96" y="298" width="208" height="32" rx="6" fill="rgba(167,139,250,0.10)" stroke="rgba(167,139,250,0.20)"/>
+          <rect x="104" y="306" width="80" height="3" rx="1.5" fill="#a78bfa" opacity="0.7"/>
+          <rect x="104" y="313" width="160" height="3" rx="1.5" fill="#a78bfa" opacity="0.5"/>
+          <rect x="104" y="320" width="120" height="3" rx="1.5" fill="#a78bfa" opacity="0.5"/>
+        </g>
+
+        <!-- Tiny visitor at bottom — same character, now inside their own thought -->
+        <g class="anim-float" style="animation-duration:4s">
+          <ellipse cx="200" cy="438" rx="14" ry="4" fill="#ffd58c" opacity="0.25"/>
+          <rect x="196" y="416" width="3" height="14" rx="1.5" fill="#1a2030"/>
+          <rect x="201" y="416" width="3" height="14" rx="1.5" fill="#1a2030"/>
+          <rect x="194" y="397" width="13" height="22" rx="6" fill="#b8c8e8"/>
+          <rect x="194" y="404" width="13" height="1.5" fill="#ffd58c"/>
+          <rect x="190" y="398" width="3" height="18" rx="1.5" fill="#b8c8e8"/>
+          <rect x="207" y="398" width="3" height="18" rx="1.5" fill="#b8c8e8"/>
+          <circle cx="200" cy="392" r="5" fill="#b8c8e8"/>
+          <path d="M195 392 Q200 391 205 392 Q200 393 195 392 Z" fill="#ffd58c"/>
+        </g>
+
+        <!-- Side label -->
+        <text x="20" y="40" font-family="ui-monospace, monospace" font-size="10" fill="rgba(103,232,249,0.85)" letter-spacing="2">·  /vault — node focused</text>
+      </svg>
+    </div>
+    <div class="scene-meta">
+      <div class="scene-step"><span class="num">03</span>arrival</div>
+      <h3 class="scene-title">Inside the thought</h3>
+      <p class="scene-body">
+        Visitor clicks a node. Camera focuses. The note expands as a panel
+        in 3D space, related notes orbit around it. Edit, save, type — without
+        ever leaving the constellation. <em>The editor lives here.</em>
+      </p>
+      <span class="scene-tag">⌘N  new note · esc  back to graph</span>
+    </div>
+  </article>
+
+</section>
+
+<!-- ───── Cast of characters ───── -->
+<section class="cast">
+  <h3 class="cast-h">cast — who lives here</h3>
+  <div class="cast-row">
+
+    <article class="character">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="84" rx="22" ry="5" fill="#ffd58c" opacity="0.18"/>
+        <rect x="46" y="64" width="3" height="20" rx="1.5" fill="#1a2030"/>
+        <rect x="51" y="64" width="3" height="20" rx="1.5" fill="#1a2030"/>
+        <rect x="42" y="40" width="16" height="28" rx="7" fill="#b8c8e8"/>
+        <rect x="42" y="50" width="16" height="2" fill="#ffd58c"/>
+        <rect x="36" y="42" width="5" height="22" rx="2" fill="#b8c8e8"/>
+        <rect x="59" y="42" width="5" height="22" rx="2" fill="#b8c8e8"/>
+        <circle cx="50" cy="32" r="9" fill="#b8c8e8"/>
+        <path d="M40 32 Q50 30 60 32 Q50 34 40 32 Z" fill="#ffd58c"/>
+      </svg>
+      <h4 class="character-name">The Visitor</h4>
+      <p class="character-role">writer · reader</p>
+      <p class="character-line">You. Drag a file in, watch it become a planet. Walk through the constellation. Talk to it. Edit it. Forget it for a year. Return.</p>
+    </article>
+
+    <article class="character">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="brain" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#fff" stop-opacity="0.95"/>
+            <stop offset="40%" stop-color="#a78bfa" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="50" cy="50" r="32" fill="url(#brain)" class="anim-breathe"/>
+        <g stroke="rgba(255,255,255,0.45)" stroke-width="1" fill="none" class="anim-spin" style="animation-duration:30s">
+          <circle cx="50" cy="50" r="22"/>
+          <ellipse cx="50" cy="50" rx="22" ry="9"/>
+          <ellipse cx="50" cy="50" rx="9" ry="22"/>
+        </g>
+        <circle cx="42" cy="46" r="2" fill="#fff"/>
+        <circle cx="58" cy="46" r="2" fill="#fff"/>
+      </svg>
+      <h4 class="character-name">The Face</h4>
+      <p class="character-role">temple presence</p>
+      <p class="character-line">Cosmological-scale Claude. Speaks back. Remembers you across visits via the brain-vault. Can repaint the world if you ask.</p>
+    </article>
+
+    <article class="character">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="34" width="60" height="40" rx="8" fill="#0d1018" stroke="rgba(103,232,249,0.6)"/>
+        <circle cx="29" cy="44" r="2" fill="#ff7a94"/>
+        <circle cx="36" cy="44" r="2" fill="#ffd58c"/>
+        <circle cx="43" cy="44" r="2" fill="#67e8f9"/>
+        <rect x="28" y="52" width="44" height="2" rx="1" fill="rgba(231,236,246,0.6)"/>
+        <rect x="28" y="58" width="32" height="2" rx="1" fill="rgba(231,236,246,0.4)"/>
+        <rect x="28" y="64" width="24" height="2" rx="1" fill="rgba(231,236,246,0.4)"/>
+        <line x1="50" y1="74" x2="50" y2="86" stroke="#67e8f9" stroke-width="1" opacity="0.6"/>
+        <line x1="50" y1="86" x2="20" y2="86" stroke="#67e8f9" stroke-width="1" opacity="0.6"/>
+        <line x1="50" y1="86" x2="80" y2="86" stroke="#67e8f9" stroke-width="1" opacity="0.6"/>
+        <text x="20" y="96" font-family="ui-monospace, monospace" font-size="6" fill="#67e8f9">claude</text>
+        <text x="74" y="96" font-family="ui-monospace, monospace" font-size="6" fill="#67e8f9">cursor</text>
+        <text x="50" y="22" text-anchor="middle" font-family="ui-monospace, monospace" font-size="7" fill="#67e8f9" letter-spacing="2">MCP</text>
+      </svg>
+      <h4 class="character-name">The Bridge</h4>
+      <p class="character-role">@markview/mcp</p>
+      <p class="character-line">23 tools any AI can call. Read, search, edit, render, graph-traverse your vault — without files leaving your machine.</p>
+    </article>
+
+    <article class="character">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="30" fill="none" stroke="#ffd58c" stroke-width="0.7" opacity="0.55"/>
+        <circle cx="50" cy="50" r="22" fill="none" stroke="#a78bfa" stroke-width="0.7" opacity="0.55"/>
+        <circle cx="50" cy="50" r="14" fill="none" stroke="#67e8f9" stroke-width="0.7" opacity="0.55"/>
+        <g class="anim-spin" style="animation-duration:25s">
+          <circle cx="80" cy="50" r="4" fill="#ffd58c"/>
+        </g>
+        <g class="anim-spin" style="animation-duration:18s">
+          <circle cx="50" cy="28" r="3.5" fill="#a78bfa"/>
+        </g>
+        <g class="anim-spin" style="animation-duration:12s">
+          <circle cx="36" cy="50" r="3" fill="#67e8f9"/>
+        </g>
+        <circle cx="50" cy="50" r="6" fill="#fff" class="anim-pulse"/>
+      </svg>
+      <h4 class="character-name">The Hub</h4>
+      <p class="character-role">apps/hub · :3100</p>
+      <p class="character-line">A small Hono server on your machine. Watches your `~/brain/`. Bridges the browser to your filesystem. Nothing leaves.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ───── Strategy / closing ───── -->
+<section class="strategy">
+  <h3>The merge: <em>finish the dolly</em>.</h3>
+  <p>
+    The existing landing already promised a 3D vault. The CTA was breaking that promise by cutting to a flat editor.
+    Instead of two products glued together, one continuous experience:
+  </p>
+  <ul>
+    <li><code>/</code> shows the cosmic landing (existing). CTA <em>"Open your vault"</em> dollies the camera into the scene.</li>
+    <li>The same 3D context becomes <code>/vault</code> — planets become note-nodes, wikilinks become edges.</li>
+    <li>Click any node → camera focuses → editor expands as a panel in 3D space. Esc returns to the graph.</li>
+    <li>The Face (`/temple`, gated) is the same world a level deeper — the visitor speaks to it; it remembers them.</li>
+    <li>The Bridge (`@markview/mcp`) is what lets every other AI tool reach in without breaking the local-first promise.</li>
+  </ul>
+</section>
+
+<footer class="foot">
+  <span>markview · merged-product-vision · mockups/merged-product-vision.html</span>
+  <span>open this file in any browser to view</span>
+</footer>
+
+</body>
+</html>
