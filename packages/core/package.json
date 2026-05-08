@@ -24,7 +24,7 @@
     "test": "vitest run --passWithNoTests",
     "size": "size-limit"
   },
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
   "repository": {
     "type": "git",

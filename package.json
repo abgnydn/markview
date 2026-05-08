@@ -4,7 +4,7 @@
   "packageManager": "npm@11.7.0",
   "description": "Beautiful, privacy-first markdown documentation viewer with MCP tools for AI assistants",
   "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/abgnydn/markview"
@@ -32,8 +32,6 @@
     "build": "turbo run build",
     "build:core": "cd packages/core && npm run build",
     "build:web": "cd apps/web && npm run build",
-    "desktop:dev": "cd apps/desktop && npm run dev",
-    "desktop:build": "cd apps/desktop && npm run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",

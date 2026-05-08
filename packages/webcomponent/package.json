@@ -2,7 +2,7 @@
   "name": "@markview/webcomponent",
   "version": "0.1.0",
   "description": "Web Component for beautiful markdown rendering — works in any framework or plain HTML",
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
   "repository": {
     "type": "git",

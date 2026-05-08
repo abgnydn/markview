@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Shared TypeScript configurations for the markview monorepo",
   "private": true,
-  "license": "AGPL-3.0",
+  "license": "Apache-2.0",
   "files": [
     "base.json",
     "library.json",
