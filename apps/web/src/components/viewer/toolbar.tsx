@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2 } from 'lucide-react';
+import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useWorkspaceStore } from '@/stores/workspace-store';
@@ -16,11 +16,12 @@ interface ToolbarProps {
   onToggleSplitView?: () => void;
   onToggleDiffView?: () => void;
   onToggleEditor?: () => void;
+  onToggleVault?: () => void;
   onGoHome?: () => void;
   onToggleSidebar?: () => void;
 }
 
-export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onGoHome, onToggleSidebar }: ToolbarProps) {
+export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onToggleVault, onGoHome, onToggleSidebar }: ToolbarProps) {
   const { mode, setMode, fontSize } = useThemeStore();
   const colorScheme = useThemeStore((s) => s.colorScheme);
   const setColorScheme = useThemeStore((s) => s.setColorScheme);
@@ -128,6 +129,17 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
             >
               <Plus size={18} />
             </button>
+
+            {/* Graph view — flips workspace into the 3D vault overlay. */}
+            {onToggleVault && (
+              <button
+                className="toolbar-btn toolbar-secondary"
+                onClick={onToggleVault}
+                title="Graph view (\\)"
+              >
+                <Network size={18} />
+              </button>
+            )}
 
             {/* Secondary actions — hidden on mobile, shown in overflow menu */}
             <button

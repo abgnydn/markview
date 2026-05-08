@@ -65,7 +65,6 @@ export default function PrivacyPage() {
           <h2>7. Third-Party Services</h2>
           <ul style={{ color: '#a1a1aa', lineHeight: '2', paddingLeft: '20px' }}>
             <li><strong>Plausible Analytics</strong> — Cookie-free page view counting on marketing pages only</li>
-            <li><strong>Lemon Squeezy</strong> — Payment processing for commercial licenses (their own <a href="https://www.lemonsqueezy.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#a5b4fc' }}>privacy policy</a> applies)</li>
             <li><strong>GitHub API</strong> — Used only when you explicitly import from a GitHub repository</li>
             <li><strong>KaTeX CDN</strong> — Font stylesheet loaded for math equation rendering</li>
           </ul>

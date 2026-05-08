@@ -4,12 +4,24 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { useCollabStore } from '@/stores/collab-store';
-import { LandingPage } from '@/components/landing/landing-page';
+import { LandingAtlas } from '@/components/landing/landing-atlas';
+import { LandingEditor } from '@/components/landing/landing-editor';
 import { ViewerPage } from '@/components/viewer/viewer-page';
+
+// Two surfaces share the same `/` route. Switching priority:
+//   1. URL query: ?surface=editor or ?surface=app  ← instant, no restart
+//   2. Env var:   NEXT_PUBLIC_SURFACE=editor|app   ← per-deploy default
+//   3. Fallback:  app
+function getSurface(): 'editor' | 'app' {
+  if (typeof window !== 'undefined') {
+    const q = new URLSearchParams(window.location.search).get('surface');
+    if (q === 'editor' || q === 'app') return q;
+  }
+  return process.env.NEXT_PUBLIC_SURFACE === 'editor' ? 'editor' : 'app';
+}
 import { JoinDialog } from '@/components/collab/join-dialog';
 import { getRoomIdFromUrl } from '@/lib/collab/y-provider';
 import { preloadShiki } from '@/components/viewer/markdown-renderer';
-import { initTauriBridge } from '@/lib/tauri/tauri-bridge';
 
 export default function HomePage() {
   // ── Store slices ───────────────────────────────────────────────────
@@ -40,7 +52,6 @@ export default function HomePage() {
     initializeTheme();
     initialize();
     preloadShiki();
-    initTauriBridge(); // no-op in browser, activates in Tauri desktop
     const roomId = getRoomIdFromUrl();
     if (roomId) {
       setPendingRoomId(roomId);
@@ -179,14 +190,50 @@ export default function HomePage() {
   }
 
   if ((!hasWorkspace && !isGuestMode) || showLanding) {
-    return (
-      <LandingPage
-        onFilesSelected={(files, title) => { setShowLanding(false); handleNewWorkspace(files, title); }}
-        onGitHubImport={(files, title) => { setShowLanding(false); handleNewWorkspace(files, title); }}
-        hasExistingWorkspace={hasWorkspace ? true : false}
-        onBackToWorkspace={() => setShowLanding(false)}
-      />
-    );
+    if (getSurface() === 'editor') {
+      // markview.ai surface — editor-focused. "Open editor" seeds a
+      // welcome markdown file so the workspace flips into ViewerPage
+      // (an empty workspace would re-render the landing because
+      // `hasWorkspace` requires an active file).
+      const seedWelcome = (): void => {
+        // Three starter files with sensitivity tiers + cross-wikilinks
+        // so the visitor sees both the graph edges AND the tier heatmap
+        // (cyan/violet/amber) the moment they hit `\\`.
+        handleNewWorkspace(
+          [
+            {
+              filename: 'welcome.md',
+              content:
+                '---\nsensitivity: public\n---\n\n' +
+                '# welcome to markview\n\n' +
+                'this is your editor. drag a `.md` file or paste a folder of markdown to begin.\n\n' +
+                'press `\\` to flip into the 3D graph view of your workspace — you should see this note linked to [[notes]] and [[private-thoughts]].\n\n' +
+                'press `⌘K` to search, `⌘B` to bold, `⌘I` to italic.\n',
+            },
+            {
+              filename: 'notes.md',
+              content:
+                '---\nsensitivity: internal\n---\n\n' +
+                '# notes\n\n' +
+                'a regular note. linked from [[welcome]] and references [[private-thoughts]].\n\n' +
+                'this file is tagged `internal` — visible to your AI tools through MCP, pseudonymized before going to the cloud via the veil.\n',
+            },
+            {
+              filename: 'private-thoughts.md',
+              content:
+                '---\nsensitivity: private\n---\n\n' +
+                '# private thoughts\n\n' +
+                'tagged `private`. backlinked from [[welcome]] and [[notes]].\n\n' +
+                'when an AI tool wants to use this, it goes through the **k-anonymous cohort blender** — the wire-side adversary sees `1/k` probability of identifying it.\n\n' +
+                'mark something `secret` in frontmatter and it never leaves your machine.\n',
+            },
+          ],
+          'workspace',
+        );
+      };
+      return <LandingEditor onStart={seedWelcome} />;
+    }
+    return <LandingAtlas />;
   }
 
   return (

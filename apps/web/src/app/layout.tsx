@@ -8,6 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://markview.ai"),
+  alternates: { canonical: "/" },
   title: "MarkView — The Embeddable Markdown Rendering Stack",
   description: "A high-performance markdown engine available as a React SDK, Web Component, and native macOS App. Built with Shiki, Mermaid, KaTeX, and MCP for AI assistants.",
   keywords: ["markdown", "viewer", "documentation", "mermaid", "diagrams", "sdk", "react", "mcp", "offline"],
@@ -58,6 +60,41 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "SoftwareApplication",
+                  "@id": "https://markview.ai/#app",
+                  "name": "MarkView",
+                  "url": "https://markview.ai/",
+                  "applicationCategory": "DeveloperApplication",
+                  "operatingSystem": "Any (web), macOS (native app)",
+                  "description": "High-performance markdown engine available as a React SDK, Web Component, and native macOS app. GitHub-flavored rendering, Mermaid, KaTeX, Shiki, MCP for AI assistants.",
+                  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+                },
+                {
+                  "@type": "Person",
+                  "@id": "https://barisgunaydin.com/#me",
+                  "name": "Ahmet Baris Gunaydin",
+                  "url": "https://barisgunaydin.com",
+                  "sameAs": [
+                    "https://github.com/abgnydn",
+                    "https://kernelfusion.dev",
+                    "https://gpubench.dev",
+                    "https://zerotvm.com",
+                    "https://webgpudna.com",
+                    "https://neuropulse.live",
+                    "https://webgpu-q.vercel.app",
+                  ],
+                },
+              ],
+            }),
+          }}
+        />
         {/* Plausible Analytics — uncomment before launch after registering at plausible.io */}
         {/* <script defer data-domain="markview.ai" src="https://plausible.io/js/script.js" /> */}
       </head>

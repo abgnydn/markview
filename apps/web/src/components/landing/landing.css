@@ -906,38 +906,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+  background: var(--feature-icon-bg, rgba(99, 102, 241, 0.15));
   border-radius: 10px;
-  color: #a5b4fc;
+  color: var(--feature-icon-color, #a5b4fc);
   margin-bottom: 14px;
 }
 
-/* Custom icon image styles */
-.landing-feature-icon-custom {
-  width: 48px;
-  height: 48px;
-  background: none;
-  border-radius: 12px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.landing-feature-icon-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
+.landing-feature-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* Hero card larger icon */
-.landing-feature-card:nth-child(1) .landing-feature-icon-custom {
-  width: 64px;
-  height: 64px;
-  border-radius: 14px;
-}
-
-.landing-feature-card:nth-child(1) .landing-feature-icon-img {
-  border-radius: 14px;
+.landing-feature-card:nth-child(1) .landing-feature-icon svg {
+  width: 30px;
+  height: 30px;
 }
 
 .landing-feature-title {

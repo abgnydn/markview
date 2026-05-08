@@ -18,6 +18,7 @@ import { PresentationMode } from '@/components/viewer/presentation-mode';
 import { SplitView } from '@/components/viewer/split-view';
 import { DiffView } from '@/components/viewer/diff-view';
 import { MarkdownEditor } from '@/components/viewer/markdown-editor';
+import { VaultOverlay } from '@/components/viewer/vault-overlay';
 
 import { PresenceBar } from '@/components/collab/presence-bar';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
@@ -66,6 +67,26 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // ── Drag-and-drop state ──────────────────────────────────────────
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
+
+  // ── Vault overlay (graph view) — `\` to toggle, esc to close ─────
+  const [vaultOpen, setVaultOpen] = useState(false);
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
+      const isTyping =
+        tag === 'input' || tag === 'textarea' ||
+        (e.target as HTMLElement | null)?.isContentEditable;
+      if (e.key === '\\' && !isTyping) {
+        e.preventDefault();
+        setVaultOpen((v) => !v);
+      } else if (e.key === 'Escape' && vaultOpen) {
+        e.preventDefault();
+        setVaultOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [vaultOpen]);
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -185,6 +206,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         onToggleSplitView={() => setShowSplitView(!showSplitView)}
         onToggleDiffView={() => setShowDiffView(true)}
         onToggleEditor={() => setShowEditor(true)}
+        onToggleVault={() => setVaultOpen(true)}
         onGoHome={onGoHome}
         onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
       />
@@ -280,6 +302,11 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
           onClose={() => setShowEditor(false)}
         />
       )}
+
+      {/* Graph view — `\` to toggle. Crossfades over the editor; preserves
+          all editor state underneath, so closing the overlay returns
+          the visitor to exactly where they left off. */}
+      <VaultOverlay open={vaultOpen} onClose={() => setVaultOpen(false)} />
     </div>
   );
 }

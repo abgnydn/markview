@@ -2,21 +2,16 @@
 
 # MarkView
 
-**The embeddable Markdown rendering stack & native macOS app.**
+**A local-first knowledge stack for the AI age.**
 
-**A high-performance markdown engine available as a React Component, Web Component, and native Desktop App. Features GitHub-flavored rendering, WYSIWYG editing, Custom Themes, and 23 MCP tools for AI assistants.**
+**Markdown that becomes a living vault. A 3D brain that watches your AI sessions. An MCP bridge so any AI tool can read and edit your knowledge — without anything ever leaving your machine.**
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
-[![core](https://img.shields.io/npm/v/@markview/core?color=cc3534&label=%40markview%2Fcore)](https://www.npmjs.com/package/@markview/core)
-[![react](https://img.shields.io/npm/v/@markview/react?color=61dafb&label=%40markview%2Freact)](https://www.npmjs.com/package/@markview/react)
-[![webcomponent](https://img.shields.io/npm/v/@markview/webcomponent?color=f7df1e&label=%40markview%2Fwebcomponent)](https://www.npmjs.com/package/@markview/webcomponent)
 [![mcp](https://img.shields.io/npm/v/@markview/mcp?color=10b981&label=%40markview%2Fmcp)](https://www.npmjs.com/package/@markview/mcp)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-84_passing-22c55e)](apps/web/src/__tests__)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![MCP Tools](https://img.shields.io/badge/MCP_Tools-23-10b981)](apps/mcp)
-[![Live Demo](https://img.shields.io/badge/Live_Demo-▶-ff6b6b)](https://getmarkview.vercel.app)
+[![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-▶-ff6b6b)](https://markview.ai)
 
 <br />
 
@@ -26,111 +21,38 @@
 
 ---
 
-## ✨ Features
+## What MarkView is
 
-### Rendering & Viewing
-- 📝 **GitHub-flavored markdown** with full spec support
-- 🧜 **Mermaid diagrams** rendered inline
-- 🔢 **KaTeX math** — inline and block equations
-- 🎨 **Syntax highlighting** via Shiki (140+ languages)
-- 📊 **Tables, alerts, footnotes** — all GitHub extensions
+A single web app that handles the full lifecycle of your local knowledge:
 
-### Workspace Management
-- 📂 **Multi-tab workspaces** with nested file trees
-- 💾 **Persistent sessions** via IndexedDB (survives refresh)
-- 🔗 **Inter-document linking** — click links between docs
-- 📎 **Drag & drop** file upload, open folders, or reorder files
-- 🐙 **GitHub import** — paste a repo URL, instantly load docs
-- 📋 **Workspace templates** — README, API Docs, Changelog, Meeting Notes, Tech Spec, Blog Post
-- 🔗 **URL sharing** — share workspaces via URL (gzip + base64url in hash)
-- 🤝 **P2P Collaboration** — real-time multiplayer editing via WebRTC, zero server required
+- **`/`** — the editor. Create, edit, render, and share markdown. GitHub-flavored, Mermaid, KaTeX, Shiki, presentations, exports, themes, plugins, P2P collab via WebRTC.
+- **`/vault`** — your knowledge graph in 3D. Drop documents in, watch them orbit. Wikilinks become real edges. TF-IDF + multilingual embeddings find related notes you forgot you wrote. Press a key to expand into a full graph view.
+- **`/brain`** — live view of every AI session writing into your `~/brain/` vault. See active Claude/Cursor/Continue sessions, the tools they're calling, the cost they're burning, in a 3D kanban orbit.
+- **The Hub** (`apps/hub`) — a tiny local Hono server on `:3100` that bridges the browser to your filesystem. Serves vault docs, watches AI sessions, and runs the MCP relay. Nothing it sees ever leaves your machine.
+- **The MCP server** (`@markview/mcp`) — exposes 23 tools so Claude Desktop, Cursor, Zed, or any MCP-compatible client can read, search, and edit your vault directly inside their conversations.
 
-### Productivity
-- 🔍 **Full-text search** across all documents (⌘K)
-- ↔️ **Split view** — compare two files side by side
-- 📊 **Diff view** — unified diff with line-by-line highlighting
-- ✏️ **Built-in editor** — edit, split, and preview modes with formatting toolbar (⌘B/⌘I/⌘K)
-- 🎬 **Presentation mode** — transform headings into slides
-- 🧘 **Focus mode** — distraction-free reading
-- ⌨️ **Keyboard-first** — navigate files, switch workspaces, adjust font size
-- 📋 **Export everywhere** — PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc, static site, or print
-- 💬 **Annotations** — highlight text, add color-coded notes, persisted per file
-- 📜 **Version history** — automatic snapshots on save, restore previous versions
-- 🎨 **Custom themes** — 6 curated presets (GitHub, Dracula, Nord, Monokai, Solarized, Rosé Pine)
-
-### Extensibility
-- 🔌 **Plugin system** — register custom code-fence renderers (alert, chart, tabs, timeline built-in)
-- 🎬 **Embed support** — YouTube, Figma, CodePen, CodeSandbox, Loom via ` ```embed `
-
-### Desktop App
-- 🖥️ **Native macOS app** — built with Tauri v2, fast and lightweight
-- 📂 **Default opener** — set MarkView as your system-default `.md` file handler
-- 🍏 **Mac App Store** — Coming soon for a one-time purchase of $14.99
-- 🚀 **Build from source** — completely un-gated for developers to compile locally
-
-### Privacy & Offline
-- 🔒 **Zero accounts** — no sign-up required
-- ☁️ **Zero cloud** — files never leave the browser
-- 📡 **Zero telemetry** — no tracking, no analytics
-- ✈️ **Works offline** — full PWA support
+**The promise:** zero accounts, zero cloud, zero telemetry. Your knowledge stays on your laptop. AI tools talk to it through MCP. Browsers connect to it through a P2P bridge. Nothing uploads.
 
 ---
 
-## 🚀 Quick Start
-
-### Web App
+## 🚀 Quick start
 
 ```bash
-cd apps/web
-npm install
-npm run dev
+# 1. Web app + editor (port 3000)
+cd apps/web && npm install && npm run dev
+
+# 2. (Optional) Hub for /brain + /vault live data (port 3100)
+cd apps/hub && npm install && npm run dev
+
+# 3. (Optional) MCP server for AI tools
+cd apps/mcp && npm install && npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — drop some markdown files and go.
+Open [http://localhost:3000](http://localhost:3000) — drop some markdown files into `/vault`, or open `/brain` if the Hub is running. Or just hit the **[live demo](https://markview.ai)** — no install needed.
 
-Or use the **[live demo](https://getmarkview.vercel.app)** — no install needed.
+### MCP — the SDK
 
-### Native macOS App (Recommended)
-
-MarkView ships as a proper native macOS app via Tauri — set it as your default `.md` opener:
-
-```bash
-# Build the .app + .dmg
-npm run desktop:build
-
-# Install to /Applications
-sudo cp -r apps/desktop/src-tauri/target/release/bundle/macos/MarkView.app /Applications/
-
-# Register file associations
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/MarkView.app
-```
-
-Then right-click any `.md` file → **Get Info** → **Open With** → **MarkView** → **Change All**.
-
-For development:
-```bash
-npm run desktop:dev
-```
-
-### Install as PWA
-
-MarkView also works as a Progressive Web App — install it from Chrome/Edge for an offline-capable app-like experience.
-
-### Chrome Extension
-
-Load `apps/extension` as an unpacked extension in Chrome to view `.md` files directly in the browser.
-
-### MCP Server
-
-The MCP server lets AI assistants read, search, and manage your markdown documentation. First, build it:
-
-```bash
-cd apps/mcp
-npm install
-npm run build
-```
-
-Then add it to your AI tool:
+The MCP server lets any AI assistant read, search, and edit your vault. Add it to your tool of choice:
 
 <details>
 <summary><strong>Claude Desktop</strong></summary>
@@ -141,8 +63,8 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "markview": {
-      "command": "node",
-      "args": ["/absolute/path/to/markview/apps/mcp/dist/index.js", "/path/to/your/docs"]
+      "command": "npx",
+      "args": ["-y", "@markview/mcp", "/path/to/your/vault"]
     }
   }
 }
@@ -155,12 +77,12 @@ Restart Claude Desktop. You'll see "markview" in the MCP tools menu (🔧).
 <details>
 <summary><strong>Cursor</strong></summary>
 
-Go to **Settings → MCP Servers → Add Server** and use:
+**Settings → MCP Servers → Add Server**:
 
 ```json
 {
-  "command": "node",
-  "args": ["/absolute/path/to/markview/apps/mcp/dist/index.js", "/path/to/your/docs"]
+  "command": "npx",
+  "args": ["-y", "@markview/mcp", "/path/to/your/vault"]
 }
 ```
 
@@ -173,8 +95,8 @@ Go to **Settings → MCP Servers → Add Server** and use:
 {
   "mcpServers": {
     "markview": {
-      "command": "node",
-      "args": ["path/to/markview/apps/mcp/dist/index.js", "./your-docs"]
+      "command": "npx",
+      "args": ["-y", "@markview/mcp", "/path/to/your/vault"]
     }
   }
 }
@@ -184,32 +106,31 @@ Go to **Settings → MCP Servers → Add Server** and use:
 
 **What you can ask your AI:**
 
-> *"Search my docs for authentication setup"*
+> *"Search my vault for authentication setup"*
 > *"What are the headings in API.md?"*
-> *"Find all broken links in my documentation"*
+> *"Find all broken links across my notes"*
 > *"Create a new doc called getting-started.md with an intro section"*
-> *"Show me all code examples in Python across my docs"*
+> *"Find documents related to KVKK compliance"*
 
 ---
 
-## 🤖 MCP Tools (23)
-
-The Model Context Protocol server lets AI assistants interact with your documentation workspace:
+## 🤖 MCP tools (23)
 
 | Category | Tools |
 |----------|-------|
-| **Read & Analyze** | `list_documents` `get_document` `search_docs` `get_headings` `get_links` `get_code_blocks` `get_frontmatter` `get_tables` `get_related_docs` `get_glossary` `get_mermaid_diagrams` `get_math_blocks` `analyze_reading_level` |
-| **Workspace Health** | `validate_workspace` `get_stats` `generate_toc` |
-| **Write & Manage** | `create_document` `update_document` `rename_document` `delete_document` `merge_documents` |
-| **Share & Export** | `share_document` `render_document` |
+| **Read & analyze** | `list_documents` `get_document` `search_docs` `get_headings` `get_links` `get_code_blocks` `get_frontmatter` `get_tables` `get_related_docs` `get_glossary` `get_mermaid_diagrams` `get_math_blocks` `analyze_reading_level` |
+| **Graph queries** | `get_related_within_hops` `get_shortest_path` `get_ego_graph` `get_vault_hubs` `get_communities` |
+| **Workspace health** | `validate_workspace` `get_stats` `generate_toc` |
+| **Write & manage** | `create_document` `update_document` `rename_document` `delete_document` `merge_documents` |
+| **Share & export** | `share_document` `render_document` |
 
 See [apps/mcp/README.md](apps/mcp/README.md) for full documentation.
 
 ---
 
-## 🌐 WebRTC Context Bridge
+## 🌐 WebRTC context bridge
 
-Stream your local documentation context to any browser-based AI tool via a peer-to-peer WebRTC data channel — **zero cloud, zero uploads, zero trust required**.
+Stream your local vault context to any browser-based AI tool via a peer-to-peer WebRTC data channel — **zero cloud, zero uploads, zero trust required**.
 
 ```
 ┌─────────────────┐     WebRTC DataChannel     ┌──────────────────────┐
@@ -218,13 +139,12 @@ Stream your local documentation context to any browser-based AI tool via a peer-
 └─────────────────┘                            └──────────────────────┘
 ```
 
-**Quick start:**
 ```bash
 # 1. Start the signaling relay
 npx tsx apps/mcp/scripts/signaling-server.ts
 
 # 2. Launch MCP in WebRTC mode
-npx markview-mcp ./docs --webrtc --room my-room
+npx markview-mcp ./vault --webrtc --room my-room
 
 # 3. Open the Agent Bridge in your browser
 #    → http://localhost:3000/agent
@@ -232,15 +152,27 @@ npx markview-mcp ./docs --webrtc --room my-room
 
 Once connected, the browser has direct read/execute access to all 23 MCP tools running on your local machine. No files ever leave your device.
 
-| Feature | Detail |
-|---------|--------|
-| **Transport** | RTCPeerConnection + RTCDataChannel |
-| **Signaling** | Lightweight WebSocket relay (localhost) |
-| **Encryption** | DTLS 1.2 (built into WebRTC) |
-| **Latency** | Sub-millisecond on localhost |
-| **Dependencies** | Zero — uses browser-native WebRTC APIs |
+| Property | Detail |
+|---|---|
+| Transport | RTCPeerConnection + RTCDataChannel |
+| Signaling | Lightweight WebSocket relay (localhost) |
+| Encryption | DTLS 1.2 (built into WebRTC) |
+| Latency | Sub-millisecond on localhost |
+| Dependencies | Zero — uses browser-native WebRTC APIs |
 
-See the [live demo](/agent) or the [Agent Demo source](apps/web/src/components/agent/agent-demo.tsx).
+---
+
+## ✨ Editor features
+
+| | |
+|---|---|
+| **Rendering** | GitHub-flavored markdown, Mermaid diagrams, KaTeX math, Shiki syntax highlighting (140+ languages), tables, alerts, footnotes |
+| **Workspace** | Multi-tab, nested file trees, IndexedDB persistence, drag-and-drop, GitHub repo import, URL sharing (gzip + base64url), P2P real-time collaboration |
+| **Productivity** | Full-text search (⌘K), split view, diff view, WYSIWYG editor with formatting toolbar, presentation mode, focus mode, version history, annotations |
+| **Export** | PDF, Word, PowerPoint, PNG, SVG, HTML, RST, AsciiDoc, static site, print |
+| **Themes** | 6 curated presets — GitHub, Dracula, Nord, Monokai, Solarized, Rosé Pine |
+| **Extensibility** | Plugin system for custom code-fence renderers (alert, chart, tabs, timeline). YouTube / Figma / CodePen / CodeSandbox / Loom embeds via ` ```embed ` |
+| **Privacy** | Zero accounts, zero cloud, zero telemetry. Full PWA, works offline. |
 
 ---
 
@@ -249,161 +181,48 @@ See the [live demo](/agent) or the [Agent Demo source](apps/web/src/components/a
 ```
 markview/
 ├── apps/
-│   ├── web/          # Next.js 16 documentation viewer
+│   ├── web/          # Next.js 16 — editor, /vault, /brain
+│   ├── hub/          # Hono server (port 3100) — local data bridge
+│   ├── mcp/          # MCP server — the SDK
 │   ├── desktop/      # Native macOS app (Tauri v2)
-│   ├── mcp/          # MCP server (23 tools)
-│   └── extension/    # Chrome extension
+│   └── extension/    # Chrome extension for inline .md viewing
 ├── packages/
-│   └── core/         # Framework-agnostic rendering engine
-├── LICENSE           # AGPL-3.0
-├── CONTRIBUTING.md
+│   └── core/         # Internal markdown engine
 └── README.md
 ```
 
 | App | Tech | Description |
-|-----|------|-------------|
-| **Web** | Next.js 16, React, Zustand, Shiki, Mermaid, KaTeX | Main documentation viewer |
-| **Desktop** | Tauri v2, Rust, WebKit | Native macOS app with file associations |
-| **MCP** | TypeScript, @modelcontextprotocol/sdk | AI documentation tools |
-| **Extension** | Chrome Extensions API | View .md files in browser |
+|---|---|---|
+| **web** | Next.js 16, React, three.js, Zustand, Shiki, Mermaid, KaTeX | The editor + 3D vault + brain |
+| **hub** | Hono, @hono/node-server | Local server: serves vault docs, watches AI sessions, MCP relay |
+| **mcp** | TypeScript, @modelcontextprotocol/sdk | The 23-tool MCP server |
+| **desktop** | Tauri v2, Rust, WebKit | Native macOS app with file associations |
+| **extension** | Chrome Extensions API | View `.md` files inside the browser |
 
 ---
 
-## 🗺️ Roadmap
+## 🐳 Self-hosting
 
-MarkView is actively maintained. Here's what's shipped and what's next:
-
-| Status | Feature | Description |
-|--------|---------|-------------|
-| ✅ | Rich rendering | GFM, Mermaid, KaTeX, Shiki, alerts, tables |
-| ✅ | Workspace management | Multi-tab, file trees, IndexedDB persistence |
-| ✅ | Productivity suite | Search, split view, diff, editor, presentation, export |
-| ✅ | MCP server | 23 AI documentation tools |
-| ✅ | WebRTC Context Bridge | P2P browser-to-local AI tool execution |
-| ✅ | Chrome extension | View .md files in the browser |
-| ✅ | PWA & offline | Install as desktop app, works without internet |
-| ✅ | Import workspace ZIP | Load shared workspace archives |
-| ✅ | Custom themes | 6 curated color schemes — Dracula, Monokai, Nord, Solarized, Rosé Pine |
-| ✅ | URL sharing | Share workspaces via URL — gzip + base64url, zero server |
-| ✅ | Drag-and-drop reorder | Rearrange files in the sidebar via drag & drop |
-| ✅ | WYSIWYG editor toolbar | 13 format buttons + ⌘B/⌘I/⌘K shortcuts + Tab indent |
-| ✅ | Workspace templates | 6 starter templates — README, API Docs, Changelog, and more |
-| ✅ | Annotations | Highlight text, add color-coded notes, persisted |
-| ✅ | Plugin system | Custom code-fence renderers — alert, chart, tabs, timeline, embed |
-| ✅ | Embed support | YouTube, Figma, CodePen, CodeSandbox, Loom embeds |
-| ✅ | Version history | Auto-snapshot on save, restore any previous version |
-| ✅ | P2P collaboration | WebRTC-based workspace sharing — zero cloud |
-| ✅ | npm publish MCP | `npx markview-mcp ./docs` — [published!](https://www.npmjs.com/package/@markview/mcp) |
-| ✅ | Native macOS app | Tauri v2 desktop app — set as default `.md` opener, ships as `.app` + `.dmg` |
-| 🔮 | GitHub bi-directional sync | Pull & push docs to/from repos |
-| 🔮 | VS Code extension | View docs without leaving the editor |
-| 🔮 | AI writing assistant | Grammar check, autocomplete, summarize |
-| 🔮 | Windows / Linux desktop | Tauri supports all platforms — packaging pending |
-
-🔮 = exploring — [contributions welcome!](CONTRIBUTING.md)
-
----
-
-## 🐳 Self-Hosting
-
-MarkView ships a static export — host it anywhere, or run it locally with Docker.
-
-**Docker Compose (quickest):**
+MarkView's web app ships as a static export — host it anywhere.
 
 ```bash
-# Copy and configure environment variables
+# Docker Compose (quickest)
 cp apps/web/.env.example .env
-
-# Build and start (serves on http://localhost:3000)
 docker compose up --build -d
-```
+# → http://localhost:3000
 
-**Manual Docker:**
-
-```bash
+# Manual Docker
 docker build -f apps/web/Dockerfile -t markview .
 docker run -p 3000:3000 markview
 ```
 
-**Variables you can configure in `.env`:**
-
-| Variable | Default | Description |
-|---|---|---|
-| `NEXT_PUBLIC_YJS_SIGNALING_SERVER` | `wss://signaling.yjs.dev` | WebRTC signaling server for collaboration |
-
-> [!NOTE]
-> For production collaboration use, self-host a signaling server. See [y-webrtc signaling setup](https://github.com/yjs/y-webrtc#signaling).
+For `/brain` and `/vault` to show live data, run `apps/hub` alongside the web app on `:3100`.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feat/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 💰 Pricing & Licensing
-
-MarkView is supported by a **dual-license** model for developers, and a one-time purchase for consumers.
-
-### 1. Developer SDKs & Components
-For integrating `@markview/core`, `@markview/react`, or `@markview/webcomponent` into your software:
-
-| License | Price | Terms |
-|---------|-------|-------|
-| **Open Source** | Free | **AGPL-3.0**. You must open-source your entire application. |
-| **Indie** | $149 / year | Valid for 1 developer, up to 3 commercial projects. No open-source requirement. |
-| **Business** | $499 / year | Up to 15 developers, unlimited commercial projects. Priority support. |
-| **Enterprise** | Custom | Unlimited developers, custom integrations, SLA, dedicated support. |
-
-To purchase a commercial license to embed MarkView into a closed-source product, see the [Pricing Section on our Website](https://getmarkview.vercel.app/#pricing).
-
-### 2. Desktop App (Consumers)
-The native macOS Tauri app will soon be available on the **Mac App Store** for a one-time purchase of **$14.99**, giving you lifetime updates and unparalleled native integration. 
-
-You can always compile the desktop app from source for free (see "Quick Start" guidelines).
-
----
-
-## 📦 Packages
-
-MarkView is available as standalone npm packages:
-
-| Package | Install | Use case |
-|---------|---------|----------|
-| [`@markview/core`](packages/core) | `npm i @markview/core` | Framework-agnostic rendering engine |
-| [`@markview/react`](packages/react) | `npm i @markview/react` | Drop-in React component |
-| [`@markview/webcomponent`](packages/webcomponent) | `npm i @markview/webcomponent` | Web Component for Vue, Angular, Svelte, plain HTML |
-| [`@markview/mcp`](apps/mcp) | `npx markview-mcp ./docs` | MCP server — give AI assistants access to your docs |
-
-**React:**
-```tsx
-import { MarkView } from '@markview/react';
-import '@markview/core/styles';
-
-<MarkView content={markdown} theme="dark" shiki mermaid katex />
-```
-
-**Any framework / plain HTML:**
-```html
-<script type="module">
-  import '@markview/webcomponent';
-</script>
-<mark-view content="# Hello" theme="dark" shiki mermaid katex></mark-view>
-```
-
-**MCP for AI assistants:**
-```bash
-npx markview-mcp ./your-docs
-```
-
-See each package README for full API docs.
+PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Fork, branch, commit, push, open a PR.
 
 ---
 
@@ -411,14 +230,12 @@ See each package README for full API docs.
 
 [AGPL-3.0](LICENSE) © [Ahmet Barış Günaydın](https://github.com/abgnydn)
 
-For commercial use without AGPL obligations, see [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md).
-
 ---
 
 <div align="center">
 
-**⭐ Star this repo if you find it useful!**
+**⭐ Star this repo if you find it useful.**
 
-Built with 💜 using Next.js, Shiki, Mermaid, KaTeX, and MCP
+Built with Next.js, three.js, Shiki, Mermaid, KaTeX, MCP, and a private bridge.
 
 </div>

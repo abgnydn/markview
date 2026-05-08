@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { BrowserWebRTCClientTransport } from '@/lib/mcp/BrowserWebRTCClientTransport';
-import { FiTerminal, FiPlay, FiServer, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { Terminal, Play, Server, CheckCircle } from 'lucide-react';
 
 export function AgentDemo() {
   const [roomId, setRoomId] = useState('demo-room');
@@ -75,7 +75,7 @@ export function AgentDemo() {
       <div className="border-b border-white/10 p-4 bg-zinc-900/50 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-            <FiServer className="w-5 h-5 text-zinc-400" />
+            <Server className="w-5 h-5 text-zinc-400" />
           </div>
           <div>
             <h2 className="font-semibold">MarkView Universal Plaid Bridge</h2>
@@ -125,14 +125,14 @@ export function AgentDemo() {
                 onClick={handleConnect}
                 className="w-full py-2.5 bg-white text-black font-semibold rounded-lg hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 mt-4"
               >
-                <FiTerminal /> Connect Securely
+                <Terminal size={14} /> Connect Securely
               </button>
             </div>
           ) : (
             <div className="space-y-6">
               <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl space-y-3">
                 <h3 className="text-sm font-semibold text-emerald-400 flex items-center gap-2">
-                  <FiCheckCircle /> Bridge Active
+                  <CheckCircle size={14} /> Bridge Active
                 </h3>
                 <p className="text-xs text-zinc-400">
                   This browser tab now has true read/execute access over your local terminal via a native WebRTC DataChannel. No cloud databases are involved.
@@ -153,7 +153,7 @@ export function AgentDemo() {
                   className="w-full text-left px-4 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors group"
                 >
                   <div className="text-sm font-medium text-white group-hover:text-indigo-400 transition-colors flex items-center justify-between">
-                    workspace-overview <FiPlay className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    workspace-overview <Play size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <div className="text-xs text-zinc-500 mt-1">Get entire docs directory stats</div>
                 </button>
@@ -163,7 +163,7 @@ export function AgentDemo() {
                   className="w-full text-left px-4 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors group"
                 >
                   <div className="text-sm font-medium text-white group-hover:text-indigo-400 transition-colors flex items-center justify-between">
-                    list_documents <FiPlay className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    list_documents <Play size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <div className="text-xs text-zinc-500 mt-1">Scan terminal for Markdown files</div>
                 </button>
@@ -173,7 +173,7 @@ export function AgentDemo() {
                   className="w-full text-left px-4 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors group"
                 >
                   <div className="text-sm font-medium text-white group-hover:text-indigo-400 transition-colors flex items-center justify-between">
-                    analyze_reading_level <FiPlay className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    analyze_reading_level <Play size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <div className="text-xs text-zinc-500 mt-1">Run Flesch-Kincaid NLP on local files</div>
                 </button>
