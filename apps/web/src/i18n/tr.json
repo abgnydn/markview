@@ -60,13 +60,5 @@
   "dropzone_assurance": "Belgeniz cihazınızdan çıkmaz — her şey tarayıcıda işlenir.",
   "related_heading": "{n} adımdaki ilgili notlar",
   "related_hops_label": "Adım",
-  "related_empty": "Bu yarıçapta ilgili not yok.",
-  "dvk_brand": "DavaKasası",
-  "dvk_brand_tag": "Dosya Kasası",
-  "dvk_back_to_landing": "davakasasi.com'a dön",
-  "dvk_default_vault_name": "Dosya Kasası",
-  "dvk_tint_cyan": "Halka Açık",
-  "dvk_tint_amber": "İş Ürünü",
-  "dvk_tint_violet": "Müvekkil–Avukat Gizli",
-  "dvk_tint_rose": "Etiketli"
+  "related_empty": "Bu yarıçapta ilgili not yok."
 }

@@ -7,7 +7,7 @@ import type { PeerPresence } from './use-vault';
 import type { SemanticSource } from './use-semantic-edges';
 import { t } from '@/i18n';
 
-export type VaultBrand = 'markview' | 'davakasasi';
+export type VaultBrand = 'markview';
 
 interface VaultTopbarProps {
   vaultName: string;
@@ -71,10 +71,9 @@ export function VaultTopbar({
   const [draft, setDraft] = useState(vaultName);
   const [copied, setCopied] = useState(false);
 
-  const isDvk = brand === 'davakasasi';
-  const brandHref = isDvk ? '/davakasasi.html' : '/';
-  const brandLabel = isDvk ? t('dvk_brand') : 'MarkView';
-  const brandTitle = isDvk ? t('dvk_back_to_landing') : t('back_to_landing');
+  const brandHref = '/';
+  const brandLabel = 'MarkView';
+  const brandTitle = t('back_to_landing');
 
   const share = async () => {
     const url = await onShare();

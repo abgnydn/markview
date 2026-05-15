@@ -60,13 +60,5 @@
   "dropzone_assurance": "Your document never leaves your device — everything is processed in the browser.",
   "related_heading": "Related within {n} hops",
   "related_hops_label": "Hops",
-  "related_empty": "No related notes within this radius.",
-  "dvk_brand": "DavaKasası",
-  "dvk_brand_tag": "Matter Vault",
-  "dvk_back_to_landing": "Back to davakasasi.com",
-  "dvk_default_vault_name": "Matter Vault",
-  "dvk_tint_cyan": "Public",
-  "dvk_tint_amber": "Work product",
-  "dvk_tint_violet": "Privileged",
-  "dvk_tint_rose": "Tagged"
+  "related_empty": "No related notes within this radius."
 }

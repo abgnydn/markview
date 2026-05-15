@@ -21,8 +21,6 @@ This file provides guidance to Claw Code (clawcode.dev) when working with code i
 
 ## Sub-project scopes
 
-Dedicated per-workstream CLAUDE.md files live in subfolders. `cd` into the one matching your task before spawning an agent:
-
-- `davakasasi/` — DavaKasası (Matter Vault TR), Turkish legal-tech GTM. See `davakasasi/CLAUDE.md`.
+Dedicated per-workstream CLAUDE.md files live in subfolders. `cd` into the one matching your task before spawning an agent.
 
 Agents spawned at the repo root get generic guidance; they should **not** assume any active workstream.

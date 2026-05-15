@@ -40,15 +40,6 @@ interface Vertical {
 
 const VERTICALS: Vertical[] = [
   {
-    id: 'law',
-    label: 'Law',
-    sub: 'DavaKasası · live',
-    color: '#fbbf24',
-    live: true,
-    href: '/davakasasi',
-    copy: 'Per-matter vault for lawyers. KVKK-grade, .udf-ready.',
-  },
-  {
     id: 'research',
     label: 'Research',
     sub: 'soon',
@@ -324,10 +315,6 @@ export function LandingAtlas() {
             Open your vault
             <span className="atlas-cta-arrow">→</span>
           </Link>
-          <Link href="/davakasasi" className="atlas-cta-secondary">
-            <span className="atlas-cta-dot" style={{ background: '#fbbf24' }} />
-            DavaKasası — for lawyers
-          </Link>
         </div>
         <div className="atlas-scroll-hint">scroll · explore the verticals</div>
       </div>
@@ -396,7 +383,6 @@ export function LandingAtlas() {
 
       <footer className="atlas-foot">
         <Link href="/vault">/vault</Link>
-        <Link href="/davakasasi">/davakasasi</Link>
         <Link href="/brain">/brain</Link>
         <Link href="/agent">/agent</Link>
         <span className="atlas-foot-mark">markview · 2026</span>
