@@ -187,18 +187,7 @@ export function VaultExperience({
 
   const activeDoc = activeId ? state.docs.find((d) => d.id === activeId) : null;
 
-  // DavaKasası reuses tints as document-privilege classes:
-  //   cyan = Halka Açık · amber = İş Ürünü · violet = Müvekkil–Avukat Gizli.
-  // For markview we leave tints unlabeled (they're decorative).
-  const tintLabels = useMemo<Partial<Record<VaultDoc['tint'], string>> | undefined>(() => {
-    if (brand !== 'davakasasi') return undefined;
-    return {
-      cyan: t('dvk_tint_cyan'),
-      amber: t('dvk_tint_amber'),
-      violet: t('dvk_tint_violet'),
-      rose: t('dvk_tint_rose'),
-    };
-  }, [brand]);
+  const tintLabels = undefined;
 
   // Dev-only test hook so Playwright can drive canvas-panel selection
   // without raycasting pixels. Stripped in production builds (NODE_ENV check).
