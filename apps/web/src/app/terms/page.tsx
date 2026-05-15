@@ -49,7 +49,7 @@ export default function TermsPage() {
           <p>The MarkView source code is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). You may use, modify, and distribute the software under the terms of this license, provided that any derivative work is also distributed under AGPL-3.0 and its source code is made available.</p>
 
           <h2>5. Commercial License</h2>
-          <p>If you wish to embed MarkView SDK packages in a proprietary or closed-source application without AGPL obligations, you must purchase a commercial license. Commercial licenses are available by emailing <a href="mailto:abgunaydin94@gmail.com" style={{ color: '#a5b4fc' }}>abgunaydin94@gmail.com</a> and come in Indie, Business, and Enterprise tiers. See our <Link href="/pricing" style={{ color: '#a5b4fc' }}>Pricing page</Link> for details.</p>
+          <p>If you wish to embed MarkView SDK packages in a proprietary or closed-source application without AGPL obligations, you must purchase a commercial license. Commercial licenses are available by emailing <a href="mailto:hi@barisgunaydin.com" style={{ color: '#a5b4fc' }}>hi@barisgunaydin.com</a> and come in Indie, Business, and Enterprise tiers. See our <Link href="/pricing" style={{ color: '#a5b4fc' }}>Pricing page</Link> for details.</p>
 
           <h2>6. Desktop Application</h2>
           <p>The MarkView for Mac desktop application is a separate product available for a one-time purchase. The desktop app is built with Tauri v2 and processes all files locally on your machine.</p>

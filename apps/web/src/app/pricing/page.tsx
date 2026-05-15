@@ -64,7 +64,7 @@ export default function PricingPage() {
               <li><Check size={14} /> All future updates</li>
               <li><Check size={14} /> Email support</li>
             </ul>
-            <a className="landing-pricing-btn landing-pricing-btn-primary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Indie%20License%20(%24149%2Fyear)">
+            <a className="landing-pricing-btn landing-pricing-btn-primary" href="mailto:hi@barisgunaydin.com?subject=MarkView%20Indie%20License%20(%24149%2Fyear)">
               <Mail size={14} /> Get Indie License
             </a>
           </div>
@@ -79,7 +79,7 @@ export default function PricingPage() {
               <li><Check size={14} /> All future updates</li>
               <li><Check size={14} /> Priority support</li>
             </ul>
-            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Business%20License%20(%24499%2Fyear)">
+            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:hi@barisgunaydin.com?subject=MarkView%20Business%20License%20(%24499%2Fyear)">
               <Mail size={14} /> Get Business License
             </a>
           </div>
@@ -94,7 +94,7 @@ export default function PricingPage() {
               <li><Check size={14} /> Custom integrations</li>
               <li><Check size={14} /> Legal review &amp; invoicing</li>
             </ul>
-            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:abgunaydin94@gmail.com?subject=MarkView%20Enterprise%20License">
+            <a className="landing-pricing-btn landing-pricing-btn-secondary" href="mailto:hi@barisgunaydin.com?subject=MarkView%20Enterprise%20License">
               <Mail size={14} /> Contact Enterprise
             </a>
           </div>
@@ -123,7 +123,7 @@ export default function PricingPage() {
             
             <div className="landing-pricing-faq-item">
               <div className="landing-pricing-faq-q">How do I purchase a license?</div>
-              <div className="landing-pricing-faq-a">Email <a href="mailto:abgunaydin94@gmail.com" style={{ color: '#a5b4fc' }}>abgunaydin94@gmail.com</a> with your chosen tier and we&apos;ll send a secure checkout link and a License Key. Provide the key inside the MarkView platform to permanently waive AGPL restrictions.</div>
+              <div className="landing-pricing-faq-a">Email <a href="mailto:hi@barisgunaydin.com" style={{ color: '#a5b4fc' }}>hi@barisgunaydin.com</a> with your chosen tier and we&apos;ll send a secure checkout link and a License Key. Provide the key inside the MarkView platform to permanently waive AGPL restrictions.</div>
             </div>
 
           </div>

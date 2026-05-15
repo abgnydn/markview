@@ -11,7 +11,7 @@
 If you discover a security vulnerability in MarkView, please report it responsibly:
 
 1. **Do NOT** open a public GitHub issue
-2. **Email** [abgunaydin94@gmail.com](mailto:abgunaydin94@gmail.com) with:
+2. **Email** [hi@barisgunaydin.com](mailto:hi@barisgunaydin.com) with:
    - Description of the vulnerability
    - Steps to reproduce
    - Potential impact

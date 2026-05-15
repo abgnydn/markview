@@ -2,7 +2,7 @@
 name = "markview-desktop"
 version = "0.1.0"
 description = "MarkView — native macOS markdown viewer"
-authors = ["Ahmet Barış Günaydın <abgunaydin94@gmail.com>"]
+authors = ["Ahmet Barış Günaydın <hi@barisgunaydin.com>"]
 license = "AGPL-3.0"
 repository = "https://github.com/abgnydn/markview"
 edition = "2021"

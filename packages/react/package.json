@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Drop-in React component for beautiful markdown rendering — Shiki, Mermaid, KaTeX, and more",
   "license": "Apache-2.0",
-  "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
+  "author": "Ahmet Barış Günaydın <hi@barisgunaydin.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/abgnydn/markview",

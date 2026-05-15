@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "packageManager": "npm@11.7.0",
   "description": "Beautiful, privacy-first markdown documentation viewer with MCP tools for AI assistants",
-  "author": "Ahmet Barış Günaydın <abgunaydin94@gmail.com>",
+  "author": "Ahmet Barış Günaydın <hi@barisgunaydin.com>",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

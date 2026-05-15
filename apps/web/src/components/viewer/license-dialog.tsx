@@ -6,7 +6,7 @@ interface LicenseDialogProps {
   onClose: () => void;
 }
 
-const CONTACT_EMAIL = 'abgunaydin94@gmail.com';
+const CONTACT_EMAIL = 'hi@barisgunaydin.com';
 
 export function LicenseDialog({ isOpen, onClose }: LicenseDialogProps) {
   const { isPro, licenseKey, instanceId, removeLicense } = useLicenseStore();

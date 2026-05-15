@@ -10,7 +10,7 @@ import { persist } from 'zustand/middleware';
  * works (keys issued before the change are grandfathered in until they
  * deactivate); only new activations are paused.
  */
-const CONTACT_EMAIL = 'abgunaydin94@gmail.com';
+const CONTACT_EMAIL = 'hi@barisgunaydin.com';
 
 interface LicenseState {
   isPro: boolean;

@@ -130,4 +130,4 @@ Override CSS custom properties to match your design:
 
 AGPL-3.0 — see [LICENSE](../../LICENSE).
 
-For commercial use without AGPL obligations, contact [abgunaydin94@gmail.com](mailto:abgunaydin94@gmail.com) for a commercial license.
+For commercial use without AGPL obligations, contact [hi@barisgunaydin.com](mailto:hi@barisgunaydin.com) for a commercial license.
