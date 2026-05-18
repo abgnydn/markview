@@ -44,32 +44,38 @@
     "syntax-highlighting"
   ],
   "dependencies": {
-    "unified": "^11.0.5",
-    "remark-parse": "^11.0.0",
-    "remark-gfm": "^4.0.1",
-    "remark-rehype": "^11.1.2",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0"
   },
   "peerDependencies": {
-    "shiki": "^4.0.0",
-    "mermaid": "^11.0.0",
-    "katex": "^0.16.0"
+    "katex": "^0.16.0",
+    "mermaid": "^11.15.0",
+    "shiki": "^4.0.0"
   },
   "peerDependenciesMeta": {
-    "shiki": { "optional": true },
-    "mermaid": { "optional": true },
-    "katex": { "optional": true }
+    "shiki": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    },
+    "katex": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@markview/tsconfig": "file:../tsconfig",
     "@size-limit/preset-small-lib": "^12.0.1",
     "@types/node": "^25.5.0",
     "size-limit": "^12.0.1",
     "typescript": "^5.8.3",
-    "vitest": "^4.1.0",
-    "@markview/tsconfig": "file:../tsconfig"
+    "vitest": "^4.1.0"
   },
   "size-limit": [
     {

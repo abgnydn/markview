@@ -18,7 +18,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"
@@ -27,18 +29,24 @@
     "@markview/core": ">=0.1.0"
   },
   "peerDependenciesMeta": {
-    "shiki": { "optional": true },
-    "mermaid": { "optional": true },
-    "katex": { "optional": true }
+    "shiki": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    },
+    "katex": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@markview/core": "file:../core",
-    "typescript": "^5",
-    "shiki": "^4",
-    "mermaid": "^11",
-    "katex": "^0.16",
+    "@markview/tsconfig": "file:../tsconfig",
     "@types/katex": "^0.16",
-    "@markview/tsconfig": "file:../tsconfig"
+    "katex": "^0.16",
+    "mermaid": "^11.15.0",
+    "shiki": "^4",
+    "typescript": "^5"
   },
   "keywords": [
     "web-component",
