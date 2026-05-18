@@ -110,12 +110,12 @@ export function VaultTopbar({
           display: 'inline-flex',
           alignItems: 'center',
           gap: '6px',
-          color: isDvk ? '#fbbf24' : 'rgba(226, 232, 240, 0.75)',
+          color: 'rgba(226, 232, 240, 0.75)',
           fontSize: '12px',
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
           textDecoration: 'none',
           letterSpacing: '0.04em',
-          fontWeight: isDvk ? 600 : 400,
+          fontWeight: 400,
         }}
         title={brandTitle}
       >

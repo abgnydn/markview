@@ -238,7 +238,6 @@ export function VaultOverlay({ open, onClose }: VaultOverlayProps): React.JSX.El
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  textTransform: 'uppercase',
                   backdropFilter: 'blur(6px)',
                 }}
               >
