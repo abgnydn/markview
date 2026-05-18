@@ -27,9 +27,10 @@ A single web app that handles the full lifecycle of your local knowledge:
 
 - **`/`** — the editor. Create, edit, render, and share markdown. GitHub-flavored, Mermaid, KaTeX, Shiki, presentations, exports, themes, plugins, P2P collab via WebRTC.
 - **`/vault`** — your knowledge graph in 3D. Drop documents in, watch them orbit. Wikilinks become real edges. TF-IDF + multilingual embeddings find related notes you forgot you wrote. Press a key to expand into a full graph view.
-- **`/brain`** — live view of every AI session writing into your `~/brain/` vault. See active Claude/Cursor/Continue sessions, the tools they're calling, the cost they're burning, in a 3D kanban orbit.
-- **The Hub** (`apps/hub`) — a tiny local Hono server on `:3100` that bridges the browser to your filesystem. Serves vault docs, watches AI sessions, and runs the MCP relay. Nothing it sees ever leaves your machine.
+- **`/brain`** — live view of every AI session writing into your local vault. See active Claude/Cursor/Continue sessions, the tools they're calling, the cost they're burning, in a 3D kanban orbit.
+- **The Chrome extensions** (`apps/extension`, `apps/context-injector`) — a side-panel markdown viewer and a WebRTC bridge that connects ChatGPT/Claude.ai tabs to your local files. Zero uploads.
 - **The MCP server** (`@markview/mcp`) — exposes 23 tools so Claude Desktop, Cursor, Zed, or any MCP-compatible client can read, search, and edit your vault directly inside their conversations.
+- **The desktop shell** (`apps/desktop`) — a Tauri wrapper for users who want MarkView as a standalone app instead of a browser tab.
 
 **The promise:** zero accounts, zero cloud, zero telemetry. Your knowledge stays on your laptop. AI tools talk to it through MCP. Browsers connect to it through a P2P bridge. Nothing uploads.
 
@@ -41,14 +42,14 @@ A single web app that handles the full lifecycle of your local knowledge:
 # 1. Web app + editor (port 3000)
 cd apps/web && npm install && npm run dev
 
-# 2. (Optional) Hub for /brain + /vault live data (port 3100)
-cd apps/hub && npm install && npm run dev
-
-# 3. (Optional) MCP server for AI tools
+# 2. (Optional) MCP server for AI tools
 cd apps/mcp && npm install && npm run build
+
+# 3. (Optional) Chrome extensions — load apps/extension and
+#    apps/context-injector as unpacked extensions in chrome://extensions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — drop some markdown files into `/vault`, or open `/brain` if the Hub is running. Or just hit the **[live demo](https://markview.ai)** — no install needed.
+Open [http://localhost:3000](http://localhost:3000) — drop some markdown files into `/vault` to see them orbit. Or just hit the **[live demo](https://markview.ai)** — no install needed.
 
 ### MCP — the SDK
 
@@ -110,7 +111,7 @@ Restart Claude Desktop. You'll see "markview" in the MCP tools menu (🔧).
 > *"What are the headings in API.md?"*
 > *"Find all broken links across my notes"*
 > *"Create a new doc called getting-started.md with an intro section"*
-> *"Find documents related to KVKK compliance"*
+> *"Summarize my notes from last week tagged #ideas"*
 
 ---
 
@@ -216,7 +217,7 @@ docker build -f apps/web/Dockerfile -t markview .
 docker run -p 3000:3000 markview
 ```
 
-For `/brain` and `/vault` to show live data, run `apps/hub` alongside the web app on `:3100`.
+For `/brain` and `/vault` to show live data from a local-running session fleet, point them at a hub server (e.g. [github.com/abgnydn/hub](https://github.com/abgnydn/hub)) on `:3100` — configure via `NEXT_PUBLIC_BRAIN_HUB_URL`.
 
 ---
 
