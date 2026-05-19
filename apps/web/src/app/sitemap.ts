@@ -19,7 +19,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/agent",
     "/vault",
     "/brain",
-    "/investors",
   ];
 
   return routes.map((path) => ({
