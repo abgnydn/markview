@@ -38,9 +38,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "werift": "^0.22.9",
     "ws": "^8.20.0",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@roamhq/wrtc": "^0.10.0"
   },
   "devDependencies": {
     "@markview/tsconfig": "file:../../packages/tsconfig",

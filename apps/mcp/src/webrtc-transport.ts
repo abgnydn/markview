@@ -1,6 +1,6 @@
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
-import { RTCPeerConnection, RTCDataChannel } from 'werift';
+import { RTCPeerConnection, RTCDataChannel } from '@roamhq/wrtc';
 import WebSocket from 'ws';
 
 /**
@@ -25,7 +25,7 @@ class SignalingClient {
       this.connected = true;
       // Join the room
       this.ws.send(JSON.stringify({ type: 'join', room: this.roomId }));
-      
+
       // Flush queue
       for (const msg of this.messageQueue) {
         this.ws.send(JSON.stringify({ ...msg, room: this.roomId }));
@@ -68,7 +68,7 @@ class SignalingClient {
 /**
  * Server transport for WebRTC.
  * Acts as the offerer. Listens for connections and sets up the data channel.
- * 
+ *
  * IMPORTANT: This transport supports client reconnects. When a peer_joined
  * signal is received, the server tears down the old PeerConnection and creates
  * a fresh one. This is critical for extension reloads.
@@ -90,17 +90,21 @@ export class WebRTCServerTransport implements Transport {
 
     this.signaling = new SignalingClient(this.signalingUrl, this.roomId, this.handleSignalingMessage.bind(this));
 
-    this.pc.onIceCandidate.subscribe((candidate) => {
-      if (candidate) {
-        this.signaling.send({ type: 'candidate', candidate: candidate.toJSON() });
-      }
-    });
+    this.wireServerPc();
+  }
 
-    // DO NOT call this.close() on connection state changes — 
+  private wireServerPc(): void {
+    this.pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        this.signaling.send({ type: 'candidate', candidate: event.candidate.toJSON() });
+      }
+    };
+
+    // DO NOT call this.close() on connection state changes —
     // that kills the signaling server and makes reconnects impossible.
-    this.pc.connectionStateChange.subscribe((state) => {
-      console.log(`[Server] PeerConnection state: ${state}`);
-    });
+    this.pc.onconnectionstatechange = () => {
+      console.log(`[Server] PeerConnection state: ${this.pc.connectionState}`);
+    };
   }
 
   async start(): Promise<void> {
@@ -128,7 +132,7 @@ export class WebRTCServerTransport implements Transport {
         // Tear down old connection gracefully
         try {
           this.dc?.close();
-          await this.pc.close();
+          this.pc.close();
         } catch (e) {
           console.log(`[Server] Cleanup of old PC (expected):`, (e as Error).message);
         }
@@ -137,16 +141,7 @@ export class WebRTCServerTransport implements Transport {
         this.pc = new RTCPeerConnection({
           iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
         });
-
-        this.pc.onIceCandidate.subscribe((candidate) => {
-          if (candidate) {
-            this.signaling.send({ type: 'candidate', candidate: candidate.toJSON() });
-          }
-        });
-
-        this.pc.connectionStateChange.subscribe((state) => {
-          console.log(`[Server] PeerConnection state: ${state}`);
-        });
+        this.wireServerPc();
 
         // Create a new DataChannel and wire it up
         this.dc = this.pc.createDataChannel('mcp');
@@ -166,20 +161,28 @@ export class WebRTCServerTransport implements Transport {
   }
 
   private setupDataChannel(dc: RTCDataChannel) {
-    dc.onMessage.subscribe((data) => {
+    dc.onmessage = (event) => {
       try {
-        const message = JSON.parse(data.toString());
+        const message = JSON.parse(event.data.toString());
         this.onmessage?.(message);
       } catch (e: any) {
         this.onerror?.(e);
       }
-    });
+    };
 
-    dc.stateChanged.subscribe((state) => {
-      console.log(`[Server] DataChannel state: ${state}`);
+    // Standard WebRTC: open/close/error are individual handlers, no
+    // unified "stateChanged" stream. Log via readyState on each event.
+    dc.onopen = () => {
+      console.log(`[Server] DataChannel state: open`);
+    };
+    dc.onclose = () => {
+      console.log(`[Server] DataChannel state: closed`);
       // DO NOT call this.close() here — it kills the signaling server.
-      // Just log the state change. A new peer_joined will reset everything.
-    });
+      // A new peer_joined will reset everything.
+    };
+    dc.onerror = (event) => {
+      console.log(`[Server] DataChannel error`, (event as unknown as { error?: Error }).error);
+    };
   }
 
   async send(message: JSONRPCMessage): Promise<void> {
@@ -192,7 +195,7 @@ export class WebRTCServerTransport implements Transport {
 
   async close(): Promise<void> {
     this.dc?.close();
-    await this.pc.close();
+    this.pc.close();
     this.signaling.close();
     this.onclose?.();
   }
@@ -218,28 +221,37 @@ export class WebRTCClientTransport implements Transport {
     });
 
     // Client waits for data channel from server
-    this.pc.onDataChannel.subscribe((dc) => {
-      this.dc = dc;
-      this.setupDataChannel(dc);
-    });
+    this.pc.ondatachannel = (event) => {
+      this.dc = event.channel;
+      this.setupDataChannel(this.dc);
+    };
 
-    this.pc.onIceCandidate.subscribe((candidate) => {
-      if (candidate) {
-        console.log(`[Client] Generated ICE candidate`, candidate);
-        this.signaling.send({ type: 'candidate', candidate: { candidate: candidate.candidate, sdpMLineIndex: candidate.sdpMLineIndex, sdpMid: candidate.sdpMid } });
+    this.pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        const c = event.candidate;
+        console.log(`[Client] Generated ICE candidate`, c);
+        this.signaling.send({
+          type: 'candidate',
+          candidate: {
+            candidate: c.candidate,
+            sdpMLineIndex: c.sdpMLineIndex,
+            sdpMid: c.sdpMid,
+          },
+        });
       }
-    });
+    };
 
-    this.pc.connectionStateChange.subscribe((state) => {
+    this.pc.onconnectionstatechange = () => {
+      const state = this.pc.connectionState;
       console.log(`[Client] Connection state: ${state}`);
       if (state === 'failed' || state === 'closed') {
         this.close();
       }
-    });
+    };
 
     this.signaling = new SignalingClient(
-      this.signalingUrl, 
-      this.roomId, 
+      this.signalingUrl,
+      this.roomId,
       this.handleSignalingMessage.bind(this),
       () => {
         // Announce we arrived to prompt an offer
@@ -251,7 +263,7 @@ export class WebRTCClientTransport implements Transport {
   async start(): Promise<void> {
     if (this.started) return;
     this.started = true;
-    
+
     // We don't create an offer here, we just wait for the signaling connection
     // and the incoming offer from the server.
     // Return when the data channel is actually open to ensure send() succeeds.
@@ -262,7 +274,7 @@ export class WebRTCClientTransport implements Transport {
           resolve();
         }
       }, 100);
-      
+
       // Safety timeout after 10s
       setTimeout(() => {
         clearInterval(checkInterval);
@@ -294,21 +306,25 @@ export class WebRTCClientTransport implements Transport {
   }
 
   private setupDataChannel(dc: RTCDataChannel) {
-    dc.onMessage.subscribe((data) => {
+    dc.onmessage = (event) => {
       try {
-        const message = JSON.parse(data.toString());
+        const message = JSON.parse(event.data.toString());
         this.onmessage?.(message);
       } catch (e: any) {
         this.onerror?.(e);
       }
-    });
+    };
 
-    dc.stateChanged.subscribe((state) => {
-      console.log(`[Client] DataChannel state: ${state}`);
-      if (state === 'closed') {
-        this.close();
-      }
-    });
+    dc.onopen = () => {
+      console.log(`[Client] DataChannel state: open`);
+    };
+    dc.onclose = () => {
+      console.log(`[Client] DataChannel state: closed`);
+      this.close();
+    };
+    dc.onerror = (event) => {
+      console.log(`[Client] DataChannel error`, (event as unknown as { error?: Error }).error);
+    };
   }
 
   async send(message: JSONRPCMessage): Promise<void> {
@@ -321,7 +337,7 @@ export class WebRTCClientTransport implements Transport {
 
   async close(): Promise<void> {
     this.dc?.close();
-    await this.pc.close();
+    this.pc.close();
     this.signaling.close();
     this.onclose?.();
   }
