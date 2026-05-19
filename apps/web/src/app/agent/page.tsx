@@ -7,7 +7,7 @@ export default function AgentDemoPage() {
         <div className="mb-8">
           <h1 className="text-4xl font-semibold text-white tracking-tight mb-2">Universal Context Bridge</h1>
           <p className="text-zinc-400 max-w-2xl text-lg">
-            This demo demonstrates the "Plaid for AI" layer. Run the MarkView CLI locally via <code className="bg-white/10 px-2 py-1 rounded text-sm mx-1">npm run start -- --webrtc --room demo-room</code>, then connect below to stream your local context securely into the browser without any central databases.
+            This demo demonstrates the "Plaid for AI" layer. Run the MarkView CLI locally with <code className="bg-white/10 px-2 py-1 rounded text-sm mx-1">npx @markview/mcp /path/to/vault --webrtc --room demo-room</code>, then connect below to stream your local context securely into the browser without any central databases.
           </p>
         </div>
         

@@ -2718,11 +2718,11 @@ async function main() {
     
     const transport = new WebRTCServerTransport(webrtcRoom, signalingUrl);
     await server.connect(transport);
-    console.error(`markview-mcp WebRTC server running on ${resolvedDir} — 29 tools, 1 resource, 3 prompts available`);
+    console.error(`markview-mcp WebRTC server running on ${resolvedDir} — 30 tools, 1 resource, 3 prompts available`);
   } else {
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error(`markview-mcp stdio server running on ${resolvedDir} — 28 tools, 1 resource, 3 prompts available`);
+    console.error(`markview-mcp stdio server running on ${resolvedDir} — 30 tools, 1 resource, 3 prompts available`);
   }
 }
 
