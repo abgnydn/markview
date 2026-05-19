@@ -9,7 +9,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](LICENSE)
 [![mcp](https://img.shields.io/npm/v/@markview/mcp?color=10b981&label=%40markview%2Fmcp)](https://www.npmjs.com/package/@markview/mcp)
 [![CI](https://github.com/abgnydn/markview/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/markview/actions/workflows/ci.yml)
-[![MCP Tools](https://img.shields.io/badge/MCP_Tools-23-10b981)](apps/mcp)
+[![MCP Tools](https://img.shields.io/badge/MCP_Tools-30-10b981)](apps/mcp)
 [![Made with Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-▶-ff6b6b)](https://markview.ai)
 
@@ -47,9 +47,15 @@ cd apps/mcp && npm install && npm run build
 
 # 3. (Optional) Chrome extensions — load apps/extension and
 #    apps/context-injector as unpacked extensions in chrome://extensions
+
+# 4. (Optional) Local hub — needed for /brain and /agent live data.
+#    Run a hub server on :3100 and set NEXT_PUBLIC_BRAIN_HUB_URL.
+#    Reference implementation: https://github.com/abgnydn/hub
 ```
 
 Open [http://localhost:3000](http://localhost:3000) — drop some markdown files into `/vault` to see them orbit. Or just hit the **[live demo](https://markview.ai)** — no install needed.
+
+> **Live data routes** — `/brain` (active AI sessions) and `/agent` (WebRTC bridge demo) both expect a local hub on `:3100`. Without it, the routes load but show empty / no-data state.
 
 ### MCP — the SDK
 
@@ -115,14 +121,15 @@ Restart Claude Desktop. You'll see "markview" in the MCP tools menu (🔧).
 
 ---
 
-## 🤖 MCP tools (23)
+## 🤖 MCP tools (30)
 
 | Category | Tools |
 |----------|-------|
 | **Read & analyze** | `list_documents` `get_document` `search_docs` `get_headings` `get_links` `get_code_blocks` `get_frontmatter` `get_tables` `get_related_docs` `get_glossary` `get_mermaid_diagrams` `get_math_blocks` `analyze_reading_level` |
 | **Graph queries** | `get_related_within_hops` `get_shortest_path` `get_ego_graph` `get_vault_hubs` `get_communities` |
 | **Workspace health** | `validate_workspace` `get_stats` `generate_toc` |
-| **Write & manage** | `create_document` `update_document` `rename_document` `delete_document` `merge_documents` |
+| **Write & manage** | `create_document` `update_document` `rename_document` `delete_document` `merge_documents` `save_to_vault` |
+| **Bridge & I/O** | `process_browser_context` |
 | **Share & export** | `share_document` `render_document` |
 
 See [apps/mcp/README.md](apps/mcp/README.md) for full documentation.
