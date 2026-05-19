@@ -2,12 +2,12 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { VaultExperience } from '@/components/vault/vault-experience';
+import { VaultClient } from '@/components/vault/vault-client';
 
 function RoomInner() {
   const searchParams = useSearchParams();
   const roomId = searchParams.get('id');
-  return <VaultExperience roomId={roomId} />;
+  return <VaultClient roomId={roomId} />;
 }
 
 export default function VaultRoomPage() {

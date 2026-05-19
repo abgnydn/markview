@@ -114,7 +114,11 @@ function buildSelfContainedHtml(title: string, bodyHtml: string, theme: 'dark' |
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${title} — MarkView</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  /* System font stack — no external dependencies. */
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 

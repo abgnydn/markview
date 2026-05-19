@@ -58,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" data-theme="dark" suppressHydrationWarning>
       <head>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" />
+        <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <script
           type="application/ld+json"

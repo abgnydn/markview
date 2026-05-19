@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { VaultExperience } from '@/components/vault/vault-experience';
+import { VaultClient } from '@/components/vault/vault-client';
 
 export const metadata: Metadata = {
   title: 'Vault · MarkView',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function VaultPage() {
-  return <VaultExperience />;
+  return <VaultClient />;
 }

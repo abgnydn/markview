@@ -52,7 +52,10 @@ const sanitizeSchema = {
     'section', 'article', 'aside', 'nav', 'header', 'footer', 'main',
   ],
   attributes: {
-    '*': ['className', 'id', 'title', 'lang', 'dir', 'data-*', 'aria-*', 'role', 'style'],
+    // SECURITY: 'style' intentionally NOT in the global allowlist —
+    // it enables CSS overlay phishing (position:fixed full-viewport)
+    // and is the largest XSS surface in user-supplied markdown.
+    '*': ['className', 'id', 'title', 'lang', 'dir', 'data-*', 'aria-*', 'role'],
     a: ['href', 'target', 'rel'],
     img: ['src', 'alt', 'width', 'height', 'loading'],
     video: ['src', 'poster', 'controls', 'width', 'height'],
@@ -74,7 +77,10 @@ const sanitizeSchema = {
   },
   protocols: {
     href: ['http', 'https', 'mailto', '#'],
-    src: ['http', 'https', 'data'],
+    // SECURITY: 'data:' intentionally NOT allowed for src — SVG data-URIs
+    // can carry inline JavaScript that fires on render. If you need
+    // inline images, encode them server-side and serve via http(s).
+    src: ['http', 'https'],
     cite: ['http', 'https'],
   },
   allowComments: false,
