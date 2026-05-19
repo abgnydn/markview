@@ -31,7 +31,7 @@ vi.mock('pdfjs-dist', () => {
   };
 });
 
-vi.mock('xlsx', () => ({
+vi.mock('@e965/xlsx', () => ({
   read: vi.fn(() => ({
     SheetNames: ['Sheet1', 'Davalar'],
     Sheets: {

@@ -66,8 +66,8 @@ async function parseDocx(file: File): Promise<string> {
 }
 
 async function parseSpreadsheet(file: File): Promise<string> {
-  // xlsx's main export is a namespace object with `read`, `utils`, etc.
-  const xlsx = await import('xlsx');
+  // @e965/xlsx is a maintained fork of SheetJS — drop-in API replacement.
+  const xlsx = await import('@e965/xlsx');
   const XLSX = (xlsx as unknown as {
     read: (data: ArrayBuffer, opts: { type: 'array' }) => {
       SheetNames: string[];

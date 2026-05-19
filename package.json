@@ -59,5 +59,9 @@
   ],
   "dependencies": {
     "unified": "^11.0.5"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "^0.9.10",
+    "postcss": "^8.5.10"
   }
 }
