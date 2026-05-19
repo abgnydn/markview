@@ -2,7 +2,8 @@
 
 import React, { useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Upload, Github, Monitor } from 'lucide-react';
+import { Upload, Monitor } from 'lucide-react';
+import { Github } from '@/components/ui/brand-icons';
 import { LandingCinema } from './landing-cinema';
 import { CinemaBackdrop } from './cinema-backdrop';
 import { LandingFinale } from './landing-finale';

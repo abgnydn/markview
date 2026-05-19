@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Github } from 'lucide-react';
+import { Github } from '@/components/ui/brand-icons';
 import '@/components/landing/landing.css';
 
 export const metadata = {

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Chrome, Github, Copy, Check, Terminal } from 'lucide-react';
+import { Copy, Check, Terminal } from 'lucide-react';
+import { Chrome, Github } from '@/components/ui/brand-icons';
 
 const CMD = 'npx @markview/mcp ./docs';
 

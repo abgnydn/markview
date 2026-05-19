@@ -18,7 +18,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"
@@ -27,13 +29,19 @@
     "@markview/core": ">=0.1.0"
   },
   "peerDependenciesMeta": {
-    "shiki": { "optional": true },
-    "mermaid": { "optional": true },
-    "katex": { "optional": true }
+    "shiki": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    },
+    "katex": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@markview/core": "file:../core",
-    "typescript": "^5",
+    "typescript": "^6.0.3",
     "shiki": "^4",
     "mermaid": "^11",
     "katex": "^0.16",

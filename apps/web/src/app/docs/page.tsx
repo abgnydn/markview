@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { Github } from 'lucide-react';
+import { Github } from '@/components/ui/brand-icons';
 import Link from 'next/link';
 import { MarkdownRenderer } from '@/components/viewer/markdown-renderer';
 import '@/components/landing/landing.css';
