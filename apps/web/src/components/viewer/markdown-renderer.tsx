@@ -109,13 +109,17 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
         .replace(/&#39;/g, "'")
         .replace(/&amp;/g, '&');
 
+      const highlighter = shikiHighlighter;
+      if (!highlighter) {
+        return createCodeBlockWrapper(lang, match, decoded);
+      }
       try {
-        const loadedLangs = shikiHighlighter!.getLoadedLanguages();
+        const loadedLangs = highlighter.getLoadedLanguages();
         if (!loadedLangs.includes(lang as never)) {
           // Return with wrapper but no highlighting
           return createCodeBlockWrapper(lang, match, decoded);
         }
-        const highlighted = shikiHighlighter!.codeToHtml(decoded, {
+        const highlighted = highlighter.codeToHtml(decoded, {
           lang,
           theme: shikiTheme,
         });

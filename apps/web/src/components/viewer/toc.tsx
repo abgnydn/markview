@@ -44,7 +44,8 @@ export function TableOfContents({ headings, scrollContainerRef }: TocProps) {
       }
     );
 
-    headingElements.forEach((el) => observerRef.current!.observe(el));
+    const observer = observerRef.current;
+    if (observer) headingElements.forEach((el) => observer.observe(el));
 
     // Set initial active heading (first one visible)
     if (headingElements.length > 0 && !activeId) {

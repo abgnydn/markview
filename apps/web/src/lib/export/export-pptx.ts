@@ -46,6 +46,9 @@ export async function downloadAsPptx(
       // Content before first heading → create title slide
       currentSlide = { title: title, level: 0, content: [], tables: [] };
     }
+    // After the assignment above, `currentSlide` is definitely defined for
+    // the rest of this iteration. Bind to a local to drop the `!.` asserts.
+    const slide = currentSlide;
 
     if (tag === 'table') {
       const rows: string[][] = [];
@@ -56,17 +59,17 @@ export async function downloadAsPptx(
         });
         rows.push(cells);
       });
-      if (rows.length > 0) currentSlide!.tables.push(rows);
+      if (rows.length > 0) slide.tables.push(rows);
     } else if (tag === 'ul' || tag === 'ol') {
       el.querySelectorAll(':scope > li').forEach((li) => {
-        currentSlide!.content.push('• ' + (li.textContent || '').trim());
+        slide.content.push('• ' + (li.textContent || '').trim());
       });
     } else if (tag === 'pre') {
       const code = el.querySelector('code')?.textContent || el.textContent || '';
-      currentSlide!.content.push(code.trim());
+      slide.content.push(code.trim());
     } else {
       const text = (el.textContent || '').trim();
-      if (text) currentSlide!.content.push(text);
+      if (text) slide.content.push(text);
     }
   });
 

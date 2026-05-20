@@ -90,16 +90,17 @@ export class BrowserWebRTCClientTransport implements Transport {
     }
 
     log.debug(`[BrowserSignaling] Connecting to ${url}`);
-    this.ws = new WebSocket(url);
+    const ws = new WebSocket(url);
+    this.ws = ws;
 
-    this.ws.onopen = () => {
+    ws.onopen = () => {
       log.debug(`[BrowserSignaling] Connected`);
       this.wsConnected = true;
-      this.ws!.send(JSON.stringify({ type: 'join', room: this.roomId }));
+      ws.send(JSON.stringify({ type: 'join', room: this.roomId }));
 
       // Flush queued messages
       for (const msg of this.messageQueue) {
-        this.ws!.send(JSON.stringify({ ...msg, room: this.roomId }));
+        ws.send(JSON.stringify({ ...msg, room: this.roomId }));
       }
       this.messageQueue = [];
 
@@ -179,8 +180,8 @@ export class BrowserWebRTCClientTransport implements Transport {
         this.sendSignaling({
           type: 'answer',
           answer: {
-            type: this.pc.localDescription!.type,
-            sdp: this.pc.localDescription!.sdp,
+            type: this.pc.localDescription?.type ?? 'answer',
+            sdp: this.pc.localDescription?.sdp ?? '',
           },
         });
       } else if (msg.type === 'candidate' && msg.candidate) {
