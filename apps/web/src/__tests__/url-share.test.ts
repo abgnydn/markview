@@ -1,3 +1,7 @@
+// @vitest-environment node
+// url-share uses Blob.stream() which jsdom doesn't implement; this module
+// runs under the Node environment (which has the full Web Streams API).
+
 import { describe, it, expect } from 'vitest';
 import { encodeMarkdownUrl, decodeMarkdownUrl, estimateUrlLength, MAX_SHAREABLE_LENGTH } from '@/lib/sharing/url-share';
 

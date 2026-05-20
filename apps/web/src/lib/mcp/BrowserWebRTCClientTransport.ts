@@ -1,4 +1,5 @@
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import { log } from '@/lib/logger';
 import { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 
 /**
@@ -33,14 +34,14 @@ export class BrowserWebRTCClientTransport implements Transport {
 
     // The SERVER creates the data channel → we receive it here
     this.pc.ondatachannel = (event) => {
-      console.log(`[BrowserClient] Received data channel: ${event.channel.label}`);
+      log.debug(`[BrowserClient] Received data channel: ${event.channel.label}`);
       this.dc = event.channel;
       this.setupDataChannel(this.dc);
     };
 
     this.pc.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log(`[BrowserClient] Sending ICE candidate`);
+        log.debug(`[BrowserClient] Sending ICE candidate`);
         this.sendSignaling({
           type: 'candidate',
           candidate: {
@@ -53,11 +54,11 @@ export class BrowserWebRTCClientTransport implements Transport {
     };
 
     this.pc.oniceconnectionstatechange = () => {
-      console.log(`[BrowserClient] ICE state: ${this.pc.iceConnectionState}`);
+      log.debug(`[BrowserClient] ICE state: ${this.pc.iceConnectionState}`);
     };
 
     this.pc.onconnectionstatechange = () => {
-      console.log(`[BrowserClient] Connection state: ${this.pc.connectionState}`);
+      log.debug(`[BrowserClient] Connection state: ${this.pc.connectionState}`);
       if (this.pc.connectionState === 'failed') {
         const err = new Error('WebRTC connection failed');
         this.dcOpenReject?.(err);
@@ -88,11 +89,11 @@ export class BrowserWebRTCClientTransport implements Transport {
       }
     }
 
-    console.log(`[BrowserSignaling] Connecting to ${url}`);
+    log.debug(`[BrowserSignaling] Connecting to ${url}`);
     this.ws = new WebSocket(url);
 
     this.ws.onopen = () => {
-      console.log(`[BrowserSignaling] Connected`);
+      log.debug(`[BrowserSignaling] Connected`);
       this.wsConnected = true;
       this.ws!.send(JSON.stringify({ type: 'join', room: this.roomId }));
 
@@ -125,7 +126,7 @@ export class BrowserWebRTCClientTransport implements Transport {
     };
 
     this.ws.onclose = () => {
-      console.log(`[BrowserSignaling] WebSocket closed`);
+      log.debug(`[BrowserSignaling] WebSocket closed`);
       this.wsConnected = false;
     };
   }
@@ -162,10 +163,10 @@ export class BrowserWebRTCClientTransport implements Transport {
     try {
       if (msg.type === 'offer' && msg.offer) {
         if (this.pc.signalingState !== 'stable') {
-          console.log(`[BrowserClient] Ignoring offer — signaling state: ${this.pc.signalingState}`);
+          log.debug(`[BrowserClient] Ignoring offer — signaling state: ${this.pc.signalingState}`);
           return;
         }
-        console.log(`[BrowserClient] Received offer, creating answer`);
+        log.debug(`[BrowserClient] Received offer, creating answer`);
 
         // werift sends SDP as { type, sdp } — ensure it's a proper RTCSessionDescription
         const offer = msg.offer;
@@ -174,7 +175,7 @@ export class BrowserWebRTCClientTransport implements Transport {
 
         const answer = await this.pc.createAnswer();
         await this.pc.setLocalDescription(answer);
-        console.log(`[BrowserClient] Sending answer`);
+        log.debug(`[BrowserClient] Sending answer`);
         this.sendSignaling({
           type: 'answer',
           answer: {
@@ -183,7 +184,7 @@ export class BrowserWebRTCClientTransport implements Transport {
           },
         });
       } else if (msg.type === 'candidate' && msg.candidate) {
-        console.log(`[BrowserClient] Adding ICE candidate`);
+        log.debug(`[BrowserClient] Adding ICE candidate`);
         await this.pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
       }
     } catch (e: any) {
@@ -194,7 +195,7 @@ export class BrowserWebRTCClientTransport implements Transport {
 
   private setupDataChannel(dc: RTCDataChannel) {
     dc.onopen = () => {
-      console.log(`[BrowserClient] ✅ DataChannel open!`);
+      log.debug(`[BrowserClient] ✅ DataChannel open!`);
       this.dcOpenResolve?.();
     };
 
@@ -212,7 +213,7 @@ export class BrowserWebRTCClientTransport implements Transport {
     };
 
     dc.onclose = () => {
-      console.log(`[BrowserClient] DataChannel closed`);
+      log.debug(`[BrowserClient] DataChannel closed`);
       this.close();
     };
   }

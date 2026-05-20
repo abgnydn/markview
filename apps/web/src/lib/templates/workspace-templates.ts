@@ -1,4 +1,5 @@
 'use client';
+import { log } from '@/lib/logger';
 
 export interface WorkspaceTemplate {
   id: string;
@@ -42,7 +43,7 @@ npm install your-package
 import { something } from 'your-package';
 
 const result = something();
-console.log(result);
+log.debug(result);
 \`\`\`
 
 ## API Reference

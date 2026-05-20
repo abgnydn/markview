@@ -11,6 +11,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@e965/xlsx": "^0.20.3",
     "@huggingface/transformers": "^4.2.0",
     "@markview/core": "^0.1.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
@@ -37,10 +38,10 @@
     "three": "^0.184.0",
     "y-webrtc": "^10.3.0",
     "yjs": "^13.6.30",
-    "zustand": "^5.0.11",
-    "@e965/xlsx": "^0.20.3"
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@markview/eslint-config": "file:../../packages/eslint-config",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4",
@@ -52,7 +53,7 @@
     "@vitest/ui": "^4.1.5",
     "eslint": "^10.4.0",
     "eslint-config-next": "16.1.7",
-    "jsdom": "^29.0.2",
+    "jsdom": "^29.1.1",
     "tailwindcss": "^4",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5"
