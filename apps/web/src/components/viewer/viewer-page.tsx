@@ -292,14 +292,27 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         />
       )}
 
-      {showEditor && activeFileId && activeFileContent && (
-        <MarkdownEditor
-          content={activeFileContent}
-          filename={activeFile?.filename || 'untitled.md'}
-          onSave={handleEditorSave}
-          onClose={() => setShowEditor(false)}
-        />
-      )}
+      {showEditor && activeFileId && activeFileContent && (() => {
+        // When collab is on, hand the editor a Y.Text from the shared
+        // doc so edits stream peer-to-peer in real time. Solo mode
+        // leaves yText undefined and the editor seeds from `content`.
+        const collab = useCollabStore.getState();
+        const collabFileId = isGuestMode
+          ? syncedActiveFileId ?? activeFileId
+          : activeFileId;
+        const yText = collabIsActive ? collab.getYText(collabFileId) ?? undefined : undefined;
+        const awareness = collabIsActive ? collab.getAwareness() ?? undefined : undefined;
+        return (
+          <MarkdownEditor
+            content={activeFileContent}
+            filename={activeFile?.filename || 'untitled.md'}
+            onSave={handleEditorSave}
+            onClose={() => setShowEditor(false)}
+            yText={yText}
+            awareness={awareness}
+          />
+        );
+      })()}
 
     </div>
   );

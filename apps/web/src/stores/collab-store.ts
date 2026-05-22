@@ -18,6 +18,8 @@ import {
   onAwarenessChange,
   type PeerInfo,
 } from '@/lib/collab/awareness';
+import type * as Y from 'yjs';
+import type { Awareness } from 'y-protocols/awareness';
 import { db } from '@/lib/storage/db';
 
 // ---------------------------------------------------------------------------
@@ -52,6 +54,11 @@ interface CollabState {
   joinRoom: (roomId: string, userName: string) => Promise<void>;
   leaveSession: () => void;
   setSyncedActiveFile: (fileId: string) => void;
+
+  // CRDT accessors — used by the editor to bind CodeMirror to a Y.Text
+  // for real-time collaborative editing.
+  getYText: (fileId: string) => Y.Text | null;
+  getAwareness: () => Awareness | null;
 }
 
 export const useCollabStore = create<CollabState>((set, get) => ({
@@ -243,5 +250,19 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     });
 
     setLocalActiveFile(_session.provider, fileId);
+  },
+
+  // ---------- CRDT accessors for the editor ----------
+  getYText: (fileId: string) => {
+    const { _session } = get();
+    if (!_session) return null;
+    const contents = _session.ydoc.getMap('contents');
+    const yText = contents.get(fileId);
+    return (yText as Y.Text | undefined) ?? null;
+  },
+
+  getAwareness: () => {
+    const { _session } = get();
+    return _session ? (_session.provider.awareness as Awareness) : null;
   },
 }));

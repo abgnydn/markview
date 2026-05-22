@@ -13,6 +13,9 @@ import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirro
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
 import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
+import { yCollab } from 'y-codemirror.next';
+import type * as Y from 'yjs';
+import type { Awareness } from 'y-protocols/awareness';
 import { MarkdownRenderer } from './markdown-renderer';
 
 interface MarkdownEditorProps {
@@ -20,6 +23,14 @@ interface MarkdownEditorProps {
   filename: string;
   onSave: (content: string) => void;
   onClose: () => void;
+  /**
+   * Optional Y.Text the editor binds to for real-time collaboration.
+   * When set, undo/redo flows through Yjs's UndoManager and edits sync
+   * to every peer in the room. When unset, the editor is solo and the
+   * `content` prop seeds the initial document.
+   */
+  yText?: Y.Text;
+  awareness?: Awareness;
 }
 
 // Format-button kinds the toolbar dispatches.
@@ -160,9 +171,18 @@ const markviewTheme = EditorView.theme(
   { dark: true },
 );
 
-function buildExtensions(onDocChange: (doc: string) => void): Extension[] {
+function buildExtensions(
+  onDocChange: (doc: string) => void,
+  collab: { yText?: Y.Text; awareness?: Awareness },
+): Extension[] {
+  // y-codemirror.next ships its own UndoManager; bypass CodeMirror's
+  // history extension when collab is active so undo doesn't double-fire.
+  const collabExt = collab.yText
+    ? [yCollab(collab.yText, collab.awareness ?? null)]
+    : [history()];
+
   return [
-    history(),
+    ...collabExt,
     lineNumbers(),
     highlightActiveLine(),
     highlightSelectionMatches(),
@@ -182,24 +202,40 @@ function buildExtensions(onDocChange: (doc: string) => void): Extension[] {
   ];
 }
 
-export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownEditorProps) {
-  const [text, setText] = useState(content);
+export function MarkdownEditor({
+  content,
+  filename,
+  onSave,
+  onClose,
+  yText,
+  awareness,
+}: MarkdownEditorProps) {
+  // When collab is on, the Y.Text is the source of truth — seed local state
+  // from it and let the updateListener mirror future edits back.
+  const initialText = yText ? yText.toString() : content;
+  const [text, setText] = useState(initialText);
   const [mode, setMode] = useState<'edit' | 'preview' | 'split'>('split');
-  const hasChanges = text !== content;
+  // In collab mode "modified vs saved" is meaningless (the host's local
+  // disk-save flow doesn't apply); we hide the unsaved dot.
+  const hasChanges = yText ? false : text !== content;
 
   const hostRef = useRef<HTMLDivElement | null>(null);
   const viewRef = useRef<EditorView | null>(null);
 
-  // Memoize the extension list — buildExtensions captures the setText updater
-  // via a closure, so we must rebuild whenever the host setter changes
-  // (effectively never; just include here to satisfy the dep contract).
-  const extensions = useMemo(() => buildExtensions((doc) => setText(doc)), []);
+  const extensions = useMemo(
+    () => buildExtensions((doc) => setText(doc), { yText, awareness }),
+    [yText, awareness],
+  );
 
-  // Boot the CodeMirror view exactly once per overlay open.
+  // Boot the CodeMirror view exactly once per overlay open. In collab mode
+  // the doc is empty here because yCollab pulls from the Y.Text on connect.
   useEffect(() => {
     if (!hostRef.current || viewRef.current) return;
     viewRef.current = new EditorView({
-      state: EditorState.create({ doc: content, extensions }),
+      state: EditorState.create({
+        doc: yText ? '' : content,
+        extensions,
+      }),
       parent: hostRef.current,
     });
     viewRef.current.focus();
@@ -207,8 +243,6 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
       viewRef.current?.destroy();
       viewRef.current = null;
     };
-    // content is the initial value — intentionally not re-applied on every
-    // change; CodeMirror owns the document from boot.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extensions]);
 
