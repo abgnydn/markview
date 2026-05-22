@@ -188,6 +188,12 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
+      {/* Zen hover zones — three invisible 16px strips at the edges that
+          reveal chrome only when the cursor genuinely reaches for it.
+          Without these, `.toolbar:hover` would fire on the whole shell. */}
+      <div className="zen-zone zen-zone-top" aria-hidden="true" />
+      <div className="zen-zone zen-zone-left" aria-hidden="true" />
+      <div className="zen-zone zen-zone-right" aria-hidden="true" />
       {isDragging && (
         <div className="viewer-drop-overlay">
           <div className="viewer-drop-content">
