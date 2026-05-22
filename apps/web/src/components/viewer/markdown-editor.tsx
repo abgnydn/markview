@@ -1,9 +1,18 @@
+// SPDX-License-Identifier: Apache-2.0
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Save, X, Eye, Edit3, Bold, Italic, Strikethrough, Code, Link2,
+  Save, X, Edit3, Bold, Italic, Strikethrough, Code, Link2,
   Heading1, Heading2, Heading3, List, ListOrdered, Quote, Minus,
 } from 'lucide-react';
+import { EditorState, type Extension } from '@codemirror/state';
+import { EditorView, keymap, lineNumbers, highlightActiveLine } from '@codemirror/view';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { languages } from '@codemirror/language-data';
+import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
+import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
+import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
+import { tags as t } from '@lezer/highlight';
 import { MarkdownRenderer } from './markdown-renderer';
 
 interface MarkdownEditorProps {
@@ -13,113 +22,203 @@ interface MarkdownEditorProps {
   onClose: () => void;
 }
 
-/** Insert/wrap markdown syntax at the cursor position or around selection */
-function applyFormat(
-  textarea: HTMLTextAreaElement,
-  setText: (s: string) => void,
-  type: string,
-) {
-  const { selectionStart: start, selectionEnd: end, value } = textarea;
-  const selected = value.substring(start, end);
-  let replacement = '';
+// Format-button kinds the toolbar dispatches.
+type FormatKind =
+  | 'bold' | 'italic' | 'strikethrough' | 'code' | 'link'
+  | 'h1' | 'h2' | 'h3'
+  | 'ul' | 'ol' | 'quote' | 'hr';
+
+/**
+ * Apply a markdown formatting transform around the current selection (or at
+ * the caret if nothing is selected). Implemented as a CodeMirror transaction
+ * so undo/redo + collaborative edits both round-trip cleanly.
+ */
+function applyFormat(view: EditorView, kind: FormatKind): void {
+  const { state } = view;
+  const sel = state.selection.main;
+  const selected = state.doc.sliceString(sel.from, sel.to);
+
+  let insert = '';
   let cursorOffset = 0;
 
-  switch (type) {
+  switch (kind) {
     case 'bold':
-      replacement = selected ? `**${selected}**` : '**bold**';
-      cursorOffset = selected ? replacement.length : 2;
+      insert = selected ? `**${selected}**` : '**bold**';
+      cursorOffset = selected ? insert.length : 2;
       break;
     case 'italic':
-      replacement = selected ? `*${selected}*` : '*italic*';
-      cursorOffset = selected ? replacement.length : 1;
+      insert = selected ? `*${selected}*` : '*italic*';
+      cursorOffset = selected ? insert.length : 1;
       break;
     case 'strikethrough':
-      replacement = selected ? `~~${selected}~~` : '~~text~~';
-      cursorOffset = selected ? replacement.length : 2;
+      insert = selected ? `~~${selected}~~` : '~~text~~';
+      cursorOffset = selected ? insert.length : 2;
       break;
     case 'code':
       if (selected.includes('\n')) {
-        replacement = `\`\`\`\n${selected}\n\`\`\``;
+        insert = `\`\`\`\n${selected}\n\`\`\``;
         cursorOffset = 4;
       } else {
-        replacement = selected ? `\`${selected}\`` : '`code`';
-        cursorOffset = selected ? replacement.length : 1;
+        insert = selected ? `\`${selected}\`` : '`code`';
+        cursorOffset = selected ? insert.length : 1;
       }
       break;
     case 'link':
-      replacement = selected ? `[${selected}](url)` : '[text](url)';
+      insert = selected ? `[${selected}](url)` : '[text](url)';
       cursorOffset = selected ? selected.length + 3 : 1;
       break;
     case 'h1':
-      replacement = `# ${selected || 'Heading'}`;
+      insert = `# ${selected || 'Heading'}`;
       cursorOffset = 2;
       break;
     case 'h2':
-      replacement = `## ${selected || 'Heading'}`;
+      insert = `## ${selected || 'Heading'}`;
       cursorOffset = 3;
       break;
     case 'h3':
-      replacement = `### ${selected || 'Heading'}`;
+      insert = `### ${selected || 'Heading'}`;
       cursorOffset = 4;
       break;
     case 'ul':
-      replacement = selected
+      insert = selected
         ? selected.split('\n').map((l) => `- ${l}`).join('\n')
         : '- Item';
       cursorOffset = 2;
       break;
     case 'ol':
-      replacement = selected
+      insert = selected
         ? selected.split('\n').map((l, i) => `${i + 1}. ${l}`).join('\n')
         : '1. Item';
       cursorOffset = 3;
       break;
     case 'quote':
-      replacement = selected
+      insert = selected
         ? selected.split('\n').map((l) => `> ${l}`).join('\n')
         : '> Quote';
       cursorOffset = 2;
       break;
     case 'hr':
-      replacement = '\n---\n';
-      cursorOffset = replacement.length;
+      insert = '\n---\n';
+      cursorOffset = insert.length;
       break;
-    default:
-      return;
   }
 
-  const newText = value.substring(0, start) + replacement + value.substring(end);
-  setText(newText);
-
-  // Restore focus and set cursor
-  requestAnimationFrame(() => {
-    textarea.focus();
-    const pos = start + cursorOffset;
-    textarea.setSelectionRange(pos, selected ? start + replacement.length : pos);
+  const anchor = sel.from + (selected ? insert.length : cursorOffset);
+  view.dispatch({
+    changes: { from: sel.from, to: sel.to, insert },
+    selection: { anchor, head: selected ? sel.from : anchor },
   });
+  view.focus();
+}
+
+// Dark syntax highlight tuned for the Markview color palette.
+const markviewHighlight = HighlightStyle.define([
+  { tag: t.heading, color: '#e2e8f0', fontWeight: '700' },
+  { tag: t.heading1, color: '#f1f5f9', fontWeight: '800', fontSize: '1.05em' },
+  { tag: t.heading2, color: '#e2e8f0', fontWeight: '700' },
+  { tag: t.heading3, color: '#cbd5e1', fontWeight: '600' },
+  { tag: t.strong, color: '#f8fafc', fontWeight: '700' },
+  { tag: t.emphasis, color: '#cbd5e1', fontStyle: 'italic' },
+  { tag: t.strikethrough, color: '#64748b', textDecoration: 'line-through' },
+  { tag: t.link, color: '#67e8f9', textDecoration: 'underline' },
+  { tag: t.url, color: '#67e8f9' },
+  { tag: t.monospace, color: '#fbbf24' },
+  { tag: t.list, color: '#a78bfa' },
+  { tag: t.quote, color: '#94a3b8', fontStyle: 'italic' },
+  { tag: t.meta, color: '#64748b' },
+  { tag: t.comment, color: '#475569', fontStyle: 'italic' },
+]);
+
+// Dark theme — paints the surface; uses CSS variables where it can so the
+// surrounding app theme picker can override.
+const markviewTheme = EditorView.theme(
+  {
+    '&': {
+      height: '100%',
+      fontSize: '14px',
+      backgroundColor: 'var(--editor-bg, #0d1117)',
+      color: 'var(--editor-fg, #e2e8f0)',
+    },
+    '.cm-scroller': {
+      fontFamily:
+        "var(--font-mono, ui-monospace, SFMono-Regular, 'JetBrains Mono', 'Cascadia Code', monospace)",
+      lineHeight: '1.6',
+    },
+    '.cm-content': { padding: '18px 8px', caretColor: '#a78bfa' },
+    '.cm-gutters': {
+      backgroundColor: 'transparent',
+      color: 'rgba(148,163,184,0.4)',
+      border: 'none',
+    },
+    '.cm-activeLine': { backgroundColor: 'rgba(167,139,250,0.06)' },
+    '.cm-activeLineGutter': { backgroundColor: 'transparent', color: '#a78bfa' },
+    '.cm-selectionBackground, ::selection': {
+      backgroundColor: 'rgba(103,232,249,0.25)',
+    },
+    '.cm-cursor': { borderLeftColor: '#a78bfa' },
+  },
+  { dark: true },
+);
+
+function buildExtensions(onDocChange: (doc: string) => void): Extension[] {
+  return [
+    history(),
+    lineNumbers(),
+    highlightActiveLine(),
+    highlightSelectionMatches(),
+    markdown({ base: markdownLanguage, codeLanguages: languages }),
+    syntaxHighlighting(markviewHighlight),
+    markviewTheme,
+    keymap.of([
+      ...defaultKeymap,
+      ...historyKeymap,
+      ...searchKeymap,
+      indentWithTab,
+    ]),
+    EditorView.lineWrapping,
+    EditorView.updateListener.of((upd) => {
+      if (upd.docChanged) onDocChange(upd.state.doc.toString());
+    }),
+  ];
 }
 
 export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownEditorProps) {
   const [text, setText] = useState(content);
   const [mode, setMode] = useState<'edit' | 'preview' | 'split'>('split');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasChanges = text !== content;
 
-  // Auto-focus textarea
-  useEffect(() => {
-    if (mode !== 'preview' && textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [mode]);
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  const viewRef = useRef<EditorView | null>(null);
 
-  // ⌘S to save
+  // Memoize the extension list — buildExtensions captures the setText updater
+  // via a closure, so we must rebuild whenever the host setter changes
+  // (effectively never; just include here to satisfy the dep contract).
+  const extensions = useMemo(() => buildExtensions((doc) => setText(doc)), []);
+
+  // Boot the CodeMirror view exactly once per overlay open.
+  useEffect(() => {
+    if (!hostRef.current || viewRef.current) return;
+    viewRef.current = new EditorView({
+      state: EditorState.create({ doc: content, extensions }),
+      parent: hostRef.current,
+    });
+    viewRef.current.focus();
+    return () => {
+      viewRef.current?.destroy();
+      viewRef.current = null;
+    };
+    // content is the initial value — intentionally not re-applied on every
+    // change; CodeMirror owns the document from boot.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extensions]);
+
+  // ⌘S to save, Esc to close.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
         e.preventDefault();
         if (hasChanges) onSave(text);
-      }
-      if (e.key === 'Escape') {
+      } else if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
       }
@@ -128,29 +227,29 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
     return () => window.removeEventListener('keydown', handler);
   }, [text, hasChanges, onSave, onClose]);
 
-  const format = useCallback((type: string) => {
-    if (textareaRef.current) {
-      applyFormat(textareaRef.current, setText, type);
-    }
+  const format = useCallback((kind: FormatKind) => {
+    if (viewRef.current) applyFormat(viewRef.current, kind);
   }, []);
 
-  // Handle Tab key to insert spaces instead of leaving textarea
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const ta = e.currentTarget;
-      const { selectionStart, selectionEnd, value } = ta;
-      const newText = value.substring(0, selectionStart) + '  ' + value.substring(selectionEnd);
-      setText(newText);
-      requestAnimationFrame(() => {
-        ta.setSelectionRange(selectionStart + 2, selectionStart + 2);
-      });
-    }
-  }, []);
+  // Keyboard shortcuts for formatting (⌘B / ⌘I / ⌘K).
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      const inEditor = viewRef.current?.dom.contains(e.target as Node);
+      if (!inEditor) return;
+      switch (e.key) {
+        case 'b': e.preventDefault(); format('bold'); break;
+        case 'i': e.preventDefault(); format('italic'); break;
+        case 'k': e.preventDefault(); format('link'); break;
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [format]);
 
   const formatButtons = [
-    { icon: Bold, type: 'bold', title: 'Bold (⌘B)', shortcut: 'b' },
-    { icon: Italic, type: 'italic', title: 'Italic (⌘I)', shortcut: 'i' },
+    { icon: Bold, type: 'bold', title: 'Bold (⌘B)' },
+    { icon: Italic, type: 'italic', title: 'Italic (⌘I)' },
     { icon: Strikethrough, type: 'strikethrough', title: 'Strikethrough' },
     { icon: Code, type: 'code', title: 'Code' },
     { icon: Link2, type: 'link', title: 'Link (⌘K)' },
@@ -165,21 +264,6 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
     { icon: Minus, type: 'hr', title: 'Horizontal Rule' },
   ] as const;
 
-  // Keyboard shortcuts for formatting
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (!(e.metaKey || e.ctrlKey)) return;
-      if (e.target !== textareaRef.current) return;
-      switch (e.key) {
-        case 'b': e.preventDefault(); format('bold'); break;
-        case 'i': e.preventDefault(); format('italic'); break;
-        case 'k': e.preventDefault(); format('link'); break;
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [format]);
-
   return (
     <div className="editor-overlay">
       <div className="editor-container">
@@ -193,21 +277,15 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
             <button
               className={`editor-mode-btn ${mode === 'edit' ? 'active' : ''}`}
               onClick={() => setMode('edit')}
-            >
-              Edit
-            </button>
+            >Edit</button>
             <button
               className={`editor-mode-btn ${mode === 'split' ? 'active' : ''}`}
               onClick={() => setMode('split')}
-            >
-              Split
-            </button>
+            >Split</button>
             <button
               className={`editor-mode-btn ${mode === 'preview' ? 'active' : ''}`}
               onClick={() => setMode('preview')}
-            >
-              Preview
-            </button>
+            >Preview</button>
           </div>
           <div className="editor-toolbar-right">
             <button
@@ -224,7 +302,6 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
           </div>
         </div>
 
-        {/* Formatting toolbar — visible in edit and split mode */}
         {mode !== 'preview' && (
           <div className="editor-format-bar">
             {formatButtons.map((btn, i) =>
@@ -234,12 +311,12 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
                 <button
                   key={btn.type}
                   className="editor-format-btn"
-                  onClick={() => format(btn.type)}
+                  onClick={() => format(btn.type as FormatKind)}
                   title={btn.title}
                 >
                   <btn.icon size={15} />
                 </button>
-              )
+              ),
             )}
           </div>
         )}
@@ -247,14 +324,7 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
         <div className={`editor-body editor-mode-${mode}`}>
           {mode !== 'preview' && (
             <div className="editor-edit-pane">
-              <textarea
-                ref={textareaRef}
-                className="editor-textarea"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                spellCheck={false}
-              />
+              <div ref={hostRef} className="editor-codemirror" />
             </div>
           )}
           {mode !== 'edit' && (
@@ -269,4 +339,3 @@ export function MarkdownEditor({ content, filename, onSave, onClose }: MarkdownE
     </div>
   );
 }
-
