@@ -40,29 +40,39 @@ fn main() {
         })
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
-        .run(|app_handle, event| {
-            if let tauri::RunEvent::Opened { urls } = event {
-                for url in urls {
-                    let path = url.to_file_path().unwrap_or_default();
-                    let path_str = path.to_string_lossy().to_string();
-                    if path_str.is_empty() {
-                        continue;
-                    }
+        .run(handle_event);
+}
 
-                    // Try to deliver immediately if the window is ready,
-                    // otherwise store as pending for the frontend to pull.
-                    if let Some(window) = app_handle.get_webview_window("main") {
-                        // Emit and also store — bridge will deduplicate via the pull
-                        file_handler::open_file_in_window(&window, &path_str);
-                    } else {
-                        app_handle
-                            .state::<PendingFile>()
-                            .0
-                            .lock()
-                            .unwrap()
-                            .replace(path_str);
-                    }
-                }
+/// File-open routing.
+///
+/// macOS surfaces "open with MarkView" via `RunEvent::Opened` (system-level
+/// Apple Events). Linux + Windows don't have that event — they pass the file
+/// path as argv[1] at launch, which we already capture in `.setup()` above.
+/// The match arm is therefore macOS-only at compile time.
+#[cfg(target_os = "macos")]
+fn handle_event(app_handle: &tauri::AppHandle, event: tauri::RunEvent) {
+    if let tauri::RunEvent::Opened { urls } = event {
+        for url in urls {
+            let path = url.to_file_path().unwrap_or_default();
+            let path_str = path.to_string_lossy().to_string();
+            if path_str.is_empty() {
+                continue;
             }
-        });
+            if let Some(window) = app_handle.get_webview_window("main") {
+                file_handler::open_file_in_window(&window, &path_str);
+            } else {
+                app_handle
+                    .state::<PendingFile>()
+                    .0
+                    .lock()
+                    .unwrap()
+                    .replace(path_str);
+            }
+        }
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+fn handle_event(_app_handle: &tauri::AppHandle, _event: tauri::RunEvent) {
+    // No equivalent on Linux/Windows — argv handling in setup() covers them.
 }
