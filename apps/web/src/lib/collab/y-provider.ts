@@ -46,7 +46,14 @@ export function getShareUrl(roomId: string): string {
 // Provider creation
 // ---------------------------------------------------------------------------
 
-const SIGNALING_SERVERS = ['wss://signaling.yjs.dev'];
+// y-webrtc connects to all servers in this list in parallel; the first
+// one that finds a peer wins. Markview's own DO is primary; the public
+// Yjs relay is the fallback so collab still works if our Worker is
+// down or geo-blocked.
+const SIGNALING_SERVERS = [
+  'wss://markview-yjs.abgunaydin94.workers.dev',
+  'wss://signaling.yjs.dev',
+];
 
 /** Create a new Y.js doc + WebRTC provider for a room */
 export function createProvider(roomId: string): CollabSession {

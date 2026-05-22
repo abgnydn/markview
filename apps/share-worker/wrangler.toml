@@ -12,8 +12,7 @@
 #   wrangler kv:namespace create SHARE_KV
 #   wrangler kv:namespace create SHARE_KV --preview
 #
-# Then paste the resulting ids into the [[env.share.kv_namespaces]]
-# block below and commit.
+# Provisioned 2026-05-22 on Abgunaydin94's Cloudflare account.
 
 name = "markview-share"  # default; overridden by [env.*] below
 compatibility_date = "2026-04-01"
@@ -32,8 +31,8 @@ preview_bucket_name = "markview-shares-preview"
 
 [[env.share.kv_namespaces]]
 binding = "SHARE_KV"
-id = "REPLACE_WITH_SHARE_KV_ID"
-preview_id = "REPLACE_WITH_SHARE_KV_PREVIEW_ID"
+id = "5a66fd12d7724f10b24fc7d3d1820d73"
+preview_id = "eec068e89c134147806761935fd1d94c"
 
 # ---------------- yjs signaling worker ----------------
 [env.yjs]
