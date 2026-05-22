@@ -16,6 +16,20 @@ createRoot(rootEl).render(
   </React.StrictMode>,
 );
 
+// Dev-only escape hatch: expose stores on window so browser-driven tests
+// can seed a workspace without clicking through the UI.
+if (import.meta.env.DEV) {
+  void Promise.all([
+    import("./stores/workspace-store"),
+    import("./stores/theme-store"),
+  ]).then(([ws, theme]) => {
+    (window as unknown as { __mv: unknown }).__mv = {
+      workspace: ws.useWorkspaceStore,
+      theme: theme.useThemeStore,
+    };
+  });
+}
+
 // Register PWA service worker (lives in public/sw.js).
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

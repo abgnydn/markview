@@ -5,41 +5,41 @@ import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useThemeStore } from "@/stores/theme-store";
 import { useCollabStore } from "@/stores/collab-store";
 import { ViewerPage } from "@/components/viewer/viewer-page";
+import { LandingEditor } from "@/components/landing/landing-editor";
 import { JoinDialog } from "@/components/collab/join-dialog";
 import { getRoomIdFromUrl } from "@/lib/collab/y-provider";
 import { preloadShiki } from "@/components/viewer/markdown-renderer";
 
 /**
- * Markview's home — a single surface: the editor.
+ * Home — single route. Two surfaces:
+ *   1. LandingEditor — shown when no workspace exists yet.
+ *   2. ViewerPage    — shown when the user has at least one workspace.
  *
- * No landing page split, no marketing scaffolding. If the URL has a
- * `?room=<id>` parameter, the JoinDialog prompts to join a live collab
- * room before the editor mounts.
+ * "Open editor" on the landing seeds a demo README so the editor has
+ * something to render the first time. Any subsequent visit goes
+ * straight to ViewerPage.
  */
 export default function Home() {
   const isLoaded = useWorkspaceStore((s) => s.isLoaded);
   const initialize = useWorkspaceStore((s) => s.initialize);
+  const createWorkspace = useWorkspaceStore((s) => s.createWorkspace);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const files = useWorkspaceStore((s) => s.files);
+  const workspaces = useWorkspaceStore((s) => s.workspaces);
   const initializeTheme = useThemeStore((s) => s.initialize);
   const collabIsActive = useCollabStore((s) => s.isActive);
 
   const addFilesInputRef = useRef<HTMLInputElement>(null);
 
-  // Eager Shiki preload — avoids a 200ms flash on first render.
   useEffect(() => {
     void preloadShiki();
   }, []);
 
-  // One-time store initialization (Dexie hydration + theme).
   useEffect(() => {
     void initialize();
     initializeTheme();
   }, [initialize, initializeTheme]);
 
-  // Inter-workspace navigation by filename — used by [[wikilinks]] inside
-  // the renderer. If we find a matching file in the active workspace, jump
-  // to it; otherwise this is a no-op.
   const handleNavigateToFile = (filename: string) => {
     const target = files.find(
       (f) => f.filename === filename || f.filename === `${filename}.md`,
@@ -47,22 +47,41 @@ export default function Home() {
     if (target) void setActiveFile(target.id);
   };
 
+  const handleStart = async () => {
+    await createWorkspace("welcome", [
+      {
+        filename: "welcome.md",
+        content: WELCOME_DOC,
+      },
+    ]);
+  };
+
   if (!isLoaded) {
     return (
-      <div className="loading-screen" aria-busy="true">
-        loading workspace…
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#060912",
+          color: "rgba(148,163,184,0.6)",
+          fontFamily: "ui-monospace, SFMono-Regular, monospace",
+          fontSize: 13,
+        }}
+      >
+        loading…
       </div>
     );
   }
 
-  // Show the room-join dialog when there's a ?room=... but no active collab.
+  // Collab join — explicit room url short-circuits the landing.
   const pendingRoomId = getRoomIdFromUrl();
   if (pendingRoomId && !collabIsActive) {
     return (
       <JoinDialog
         roomId={pendingRoomId}
         onClose={() => {
-          // Strip the ?room= param + reload as a regular session.
           const url = new URL(window.location.href);
           url.searchParams.delete("room");
           window.history.replaceState({}, "", url.toString());
@@ -72,16 +91,43 @@ export default function Home() {
     );
   }
 
+  // No workspace yet → landing.
+  if (workspaces.length === 0) {
+    return <LandingEditor onStart={() => void handleStart()} />;
+  }
+
   return (
     <ViewerPage
-      onGoHome={() => {
-        // setActiveFile expects a string; the workspace store treats empty
-        // string as "no active file" in current Home → ViewerPage contract.
-        // A future cleanup would make setActiveFile(null) explicit.
-        void setActiveFile("");
-      }}
+      onGoHome={() => void setActiveFile("")}
       addFilesInputRef={addFilesInputRef}
       onNavigateToFile={handleNavigateToFile}
     />
   );
 }
+
+const WELCOME_DOC = `# Welcome to MarkView
+
+A markdown editor that stays on your machine.
+
+## What you can do
+
+- **Edit** — CodeMirror 6 with full markdown syntax highlighting. Press \`⌘B\` for bold, \`⌘I\` for italic, \`⌘K\` for link.
+- **Render** — Shiki for code, Mermaid for diagrams, KaTeX for math.
+- **Search** — \`⌘K\` opens a fuzzy finder across all open files.
+- **Export** — PDF, Word, PowerPoint, PNG, SVG, HTML, or a static site.
+- **Share** — generate a live collab URL; another person joins and you both type at once.
+
+## Try it now
+
+Drag a \`.md\` file onto this page. Or drop an entire folder. Or paste a GitHub URL — MarkView will pull the markdown files in.
+
+Everything stays on your machine. No accounts, no uploads, no telemetry.
+
+\`\`\`typescript
+function welcome(): string {
+  return 'happy editing';
+}
+\`\`\`
+
+> Tip: press \`E\` to open the editor on this file, or click anywhere in the rendered text to keep reading.
+`;
