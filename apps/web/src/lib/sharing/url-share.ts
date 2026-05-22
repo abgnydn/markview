@@ -1,4 +1,3 @@
-'use client';
 
 /**
  * URL Sharing — encode/decode markdown content in shareable URLs.

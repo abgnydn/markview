@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useEffect } from 'react';
 import { History, RotateCcw, Trash2, Clock } from 'lucide-react';

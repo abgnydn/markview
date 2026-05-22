@@ -1,11 +1,6 @@
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { Github } from '@/components/ui/brand-icons';
-import '@/components/landing/landing.css';
 
-export const metadata = {
-  title: 'Terms of Service — MarkView',
-  description: 'MarkView terms of service for the web app, desktop app, SDK packages, and commercial licenses.',
-};
 
 export default function TermsPage() {
   return (
@@ -13,13 +8,11 @@ export default function TermsPage() {
       {/* Sticky Nav Bar */}
       <nav className="landing-navbar">
         <div className="landing-navbar-inner">
-          <Link href="/" className="landing-navbar-brand" style={{ textDecoration: 'none' }}>
+          <Link to="/" className="landing-navbar-brand" style={{ textDecoration: 'none' }}>
             <img src="/icon-192.png" alt="MarkView" className="landing-navbar-logo" />
             <span className="landing-navbar-name">MarkView</span>
           </Link>
           <div className="landing-navbar-links">
-            <Link href="/pricing" className="landing-navbar-link">Pricing</Link>
-            <Link href="/docs" className="landing-navbar-link">Docs</Link>
             <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer" className="landing-navbar-github">
               <Github size={16} />
               <span>GitHub</span>
@@ -49,7 +42,6 @@ export default function TermsPage() {
           <p>The MarkView source code is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). You may use, modify, and distribute the software under the terms of this license, provided that any derivative work is also distributed under AGPL-3.0 and its source code is made available.</p>
 
           <h2>5. Commercial License</h2>
-          <p>If you wish to embed MarkView SDK packages in a proprietary or closed-source application without AGPL obligations, you must purchase a commercial license. Commercial licenses are available by emailing <a href="mailto:hi@barisgunaydin.com" style={{ color: '#a5b4fc' }}>hi@barisgunaydin.com</a> and come in Indie, Business, and Enterprise tiers. See our <Link href="/pricing" style={{ color: '#a5b4fc' }}>Pricing page</Link> for details.</p>
 
           <h2>6. Desktop Application</h2>
           <p>The MarkView for Mac desktop application is a separate product available for a one-time purchase. The desktop app is built with Tauri v2 and processes all files locally on your machine.</p>
@@ -77,17 +69,15 @@ export default function TermsPage() {
         <p><strong>MarkView</strong> — Open source markdown documentation viewer</p>
         <p className="landing-footer-sub">Built with Next.js · WebRTC (Yjs) · Shiki · Mermaid · KaTeX · MCP</p>
         <p className="landing-footer-links">
-          <Link href="/pricing">Pricing</Link>
           <span>·</span>
-          <Link href="/docs">Documentation</Link>
           <span>·</span>
           <a href="https://www.npmjs.com/package/@markview/core" target="_blank" rel="noopener noreferrer">npm</a>
           <span>·</span>
           <a href="https://github.com/abgnydn/markview" target="_blank" rel="noopener noreferrer">GitHub</a>
           <span>·</span>
-          <Link href="/terms">Terms</Link>
+          <Link to="/terms">Terms</Link>
           <span>·</span>
-          <Link href="/privacy">Privacy</Link>
+          <Link to="/privacy">Privacy</Link>
         </p>
       </footer>
     </div>

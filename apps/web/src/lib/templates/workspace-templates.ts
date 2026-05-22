@@ -1,4 +1,3 @@
-'use client';
 import { log } from '@/lib/logger';
 
 export interface WorkspaceTemplate {

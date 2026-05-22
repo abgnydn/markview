@@ -1,4 +1,3 @@
-'use client';
 
 import { useCollabStore } from '@/stores/collab-store';
 

@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useEffect, useRef, useState, useCallback, startTransition } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';

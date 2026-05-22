@@ -1,4 +1,3 @@
-'use client';
 
 import { create } from 'zustand';
 import { db, type DBWorkspace, type DBFile } from '@/lib/storage/db';

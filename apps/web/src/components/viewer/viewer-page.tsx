@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useRef, useMemo, useState, useCallback } from 'react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
@@ -18,7 +17,6 @@ import { PresentationMode } from '@/components/viewer/presentation-mode';
 import { SplitView } from '@/components/viewer/split-view';
 import { DiffView } from '@/components/viewer/diff-view';
 import { MarkdownEditor } from '@/components/viewer/markdown-editor';
-import { VaultOverlay } from '@/components/viewer/vault-overlay';
 
 import { PresenceBar } from '@/components/collab/presence-bar';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
@@ -303,10 +301,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         />
       )}
 
-      {/* Graph view — `\` to toggle. Crossfades over the editor; preserves
-          all editor state underneath, so closing the overlay returns
-          the visitor to exactly where they left off. */}
-      <VaultOverlay open={vaultOpen} onClose={() => setVaultOpen(false)} />
     </div>
   );
 }

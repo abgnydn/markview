@@ -1,4 +1,3 @@
-'use client';
 
 import type { WebrtcProvider } from 'y-webrtc';
 

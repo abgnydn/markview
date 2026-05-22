@@ -1,4 +1,3 @@
-'use client';
 
 // ---------------------------------------------------------------------------
 // Theme Presets — Each preset defines CSS variable overrides for dark & light

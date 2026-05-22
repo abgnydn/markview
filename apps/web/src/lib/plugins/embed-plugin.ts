@@ -1,4 +1,3 @@
-'use client';
 
 import { usePluginStore, type CodeFencePlugin } from './plugin-registry';
 

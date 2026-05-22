@@ -1,4 +1,3 @@
-'use client';
 
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';

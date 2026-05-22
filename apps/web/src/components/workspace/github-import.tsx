@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useState, useCallback } from 'react';
 import { Globe, Loader2, AlertCircle } from 'lucide-react';

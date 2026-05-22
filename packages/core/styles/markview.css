@@ -1,0 +1,375 @@
+/**
+ * @markview/core — Styles
+ *
+ * These styles provide beautiful rendering for markdown content.
+ * All styles use CSS custom properties for easy theming.
+ *
+ * Usage:
+ *   import '@markview/core/styles';
+ *
+ * Then wrap your rendered HTML in a container with the class "markview-content":
+ *   <div class="markview-content">{html}</div>
+ *
+ * Customize by overriding the CSS custom properties in :root or a parent selector.
+ */
+
+/* ============================================
+   CUSTOM PROPERTIES (THEME TOKENS)
+   Override these to customize the appearance.
+   ============================================ */
+:root {
+  /* Text */
+  --mv-text-primary: #e6edf3;
+  --mv-text-secondary: #8b949e;
+  --mv-text-muted: #6e7681;
+  --mv-text-link: #58a6ff;
+
+  /* Backgrounds */
+  --mv-bg-primary: #0d1117;
+  --mv-bg-secondary: #161b22;
+  --mv-bg-elevated: #21262d;
+  --mv-bg-hover: rgba(255, 255, 255, 0.05);
+  --mv-bg-tertiary: rgba(255, 255, 255, 0.03);
+
+  /* Borders */
+  --mv-border-default: #30363d;
+  --mv-border-muted: #21262d;
+
+  /* Accents */
+  --mv-accent-blue: #58a6ff;
+  --mv-accent-green: #3fb950;
+  --mv-accent-red: #f85149;
+
+  /* Radii */
+  --mv-radius-sm: 6px;
+  --mv-radius-md: 8px;
+  --mv-radius-lg: 12px;
+
+  /* Fonts */
+  --mv-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mv-font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+
+  /* Alerts */
+  --mv-alert-note-bg: rgba(56, 139, 253, 0.1);
+  --mv-alert-note-border: rgba(56, 139, 253, 0.4);
+  --mv-alert-note-text: #58a6ff;
+
+  --mv-alert-tip-bg: rgba(46, 160, 67, 0.1);
+  --mv-alert-tip-border: rgba(46, 160, 67, 0.4);
+  --mv-alert-tip-text: #3fb950;
+
+  --mv-alert-important-bg: rgba(137, 87, 229, 0.1);
+  --mv-alert-important-border: rgba(137, 87, 229, 0.4);
+  --mv-alert-important-text: #bc8cff;
+
+  --mv-alert-warning-bg: rgba(187, 128, 9, 0.1);
+  --mv-alert-warning-border: rgba(187, 128, 9, 0.4);
+  --mv-alert-warning-text: #d29922;
+
+  --mv-alert-caution-bg: rgba(248, 81, 73, 0.1);
+  --mv-alert-caution-border: rgba(248, 81, 73, 0.4);
+  --mv-alert-caution-text: #f85149;
+}
+
+/* Light theme preset — apply with class or media query */
+@media (prefers-color-scheme: light) {
+  :root {
+    --mv-text-primary: #1f2328;
+    --mv-text-secondary: #656d76;
+    --mv-text-muted: #8b949e;
+    --mv-text-link: #0969da;
+
+    --mv-bg-primary: #ffffff;
+    --mv-bg-secondary: #f6f8fa;
+    --mv-bg-elevated: #ffffff;
+    --mv-bg-hover: rgba(0, 0, 0, 0.04);
+    --mv-bg-tertiary: rgba(0, 0, 0, 0.02);
+
+    --mv-border-default: #d0d7de;
+    --mv-border-muted: #d8dee4;
+
+    --mv-accent-blue: #0969da;
+    --mv-accent-green: #1a7f37;
+    --mv-accent-red: #d1242f;
+
+    --mv-alert-note-bg: rgba(56, 139, 253, 0.08);
+    --mv-alert-note-border: rgba(56, 139, 253, 0.4);
+    --mv-alert-note-text: #0969da;
+
+    --mv-alert-tip-bg: rgba(46, 160, 67, 0.08);
+    --mv-alert-tip-border: rgba(46, 160, 67, 0.4);
+    --mv-alert-tip-text: #1a7f37;
+
+    --mv-alert-important-bg: rgba(137, 87, 229, 0.08);
+    --mv-alert-important-border: rgba(137, 87, 229, 0.4);
+    --mv-alert-important-text: #8250df;
+
+    --mv-alert-warning-bg: rgba(187, 128, 9, 0.08);
+    --mv-alert-warning-border: rgba(187, 128, 9, 0.4);
+    --mv-alert-warning-text: #9a6700;
+
+    --mv-alert-caution-bg: rgba(248, 81, 73, 0.08);
+    --mv-alert-caution-border: rgba(248, 81, 73, 0.4);
+    --mv-alert-caution-text: #d1242f;
+  }
+}
+
+/* ============================================
+   MARKDOWN CONTENT
+   ============================================ */
+.markview-content {
+  font-family: var(--mv-font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--mv-text-primary);
+  word-wrap: break-word;
+}
+
+.markview-content h1,
+.markview-content h2,
+.markview-content h3,
+.markview-content h4,
+.markview-content h5,
+.markview-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--mv-text-primary);
+}
+
+.markview-content h1 { font-size: 2em; border-bottom: 1px solid var(--mv-border-muted); padding-bottom: 0.3em; }
+.markview-content h2 { font-size: 1.5em; border-bottom: 1px solid var(--mv-border-muted); padding-bottom: 0.3em; }
+.markview-content h3 { font-size: 1.25em; }
+.markview-content h4 { font-size: 1em; }
+.markview-content h5 { font-size: 0.875em; }
+.markview-content h6 { font-size: 0.85em; color: var(--mv-text-secondary); }
+
+.markview-content p { margin-bottom: 1em; }
+
+.markview-content a {
+  color: var(--mv-text-link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.markview-content a:hover { border-bottom-color: var(--mv-text-link); }
+
+.markview-content strong { font-weight: 600; color: var(--mv-text-primary); }
+.markview-content em { font-style: italic; }
+
+.markview-content ul,
+.markview-content ol { margin-bottom: 1em; padding-left: 2em; }
+.markview-content li { margin-bottom: 0.35em; }
+.markview-content li > ul,
+.markview-content li > ol { margin-bottom: 0; }
+
+.markview-content input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: var(--mv-accent-blue);
+}
+
+.markview-content blockquote {
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  border-left: 4px solid var(--mv-border-default);
+  color: var(--mv-text-secondary);
+  background: var(--mv-bg-hover);
+  border-radius: 0 var(--mv-radius-sm) var(--mv-radius-sm) 0;
+}
+
+/* Inline code */
+.markview-content code {
+  font-family: var(--mv-font-mono);
+  font-size: 0.875em;
+  background: var(--mv-bg-elevated);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  border: 1px solid var(--mv-border-muted);
+}
+
+.markview-content pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.875em;
+}
+
+/* Code blocks */
+.markview-content pre {
+  margin: 1em 0;
+  padding: 16px 20px;
+  background: var(--mv-bg-secondary);
+  border: 1px solid var(--mv-border-default);
+  border-radius: var(--mv-radius-lg);
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+/* Tables */
+.markview-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 14px;
+}
+
+.markview-content thead th {
+  background: var(--mv-bg-secondary);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 16px;
+  border: 1px solid var(--mv-border-default);
+}
+
+.markview-content tbody td {
+  padding: 10px 16px;
+  border: 1px solid var(--mv-border-default);
+}
+
+.markview-content tbody tr:nth-child(even) {
+  background: var(--mv-bg-hover);
+}
+
+.markview-content hr {
+  border: none;
+  border-top: 1px solid var(--mv-border-default);
+  margin: 2em 0;
+}
+
+.markview-content img {
+  max-width: 100%;
+  border-radius: var(--mv-radius-md);
+}
+
+.markview-content del { color: var(--mv-text-muted); }
+
+/* ============================================
+   CODE BLOCK WRAPPER
+   ============================================ */
+.code-block-wrapper {
+  position: relative;
+  margin: 1em 0;
+  border-radius: var(--mv-radius-lg);
+  border: 1px solid var(--mv-border-default);
+  overflow: hidden;
+  background: var(--mv-bg-secondary);
+}
+
+.code-block-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--mv-bg-tertiary);
+  border-bottom: 1px solid var(--mv-border-muted);
+}
+
+.code-block-lang {
+  font-size: 11px;
+  font-family: var(--mv-font-mono);
+  color: var(--mv-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.code-copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  color: var(--mv-text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.code-copy-btn:hover {
+  color: var(--mv-text-primary);
+  background: var(--mv-bg-hover);
+}
+
+.code-copy-btn.copied { color: var(--mv-accent-green); }
+
+.code-block-wrapper pre {
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.code-block-wrapper pre code { font-size: 13px !important; }
+
+/* ============================================
+   MERMAID DIAGRAMS
+   ============================================ */
+.mermaid-wrapper {
+  position: relative;
+  margin: 1.5em 0;
+  padding: 24px;
+  background: var(--mv-bg-secondary);
+  border: 1px solid var(--mv-border-default);
+  border-radius: var(--mv-radius-lg);
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  transition: border-color 0.15s ease;
+}
+
+.mermaid-wrapper:hover { border-color: var(--mv-accent-blue); }
+
+.mermaid-wrapper svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================
+   GITHUB-STYLE ALERTS
+   ============================================ */
+.gh-alert {
+  margin: 1em 0;
+  padding: 12px 16px;
+  border-radius: var(--mv-radius-md);
+  border-left: 4px solid;
+}
+
+.gh-alert p { margin-bottom: 0.5em; }
+.gh-alert p:last-child { margin-bottom: 0; }
+
+.gh-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.alert-note { background: var(--mv-alert-note-bg); border-color: var(--mv-alert-note-border); }
+.alert-note .gh-alert-title { color: var(--mv-alert-note-text); }
+
+.alert-tip { background: var(--mv-alert-tip-bg); border-color: var(--mv-alert-tip-border); }
+.alert-tip .gh-alert-title { color: var(--mv-alert-tip-text); }
+
+.alert-important { background: var(--mv-alert-important-bg); border-color: var(--mv-alert-important-border); }
+.alert-important .gh-alert-title { color: var(--mv-alert-important-text); }
+
+.alert-warning { background: var(--mv-alert-warning-bg); border-color: var(--mv-alert-warning-border); }
+.alert-warning .gh-alert-title { color: var(--mv-alert-warning-text); }
+
+.alert-caution { background: var(--mv-alert-caution-bg); border-color: var(--mv-alert-caution-border); }
+.alert-caution .gh-alert-title { color: var(--mv-alert-caution-text); }
+
+/* ============================================
+   KATEX MATH
+   ============================================ */
+.katex-block {
+  margin: 1em 0;
+  text-align: center;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.katex-inline { display: inline; }

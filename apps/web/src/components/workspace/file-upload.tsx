@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useCallback, useState, useRef } from 'react';
 import { Upload, FolderOpen, FileText, Clock } from 'lucide-react';

@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { X, Columns2 } from 'lucide-react';
