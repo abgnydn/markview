@@ -1,0 +1,50 @@
+# Markview Cloudflare Workers — share renderer + Yjs signaling
+# --------------------------------------------------------------
+#
+#   - markview-share  → /share/:id   (read-only public renderer)
+#   - markview-yjs    → /yjs/:room   (y-webrtc signaling, Durable Object)
+#
+# Run `bun run deploy` from this directory to ship both. Provisioning
+# checklist (one-time):
+#
+#   wrangler r2 bucket create markview-shares
+#   wrangler r2 bucket create markview-shares-preview
+#   wrangler kv:namespace create SHARE_KV
+#   wrangler kv:namespace create SHARE_KV --preview
+#
+# Then paste the resulting ids into the [[env.share.kv_namespaces]]
+# block below and commit.
+
+name = "markview-share"  # default; overridden by [env.*] below
+compatibility_date = "2026-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ---------------- share worker ----------------
+[env.share]
+name = "markview-share"
+main = "src/share.ts"
+workers_dev = true
+
+[[env.share.r2_buckets]]
+binding = "SHARES"
+bucket_name = "markview-shares"
+preview_bucket_name = "markview-shares-preview"
+
+[[env.share.kv_namespaces]]
+binding = "SHARE_KV"
+id = "REPLACE_WITH_SHARE_KV_ID"
+preview_id = "REPLACE_WITH_SHARE_KV_PREVIEW_ID"
+
+# ---------------- yjs signaling worker ----------------
+[env.yjs]
+name = "markview-yjs"
+main = "src/yjs-room.ts"
+workers_dev = true
+
+[[env.yjs.durable_objects.bindings]]
+name = "YJS_ROOMS"
+class_name = "YjsSignalRoom"
+
+[[env.yjs.migrations]]
+tag = "v1"
+new_sqlite_classes = ["YjsSignalRoom"]

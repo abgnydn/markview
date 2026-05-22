@@ -1,0 +1,19 @@
+{
+  "name": "@markview/share-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy:share": "wrangler deploy --env share",
+    "deploy:yjs": "wrangler deploy --env yjs",
+    "deploy": "bun run deploy:share && bun run deploy:yjs",
+    "dev:share": "wrangler dev --env share",
+    "dev:yjs": "wrangler dev --env yjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250424.0",
+    "typescript": "^5.7.2",
+    "wrangler": "^3.90.0"
+  }
+}
