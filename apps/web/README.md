@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# @markview/web
 
-## Getting Started
+Markview's web SPA — Vite + React + CodeMirror 6. Single-page editor
+that renders, edits, searches, exports, and shares markdown locally.
 
-First, run the development server:
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install           # from repo root, installs all workspaces
+bun run dev           # serves at http://localhost:3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+bun --filter @markview/web build   # output → apps/web/out
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Apps/desktop's Tauri shell consumes `apps/web/out` as its frontend.
 
-## Learn More
+## Deploy
 
-To learn more about Next.js, take a look at the following resources:
+The web build deploys to Cloudflare Pages from
+`.github/workflows/release-desktop.yml`'s tagged matrix — there's no
+Vercel integration (deleted; was a v1 leftover).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Editor surface
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `src/components/viewer/markdown-editor.tsx` — CodeMirror 6 overlay
+  with the zen theme, optional y-collab binding for real-time multi-user
+  editing.
+- `src/components/viewer/markdown-renderer.tsx` — Shiki + Mermaid + KaTeX
+  rendering pipeline.
+- `src/styles/zen.css` — the vanishing-chrome layer. Hover the top edge
+  of the viewport to reveal the toolbar; hover left for the sidebar;
+  hover right for the table of contents.
