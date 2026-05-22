@@ -1,9 +1,9 @@
 {
-  "extends": "@markview/tsconfig/library.json",
+  "extends": "../tsconfig/library.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "noEmit": true,
     "rootDir": "src"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
+  "exclude": ["node_modules", "src/**/*.test.ts"]
 }
