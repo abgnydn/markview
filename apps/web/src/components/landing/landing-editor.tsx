@@ -80,12 +80,13 @@ export function LandingEditor({ onStart }: LandingEditorProps) {
         <div className="ed-hero-cta-row">
           <button onClick={start} className="ed-cta-primary">Open editor →</button>
           <a
-            href="https://github.com/abgnydn/markview/releases"
+            href="https://github.com/abgnydn/markview/releases/latest"
             target="_blank"
             rel="noopener noreferrer"
             className="ed-cta-secondary"
+            title="Latest release on GitHub — pick the .dmg, .msi, or .AppImage for your OS"
           >
-            Download for macOS
+            Download for desktop
           </a>
         </div>
         <div className="ed-hero-meta">
