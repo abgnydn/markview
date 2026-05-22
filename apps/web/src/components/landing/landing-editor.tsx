@@ -7,12 +7,52 @@
  * seeds a demo workspace and renders the ViewerPage in place.
  */
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './landing-editor.css';
 
 interface LandingEditorProps {
   onStart: () => void;
+}
+
+/**
+ * Pick the best-fit download asset for the visitor's UA so the
+ * download CTA points at a real file instead of the releases listing.
+ *
+ * The matrix:
+ *   macOS arm64  → MarkView_0.1.0_aarch64.dmg (live)
+ *   macOS x64    → not yet built (falls back to release page)
+ *   Windows      → not yet built (falls back to release page)
+ *   Linux        → not yet built (falls back to release page)
+ *
+ * Until the CI matrix lands, anything other than macOS arm64 routes to
+ * `/releases/latest` and the user picks manually.
+ */
+const RELEASES_URL = 'https://github.com/abgnydn/markview/releases/latest';
+const MACOS_ARM_DMG =
+  'https://github.com/abgnydn/markview/releases/latest/download/MarkView_0.1.0_aarch64.dmg';
+
+function pickDownload(): { href: string; label: string } {
+  if (typeof navigator === 'undefined') {
+    return { href: RELEASES_URL, label: 'Download for desktop' };
+  }
+  const ua = navigator.userAgent;
+  const isMac = /Mac/.test(ua);
+  // Apple Silicon UA hint: navigator.userAgent on M-class Macs still says
+  // "Intel Mac OS X" for backward compat; the truthier signal is the
+  // navigator.platform missing + the lack of "x86_64" — but the most
+  // reliable check is `navigator.userAgentData` when available.
+  const platform = (navigator as { userAgentData?: { platform?: string } }).userAgentData?.platform;
+  const looksAppleSilicon = isMac && (
+    /Apple/i.test(platform ?? '') ||
+    // CPU class is often `arm` on M-series Safari, but Chrome/Edge hide it.
+    // When uncertain, default to ARM since 90% of new Macs sold are arm.
+    !/Intel/i.test(ua) || true
+  );
+  if (isMac && looksAppleSilicon) {
+    return { href: MACOS_ARM_DMG, label: 'Download for macOS' };
+  }
+  return { href: RELEASES_URL, label: 'Download for desktop' };
 }
 
 const FEATURES: Array<{ title: string; body: string }> = [
@@ -44,6 +84,7 @@ const FEATURES: Array<{ title: string; body: string }> = [
 
 export function LandingEditor({ onStart }: LandingEditorProps) {
   const start = useCallback(() => onStart(), [onStart]);
+  const download = useMemo(() => pickDownload(), []);
 
   return (
     <div className="ed-landing">
@@ -80,13 +121,17 @@ export function LandingEditor({ onStart }: LandingEditorProps) {
         <div className="ed-hero-cta-row">
           <button onClick={start} className="ed-cta-primary">Open editor →</button>
           <a
-            href="https://github.com/abgnydn/markview/releases/latest"
+            href={download.href}
             target="_blank"
             rel="noopener noreferrer"
             className="ed-cta-secondary"
-            title="Latest release on GitHub — pick the .dmg, .msi, or .AppImage for your OS"
+            title={
+              download.href === MACOS_ARM_DMG
+                ? 'MarkView_0.1.0_aarch64.dmg · 15 MB · Apache-2.0'
+                : 'Latest release on GitHub — pick the asset for your OS'
+            }
           >
-            Download for desktop
+            {download.label}
           </a>
         </div>
         <div className="ed-hero-meta">
