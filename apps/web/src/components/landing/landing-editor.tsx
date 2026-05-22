@@ -16,43 +16,50 @@ interface LandingEditorProps {
 }
 
 /**
- * Pick the best-fit download asset for the visitor's UA so the
- * download CTA points at a real file instead of the releases listing.
- *
- * The matrix:
- *   macOS arm64  → MarkView_0.1.0_aarch64.dmg (live)
- *   macOS x64    → not yet built (falls back to release page)
- *   Windows      → not yet built (falls back to release page)
- *   Linux        → not yet built (falls back to release page)
- *
- * Until the CI matrix lands, anything other than macOS arm64 routes to
- * `/releases/latest` and the user picks manually.
+ * Pick the best-fit download asset for the visitor's UA. All four platform
+ * builds are now live in the v0.1.4 release matrix, so the CTA always points
+ * at a real file. Unknown user-agents fall back to the release page so the
+ * visitor can browse the asset list.
  */
 const RELEASES_URL = 'https://github.com/abgnydn/markview/releases/latest';
-const MACOS_ARM_DMG =
-  'https://github.com/abgnydn/markview/releases/latest/download/MarkView_0.1.0_aarch64.dmg';
+const DL = (asset: string) =>
+  `https://github.com/abgnydn/markview/releases/latest/download/${asset}`;
 
-function pickDownload(): { href: string; label: string } {
+const ASSET_MAC_ARM = 'MarkView_0.1.0_aarch64.dmg';
+const ASSET_MAC_X64 = 'MarkView_0.1.0_x64.dmg';
+const ASSET_WIN_SETUP = 'MarkView_0.1.0_x64-setup.exe';
+const ASSET_LINUX_APPIMAGE = 'MarkView_0.1.0_amd64.AppImage';
+
+function pickDownload(): { href: string; label: string; tooltip: string } {
   if (typeof navigator === 'undefined') {
-    return { href: RELEASES_URL, label: 'Download for desktop' };
+    return { href: RELEASES_URL, label: 'Download for desktop', tooltip: '' };
   }
   const ua = navigator.userAgent;
-  const isMac = /Mac/.test(ua);
-  // Apple Silicon UA hint: navigator.userAgent on M-class Macs still says
-  // "Intel Mac OS X" for backward compat; the truthier signal is the
-  // navigator.platform missing + the lack of "x86_64" — but the most
-  // reliable check is `navigator.userAgentData` when available.
-  const platform = (navigator as { userAgentData?: { platform?: string } }).userAgentData?.platform;
-  const looksAppleSilicon = isMac && (
-    /Apple/i.test(platform ?? '') ||
-    // CPU class is often `arm` on M-series Safari, but Chrome/Edge hide it.
-    // When uncertain, default to ARM since 90% of new Macs sold are arm.
-    !/Intel/i.test(ua) || true
-  );
-  if (isMac && looksAppleSilicon) {
-    return { href: MACOS_ARM_DMG, label: 'Download for macOS' };
+  // userAgentData is the truthy signal on modern Chromium; Safari sees fewer
+  // fields but the UA string still includes "Intel" vs "Apple Silicon" cues.
+  const uad = (navigator as { userAgentData?: { platform?: string } }).userAgentData;
+  const platform = uad?.platform ?? '';
+
+  const isMac = /Mac/i.test(ua) || /macOS/i.test(platform);
+  const isWindows = /Windows/i.test(ua) || /Windows/i.test(platform);
+  const isLinux = !isMac && !isWindows && (/Linux/i.test(ua) || /Linux/i.test(platform));
+
+  if (isMac) {
+    // Apple Silicon detection: Chromium exposes "macOS" + a hint; Safari
+    // doesn't. We trust uaa.platform when present; otherwise default to
+    // arm64 (90% of new Macs sold).
+    const looksIntel = /Intel/i.test(ua) && !/Apple/i.test(platform);
+    return looksIntel
+      ? { href: DL(ASSET_MAC_X64), label: 'Download for macOS (Intel)', tooltip: `${ASSET_MAC_X64} · 15 MB · Apache-2.0` }
+      : { href: DL(ASSET_MAC_ARM), label: 'Download for macOS', tooltip: `${ASSET_MAC_ARM} · 15 MB · Apache-2.0` };
   }
-  return { href: RELEASES_URL, label: 'Download for desktop' };
+  if (isWindows) {
+    return { href: DL(ASSET_WIN_SETUP), label: 'Download for Windows', tooltip: `${ASSET_WIN_SETUP} · 13 MB · Apache-2.0` };
+  }
+  if (isLinux) {
+    return { href: DL(ASSET_LINUX_APPIMAGE), label: 'Download for Linux', tooltip: `${ASSET_LINUX_APPIMAGE} · 85 MB · Apache-2.0` };
+  }
+  return { href: RELEASES_URL, label: 'Download for desktop', tooltip: 'Pick the build for your OS' };
 }
 
 const FEATURES: Array<{ title: string; body: string }> = [
@@ -125,11 +132,7 @@ export function LandingEditor({ onStart }: LandingEditorProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="ed-cta-secondary"
-            title={
-              download.href === MACOS_ARM_DMG
-                ? 'MarkView_0.1.0_aarch64.dmg · 15 MB · Apache-2.0'
-                : 'Latest release on GitHub — pick the asset for your OS'
-            }
+            title={download.tooltip || 'Latest release on GitHub'}
           >
             {download.label}
           </a>
