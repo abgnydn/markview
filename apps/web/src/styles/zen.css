@@ -84,6 +84,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   font-variant-ligatures: common-ligatures;
+  /* CRITICAL: globals.css sets body to overflow:hidden inside @layer base
+     which traps the page once chrome is fixed-position. The fix is just
+     `visible` — let the document scroll naturally via the html element.
+     Don't set body to overflow:auto/scroll: that creates a nested scroll
+     container and the wheel event gets eaten by the wrong layer. */
+  overflow: visible !important;
+  min-height: 100vh;
 }
 
 /* Selection is the only paint in the room. */
@@ -136,10 +143,12 @@ body {
   left: 0;
   right: 0;
   height: 52px;
+  /* Theme-aware gradient — both stops resolve from the active palette so
+     the toolbar fades into whatever surface the body uses. */
   background: linear-gradient(
     180deg,
     var(--zen-bg-deep) 0%,
-    rgba(5, 5, 7, 0.88) 60%,
+    var(--zen-bg-deep) 70%,
     transparent 100%
   ) !important;
   border-bottom: 0 !important;
@@ -336,11 +345,13 @@ nav.toc a,
   display: block !important;
   padding: 0 !important;
   margin: 0 !important;
+  overflow: visible !important;
 }
 .viewer-main {
   background: transparent !important;
   padding: 0 !important;
-  overflow-x: hidden;
+  overflow: visible !important;
+  height: auto !important;
 }
 .viewer-content {
   max-width: var(--zen-content-width) !important;

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useThemeStore } from "@/stores/theme-store";
 import { useCollabStore } from "@/stores/collab-store";
@@ -12,14 +13,19 @@ import { preloadShiki } from "@/components/viewer/markdown-renderer";
 
 /**
  * Home — single route. Two surfaces:
- *   1. LandingEditor — shown when no workspace exists yet.
- *   2. ViewerPage    — shown when the user has at least one workspace.
+ *   1. LandingEditor — shown when no workspace exists yet, OR the user
+ *      came back to the landing via `?home=1` (e.g. clicking the brand
+ *      mark in the toolbar). Workspaces are preserved across the visit.
+ *   2. ViewerPage    — shown when the user has at least one workspace and
+ *      isn't explicitly asking for the landing.
  *
- * "Open editor" on the landing seeds a demo README so the editor has
- * something to render the first time. Any subsequent visit goes
- * straight to ViewerPage.
+ * "Open editor" on the landing seeds a welcome workspace the first time;
+ * subsequent visits reuse whatever's in IndexedDB and clear the ?home flag.
  */
 export default function Home() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showLanding = searchParams.get("home") === "1";
+
   const isLoaded = useWorkspaceStore((s) => s.isLoaded);
   const initialize = useWorkspaceStore((s) => s.initialize);
   const createWorkspace = useWorkspaceStore((s) => s.createWorkspace);
@@ -48,12 +54,24 @@ export default function Home() {
   };
 
   const handleStart = async () => {
-    await createWorkspace("welcome", [
-      {
-        filename: "welcome.md",
-        content: WELCOME_DOC,
-      },
-    ]);
+    if (workspaces.length === 0) {
+      await createWorkspace("welcome", [
+        {
+          filename: "welcome.md",
+          content: WELCOME_DOC,
+        },
+      ]);
+    }
+    // Clear the ?home=1 flag so the next render shows the editor.
+    setSearchParams({});
+  };
+
+  const handleGoHome = () => {
+    // Don't delete the workspace — preserving the user's work matters more
+    // than a clean state. Push the ?home=1 flag and Home re-renders into
+    // the landing. Clicking "Open editor" clears the flag and the editor
+    // surfaces the existing workspace.
+    setSearchParams({ home: "1" });
   };
 
   if (!isLoaded) {
@@ -64,7 +82,7 @@ export default function Home() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#060912",
+          background: "var(--zen-bg-deep, #060912)",
           color: "rgba(148,163,184,0.6)",
           fontFamily: "ui-monospace, SFMono-Regular, monospace",
           fontSize: 13,
@@ -91,14 +109,14 @@ export default function Home() {
     );
   }
 
-  // No workspace yet → landing.
-  if (workspaces.length === 0) {
+  // Landing if: no workspace yet OR user explicitly asked for it via ?home=1.
+  if (workspaces.length === 0 || showLanding) {
     return <LandingEditor onStart={() => void handleStart()} />;
   }
 
   return (
     <ViewerPage
-      onGoHome={() => void setActiveFile("")}
+      onGoHome={handleGoHome}
       addFilesInputRef={addFilesInputRef}
       onNavigateToFile={handleNavigateToFile}
     />
