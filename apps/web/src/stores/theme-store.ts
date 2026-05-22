@@ -86,8 +86,11 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
   },
 
   initialize: () => {
+    // Default to dark — Markview's brand is the cosmic editor surface.
+    // Users who switch to light/system get that respected; first-visit
+    // default is dark so the editor matches the landing's dark hero.
     const saved = localStorage.getItem('markview-theme') as ThemeMode | null;
-    const mode = saved || 'system';
+    const mode = saved || 'dark';
     const resolved = resolveTheme(mode);
     applyTheme(resolved);
 

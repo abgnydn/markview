@@ -122,51 +122,65 @@ function applyFormat(view: EditorView, kind: FormatKind): void {
   view.focus();
 }
 
-// Dark syntax highlight tuned for the Markview color palette.
+// Zen syntax highlight — markdown markers fade; prose stays warm and present.
+// Hierarchy: heading > strong > body > emphasis > meta. Color is sparse on
+// purpose so the EYE is led by typography (size + weight), not paint.
 const markviewHighlight = HighlightStyle.define([
-  { tag: t.heading, color: '#e2e8f0', fontWeight: '700' },
-  { tag: t.heading1, color: '#f1f5f9', fontWeight: '800', fontSize: '1.05em' },
-  { tag: t.heading2, color: '#e2e8f0', fontWeight: '700' },
-  { tag: t.heading3, color: '#cbd5e1', fontWeight: '600' },
-  { tag: t.strong, color: '#f8fafc', fontWeight: '700' },
-  { tag: t.emphasis, color: '#cbd5e1', fontStyle: 'italic' },
-  { tag: t.strikethrough, color: '#64748b', textDecoration: 'line-through' },
-  { tag: t.link, color: '#67e8f9', textDecoration: 'underline' },
-  { tag: t.url, color: '#67e8f9' },
-  { tag: t.monospace, color: '#fbbf24' },
-  { tag: t.list, color: '#a78bfa' },
-  { tag: t.quote, color: '#94a3b8', fontStyle: 'italic' },
-  { tag: t.meta, color: '#64748b' },
-  { tag: t.comment, color: '#475569', fontStyle: 'italic' },
+  { tag: t.heading, color: '#f0ebe2', fontWeight: '700' },
+  { tag: t.heading1, color: '#f5f0e6', fontWeight: '800', fontSize: '1.18em' },
+  { tag: t.heading2, color: '#efe9df', fontWeight: '700' },
+  { tag: t.heading3, color: '#e6e0d4', fontWeight: '600' },
+  { tag: t.strong, color: '#f5f0e6', fontWeight: '700' },
+  { tag: t.emphasis, color: '#e8e2d4', fontStyle: 'italic' },
+  { tag: t.strikethrough, color: 'rgba(232,226,212,0.42)', textDecoration: 'line-through' },
+  { tag: t.link, color: '#8b6dff' },
+  { tag: t.url, color: '#8b6dff' },
+  { tag: t.monospace, color: '#d6b370' },
+  { tag: t.list, color: 'rgba(232,226,212,0.55)' },
+  { tag: t.quote, color: 'rgba(232,226,212,0.62)', fontStyle: 'italic' },
+  { tag: t.meta, color: 'rgba(232,226,212,0.30)' },
+  { tag: t.comment, color: 'rgba(232,226,212,0.30)', fontStyle: 'italic' },
 ]);
 
-// Dark theme — paints the surface; uses CSS variables where it can so the
-// surrounding app theme picker can override.
+// Zen editor surface — warm paper feel. Generous left/right padding centers
+// the prose; the editor surface itself is the "paper". No active-line bg,
+// no harsh selection, soft violet caret.
 const markviewTheme = EditorView.theme(
   {
     '&': {
       height: '100%',
-      fontSize: '14px',
-      backgroundColor: 'var(--editor-bg, #0d1117)',
-      color: 'var(--editor-fg, #e2e8f0)',
+      fontSize: '17px',
+      backgroundColor: 'transparent',
+      color: '#e8e2d4',
     },
     '.cm-scroller': {
       fontFamily:
-        "var(--font-mono, ui-monospace, SFMono-Regular, 'JetBrains Mono', 'Cascadia Code', monospace)",
-      lineHeight: '1.6',
+        "'Iowan Old Style', 'Charter', 'Iowan', 'New York', 'Source Serif Pro', Georgia, serif",
+      lineHeight: '1.72',
     },
-    '.cm-content': { padding: '18px 8px', caretColor: '#a78bfa' },
-    '.cm-gutters': {
-      backgroundColor: 'transparent',
-      color: 'rgba(148,163,184,0.4)',
-      border: 'none',
+    '.cm-content': {
+      // Mirror the renderer's content width so the editor feels like the
+      // same page, just with markup made visible.
+      maxWidth: '720px',
+      margin: '0 auto',
+      padding: '8vh 4vw 16vh',
+      caretColor: '#8b6dff',
     },
-    '.cm-activeLine': { backgroundColor: 'rgba(167,139,250,0.06)' },
-    '.cm-activeLineGutter': { backgroundColor: 'transparent', color: '#a78bfa' },
+    '.cm-gutters': { display: 'none' },
+    '.cm-activeLine': { backgroundColor: 'transparent' },
+    '.cm-activeLineGutter': { backgroundColor: 'transparent' },
     '.cm-selectionBackground, ::selection': {
-      backgroundColor: 'rgba(103,232,249,0.25)',
+      backgroundColor: 'rgba(139, 109, 255, 0.20)',
     },
-    '.cm-cursor': { borderLeftColor: '#a78bfa' },
+    '.cm-cursor': {
+      borderLeftColor: '#8b6dff',
+      borderLeftWidth: '2px',
+    },
+    '.cm-line': {
+      // Slight horizontal padding so wrap doesn't kiss the margin.
+      paddingLeft: '0',
+      paddingRight: '0',
+    },
   },
   { dark: true },
 );

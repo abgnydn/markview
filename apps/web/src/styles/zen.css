@@ -1,0 +1,473 @@
+/* SPDX-License-Identifier: Apache-2.0
+ *
+ * Markview — zen editor layer.
+ *
+ * Loaded after globals.css so it overrides the generic toolbar/sidebar/TOC
+ * chrome. Everything heavy fades away by default; intent (hover-on-edge,
+ * Cmd+\, focus) brings it back. The space is the page; the page is brain.
+ */
+
+:root {
+  /* paper palette — warm, never pure black or white */
+  --zen-bg-dark:        #0a0a0c;
+  --zen-bg-dark-deep:   #050507;
+  --zen-fg-dark:        #e8e6e1;
+  --zen-fg-dark-soft:   rgba(232, 230, 225, 0.72);
+  --zen-fg-dark-faint:  rgba(232, 230, 225, 0.38);
+
+  --zen-bg-light:       #fbf8f3;
+  --zen-bg-light-deep:  #f5efe5;
+  --zen-fg-light:       #1c1816;
+  --zen-fg-light-soft:  rgba(28, 24, 22, 0.72);
+  --zen-fg-light-faint: rgba(28, 24, 22, 0.38);
+
+  --zen-accent:         #8b6dff;
+  --zen-accent-soft:    rgba(139, 109, 255, 0.18);
+
+  /* typography */
+  --zen-serif:
+    'Iowan Old Style', 'Charter', 'Iowan', 'New York', 'Source Serif Pro',
+    Georgia, 'Times New Roman', serif;
+  --zen-mono:
+    'Berkeley Mono', 'JetBrains Mono', 'Cascadia Code', ui-monospace,
+    SFMono-Regular, Menlo, monospace;
+
+  /* breathing */
+  --zen-content-width: min(720px, 92ch);
+  --zen-content-pad-y: 12vh;
+  --zen-edge-pad:      4vw;
+
+  /* easings */
+  --zen-ease:          cubic-bezier(0.32, 0.72, 0.32, 1);
+  --zen-duration:      420ms;
+}
+
+[data-theme='dark'],
+.dark {
+  --zen-bg: var(--zen-bg-dark);
+  --zen-bg-deep: var(--zen-bg-dark-deep);
+  --zen-fg: var(--zen-fg-dark);
+  --zen-fg-soft: var(--zen-fg-dark-soft);
+  --zen-fg-faint: var(--zen-fg-dark-faint);
+}
+
+:root:not(.dark):not([data-theme='dark']) {
+  --zen-bg: var(--zen-bg-light);
+  --zen-bg-deep: var(--zen-bg-light-deep);
+  --zen-fg: var(--zen-fg-light);
+  --zen-fg-soft: var(--zen-fg-light-soft);
+  --zen-fg-faint: var(--zen-fg-light-faint);
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Body — warm gradient, serif by default
+ * ──────────────────────────────────────────────────────────────────────── */
+html,
+body {
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      var(--zen-bg) 0%,
+      var(--zen-bg-deep) 100%
+    ) !important;
+  color: var(--zen-fg);
+  font-family: var(--zen-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * App shell — let the page breathe. No grid, no chrome, just space.
+ * ──────────────────────────────────────────────────────────────────────── */
+.app {
+  display: block !important;        /* override the .app grid */
+  min-height: 100vh;
+  background: transparent;
+}
+
+/* The viewer layout is now a single centered column. Sidebar + TOC float
+   above it and only show on intent. */
+.viewer-layout {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Toolbar — vanishes. Returns on hover at the top edge.
+ * ──────────────────────────────────────────────────────────────────────── */
+.toolbar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: linear-gradient(
+    180deg,
+    var(--zen-bg-deep) 0%,
+    transparent 100%
+  ) !important;
+  border-bottom: 0 !important;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity var(--zen-duration) var(--zen-ease),
+    transform var(--zen-duration) var(--zen-ease);
+  pointer-events: none;
+}
+
+/* A 56px invisible hit-target at the top reveals the toolbar. */
+.app::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 49;
+}
+.app:hover .toolbar,
+.app:focus-within .toolbar,
+.toolbar:hover,
+.toolbar:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Make the toolbar buttons themselves quieter — borderless, less padding,
+   no harsh divider. */
+.toolbar-btn {
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--zen-fg-faint) !important;
+  transition: color 200ms var(--zen-ease);
+}
+.toolbar-btn:hover {
+  color: var(--zen-fg) !important;
+  background: transparent !important;
+}
+.toolbar-brand,
+.toolbar-workspace-name {
+  font-family: var(--zen-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint) !important;
+  font-weight: 500 !important;
+}
+.toolbar-logo {
+  display: none;
+}
+.toolbar-reading-stats {
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--zen-fg-faint) !important;
+  text-transform: lowercase;
+}
+.toolbar-stat {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 6px !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Sidebar — floats off-canvas. Hover near the left edge brings it back.
+ * ──────────────────────────────────────────────────────────────────────── */
+.sidebar {
+  position: fixed !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 260px !important;
+  background: var(--zen-bg-deep) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.04) !important;
+  transform: translateX(calc(-100% + 6px));
+  transition: transform var(--zen-duration) var(--zen-ease);
+  z-index: 40;
+  padding-top: 56px;
+}
+.sidebar:hover,
+.sidebar:focus-within,
+.sidebar.sidebar-open {
+  transform: translateX(0);
+}
+.sidebar-header,
+.sidebar-title {
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint) !important;
+  border-bottom: 0 !important;
+}
+.sidebar-item {
+  font-family: var(--zen-serif) !important;
+  font-size: 14.5px !important;
+  color: var(--zen-fg-soft) !important;
+  border-radius: 4px !important;
+  padding: 8px 14px !important;
+  transition: color 200ms var(--zen-ease), background 200ms var(--zen-ease);
+}
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--zen-fg) !important;
+}
+.sidebar-item-active {
+  background: var(--zen-accent-soft) !important;
+  color: var(--zen-fg) !important;
+}
+.sidebar-item-active::before {
+  background: var(--zen-accent) !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Right rail (TOC) — same vanishing pattern from the right edge.
+ * ──────────────────────────────────────────────────────────────────────── */
+.toc-container,
+.right-rail,
+aside.toc {
+  position: fixed !important;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 220px !important;
+  padding: 72px 18px 24px !important;
+  background: transparent !important;
+  border-left: 0 !important;
+  opacity: 0.18;
+  transition: opacity var(--zen-duration) var(--zen-ease);
+  z-index: 30;
+  pointer-events: auto;
+}
+.toc-container:hover,
+.right-rail:hover,
+aside.toc:hover {
+  opacity: 1;
+}
+.toc-title,
+.toc-heading {
+  font-family: var(--zen-mono);
+  font-size: 10px !important;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint) !important;
+  border-bottom: 0 !important;
+}
+.toc-link,
+.toc-item {
+  font-family: var(--zen-serif) !important;
+  font-size: 13px !important;
+  color: var(--zen-fg-soft) !important;
+  line-height: 1.5 !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Main content — single centered column. Generous breathing room.
+ * ──────────────────────────────────────────────────────────────────────── */
+.markdown-content,
+.viewer-content,
+main.viewer,
+.app > main {
+  max-width: var(--zen-content-width) !important;
+  margin: 0 auto !important;
+  padding: var(--zen-content-pad-y) var(--zen-edge-pad)
+    calc(var(--zen-content-pad-y) * 2) !important;
+  background: transparent !important;
+  color: var(--zen-fg);
+  font-family: var(--zen-serif);
+  font-size: 19px;
+  line-height: 1.75;
+  letter-spacing: -0.003em;
+}
+
+/* Rendered markdown typography */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+  font-family: var(--zen-serif) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--zen-fg) !important;
+}
+.markdown-content h1 {
+  font-size: 2.4em !important;
+  line-height: 1.15 !important;
+  margin: 0 0 0.5em !important;
+}
+.markdown-content h2 {
+  font-size: 1.55em !important;
+  margin: 2em 0 0.6em !important;
+}
+.markdown-content h3 {
+  font-size: 1.2em !important;
+  margin: 1.6em 0 0.5em !important;
+}
+.markdown-content p {
+  margin: 0 0 1.15em !important;
+  color: var(--zen-fg-soft) !important;
+}
+.markdown-content a {
+  color: var(--zen-accent) !important;
+  text-decoration: underline;
+  text-decoration-color: rgba(139, 109, 255, 0.28);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 200ms var(--zen-ease);
+}
+.markdown-content a:hover {
+  text-decoration-color: var(--zen-accent);
+}
+.markdown-content code {
+  font-family: var(--zen-mono) !important;
+  font-size: 0.88em !important;
+  color: #d6b370 !important;
+  background: rgba(214, 179, 112, 0.08) !important;
+  padding: 1px 6px !important;
+  border-radius: 3px !important;
+  border: 0 !important;
+}
+.markdown-content pre {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  padding: 18px 22px !important;
+  margin: 1.5em 0 !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  overflow-x: auto;
+}
+.markdown-content pre code {
+  background: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+}
+.markdown-content blockquote {
+  border-left: 2px solid var(--zen-accent) !important;
+  padding: 0 0 0 1.1em !important;
+  margin: 1.4em 0 !important;
+  color: var(--zen-fg-soft) !important;
+  font-style: italic;
+}
+.markdown-content hr {
+  border: 0 !important;
+  height: 1px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  margin: 3em auto !important;
+  width: 40%;
+}
+.markdown-content ul,
+.markdown-content ol {
+  margin: 0 0 1.15em !important;
+  padding-left: 1.4em !important;
+  color: var(--zen-fg-soft) !important;
+}
+.markdown-content li {
+  margin: 0.25em 0 !important;
+}
+.markdown-content img {
+  display: block;
+  margin: 2em auto;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Editor overlay — when MarkdownEditor opens, fade in over the renderer.
+ * The CodeMirror surface itself is styled inside markdown-editor.tsx.
+ * ──────────────────────────────────────────────────────────────────────── */
+.editor-overlay {
+  background: rgba(10, 10, 12, 0.92) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.editor-container {
+  background: var(--zen-bg) !important;
+  border: 0 !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 30px 80px -20px rgba(0, 0, 0, 0.55) !important;
+}
+.editor-toolbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  background: transparent !important;
+  padding: 14px 22px !important;
+}
+.editor-filename {
+  font-family: var(--zen-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint) !important;
+}
+.editor-mode-btn {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--zen-fg-faint) !important;
+  font-family: var(--zen-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  padding: 4px 10px !important;
+  transition: color 200ms var(--zen-ease);
+}
+.editor-mode-btn:hover,
+.editor-mode-btn.active {
+  color: var(--zen-fg) !important;
+  background: transparent !important;
+}
+.editor-format-bar {
+  border-bottom: 0 !important;
+  padding: 6px 22px !important;
+  opacity: 0;
+  transition: opacity 200ms var(--zen-ease);
+}
+.editor-overlay:hover .editor-format-bar,
+.editor-overlay:focus-within .editor-format-bar {
+  opacity: 1;
+}
+
+/* Wider editor surface inside the overlay — feels like a desk, not a panel */
+.editor-body {
+  padding: 0 !important;
+}
+.editor-edit-pane,
+.editor-preview-pane {
+  padding: 4vh 5vw !important;
+}
+.editor-codemirror,
+.editor-codemirror .cm-editor {
+  height: 100%;
+  background: transparent !important;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Misc cleanups — drop the "16px" + "System" widget visual weight.
+ * ──────────────────────────────────────────────────────────────────────── */
+.toolbar-theme-picker-btn,
+.toolbar-theme-btn {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--zen-fg-faint) !important;
+  font-family: var(--zen-mono) !important;
+  font-size: 11px !important;
+}
+
+/* Focus mode (existing class) — when it's on, push the chrome even further. */
+.focus-mode .toolbar,
+.focus-mode .sidebar,
+.focus-mode .toc-container,
+.focus-mode .right-rail {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Selection — soft violet rather than the bright system default. */
+::selection {
+  background: var(--zen-accent-soft);
+  color: var(--zen-fg);
+}

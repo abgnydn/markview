@@ -4,6 +4,9 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./app/globals.css";
+// Zen layer — loaded AFTER globals so the override wins. Makes the
+// editor feel like brain space: vanishing chrome, serif body, paper bg.
+import "./styles/zen.css";
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("#root missing in index.html");
