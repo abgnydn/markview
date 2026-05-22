@@ -39,10 +39,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14            # Apple Silicon
+          # Cross-compile both Mac targets from a single Apple Silicon
+          # runner — the Intel (macos-13) runner pool has been starving
+          # the queue with 30-60min waits. The aarch64 native build also
+          # produces the x86_64 binary via `--target x86_64-apple-darwin`.
+          - os: macos-14
             target: aarch64-apple-darwin
             label: macOS arm64
-          - os: macos-13            # Intel Mac
+          - os: macos-14
             target: x86_64-apple-darwin
             label: macOS x64
           - os: ubuntu-latest
