@@ -11,13 +11,13 @@
       },
     },
     "apps/desktop": {
-      "name": "desktop",
+      "name": "@markview/desktop",
       "version": "0.1.0",
       "dependencies": {
-        "@tauri-apps/api": "^2",
+        "@tauri-apps/api": "^2.1.1",
       },
       "devDependencies": {
-        "@tauri-apps/cli": "^2",
+        "@tauri-apps/cli": "^2.1.0",
       },
     },
     "apps/web": {
@@ -369,6 +369,8 @@
     "@marijn/find-cluster-break": ["@marijn/find-cluster-break@1.0.2", "", {}, "sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g=="],
 
     "@markview/core": ["@markview/core@workspace:packages/core"],
+
+    "@markview/desktop": ["@markview/desktop@workspace:apps/desktop"],
 
     "@markview/eslint-config": ["@markview/eslint-config@workspace:packages/eslint-config"],
 
@@ -819,8 +821,6 @@
     "delayed-stream": ["delayed-stream@1.0.0", "", {}, "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ=="],
 
     "dequal": ["dequal@2.0.3", "", {}, "sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA=="],
-
-    "desktop": ["desktop@workspace:apps/desktop"],
 
     "devlop": ["devlop@1.1.0", "", { "dependencies": { "dequal": "^2.0.0" } }, "sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA=="],
 

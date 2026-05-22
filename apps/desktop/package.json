@@ -1,16 +1,17 @@
 {
-  "name": "desktop",
+  "name": "@markview/desktop",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": ". ~/.cargo/env && tauri dev",
     "build": ". ~/.cargo/env && tauri build",
-    "tauri": ". ~/.cargo/env && tauri"
+    "tauri": ". ~/.cargo/env && tauri",
+    "typecheck": "echo 'tauri desktop — typecheck skipped'"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2"
+    "@tauri-apps/cli": "^2.1.0"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2"
+    "@tauri-apps/api": "^2.1.1"
   }
 }
