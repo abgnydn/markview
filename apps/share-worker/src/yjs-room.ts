@@ -196,9 +196,15 @@ export class YjsSignalRoom {
 }
 
 /**
- * Default Worker entrypoint that fronts the DO. Routes:
+ * Default Worker entrypoint that fronts the DO.
  *
- *   GET /yjs/:room  (Upgrade: websocket)  →  forwards to YjsSignalRoom
+ * y-webrtc connects to the signaling URL directly (no path append) and
+ * multiplexes rooms over one socket via the subscribe/unsubscribe topic
+ * envelope. So we accept ANY path and route every upgrade to a single
+ * global DO instance — peers find each other through the topic index.
+ *
+ *   GET /*  (Upgrade: websocket)  →  YjsSignalRoom("signal-v1")
+ *   GET /*  (anything else)       →  200 health text
  */
 export interface YjsEnv {
   YJS_ROOMS: {
@@ -207,15 +213,15 @@ export interface YjsEnv {
   };
 }
 
-const ROOM_ROUTE = /^\/yjs\/([A-Za-z0-9._~-]{1,128})\/?$/;
-
 export default {
   async fetch(request: Request, env: YjsEnv): Promise<Response> {
-    const url = new URL(request.url);
-    const m = ROOM_ROUTE.exec(url.pathname);
-    if (!m) return new Response("not found", { status: 404 });
-    const roomId = m[1]!;
-    const id = env.YJS_ROOMS.idFromName(roomId);
+    if (request.headers.get("Upgrade") !== "websocket") {
+      return new Response("markview-yjs signaling — connect over WSS\n", {
+        status: 200,
+        headers: { "content-type": "text/plain; charset=utf-8" },
+      });
+    }
+    const id = env.YJS_ROOMS.idFromName("signal-v1");
     const stub = env.YJS_ROOMS.get(id);
     return stub.fetch(request);
   },

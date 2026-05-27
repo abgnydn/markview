@@ -47,12 +47,11 @@ export function getShareUrl(roomId: string): string {
 // ---------------------------------------------------------------------------
 
 // y-webrtc connects to all servers in this list in parallel; the first
-// one that finds a peer wins. Markview's own DO is primary; the public
-// Yjs relay is the fallback so collab still works if our Worker is
-// down or geo-blocked.
+// one that finds a peer wins. Our own DO is the only entry — the public
+// `signaling.yjs.dev` host was deprecated and now refuses connections,
+// so listing it just produces noisy WebSocket errors in the console.
 const SIGNALING_SERVERS = [
   'wss://markview-yjs.abgunaydin94.workers.dev',
-  'wss://signaling.yjs.dev',
 ];
 
 /** Create a new Y.js doc + WebRTC provider for a room */

@@ -1,11 +1,11 @@
 
-import React, { useRef, useMemo, useState, useCallback } from 'react';
+import React, { useRef, useMemo, useState, useCallback, lazy, Suspense } from 'react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { useCollabStore } from '@/stores/collab-store';
 import { Toolbar } from '@/components/viewer/toolbar';
 import { Sidebar } from '@/components/viewer/sidebar';
-import { MarkdownRenderer, preloadShiki } from '@/components/viewer/markdown-renderer';
+import { MarkdownRenderer } from '@/components/viewer/markdown-renderer';
 import { TableOfContents } from '@/components/viewer/toc';
 import { AnnotationToolbar, AnnotationPanel } from '@/components/viewer/annotation-toolbar';
 import { SearchDialog } from '@/components/viewer/search-dialog';
@@ -13,12 +13,26 @@ import { WorkspaceTabs } from '@/components/workspace/workspace-tabs';
 import { ReadingProgress } from '@/components/viewer/reading-progress';
 import { Breadcrumbs } from '@/components/viewer/breadcrumbs';
 import { FrontmatterCard } from '@/components/viewer/frontmatter-card';
-import { PresentationMode } from '@/components/viewer/presentation-mode';
-import { SplitView } from '@/components/viewer/split-view';
-import { DiffView } from '@/components/viewer/diff-view';
-import { MarkdownEditor } from '@/components/viewer/markdown-editor';
 
-import { PresenceBar } from '@/components/collab/presence-bar';
+// Heavy user-triggered overlays — lazy so the cold-open chunk stays
+// tight. The MarkdownEditor pulls in CodeMirror, PresentationMode pulls
+// in reveal-style rendering, AiChat pulls transformers.js — none of it
+// belongs on the path of "open a shared URL, just read."
+const PresentationMode = lazy(() => import('@/components/viewer/presentation-mode').then((m) => ({ default: m.PresentationMode })));
+const SplitView = lazy(() => import('@/components/viewer/split-view').then((m) => ({ default: m.SplitView })));
+const DiffView = lazy(() => import('@/components/viewer/diff-view').then((m) => ({ default: m.DiffView })));
+const MarkdownEditor = lazy(() => import('@/components/viewer/markdown-editor').then((m) => ({ default: m.MarkdownEditor })));
+const FileBrowser = lazy(() => import('@/components/viewer/file-browser').then((m) => ({ default: m.FileBrowser })));
+const GraphView = lazy(() => import('@/components/viewer/graph-view').then((m) => ({ default: m.GraphView })));
+const AiChat = lazy(() => import('@/components/viewer/ai-chat').then((m) => ({ default: m.AiChat })));
+
+// PresenceBar replaced by the floating <ShareStatus /> widget (bottom-right).
+import { ShareStatus } from '@/components/collab/share-status';
+import { RelatedNotes } from '@/components/viewer/related-notes';
+import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
+import { useAtmosphereRotation } from '@/hooks/use-atmosphere-rotation';
+import { useEmbeddingsBackfill } from '@/hooks/use-embeddings-backfill';
+import { useViewerOverlays } from '@/hooks/use-viewer-overlays';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 import { useViewerState } from '@/hooks/use-viewer-state';
 import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
@@ -47,6 +61,7 @@ interface ViewerPageProps {
  */
 export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: ViewerPageProps) {
   const focusMode = useThemeStore((s) => s.focusMode);
+  const atmosphere = useThemeStore((s) => s.atmosphere);
 
   // Workspace data
   const addFiles = useWorkspaceStore((s) => s.addFiles);
@@ -66,25 +81,22 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
 
-  // ── Vault overlay (graph view) — `\` to toggle, esc to close ─────
-  const [vaultOpen, setVaultOpen] = useState(false);
-  React.useEffect(() => {
-    const onKey = (e: KeyboardEvent): void => {
-      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
-      const isTyping =
-        tag === 'input' || tag === 'textarea' ||
-        (e.target as HTMLElement | null)?.isContentEditable;
-      if (e.key === '\\' && !isTyping) {
-        e.preventDefault();
-        setVaultOpen((v) => !v);
-      } else if (e.key === 'Escape' && vaultOpen) {
-        e.preventDefault();
-        setVaultOpen(false);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [vaultOpen]);
+  // Overlay state + their keyboard shortcuts (\ for graph, ⌘J for chat,
+  // Esc closes whichever is open). One hook owns the whole stack.
+  const {
+    vaultOpen, setVaultOpen,
+    fileBrowserOpen, setFileBrowserOpen,
+    aiChatOpen, setAiChatOpen,
+  } = useViewerOverlays();
+
+  // Bumps when the atmosphere painting should re-pick — handles both
+  // the sidebar cycle/shuffle buttons AND timed rotation (hourly, 5m).
+  const paintingNonce = useAtmosphereRotation(atmosphere);
+
+  // Lazy-embed every file that doesn't have vectors yet (powers
+  // semantic search + related-notes + AI chat). Triggers the one-time
+  // MiniLM download on first run.
+  useEmbeddingsBackfill(useWorkspaceStore.getState().activeWorkspaceId);
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -211,11 +223,91 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         onToggleDiffView={() => setShowDiffView(true)}
         onToggleEditor={() => setShowEditor(true)}
         onToggleVault={() => setVaultOpen(true)}
+        onOpenFileBrowser={() => setFileBrowserOpen(true)}
+        onOpenAiChat={() => setAiChatOpen(true)}
         onGoHome={onGoHome}
         onToggleSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
       />
-      <PresenceBar />
+      {atmosphere !== 'none' && (
+        <PaintingAtmosphere atmosphere={atmosphere} paintingNonce={paintingNonce} />
+      )}
+      <ShareStatus />
       <WorkspaceTabs />
+
+      {/* Standalone "+ new workspace" drop target. Becomes visible only
+          while a sidebar file is being dragged. Drop a file here to
+          promote it into its own brand-new workspace. */}
+      <div
+        className="workspace-tab-new-drop-standalone"
+        onDragOver={(e) => {
+          if (e.dataTransfer.types.includes('application/x-markview-file')) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            (e.currentTarget as HTMLElement).classList.add('is-hot');
+          }
+        }}
+        onDragLeave={(e) => {
+          (e.currentTarget as HTMLElement).classList.remove('is-hot');
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).classList.remove('is-hot');
+          const fileId = e.dataTransfer.getData('application/x-markview-file');
+          if (fileId) {
+            void useWorkspaceStore.getState().promoteFileToNewWorkspace(fileId);
+          }
+        }}
+        aria-hidden="true"
+      >
+        + Drop here to make it its own workspace
+      </div>
+
+      {/* Hidden file input — the "+" button in the toolbar calls
+          `addFilesInputRef.current.click()`. We read each .md / .markdown
+          file's text and append to the active workspace. */}
+      <input
+        ref={addFilesInputRef}
+        type="file"
+        accept=".md,.markdown,text/markdown"
+        multiple
+        style={{ display: 'none' }}
+        onChange={async (e) => {
+          const picked = e.target.files;
+          if (!picked || picked.length === 0) return;
+          const incoming: { filename: string; content: string }[] = [];
+          for (const f of Array.from(picked)) {
+            try {
+              const content = await f.text();
+              incoming.push({ filename: f.name, content });
+            } catch (err) {
+              console.warn('failed to read file', f.name, err);
+            }
+          }
+          if (incoming.length > 0) {
+            await useWorkspaceStore.getState().addFiles(incoming);
+          }
+          // reset so picking the same file twice fires another change
+          e.target.value = '';
+        }}
+      />
+
+      {fileBrowserOpen && (
+        <Suspense fallback={null}>
+          <FileBrowser onClose={() => setFileBrowserOpen(false)} />
+        </Suspense>
+      )}
+
+      {vaultOpen && (
+        <Suspense fallback={null}>
+          <GraphView onClose={() => setVaultOpen(false)} />
+        </Suspense>
+      )}
+
+      {aiChatOpen && (
+        <Suspense fallback={null}>
+          <AiChat onClose={() => setAiChatOpen(false)} />
+        </Suspense>
+      )}
 
       <div className="viewer-layout">
         {mobileSidebarOpen && (
@@ -275,9 +367,20 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
             )}
           </div>
         </main>
-        {!focusMode && <TableOfContents headings={headings} scrollContainerRef={contentRef} />}
+        {!focusMode && (
+          <div className="viewer-right-rail">
+            <TableOfContents headings={headings} scrollContainerRef={contentRef} />
+            <RelatedNotes
+              content={activeFileContent}
+              fileId={activeFileId}
+              workspaceId={useWorkspaceStore.getState().activeWorkspaceId}
+            />
+          </div>
+        )}
         {showSplitView && activeFileId && (
-          <SplitView mainFileId={activeFileId} onClose={() => setShowSplitView(false)} />
+          <Suspense fallback={null}>
+            <SplitView mainFileId={activeFileId} onClose={() => setShowSplitView(false)} />
+          </Suspense>
         )}
       </div>
 
@@ -285,17 +388,21 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
 
       {/* Overlays */}
       {showPresentation && effectiveContent && (
-        <PresentationMode
-          html={renderedHtml || effectiveContent}
-          onClose={() => setShowPresentation(false)}
-        />
+        <Suspense fallback={null}>
+          <PresentationMode
+            html={renderedHtml || effectiveContent}
+            onClose={() => setShowPresentation(false)}
+          />
+        </Suspense>
       )}
 
       {showDiffView && activeFileId && (
-        <DiffView
-          fileAId={activeFileId}
-          onClose={() => setShowDiffView(false)}
-        />
+        <Suspense fallback={null}>
+          <DiffView
+            fileAId={activeFileId}
+            onClose={() => setShowDiffView(false)}
+          />
+        </Suspense>
       )}
 
       {showEditor && activeFileId && activeFileContent && (() => {
@@ -309,14 +416,18 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         const yText = collabIsActive ? collab.getYText(collabFileId) ?? undefined : undefined;
         const awareness = collabIsActive ? collab.getAwareness() ?? undefined : undefined;
         return (
-          <MarkdownEditor
-            content={activeFileContent}
-            filename={activeFile?.filename || 'untitled.md'}
-            onSave={handleEditorSave}
-            onClose={() => setShowEditor(false)}
-            yText={yText}
-            awareness={awareness}
-          />
+          <Suspense fallback={null}>
+            <MarkdownEditor
+              content={activeFileContent}
+              filename={activeFile?.filename || 'untitled.md'}
+              fileId={activeFile?.id}
+              workspaceId={useWorkspaceStore.getState().activeWorkspaceId || undefined}
+              onSave={handleEditorSave}
+              onClose={() => setShowEditor(false)}
+              yText={yText}
+              awareness={awareness}
+            />
+          </Suspense>
         );
       })()}
 

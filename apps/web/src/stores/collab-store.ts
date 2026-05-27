@@ -54,6 +54,9 @@ interface CollabState {
   joinRoom: (roomId: string, userName: string) => Promise<void>;
   leaveSession: () => void;
   setSyncedActiveFile: (fileId: string) => void;
+  /** Rename the local user. Updates store + broadcasts via awareness so
+      every peer's UI re-labels this user (cursor tag, avatar tooltip). */
+  setLocalUserName: (name: string) => void;
 
   // CRDT accessors — used by the editor to bind CodeMirror to a Y.Text
   // for real-time collaborative editing.
@@ -68,7 +71,13 @@ export const useCollabStore = create<CollabState>((set, get) => ({
   roomId: null,
   shareUrl: null,
   peers: [],
-  localUserName: 'Host',
+  localUserName: (() => {
+    try {
+      return localStorage.getItem('markview:user-name') || 'Host';
+    } catch {
+      return 'Host';
+    }
+  })(),
   syncedTitle: null,
   syncedFiles: [],
   syncedActiveFileId: null,
@@ -104,7 +113,10 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       }))
     );
 
-    setLocalUser(session.provider, 'Host');
+    // Use the user's saved name (set via setLocalUserName) instead of
+    // hardcoded "Host" so other peers see them by their real name.
+    const hostName = get().localUserName || 'Host';
+    setLocalUser(session.provider, hostName);
 
     // Subscribe to awareness changes
     const unsubAwareness = onAwarenessChange(session.provider, (peers) => {
@@ -119,7 +131,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       isConnecting: false,
       roomId,
       shareUrl,
-      localUserName: 'Host',
+      localUserName: hostName,
       _session: session,
       _unsubAwareness: unsubAwareness,
     });
@@ -264,5 +276,23 @@ export const useCollabStore = create<CollabState>((set, get) => ({
   getAwareness: () => {
     const { _session } = get();
     return _session ? (_session.provider.awareness as Awareness) : null;
+  },
+
+  setLocalUserName: (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    set({ localUserName: trimmed });
+    // Persist for next session — keyed locally, never sent anywhere.
+    try {
+      localStorage.setItem('markview:user-name', trimmed);
+    } catch {
+      /* ignore */
+    }
+    // If a session is live, broadcast the new name immediately so every
+    // peer's UI re-labels the cursor + avatar tag.
+    const { _session, syncedActiveFileId } = get();
+    if (_session) {
+      setLocalUser(_session.provider, trimmed, syncedActiveFileId);
+    }
   },
 }));
