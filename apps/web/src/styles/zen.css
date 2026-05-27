@@ -10,6 +10,16 @@
  * Loaded after globals.css; overrides every chrome rule.
  */
 
+/* Extracted modules — these @import lines MUST come first per CSS spec
+   (PostCSS/Vite drop @imports placed after other rules). Each module
+   groups rules by concern: ai chat, atmosphere layer + particles,
+   floating collab share-status, graph view, mobile + touch overrides. */
+@import "./zen-modules/ai.css";
+@import "./zen-modules/graph.css";
+@import "./zen-modules/collab-status.css";
+@import "./zen-modules/atmosphere.css";
+@import "./zen-modules/mobile.css";
+
 :root {
   /* Paper palette — warm, never pure black or white.
      Soft tier bumped from 0.74 → 0.82 so body text reads as ink, not fog. */
@@ -2012,15 +2022,6 @@ body:has(.sidebar-item-dragging) .workspace-tab-new-drop-standalone {
 
 
 /* Mobile + touch breakpoints — extracted module */
-@import "./zen-modules/mobile.css";
-
-/* Extracted modules — keep zen.css under 2000 lines and group rules by
-   concern (atmosphere, AI chat, graph, collab status, mobile). */
-@import "./zen-modules/ai.css";
-@import "./zen-modules/graph.css";
-@import "./zen-modules/collab-status.css";
-@import "./zen-modules/atmosphere.css";
-
 /* View Transitions API — slow the default snapshot cross-fade so the
    appearance swap reads as one coordinated fade instead of a fast pop.
    No-op on browsers that don't support the API. */
