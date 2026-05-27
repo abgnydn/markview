@@ -37,6 +37,11 @@ export function useViewerState() {
     // snapshots library — see lib/snapshots.ts createSnapshot calls.)
     const { db } = await import('@/lib/storage/db');
     await db.files.update(activeFileId, { content: newContent });
+    // #12 Quiet save indicator — broadcast so WorkspaceTabs can pulse
+    // a dot on the active tab for 800ms instead of showing a toast.
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('markview:file-saved', { detail: { fileId: activeFileId } }));
+    }
     // Reload content in store
     useWorkspaceStore.getState().setActiveFile(activeFileId);
     setShowEditor(false);

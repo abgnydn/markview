@@ -329,6 +329,23 @@ export function MarkdownEditor({
   const [text, setText] = useState(initialText);
   const [mode, setMode] = useState<'edit' | 'preview' | 'split'>('split');
   const [showHistory, setShowHistory] = useState(false);
+  // #15 Cursor halo — add .editor-typing class while the user is
+  // actively typing (decays 800ms after the last keystroke), so the
+  // violet glow only appears when the caret is "alive".
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimerRef = useRef<number | null>(null);
+  useEffect(() => {
+    const onKey = () => {
+      setIsTyping(true);
+      if (typingTimerRef.current !== null) window.clearTimeout(typingTimerRef.current);
+      typingTimerRef.current = window.setTimeout(() => setIsTyping(false), 800);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (typingTimerRef.current !== null) window.clearTimeout(typingTimerRef.current);
+    };
+  }, []);
   // In collab mode "modified vs saved" is meaningless (the host's local
   // disk-save flow doesn't apply); we hide the unsaved dot.
   const hasChanges = yText ? false : text !== content;
@@ -459,7 +476,7 @@ export function MarkdownEditor({
   ] as const;
 
   return (
-    <div className="editor-overlay">
+    <div className={`editor-overlay${isTyping ? ' editor-typing' : ''}`}>
       <div className="editor-container">
         <div className="editor-toolbar">
           <div className="editor-toolbar-left">

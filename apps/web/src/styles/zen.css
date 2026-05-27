@@ -2037,3 +2037,424 @@ body:has(.sidebar-item-dragging) .workspace-tab-new-drop-standalone {
   ::view-transition-old(root),
   ::view-transition-new(root) { animation-duration: 0ms; }
 }
+
+/* ────────────────────────────────────────────────────────────────────────
+ * UI polish layer — smaller, lighter, more alive. All gated on
+ * `prefers-reduced-motion: no-preference` where motion is involved.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* #6 Drop cap fade-in — the magazine ornament settles onto the page
+   instead of slamming in with the body. */
+@keyframes mv-dropcap-settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .markdown-content h1 + p::first-letter {
+    animation: mv-dropcap-settle 700ms cubic-bezier(0.2, 0.7, 0.2, 1) 200ms both;
+  }
+}
+
+/* #8 Soft horizontal rule — replace the line with a centered ·  ·  ·
+   so it reads like a magazine section break. */
+.markdown-content hr {
+  border: none;
+  height: auto;
+  background: none;
+  text-align: center;
+  margin: 3em auto 3em;
+  letter-spacing: 0.7em;
+  font-size: 14px;
+  color: var(--zen-muted, rgba(255,255,255,0.28));
+  line-height: 1;
+}
+.markdown-content hr::before {
+  content: '·  ·  ·';
+}
+
+/* #9 Tag pill diet — drop bg and border. Render #tag in violet small-
+   caps with the # muted. Applies to links the renderer emits for #tag. */
+.markdown-content a[href^="#tag-"],
+.markdown-content a.tag {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  color: var(--zen-accent, #b9a4ff);
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  margin: 0 0.15em;
+  opacity: 0.92;
+}
+.markdown-content a[href^="#tag-"]::before,
+.markdown-content a.tag::before {
+  content: '#';
+  opacity: 0.35;
+  margin-right: 0.05em;
+}
+
+/* #10 Caret breathing — slower, gentler than the default blink. */
+@media (prefers-reduced-motion: no-preference) {
+  .cm-cursor, .cm-dropCursor {
+    animation: mv-caret-breath 1.2s ease-in-out infinite !important;
+  }
+}
+@keyframes mv-caret-breath {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 1; }
+}
+
+/* #11 Sidebar spring easing — overshoot bezier so the drawer feels
+   alive instead of mechanical when it slides in. */
+.sidebar,
+.sidebar.sidebar-mobile-open,
+.sidebar:not(.sidebar-mobile-open) {
+  transition: transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+/* #13 Reading thread — replace the chunky reading-progress block with a
+   1px violet hairline along the very top of the page. */
+.reading-progress {
+  height: 1px !important;
+  background: linear-gradient(90deg,
+    rgba(185, 164, 255, 0) 0%,
+    rgba(185, 164, 255, 0.7) 18%,
+    rgba(185, 164, 255, 0.95) 50%,
+    rgba(185, 164, 255, 0.7) 82%,
+    rgba(185, 164, 255, 0) 100%) !important;
+  box-shadow: 0 0 6px rgba(185, 164, 255, 0.35);
+  z-index: 999;
+}
+
+/* #16 Vignette — soft radial dark at the four corners of the viewport
+   draws the eye to the centered content column. Below content + scrim
+   so text is unaffected; above atmosphere so the painting fades to its
+   edges instead of feeling square-clipped. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.18) 92%,
+    rgba(0, 0, 0, 0.28) 100%);
+}
+:root:not(.dark):not([data-theme='dark']) body::after {
+  background: radial-gradient(ellipse at center,
+    transparent 60%,
+    rgba(40, 30, 20, 0.06) 94%,
+    rgba(40, 30, 20, 0.10) 100%);
+}
+
+/* #17 Empty state replacement — drop the giant MarkView logo wall, show
+   a quiet italic phrase instead. Component still wraps a div.viewer-
+   empty-state; we just override its visual. */
+.viewer-empty-state {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  opacity: 1 !important;
+  pointer-events: none;
+  user-select: none;
+}
+.viewer-empty-state img,
+.viewer-empty-state h3 { display: none !important; }
+.viewer-empty-state::after {
+  content: 'waiting for ink';
+  font-family: var(--zen-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--zen-muted, rgba(255,255,255,0.22));
+  letter-spacing: 0.02em;
+}
+
+/* #18 Hover-paragraph dim — the paragraph you hover brightens to full
+   ink, others drop to 65%. Feels like the page is reading along. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .markdown-content:hover p,
+  .markdown-content:hover li,
+  .markdown-content:hover blockquote {
+    transition: opacity 240ms ease;
+    opacity: 0.55;
+  }
+  .markdown-content:hover p:hover,
+  .markdown-content:hover li:hover,
+  .markdown-content:hover blockquote:hover {
+    opacity: 1;
+  }
+}
+
+/* #19 Mobile bottom-anchored search — thumb-reachable. Slides up from
+   the bottom of the viewport instead of dropping from the center. */
+@media (max-width: 768px) {
+  .search-overlay {
+    align-items: flex-end !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
+  }
+  .search-dialog {
+    margin-bottom: 0 !important;
+    border-radius: 14px 14px 0 0 !important;
+    animation: mv-sheet-slide-up 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes mv-sheet-slide-up {
+    from { transform: translateY(40px); opacity: 0.6; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+}
+
+/* #15 Cursor halo — violet glow that follows the caret while typing.
+   Implemented via a ::after on the .cm-cursor element + class on the
+   editor that's added while typing (markdown-editor.tsx). */
+.cm-cursor {
+  position: relative;
+}
+.editor-typing .cm-cursor::after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: -4px;
+  width: 22px;
+  height: calc(100% + 8px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(185, 164, 255, 0.35) 0%, rgba(185, 164, 255, 0) 70%);
+  pointer-events: none;
+  animation: mv-halo-fade 800ms ease-out 1 both;
+}
+@keyframes mv-halo-fade {
+  from { opacity: 1; }
+  to   { opacity: 0.4; }
+}
+
+/* #12 Save dot — pulse on the active workspace-tab when a save lands.
+   Component (workspace-tabs.tsx) toggles .ws-tab-saved-pulse for 800ms. */
+@keyframes mv-save-pulse {
+  0%   { transform: scale(0.6); opacity: 0; }
+  40%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1);   opacity: 0.85; }
+}
+.ws-tab-saved-pulse::after {
+  content: '●';
+  display: inline-block;
+  margin-left: 0.4em;
+  color: var(--zen-accent, #b9a4ff);
+  font-size: 0.55em;
+  vertical-align: middle;
+  animation: mv-save-pulse 800ms ease-out both;
+}
+
+/* #14 Atmosphere caption flourish — fades in bottom-left on swap, lives
+   2s, fades out. Component toggles the .atmosphere-caption-show class. */
+.atmosphere-caption {
+  position: fixed;
+  left: 28px;
+  bottom: 24px;
+  z-index: 3;
+  pointer-events: none;
+  font-family: var(--zen-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--zen-soft, rgba(255,255,255,0.55));
+  letter-spacing: 0.01em;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 360ms ease, transform 360ms ease;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.atmosphere-caption.atmosphere-caption-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* #7 Sticky H1 mini-title — a 12px small-caps whisper-bar that appears
+   at the top of the page after the user scrolls past the H1. Component
+   (sticky-title.tsx) renders it; CSS handles the visual + transition. */
+.sticky-title {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  z-index: 4;
+  pointer-events: none;
+  font-family: var(--zen-serif, Georgia, serif);
+  font-size: 12px;
+  font-variant: small-caps;
+  letter-spacing: 0.14em;
+  color: var(--zen-soft, rgba(255,255,255,0.55));
+  background: var(--zen-bg, rgba(11, 10, 13, 0.72));
+  padding: 6px 14px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 220ms ease, transform 220ms ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  max-width: 60vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sticky-title.sticky-title-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* #3 Paragraph scroll-reveal — sets initial state. The renderer adds
+   .mv-revealed to each <p>/<li>/<blockquote> as it enters the viewport,
+   triggering the transition to full ink. */
+@media (prefers-reduced-motion: no-preference) {
+  .markdown-content p,
+  .markdown-content li,
+  .markdown-content blockquote,
+  .markdown-content pre,
+  .markdown-content table {
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 280ms ease, transform 280ms ease;
+  }
+  .markdown-content .mv-revealed,
+  .markdown-content p.mv-revealed,
+  .markdown-content li.mv-revealed,
+  .markdown-content blockquote.mv-revealed,
+  .markdown-content pre.mv-revealed,
+  .markdown-content table.mv-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* h1+p is the drop-cap line — its own settle animation drives opacity,
+     so don't apply the reveal masking on it. */
+  .markdown-content h1 + p {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* #2 Whisper tab strip — drop the pill bg, render filenames inline,
+   active one underlined with a hairline. Existing workspace-tabs
+   selectors get the new visuals. */
+.workspace-tabs {
+  background: transparent !important;
+  border: none !important;
+  padding: 8px 18px !important;
+  gap: 0 !important;
+  display: flex;
+  align-items: center;
+}
+.workspace-tab {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 4px 0 6px !important;
+  margin: 0 14px 0 0 !important;
+  position: relative;
+  font-family: var(--zen-mono, ui-monospace, monospace) !important;
+  font-size: 10.5px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--zen-muted, rgba(255,255,255,0.32)) !important;
+  transition: color 180ms ease;
+}
+.workspace-tab::after {
+  content: '·';
+  position: absolute;
+  right: -10px;
+  top: 4px;
+  color: var(--zen-muted, rgba(255,255,255,0.18));
+  font-size: 10.5px;
+}
+.workspace-tab:last-child::after { content: none; }
+.workspace-tab:hover {
+  color: var(--zen-fg, rgba(255,255,255,0.85)) !important;
+}
+.workspace-tab.workspace-tab-active,
+.workspace-tab[data-active="true"] {
+  color: var(--zen-fg, rgba(255,255,255,0.95)) !important;
+}
+.workspace-tab.workspace-tab-active::before,
+.workspace-tab[data-active="true"]::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 14px;
+  bottom: 0;
+  height: 1px;
+  background: var(--zen-accent, #b9a4ff);
+  opacity: 0.85;
+}
+.workspace-tab-count,
+.workspace-tab .ws-tab-count {
+  opacity: 0.5;
+  margin-left: 0.4em;
+  font-size: 0.85em;
+}
+
+/* #4 Sidebar mass cut — drop borders + hover bg, use color shift only.
+   Hairline rule (12% accent) between items. */
+.sidebar-item,
+.sidebar-file {
+  border: none !important;
+  background: transparent !important;
+  padding: 8px 14px !important;
+  color: var(--zen-soft, rgba(255,255,255,0.6)) !important;
+  transition: color 160ms ease !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+.sidebar-item:hover,
+.sidebar-file:hover {
+  background: transparent !important;
+  color: var(--zen-fg, rgba(255,255,255,0.95)) !important;
+}
+.sidebar-item.sidebar-item-active,
+.sidebar-file.sidebar-file-active,
+.sidebar-item[data-active="true"] {
+  background: transparent !important;
+  color: var(--zen-accent, #b9a4ff) !important;
+}
+.sidebar-item:last-child,
+.sidebar-file:last-child {
+  border-bottom: none !important;
+}
+
+/* #20 Wikilink hover preview — small floating card with the linked
+   file's preview. Renderer attaches mouseenter handlers to a.internal-
+   link. The card is .wikilink-preview. */
+.wikilink-preview {
+  position: fixed;
+  z-index: 1000;
+  max-width: 320px;
+  padding: 12px 14px;
+  font-family: var(--zen-serif, Georgia, serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--zen-soft, rgba(255,255,255,0.7));
+  background: var(--zen-bg, rgba(11, 10, 13, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  pointer-events: none;
+}
+.wikilink-preview-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.wikilink-preview-title {
+  display: block;
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--zen-accent, #b9a4ff);
+  opacity: 0.7;
+  margin-bottom: 6px;
+}

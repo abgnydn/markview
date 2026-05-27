@@ -100,6 +100,16 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     };
   }, [cfg]);
 
+  // ── #14 Caption flourish — show the painting's title bottom-left
+  // for 2s on swap. Re-fires whenever the displayed painting changes
+  // (atmosphere change or rotation tick).
+  const [captionVisible, setCaptionVisible] = useState(false);
+  useEffect(() => {
+    setCaptionVisible(true);
+    const t = window.setTimeout(() => setCaptionVisible(false), 2400);
+    return () => window.clearTimeout(t);
+  }, [displayed.painting.imageSrc]);
+
   if (!displayedCfg) return null;
 
   const style: React.CSSProperties = {
@@ -153,6 +163,15 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         <span className="atmosphere-credit-artist">{displayed.painting.attribution}</span>
         <span className="atmosphere-credit-sep"> · </span>
         <span className="atmosphere-credit-detail">{displayed.painting.attributionDetail}</span>
+      </div>
+
+      {/* #14 Caption flourish — soft italic title bottom-left for 2.4s
+          on every painting swap. Sits above the credit, fades on its own. */}
+      <div
+        className={`atmosphere-caption${captionVisible ? ' atmosphere-caption-show' : ''}`}
+        aria-hidden="true"
+      >
+        {displayed.painting.attributionDetail.split(' · ')[0]}
       </div>
     </div>
   );

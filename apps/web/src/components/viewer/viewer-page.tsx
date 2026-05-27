@@ -13,6 +13,7 @@ import { WorkspaceTabs } from '@/components/workspace/workspace-tabs';
 import { ReadingProgress } from '@/components/viewer/reading-progress';
 import { Breadcrumbs } from '@/components/viewer/breadcrumbs';
 import { FrontmatterCard } from '@/components/viewer/frontmatter-card';
+import { StickyTitle } from '@/components/viewer/sticky-title';
 
 // Heavy user-triggered overlays — lazy so the cold-open chunk stays
 // tight. The MarkdownEditor pulls in CodeMirror, PresentationMode pulls
@@ -321,6 +322,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         )}
         <main className="viewer-main" ref={contentRef}>
           <ReadingProgress scrollContainerRef={contentRef} />
+          <StickyTitle contentRef={contentRef} />
           <div className="viewer-content">
             <Breadcrumbs filepath={displayFilename} />
             <div className="viewer-file-header">

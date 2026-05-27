@@ -34,6 +34,21 @@ export function WorkspaceTabs() {
     }
   }, [editingId]);
 
+  // #12 Save dot pulse — when a file save lands, briefly flag the
+  // active workspace tab so the CSS animation runs. 800ms then clear.
+  const [savedPulseWsId, setSavedPulseWsId] = useState<string | null>(null);
+  useEffect(() => {
+    const onSaved = () => {
+      const wsId = useWorkspaceStore.getState().activeWorkspaceId;
+      if (!wsId) return;
+      setSavedPulseWsId(wsId);
+      const t = window.setTimeout(() => setSavedPulseWsId(null), 900);
+      return () => window.clearTimeout(t);
+    };
+    window.addEventListener('markview:file-saved', onSaved);
+    return () => window.removeEventListener('markview:file-saved', onSaved);
+  }, []);
+
   if (workspaces.length <= 1) return null;
 
   const handleStartRename = (id: string, currentTitle: string, e: React.MouseEvent) => {
@@ -151,7 +166,7 @@ export function WorkspaceTabs() {
         {workspaces.map((ws, index) => (
           <div
             key={ws.id}
-            className={`workspace-tab${ws.id === activeWorkspaceId ? ' workspace-tab-active' : ''}${dragIndex === index ? ' workspace-tab-dragging' : ''}${dropIndex === index && dragIndex !== index ? ' workspace-tab-drop-target' : ''}${fileDropWsId === ws.id ? ' workspace-tab-file-drop' : ''}`}
+            className={`workspace-tab${ws.id === activeWorkspaceId ? ' workspace-tab-active' : ''}${dragIndex === index ? ' workspace-tab-dragging' : ''}${dropIndex === index && dragIndex !== index ? ' workspace-tab-drop-target' : ''}${fileDropWsId === ws.id ? ' workspace-tab-file-drop' : ''}${savedPulseWsId === ws.id ? ' ws-tab-saved-pulse' : ''}`}
             onClick={() => switchWorkspace(ws.id)}
             title={`${ws.title} — ${ws.fileCount} files, ${formatSize(ws.totalSize)}\nDrop a file here to move it into this workspace.`}
             draggable={editingId !== ws.id}

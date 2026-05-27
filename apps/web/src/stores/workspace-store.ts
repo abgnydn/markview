@@ -298,14 +298,28 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   },
 
   // ---------- Set Active File (lazy load content) ----------
+  // Cross-fade the document swap via the View Transitions API. We load
+  // the content first (IndexedDB read is usually <10ms) and only then
+  // commit the state mutation, so the snapshot the browser captures has
+  // the old document fully painted and the new one ready to fade in.
+  // Falls back to a normal set() on browsers without the API.
   setActiveFile: async (fileId) => {
-    set({ activeFileId: fileId, isContentLoading: true });
-
     const dbFile = await db.files.get(fileId);
-    set({
-      activeFileContent: dbFile?.content || null,
-      isContentLoading: false,
-    });
+    const commit = () => {
+      set({
+        activeFileId: fileId,
+        activeFileContent: dbFile?.content || null,
+        isContentLoading: false,
+      });
+    };
+    const d = typeof document !== 'undefined' ? document as Document & {
+      startViewTransition?: (cb: () => void) => unknown;
+    } : null;
+    if (d && typeof d.startViewTransition === 'function') {
+      d.startViewTransition(commit);
+    } else {
+      commit();
+    }
   },
 
   // ---------- Add Files to Active Workspace ----------

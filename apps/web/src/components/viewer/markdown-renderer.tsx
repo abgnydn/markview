@@ -606,6 +606,116 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     });
   }, [html]);
 
+  // ── #3 Paragraph scroll-reveal — fade-in each block as it enters
+  // the viewport. Initial state (opacity 0 + translateY 4px) is set in
+  // CSS; we just add .mv-revealed once seen. IntersectionObserver
+  // unobserves each element after the first reveal so scrolling back
+  // doesn't re-trigger. Gated on prefers-reduced-motion.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    if (typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      root.querySelectorAll('p,li,blockquote,pre,table')
+          .forEach((el) => el.classList.add('mv-revealed'));
+      return;
+    }
+    const targets = root.querySelectorAll('p,li,blockquote,pre,table');
+    if (!('IntersectionObserver' in window) || targets.length === 0) {
+      targets.forEach((el) => el.classList.add('mv-revealed'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add('mv-revealed');
+          io.unobserve(e.target);
+        }
+      }
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.01 });
+    targets.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [html]);
+
+  // ── #20 Wikilink hover preview — small floating card with the
+  // linked file's first paragraph. Activates after a 350ms hover so
+  // it doesn't fire on incidental mouse-overs. One shared DOM node
+  // gets repositioned per-link to avoid a node-per-link explosion.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const links = root.querySelectorAll<HTMLAnchorElement>('a.internal-link');
+    if (links.length === 0) return;
+    let card: HTMLDivElement | null = null;
+    let hoverTimer: number | null = null;
+    let hideTimer: number | null = null;
+    const escapeHtml = (s: string) => s
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const ensureCard = () => {
+      if (card) return card;
+      card = document.createElement('div');
+      card.className = 'wikilink-preview';
+      document.body.appendChild(card);
+      return card;
+    };
+    const show = async (link: HTMLAnchorElement) => {
+      const filename = (link.getAttribute('href') || '').replace(/^[./]+/, '');
+      const c = ensureCard();
+      c.innerHTML = '<span class="wikilink-preview-title">…</span>';
+      const rect = link.getBoundingClientRect();
+      c.style.left = `${Math.min(window.innerWidth - 340, Math.max(20, rect.left))}px`;
+      c.style.top = `${rect.bottom + 8}px`;
+      c.classList.add('wikilink-preview-show');
+      try {
+        const { db } = await import('@/lib/storage/db');
+        const f = await db.files.where('filename').equalsIgnoreCase(filename)
+          .or('filename').equalsIgnoreCase(filename.replace(/\.md$/i, ''))
+          .or('filename').equalsIgnoreCase(`${filename}.md`)
+          .first();
+        if (!f) {
+          c.innerHTML = `<span class="wikilink-preview-title">${escapeHtml(filename)}</span><em>not found in this workspace</em>`;
+          return;
+        }
+        const stripped = f.content
+          .replace(/^---[\s\S]*?---\n+/, '')
+          .replace(/^#.*$/m, '')
+          .trim()
+          .split(/\n\n/)[0]
+          .slice(0, 260);
+        c.innerHTML = `<span class="wikilink-preview-title">${escapeHtml(f.displayName || f.filename)}</span>${escapeHtml(stripped)}`;
+      } catch {
+        c.classList.remove('wikilink-preview-show');
+      }
+    };
+    const hide = () => {
+      if (card) card.classList.remove('wikilink-preview-show');
+    };
+    const onEnter = (e: Event) => {
+      const link = e.currentTarget as HTMLAnchorElement;
+      if (hideTimer !== null) { window.clearTimeout(hideTimer); hideTimer = null; }
+      hoverTimer = window.setTimeout(() => show(link), 350);
+    };
+    const onLeave = () => {
+      if (hoverTimer !== null) { window.clearTimeout(hoverTimer); hoverTimer = null; }
+      hideTimer = window.setTimeout(hide, 120);
+    };
+    links.forEach((l) => {
+      l.addEventListener('mouseenter', onEnter);
+      l.addEventListener('mouseleave', onLeave);
+    });
+    return () => {
+      links.forEach((l) => {
+        l.removeEventListener('mouseenter', onEnter);
+        l.removeEventListener('mouseleave', onLeave);
+      });
+      if (hoverTimer !== null) window.clearTimeout(hoverTimer);
+      if (hideTimer !== null) window.clearTimeout(hideTimer);
+      card?.remove();
+      card = null;
+    };
+  }, [html]);
+
   return (
     <div className="markdown-content" ref={contentRef} style={{ fontSize: 'var(--content-font-size, 16px)' }}>
       {/* SECURITY: html is sanitized via rehype-sanitize in the rendering pipeline */}
