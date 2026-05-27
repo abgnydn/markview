@@ -246,8 +246,25 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
 
     const process = async () => {
       try {
+        // Expand `[[name]]` wikilinks into standard markdown links. The
+        // target gets `.md` appended so they flow through the same
+        // internal-link handler as `[text](other.md)`. Pipe-style aliases
+        // ([[file|display text]]) are honored.
+        const preprocessed = content.replace(
+          /\[\[([^\]\n|]+?)(?:\|([^\]\n]+))?\]\]/g,
+          (_match, target: string, alias?: string) => {
+            const label = (alias ?? target).trim();
+            const href = `${target.trim()}.md`;
+            return `[${label}](${href})`;
+          }
+        );
+
         // Render markdown
-        const rawHtml = await renderMarkdown(content, { codeBlockToolbar: false });
+        const rawHtml = await renderMarkdown(preprocessed, {
+          codeBlockToolbar: false,
+          katex: true,
+          alerts: true,
+        });
         if (cancelled) return;
 
         // Ensure shiki is loaded (fails gracefully in extension context)

@@ -33,17 +33,27 @@ export function useViewerState() {
 
   const handleEditorSave = useCallback(async (newContent: string) => {
     if (!activeFileId) return;
-    // Save version snapshot before overwriting
-    const { useVersionStore } = await import('@/stores/version-store');
-    const activeF = useWorkspaceStore.getState().files.find((f) => f.id === activeFileId);
-    if (activeF && activeFileContent) {
-      useVersionStore.getState().saveVersion(activeFileId, activeF.filename, activeFileContent, 'editor');
-    }
+    // (Pre-save snapshotting is handled inside MarkdownEditor via the
+    // snapshots library — see lib/snapshots.ts createSnapshot calls.)
     const { db } = await import('@/lib/storage/db');
     await db.files.update(activeFileId, { content: newContent });
     // Reload content in store
     useWorkspaceStore.getState().setActiveFile(activeFileId);
     setShowEditor(false);
+
+    // Re-embed the file in the background — fire-and-forget so save UX
+    // stays snappy. Failures (e.g. first-load model download still in
+    // progress) are swallowed and re-tried on the next save.
+    void (async () => {
+      try {
+        const workspaceId = useWorkspaceStore.getState().activeWorkspaceId;
+        if (!workspaceId) return;
+        const { embedFile } = await import('@/lib/embeddings');
+        await embedFile(activeFileId, workspaceId, newContent);
+      } catch {
+        /* embeddings are best-effort */
+      }
+    })();
   }, [activeFileId, activeFileContent]);
 
   return {

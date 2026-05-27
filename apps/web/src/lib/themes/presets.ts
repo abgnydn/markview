@@ -242,27 +242,56 @@ export const THEME_PRESETS: ThemePreset[] = [
 ];
 
 /** Apply a theme preset's CSS variable overrides to the document */
+/**
+ * Map a globals.css var name → zen var name. The zen layer (zen.css) has
+ * its own variable namespace (`--zen-*`) so it can evolve independently
+ * of the legacy globals tokens. When a user picks a color preset we mirror
+ * the preset's globals values into the matching zen vars so the picker
+ * actually moves what's on screen.
+ */
+const ZEN_MIRROR: Record<string, string[]> = {
+  '--bg-primary':    ['--zen-bg'],
+  '--bg-secondary':  ['--zen-bg-deep'],
+  '--bg-elevated':   ['--zen-bg-deep'],
+  '--text-primary':  ['--zen-fg'],
+  '--text-secondary':['--zen-fg-soft'],
+  '--text-muted':    ['--zen-fg-faint'],
+  '--accent-blue':   ['--zen-accent'],
+  '--accent-purple': ['--zen-accent'],
+  '--accent-orange': ['--zen-code'],
+  '--border-default':['--zen-paper-line'],
+  '--border-muted':  ['--zen-paper-line'],
+};
+
 export function applyThemePreset(presetId: string, resolved: 'dark' | 'light'): void {
   if (typeof document === 'undefined') return;
 
   const preset = THEME_PRESETS.find((p) => p.id === presetId);
   const root = document.documentElement;
 
-  // First remove any previous custom properties set by themes
+  // First remove any previous custom properties set by themes — both the
+  // globals tokens AND the mirrored zen tokens, otherwise switching from
+  // a preset back to the default leaves stale violet/whatever on the page.
   for (const p of THEME_PRESETS) {
     for (const key of Object.keys(p.dark)) {
       root.style.removeProperty(key);
+      (ZEN_MIRROR[key] ?? []).forEach((zk) => root.style.removeProperty(zk));
     }
     for (const key of Object.keys(p.light)) {
       root.style.removeProperty(key);
+      (ZEN_MIRROR[key] ?? []).forEach((zk) => root.style.removeProperty(zk));
     }
   }
 
   if (!preset) return;
 
-  // Apply the chosen preset's overrides for the current resolved theme
+  // Apply the chosen preset's overrides for the current resolved theme,
+  // mirroring values into the zen palette so they're actually visible.
   const overrides = resolved === 'dark' ? preset.dark : preset.light;
   for (const [key, value] of Object.entries(overrides)) {
     root.style.setProperty(key, value);
+    for (const zenKey of ZEN_MIRROR[key] ?? []) {
+      root.style.setProperty(zenKey, value);
+    }
   }
 }

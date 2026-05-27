@@ -11,6 +11,8 @@ export function WorkspaceTabs() {
   const deleteWorkspace = useWorkspaceStore((s) => s.deleteWorkspace);
   const renameWorkspace = useWorkspaceStore((s) => s.renameWorkspace);
   const reorderWorkspaces = useWorkspaceStore((s) => s.reorderWorkspaces);
+  const moveFileToWorkspace = useWorkspaceStore((s) => s.moveFileToWorkspace);
+  const promoteFileToNewWorkspace = useWorkspaceStore((s) => s.promoteFileToNewWorkspace);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
@@ -20,6 +22,9 @@ export function WorkspaceTabs() {
   // Drag-and-drop state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
+  // Cross-workspace file-drop: when a sidebar file is dragged over a tab,
+  // we highlight the tab differently from intra-tabs reorder.
+  const [fileDropWsId, setFileDropWsId] = useState<string | null>(null);
   const dragCounter = useRef(0);
 
   useEffect(() => {
@@ -84,13 +89,31 @@ export function WorkspaceTabs() {
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, wsId: string) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    // A sidebar file carries `application/x-markview-file`; mark this tab
+    // as a cross-workspace drop target so the user gets visible feedback.
+    if (e.dataTransfer.types.includes('application/x-markview-file')) {
+      e.dataTransfer.dropEffect = 'move';
+      setFileDropWsId(wsId);
+    } else {
+      e.dataTransfer.dropEffect = 'move';
+    }
   };
 
-  const handleDrop = (e: React.DragEvent, toIndex: number) => {
+  const handleDrop = (e: React.DragEvent, toIndex: number, toWsId: string) => {
     e.preventDefault();
+    // Cross-workspace file move takes precedence — the payload tells us
+    // what kind of drop this is.
+    const fileId = e.dataTransfer.getData('application/x-markview-file');
+    setFileDropWsId(null);
+    if (fileId) {
+      void moveFileToWorkspace(fileId, toWsId);
+      dragCounter.current = 0;
+      setDragIndex(null);
+      setDropIndex(null);
+      return;
+    }
     const fromIndex = Number(e.dataTransfer.getData('text/plain'));
     dragCounter.current = 0;
     setDragIndex(null);
@@ -100,6 +123,27 @@ export function WorkspaceTabs() {
     }
   };
 
+  // "New workspace" drop target — drop a file here to promote it into
+  // its own workspace.
+  const handleNewWsDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setFileDropWsId(null);
+    const fileId = e.dataTransfer.getData('application/x-markview-file');
+    if (fileId) {
+      void promoteFileToNewWorkspace(fileId);
+    }
+  };
+  const handleNewWsDragOver = (e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes('application/x-markview-file')) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      setFileDropWsId('__new__');
+    }
+  };
+  const handleNewWsDragLeave = () => {
+    setFileDropWsId(null);
+  };
+
   return (
     <>
       <div className="workspace-tabs">
@@ -107,16 +151,16 @@ export function WorkspaceTabs() {
         {workspaces.map((ws, index) => (
           <div
             key={ws.id}
-            className={`workspace-tab${ws.id === activeWorkspaceId ? ' workspace-tab-active' : ''}${dragIndex === index ? ' workspace-tab-dragging' : ''}${dropIndex === index && dragIndex !== index ? ' workspace-tab-drop-target' : ''}`}
+            className={`workspace-tab${ws.id === activeWorkspaceId ? ' workspace-tab-active' : ''}${dragIndex === index ? ' workspace-tab-dragging' : ''}${dropIndex === index && dragIndex !== index ? ' workspace-tab-drop-target' : ''}${fileDropWsId === ws.id ? ' workspace-tab-file-drop' : ''}`}
             onClick={() => switchWorkspace(ws.id)}
-            title={`${ws.title} — ${ws.fileCount} files, ${formatSize(ws.totalSize)}`}
+            title={`${ws.title} — ${ws.fileCount} files, ${formatSize(ws.totalSize)}\nDrop a file here to move it into this workspace.`}
             draggable={editingId !== ws.id}
             onDragStart={(e) => handleDragStart(e, index)}
             onDragEnd={handleDragEnd}
             onDragEnter={(e) => handleDragEnter(e, index)}
-            onDragLeave={handleDragLeave}
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, index)}
+            onDragLeave={() => { handleDragLeave(); if (fileDropWsId === ws.id) setFileDropWsId(null); }}
+            onDragOver={(e) => handleDragOver(e, ws.id)}
+            onDrop={(e) => handleDrop(e, index, ws.id)}
           >
             {editingId === ws.id ? (
               <input
@@ -153,6 +197,18 @@ export function WorkspaceTabs() {
             )}
           </div>
         ))}
+        {/* "New workspace" drop target — drag a file here to promote it
+            into its own workspace. Invisible until something's being
+            dragged so it doesn't clutter the row otherwise. */}
+        <div
+          className={`workspace-tab-new-drop${fileDropWsId === '__new__' ? ' workspace-tab-new-drop-active' : ''}`}
+          onDragOver={handleNewWsDragOver}
+          onDragLeave={handleNewWsDragLeave}
+          onDrop={handleNewWsDrop}
+          title="Drop a file here to make it its own workspace"
+        >
+          + new
+        </div>
       </div>
       </div>
       <ConfirmDialog

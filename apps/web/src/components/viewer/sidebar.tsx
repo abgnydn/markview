@@ -6,7 +6,39 @@ import { useCollabStore } from '@/stores/collab-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { THEME_PRESETS } from '@/lib/themes/presets';
 import { ShareDialog } from '@/components/collab/share-dialog';
+import {
+  isAtmosphereMuted,
+  setAtmosphereMuted,
+  getAtmosphereVolume,
+  setAtmosphereVolume,
+  unlockAtmosphereAudio,
+  setAtmosphereAudio,
+} from '@/lib/atmosphere/audio';
+import {
+  getTimeTintMode,
+  setTimeTintMode,
+  type TimeTintMode,
+} from '@/lib/atmosphere/time-of-day';
+import { Volume2, VolumeX, Sunrise, Sun as SunIcon, Sunset, Moon as MoonIcon, CircleDot, RefreshCw } from 'lucide-react';
+import {
+  nextPaintingFor,
+  shufflePaintingFor,
+  resetPaintingFor,
+  ATMOSPHERES,
+  getRotationTempo,
+  setRotationTempo,
+  type RotationTempo,
+} from '@/components/atmosphere/atmospheres';
+import { Shuffle, Pin } from 'lucide-react';
 import '@/components/collab/collab.css';
+
+const ATMOSPHERE_LABELS: Record<string, string> = {
+  none: 'Pure zen paper, no ambient layer',
+  fuji: 'Hokusai · Red Fuji + drifting cherry blossom petals',
+  wave: 'Hokusai · The Great Wave off Kanagawa',
+  snow: 'Hiroshige · Snowy Evening at Kanbara',
+  fields: 'Van Gogh · Wheat Field with Cypresses',
+};
 
 interface TreeNode {
   name: string;
@@ -139,7 +171,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   const reorderFiles = useWorkspaceStore((s) => s.reorderFiles);
   const collabIsActive = useCollabStore((s) => s.isActive);
   const [showShareDialog, setShowShareDialog] = useState(false);
-  const { mode, setMode, colorScheme, setColorScheme } = useThemeStore();
+  const { mode, setMode, colorScheme, setColorScheme, atmosphere, setAtmosphere } = useThemeStore();
 
   // Drag state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -156,12 +188,20 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
     setDragIndex(index);
     e.dataTransfer.effectAllowed = 'move';
+    // Plain-text payload = the source index (used by intra-sidebar reorder).
     e.dataTransfer.setData('text/plain', String(index));
-    // Make the drag ghost slightly transparent
+    // Rich payload = the file id (used by workspace tabs to drop the file
+    // into a different workspace). A separate MIME type means cross-target
+    // drops can recognize "this is a markview file" without confusing the
+    // intra-list reorder logic.
+    const file = files[index];
+    if (file) {
+      e.dataTransfer.setData('application/x-markview-file', file.id);
+    }
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.style.opacity = '0.5';
     }
-  }, []);
+  }, [files]);
 
   const handleDragEnd = useCallback((e: React.DragEvent) => {
     setDragIndex(null);
@@ -269,8 +309,10 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
         )}
       </nav>
       
+      <AtmosphereControls atmosphere={atmosphere} setAtmosphere={setAtmosphere} />
+
       {/* Inline settings (hidden on desktop via css or just acting as footer settings) */}
-      <div className="sidebar-mobile-settings mobile-only" style={{ marginTop: 'auto', paddingTop: 20, paddingBottom: 24, borderTop: '1px solid var(--border-muted)' }}>
+      <div className="sidebar-mobile-settings mobile-only" style={{ paddingTop: 20, paddingBottom: 24, borderTop: '1px solid var(--border-muted)' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: '0 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Appearance</span>
@@ -294,6 +336,9 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
               ))}
             </div>
           </div>
+
+          {/* Atmosphere controls live in their own component above this
+              mobile-only block so desktop users see them too. */}
         </div>
       </div>
     </aside>
@@ -301,3 +346,224 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
     </>
   );
 }
+
+// ─── Atmosphere controls ─────────────────────────────────────────────
+interface AtmosphereControlsProps {
+  atmosphere: 'none' | 'fuji' | 'wave' | 'snow' | 'fields';
+  setAtmosphere: (a: 'none' | 'fuji' | 'wave' | 'snow' | 'fields') => void;
+}
+function AtmosphereControls({ atmosphere, setAtmosphere }: AtmosphereControlsProps) {
+  const [muted, setMuted] = useState<boolean>(() => isAtmosphereMuted());
+  const [volume, setVolume] = useState<number>(() => getAtmosphereVolume());
+  const [tintMode, setTintModeState] = useState<TimeTintMode>(() => getTimeTintMode());
+  const [tempo, setTempo] = useState<RotationTempo>(() => getRotationTempo());
+
+  const toggleMute = () => {
+    const next = !muted;
+    setMuted(next);
+    setAtmosphereMuted(next);
+    if (!next && atmosphere !== 'none') {
+      // Unlock + re-apply current atmosphere so audio actually starts.
+      unlockAtmosphereAudio();
+      setAtmosphereAudio(atmosphere);
+    }
+  };
+  const onVolume = (v: number) => {
+    setVolume(v);
+    setAtmosphereVolume(v);
+  };
+  const onTint = (m: TimeTintMode) => {
+    setTintModeState(m);
+    setTimeTintMode(m);
+  };
+  const onTempo = (t: RotationTempo) => {
+    setTempo(t);
+    setRotationTempo(t);
+    // If switching to a non-manual tempo, drop the pin so rotation actually flows.
+    if (t !== 'manual' && atmosphere !== 'none') {
+      resetPaintingFor(atmosphere as Exclude<typeof atmosphere, 'none'>);
+      window.dispatchEvent(new Event('markview:cycle-painting'));
+    }
+    window.dispatchEvent(new Event('markview:rotation-tempo-changed'));
+  };
+
+  return (
+    <div className="sidebar-atmosphere" style={{ marginTop: 'auto', paddingTop: 16, paddingBottom: 16, borderTop: '1px solid var(--border-muted)', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {/* Painting picker */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span style={{ fontFamily: 'var(--zen-mono)', fontSize: 9.5, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--zen-fg-faint)' }}>Atmosphere</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4 }}>
+          {(['none', 'fuji', 'wave', 'snow', 'fields'] as const).map((id) => {
+            const isActive = atmosphere === id;
+            return (
+              <button
+                key={id}
+                onClick={() => setAtmosphere(id)}
+                title={ATMOSPHERE_LABELS[id] || id}
+                style={{
+                  padding: '6px 0',
+                  borderRadius: 3,
+                  background: isActive ? 'var(--zen-accent-soft)' : 'transparent',
+                  color: isActive ? 'var(--zen-accent)' : 'var(--zen-fg-faint)',
+                  border: isActive ? '1px solid var(--zen-accent-soft)' : '1px solid var(--zen-paper-line)',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--zen-mono)',
+                  fontSize: 10,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {id}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Audio mute + volume + next-painting cycle. Hidden when atmosphere === 'none'. */}
+      {atmosphere !== 'none' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              onClick={toggleMute}
+              title={muted ? 'Unmute ambient audio' : 'Mute ambient audio'}
+              style={{ background: 'transparent', border: '1px solid var(--zen-paper-line)', borderRadius: 3, padding: '6px 8px', color: 'var(--zen-fg-faint)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+            >
+              {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+            </button>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={volume}
+              onChange={(e) => onVolume(parseFloat(e.target.value))}
+              disabled={muted}
+              style={{ flex: 1, accentColor: 'var(--zen-accent)' }}
+              title="Ambient audio volume"
+            />
+            <button
+              onClick={() => {
+                nextPaintingFor(atmosphere as Exclude<typeof atmosphere, 'none'>);
+                window.dispatchEvent(new Event('markview:cycle-painting'));
+              }}
+              title={`Next painting in the ${ATMOSPHERES[atmosphere as Exclude<typeof atmosphere, 'none'>].label} pack`}
+              style={{ background: 'transparent', border: '1px solid var(--zen-paper-line)', borderRadius: 3, padding: '6px 8px', color: 'var(--zen-fg-faint)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+            >
+              <RefreshCw size={14} />
+            </button>
+            <button
+              onClick={() => {
+                shufflePaintingFor(atmosphere as Exclude<typeof atmosphere, 'none'>);
+                window.dispatchEvent(new Event('markview:cycle-painting'));
+              }}
+              title="Shuffle to a random painting in the pack"
+              style={{ background: 'transparent', border: '1px solid var(--zen-paper-line)', borderRadius: 3, padding: '6px 8px', color: 'var(--zen-fg-faint)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+            >
+              <Shuffle size={14} />
+            </button>
+            <button
+              onClick={() => {
+                resetPaintingFor(atmosphere as Exclude<typeof atmosphere, 'none'>);
+                window.dispatchEvent(new Event('markview:cycle-painting'));
+              }}
+              title="Unpin — let rotation tempo pick the painting"
+              style={{ background: 'transparent', border: '1px solid var(--zen-paper-line)', borderRadius: 3, padding: '6px 8px', color: 'var(--zen-fg-faint)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+            >
+              <Pin size={14} />
+            </button>
+          </div>
+          {/* Rotation tempo */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span style={{ fontFamily: 'var(--zen-mono)', fontSize: 9, letterSpacing: '0.18em', color: 'var(--zen-fg-faint)', textTransform: 'uppercase' }}>Rotation</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 3 }}>
+              {(['manual', 'session', 'daily', 'hourly', 'minutes-15', 'minutes-5'] as const).map((t) => {
+                const isActive = tempo === t;
+                const labels: Record<RotationTempo, string> = {
+                  manual: 'manual',
+                  session: 'session',
+                  daily: 'daily',
+                  hourly: 'hourly',
+                  'minutes-15': '15m',
+                  'minutes-5': '5m',
+                };
+                return (
+                  <button
+                    key={t}
+                    onClick={() => onTempo(t)}
+                    title={`Rotate ${labels[t]}`}
+                    style={{
+                      padding: '5px 0',
+                      borderRadius: 3,
+                      background: isActive ? 'var(--zen-accent-soft)' : 'transparent',
+                      color: isActive ? 'var(--zen-accent)' : 'var(--zen-fg-faint)',
+                      border: isActive ? '1px solid var(--zen-accent-soft)' : '1px solid var(--zen-paper-line)',
+                      cursor: 'pointer',
+                      fontFamily: 'var(--zen-mono)',
+                      fontSize: 9.5,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {labels[t]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <span style={{ fontFamily: 'var(--zen-mono)', fontSize: 9, letterSpacing: '0.14em', color: 'var(--zen-fg-faint)', textTransform: 'uppercase' }}>
+            {ATMOSPHERES[atmosphere as Exclude<typeof atmosphere, 'none'>].paintings.length} paintings
+          </span>
+        </div>
+      )}
+
+      {/* Time-of-day tint selector */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span style={{ fontFamily: 'var(--zen-mono)', fontSize: 9.5, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--zen-fg-faint)' }}>Time of day</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 4 }}>
+          {(['auto', 'dawn', 'day', 'dusk', 'night', 'off'] as const).map((m) => {
+            const Icon = TINT_ICONS[m];
+            const isActive = tintMode === m;
+            return (
+              <button
+                key={m}
+                onClick={() => onTint(m)}
+                title={TINT_LABELS[m]}
+                style={{
+                  padding: '6px 0',
+                  borderRadius: 3,
+                  background: isActive ? 'var(--zen-accent-soft)' : 'transparent',
+                  color: isActive ? 'var(--zen-accent)' : 'var(--zen-fg-faint)',
+                  border: isActive ? '1px solid var(--zen-accent-soft)' : '1px solid var(--zen-paper-line)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Icon size={12} />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const TINT_LABELS: Record<TimeTintMode, string> = {
+  auto:  'Auto — follows local clock',
+  dawn:  'Dawn — warm pink wash',
+  day:   'Day — neutral',
+  dusk:  'Dusk — amber light',
+  night: 'Night — deep blue',
+  off:   'Off — no time tint',
+};
+const TINT_ICONS: Record<TimeTintMode, React.ComponentType<{ size?: number }>> = {
+  auto:  CircleDot,
+  dawn:  Sunrise,
+  day:   SunIcon,
+  dusk:  Sunset,
+  night: MoonIcon,
+  off:   CircleDot,
+};

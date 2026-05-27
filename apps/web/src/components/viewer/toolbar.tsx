@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network } from 'lucide-react';
+import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useWorkspaceStore } from '@/stores/workspace-store';
@@ -16,11 +16,13 @@ interface ToolbarProps {
   onToggleDiffView?: () => void;
   onToggleEditor?: () => void;
   onToggleVault?: () => void;
+  onOpenFileBrowser?: () => void;
+  onOpenAiChat?: () => void;
   onGoHome?: () => void;
   onToggleSidebar?: () => void;
 }
 
-export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onToggleVault, onGoHome, onToggleSidebar }: ToolbarProps) {
+export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onToggleVault, onOpenFileBrowser, onOpenAiChat, onGoHome, onToggleSidebar }: ToolbarProps) {
   const { mode, setMode, fontSize } = useThemeStore();
   const colorScheme = useThemeStore((s) => s.colorScheme);
   const setColorScheme = useThemeStore((s) => s.setColorScheme);
@@ -167,11 +169,20 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
             </span>
             <button
               className="toolbar-btn toolbar-secondary"
-              onClick={onGoHome}
-              title="Home"
+              onClick={onOpenFileBrowser}
+              title="Browse all workspaces & files"
             >
               <FolderOpen size={18} />
             </button>
+            {onOpenAiChat && (
+              <button
+                className="toolbar-btn toolbar-ai-btn"
+                onClick={onOpenAiChat}
+                title="Chat with this workspace (⌘J)"
+              >
+                <Sparkles size={18} />
+              </button>
+            )}
             <button
               className="toolbar-btn toolbar-secondary"
               onClick={handleClearAll}
@@ -209,8 +220,11 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
                     <FileCode2 size={16} /> Compare Git Diff
                   </button>
                   <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid var(--border-muted)' }} />
+                  <button className="toolbar-overflow-item" onClick={() => { onOpenFileBrowser?.(); setShowOverflow(false); }}>
+                    <FolderOpen size={16} /> Browse all files
+                  </button>
                   <button className="toolbar-overflow-item" onClick={() => { onGoHome?.(); setShowOverflow(false); }}>
-                    <FolderOpen size={16} /> Go Home
+                    <Plus size={16} style={{ transform: 'rotate(45deg)' }} /> Go to landing
                   </button>
                   <button className="toolbar-overflow-item" onClick={() => { handleClearAll(); setShowOverflow(false); }} style={{ color: '#f87171' }}>
                     <Trash2 size={16} /> Clear All Workspaces

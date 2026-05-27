@@ -3,10 +3,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Save, X, Edit3, Bold, Italic, Strikethrough, Code, Link2,
-  Heading1, Heading2, Heading3, List, ListOrdered, Quote, Minus,
+  Heading1, Heading2, Heading3, List, ListOrdered, Quote, Minus, Clock,
 } from 'lucide-react';
-import { EditorState, type Extension } from '@codemirror/state';
-import { EditorView, keymap, lineNumbers, highlightActiveLine } from '@codemirror/view';
+import { createSnapshot } from '@/lib/snapshots';
+import { HistoryPanel } from './history-panel';
+import { EditorState, type Extension, RangeSetBuilder } from '@codemirror/state';
+import {
+  EditorView, keymap, lineNumbers, highlightActiveLine,
+  Decoration, type DecorationSet, ViewPlugin, type ViewUpdate,
+} from '@codemirror/view';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
@@ -14,13 +19,19 @@ import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
 import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
 import { yCollab } from 'y-codemirror.next';
+import { autocompletion, CompletionContext, closeBrackets } from '@codemirror/autocomplete';
 import type * as Y from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 import { MarkdownRenderer } from './markdown-renderer';
+import { markviewCompletions, invalidateCompletionCache } from './editor-completions';
 
 interface MarkdownEditorProps {
   content: string;
   filename: string;
+  /** File id — required for version-history snapshots to attach to the
+      right file. If unset, snapshotting is disabled. */
+  fileId?: string;
+  workspaceId?: string;
   onSave: (content: string) => void;
   onClose: () => void;
   /**
@@ -125,33 +136,79 @@ function applyFormat(view: EditorView, kind: FormatKind): void {
 // Zen syntax highlight — markdown markers fade; prose stays warm and present.
 // Hierarchy: heading > strong > body > emphasis > meta. Color is sparse on
 // purpose so the EYE is led by typography (size + weight), not paint.
+//
+// All colors funnel through theme-aware CSS variables defined in zen.css so
+// the same theme works on dark paper AND light cream — no separate light/dark
+// theme objects needed.
 const markviewHighlight = HighlightStyle.define([
-  { tag: t.heading, color: '#f0ebe2', fontWeight: '700' },
-  { tag: t.heading1, color: '#f5f0e6', fontWeight: '800', fontSize: '1.18em' },
-  { tag: t.heading2, color: '#efe9df', fontWeight: '700' },
-  { tag: t.heading3, color: '#e6e0d4', fontWeight: '600' },
-  { tag: t.strong, color: '#f5f0e6', fontWeight: '700' },
-  { tag: t.emphasis, color: '#e8e2d4', fontStyle: 'italic' },
-  { tag: t.strikethrough, color: 'rgba(232,226,212,0.42)', textDecoration: 'line-through' },
-  { tag: t.link, color: '#8b6dff' },
-  { tag: t.url, color: '#8b6dff' },
-  { tag: t.monospace, color: '#d6b370' },
-  { tag: t.list, color: 'rgba(232,226,212,0.55)' },
-  { tag: t.quote, color: 'rgba(232,226,212,0.62)', fontStyle: 'italic' },
-  { tag: t.meta, color: 'rgba(232,226,212,0.30)' },
-  { tag: t.comment, color: 'rgba(232,226,212,0.30)', fontStyle: 'italic' },
+  { tag: t.heading,       class: 'cm-tok-heading' },
+  { tag: t.heading1,      class: 'cm-tok-heading cm-tok-h1' },
+  { tag: t.heading2,      class: 'cm-tok-heading cm-tok-h2' },
+  { tag: t.heading3,      class: 'cm-tok-heading cm-tok-h3' },
+  { tag: t.strong,        class: 'cm-tok-strong' },
+  { tag: t.emphasis,      class: 'cm-tok-emphasis' },
+  { tag: t.strikethrough, class: 'cm-tok-strikethrough' },
+  { tag: t.link,          class: 'cm-tok-link' },
+  { tag: t.url,           class: 'cm-tok-url' },
+  { tag: t.monospace,     class: 'cm-tok-code' },
+  { tag: t.list,          class: 'cm-tok-list' },
+  { tag: t.quote,         class: 'cm-tok-quote' },
+  { tag: t.meta,          class: 'cm-tok-meta' },
+  { tag: t.comment,       class: 'cm-tok-meta' },
 ]);
+
+/**
+ * Focus-paragraph mode — the paragraph holding the caret stays full-ink;
+ * everything else dims to half-opacity. iA Writer / Hemingway feel.
+ * A "paragraph" is a run of non-blank lines (markdown block).
+ */
+const focusParagraphPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet;
+    constructor(view: EditorView) {
+      this.decorations = this.build(view);
+    }
+    update(u: ViewUpdate) {
+      if (u.selectionSet || u.docChanged || u.viewportChanged) {
+        this.decorations = this.build(u.view);
+      }
+    }
+    build(view: EditorView): DecorationSet {
+      const cursor = view.state.selection.main.head;
+      const doc = view.state.doc;
+      const cursorLine = doc.lineAt(cursor).number;
+      let pStart = cursorLine;
+      let pEnd = cursorLine;
+      while (pStart > 1 && doc.line(pStart - 1).text.trim() !== '') pStart--;
+      while (pEnd < doc.lines && doc.line(pEnd + 1).text.trim() !== '') pEnd++;
+      const builder = new RangeSetBuilder<Decoration>();
+      const { from, to } = view.viewport;
+      const firstVisible = doc.lineAt(from).number;
+      const lastVisible = doc.lineAt(to).number;
+      for (let i = firstVisible; i <= lastVisible; i++) {
+        if (i < pStart || i > pEnd) {
+          const line = doc.line(i);
+          builder.add(line.from, line.from, Decoration.line({ class: 'cm-zen-dim' }));
+        }
+      }
+      return builder.finish();
+    }
+  },
+  { decorations: (v) => v.decorations },
+);
 
 // Zen editor surface — warm paper feel. Generous left/right padding centers
 // the prose; the editor surface itself is the "paper". No active-line bg,
-// no harsh selection, soft violet caret.
+// no harsh selection, soft violet caret with a slow breath + glow.
 const markviewTheme = EditorView.theme(
   {
     '&': {
       height: '100%',
       fontSize: '17px',
       backgroundColor: 'transparent',
-      color: '#e8e2d4',
+      // Base text color comes from the zen palette — adapts to light/dark
+      // automatically since the var is set on the html element.
+      color: 'var(--zen-fg)',
     },
     '.cm-scroller': {
       fontFamily:
@@ -160,34 +217,57 @@ const markviewTheme = EditorView.theme(
     },
     '.cm-content': {
       // Mirror the renderer's content width so the editor feels like the
-      // same page, just with markup made visible.
+      // same page, just with markup made visible. Modest top padding (~6vh)
+      // so the title opens near the top; generous bottom padding lets any
+      // line reach viewport-center as the user types deeper (typewriter
+      // affordance).
       maxWidth: '720px',
       margin: '0 auto',
-      padding: '8vh 4vw 16vh',
-      caretColor: '#8b6dff',
+      padding: '6vh 4vw 50vh',
+      caretColor: 'var(--zen-accent, #9b7dff)',
     },
     '.cm-gutters': { display: 'none' },
     '.cm-activeLine': { backgroundColor: 'transparent' },
     '.cm-activeLineGutter': { backgroundColor: 'transparent' },
     '.cm-selectionBackground, ::selection': {
-      backgroundColor: 'rgba(139, 109, 255, 0.20)',
+      backgroundColor: 'var(--zen-accent-soft, rgba(155, 125, 255, 0.22))',
     },
-    '.cm-cursor': {
-      borderLeftColor: '#8b6dff',
+    '.cm-cursor, .cm-cursor-primary': {
+      borderLeftColor: 'var(--zen-accent, #9b7dff)',
       borderLeftWidth: '2px',
+      boxShadow: '0 0 10px var(--zen-accent-glow, rgba(155, 125, 255, 0.45))',
+      animation: 'zen-caret-breath 1100ms ease-in-out infinite',
     },
     '.cm-line': {
       // Slight horizontal padding so wrap doesn't kiss the margin.
       paddingLeft: '0',
       paddingRight: '0',
+      transition: 'opacity 320ms cubic-bezier(0.32, 0.72, 0.32, 1)',
     },
+    // Focus-paragraph dim: every line that isn't part of the cursor's
+    // paragraph fades. The plugin tags the right lines.
+    '.cm-line.cm-zen-dim': { opacity: 'var(--zen-dim-opacity, 0.55)' },
+    // Syntax highlight tokens — driven by CSS vars so they adapt to theme.
+    '.cm-tok-heading':       { color: 'var(--zen-fg)', fontWeight: '700' },
+    '.cm-tok-h1':            { fontSize: '1.18em', fontWeight: '800' },
+    '.cm-tok-h2':            { fontWeight: '700' },
+    '.cm-tok-h3':            { fontWeight: '600' },
+    '.cm-tok-strong':        { color: 'var(--zen-fg)', fontWeight: '700' },
+    '.cm-tok-emphasis':      { color: 'var(--zen-fg)', fontStyle: 'italic' },
+    '.cm-tok-strikethrough': { color: 'var(--zen-fg-faint)', textDecoration: 'line-through' },
+    '.cm-tok-link':          { color: 'var(--zen-accent)' },
+    '.cm-tok-url':           { color: 'var(--zen-accent)' },
+    '.cm-tok-code':          { color: 'var(--zen-code)' },
+    '.cm-tok-list':          { color: 'var(--zen-fg-soft)' },
+    '.cm-tok-quote':         { color: 'var(--zen-fg-soft)', fontStyle: 'italic' },
+    '.cm-tok-meta':          { color: 'var(--zen-fg-faint)' },
   },
-  { dark: true },
 );
 
 function buildExtensions(
   onDocChange: (doc: string) => void,
   collab: { yText?: Y.Text; awareness?: Awareness },
+  workspaceId?: string,
 ): Extension[] {
   // y-codemirror.next ships its own UndoManager; bypass CodeMirror's
   // history extension when collab is active so undo doesn't double-fire.
@@ -195,13 +275,30 @@ function buildExtensions(
     ? [yCollab(collab.yText, collab.awareness ?? null)]
     : [history()];
 
+  // Autocomplete sources — [[file]] picker + #tag picker. Only attach
+  // if we have a workspace context, otherwise skip.
+  const completionExt = workspaceId
+    ? [
+        autocompletion({
+          override: [
+            (ctx: CompletionContext) => markviewCompletions(workspaceId)(ctx),
+          ],
+          activateOnTyping: true,
+          maxRenderedOptions: 12,
+        }),
+        closeBrackets(),
+      ]
+    : [];
+
   return [
     ...collabExt,
+    ...completionExt,
     lineNumbers(),
     highlightActiveLine(),
     highlightSelectionMatches(),
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     syntaxHighlighting(markviewHighlight),
+    focusParagraphPlugin,
     markviewTheme,
     keymap.of([
       ...defaultKeymap,
@@ -219,6 +316,8 @@ function buildExtensions(
 export function MarkdownEditor({
   content,
   filename,
+  fileId,
+  workspaceId,
   onSave,
   onClose,
   yText,
@@ -229,6 +328,7 @@ export function MarkdownEditor({
   const initialText = yText ? yText.toString() : content;
   const [text, setText] = useState(initialText);
   const [mode, setMode] = useState<'edit' | 'preview' | 'split'>('split');
+  const [showHistory, setShowHistory] = useState(false);
   // In collab mode "modified vs saved" is meaningless (the host's local
   // disk-save flow doesn't apply); we hide the unsaved dot.
   const hasChanges = yText ? false : text !== content;
@@ -237,8 +337,8 @@ export function MarkdownEditor({
   const viewRef = useRef<EditorView | null>(null);
 
   const extensions = useMemo(
-    () => buildExtensions((doc) => setText(doc), { yText, awareness }),
-    [yText, awareness],
+    () => buildExtensions((doc) => setText(doc), { yText, awareness }, workspaceId),
+    [yText, awareness, workspaceId],
   );
 
   // Boot the CodeMirror view exactly once per overlay open. In collab mode
@@ -260,12 +360,21 @@ export function MarkdownEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extensions]);
 
-  // ⌘S to save, Esc to close.
+  // ⌘S to save, Esc to close. Save also drops a `save` snapshot so the
+  // user has a clean restore point at every commit.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
         e.preventDefault();
-        if (hasChanges) onSave(text);
+        if (hasChanges) {
+          onSave(text);
+          if (fileId && workspaceId) {
+            void createSnapshot(fileId, workspaceId, text, 'save');
+            // New tags / new wikilinks might exist after save — drop the
+            // completion cache so suggestions reflect what's just written.
+            invalidateCompletionCache();
+          }
+        }
       } else if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
@@ -273,7 +382,44 @@ export function MarkdownEditor({
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [text, hasChanges, onSave, onClose]);
+  }, [text, hasChanges, onSave, onClose, fileId, workspaceId]);
+
+  // Auto-snapshot every 5 minutes if the doc has changed since the last
+  // snapshot. Dedup happens in createSnapshot so a quiet doc doesn't pile
+  // up duplicate rows.
+  useEffect(() => {
+    if (!fileId || !workspaceId) return;
+    const handle = window.setInterval(() => {
+      if (text && text.trim().length > 0) {
+        void createSnapshot(fileId, workspaceId, text, 'auto');
+      }
+    }, 5 * 60 * 1000);
+    return () => window.clearInterval(handle);
+  }, [fileId, workspaceId, text]);
+
+  /**
+   * Restore a snapshot back into the editor. In collab mode we push the
+   * change through the Y.Text inside a single Yjs transaction so every
+   * peer sees the restore as one atomic edit. Solo mode just dispatches
+   * a CodeMirror change.
+   */
+  const restoreSnapshot = useCallback((newContent: string) => {
+    if (yText) {
+      yText.doc?.transact(() => {
+        yText.delete(0, yText.length);
+        yText.insert(0, newContent);
+      });
+    } else if (viewRef.current) {
+      const view = viewRef.current;
+      view.dispatch({
+        changes: { from: 0, to: view.state.doc.length, insert: newContent },
+      });
+    }
+    // Drop a snapshot of the pre-restore state so undo-by-history works.
+    if (fileId && workspaceId) {
+      void createSnapshot(fileId, workspaceId, newContent, 'manual', 'restored');
+    }
+  }, [yText, fileId, workspaceId]);
 
   const format = useCallback((kind: FormatKind) => {
     if (viewRef.current) applyFormat(viewRef.current, kind);
@@ -336,9 +482,24 @@ export function MarkdownEditor({
             >Preview</button>
           </div>
           <div className="editor-toolbar-right">
+            {fileId && (
+              <button
+                className="editor-save-btn editor-history-btn"
+                onClick={() => setShowHistory(true)}
+                title="Version history"
+              >
+                <Clock size={14} />
+                History
+              </button>
+            )}
             <button
               className="editor-save-btn"
-              onClick={() => onSave(text)}
+              onClick={() => {
+                onSave(text);
+                if (fileId && workspaceId) {
+                  void createSnapshot(fileId, workspaceId, text, 'save');
+                }
+              }}
               disabled={!hasChanges}
             >
               <Save size={14} />
@@ -384,6 +545,16 @@ export function MarkdownEditor({
           )}
         </div>
       </div>
+
+      {showHistory && fileId && workspaceId && (
+        <HistoryPanel
+          fileId={fileId}
+          workspaceId={workspaceId}
+          currentContent={text}
+          onRestore={restoreSnapshot}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
     </div>
   );
 }

@@ -95,6 +95,9 @@ const ALERT_TYPES: Record<string, { icon: string; label: string; className: stri
   IMPORTANT: { icon: '❗', label: 'Important', className: 'alert-important' },
   WARNING: { icon: '⚠️', label: 'Warning', className: 'alert-warning' },
   CAUTION: { icon: '🔴', label: 'Caution', className: 'alert-caution' },
+  // Pull-quote variant — no title row, magazine-style centered italic. The
+  // remark visitor below skips the title prepend when className === alert-quote.
+  QUOTE: { icon: '', label: 'Quote', className: 'alert-quote' },
 };
 
 const remarkAlerts: Plugin<[], Root> = () => {
@@ -107,10 +110,11 @@ const remarkAlerts: Plugin<[], Root> = () => {
       if (firstInline?.type !== 'text') return;
 
       const text = (firstInline as Text).value;
-      const match = text.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*\n?/);
+      // Accept both [!NOTE] and [!note] — author convenience.
+      const match = text.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION|QUOTE)\]\s*\n?/i);
       if (!match) return;
 
-      const alertType = match[1];
+      const alertType = match[1].toUpperCase();
       const config = ALERT_TYPES[alertType];
       if (!config) return;
 
@@ -125,11 +129,13 @@ const remarkAlerts: Plugin<[], Root> = () => {
         'data-alert-type': alertType.toLowerCase(),
       };
 
-      // Prepend title
-      (firstChild as Paragraph).children.unshift({
-        type: 'html',
-        value: `<div class="gh-alert-title"><span class="gh-alert-icon">${config.icon}</span> ${config.label}</div>`,
-      } as never);
+      // Pull-quote variant has no title bar — the body IS the statement.
+      if (alertType !== 'QUOTE') {
+        (firstChild as Paragraph).children.unshift({
+          type: 'html',
+          value: `<div class="gh-alert-title"><span class="gh-alert-icon">${config.icon}</span> ${config.label}</div>`,
+        } as never);
+      }
     });
   };
 };
@@ -297,45 +303,92 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'default'): Pro
 
 // ---- KaTeX Rendering ----
 
-async function renderKatexInHtml(html: string): Promise<string> {
-  if (!html.includes('$')) return html;
+/**
+ * Pull math out of markdown source BEFORE remark sees it. Two reasons:
+ *   1. Markdown collapses `\\` (LaTeX row-break) into a single backslash.
+ *   2. `&` (LaTeX column separator) gets HTML-escaped to `&amp;` after parse.
+ * Either of those breaks KaTeX's ability to parse matrices, aligned, etc.
+ * We swap each math span for a placeholder, run the pipeline, then KaTeX-
+ * render the original source and put the HTML back where the placeholder is.
+ */
+interface MathExtract {
+  content: string;
+  blocks: Array<{ key: string; math: string; display: boolean }>;
+}
+
+function extractMath(content: string): MathExtract {
+  const blocks: MathExtract['blocks'] = [];
+  let counter = 0;
+
+  // Split on fenced and inline code so we don't pull math out of code samples
+  // (e.g. shell snippets that mention `$VAR`). Odd indices are code.
+  const segments = content.split(/(```[\s\S]*?```|`[^`\n]+`)/g);
+
+  const transformed = segments.map((seg, i) => {
+    if (i % 2 === 1) return seg; // leave code alone
+
+    // Block math first — $$...$$ (multi-line allowed).
+    seg = seg.replace(/\$\$([\s\S]+?)\$\$/g, (_m, math) => {
+      const key = `MATHBLOCK${counter++}KEY`;
+      blocks.push({ key, math, display: true });
+      return key;
+    });
+
+    // Inline math — $...$ on one line, no `$` or newline in body.
+    seg = seg.replace(/\$([^\s$][^$\n]*?)\$/g, (m, math) => {
+      if (/^\d/.test(math)) return m; // looks like currency
+      const key = `MATHINLINE${counter++}KEY`;
+      blocks.push({ key, math, display: false });
+      return key;
+    });
+
+    return seg;
+  });
+
+  return { content: transformed.join(''), blocks };
+}
+
+async function restoreMathInHtml(
+  html: string,
+  blocks: MathExtract['blocks']
+): Promise<string> {
+  if (blocks.length === 0) return html;
 
   try {
     // @ts-ignore — katex is an optional peer dependency
     const katexModule = (await import('katex')).default;
 
-    // Process block math: $$...$$
-    html = html.replace(
-      /<code>\$\$([\s\S]*?)\$\$<\/code>/g,
-      (_match, math) => {
-        try {
-          const rendered = katexModule.renderToString(math.trim(), {
-            displayMode: true,
-            throwOnError: false,
-          });
-          return `<div class="katex-block">${rendered}</div>`;
-        } catch {
-          return _match;
+    for (const { key, math, display } of blocks) {
+      let replacement: string;
+      try {
+        const rendered = katexModule.renderToString(math.trim(), {
+          displayMode: display,
+          throwOnError: false,
+          output: 'html',
+        });
+        replacement = display
+          ? `<div class="katex-block">${rendered}</div>`
+          : `<span class="katex-inline">${rendered}</span>`;
+      } catch {
+        // Couldn't render — fall back to a code-styled sample so the user
+        // sees something instead of a leaked placeholder.
+        replacement = display
+          ? `<pre><code>${math.trim()}</code></pre>`
+          : `<code>${math}</code>`;
+      }
+      // Block math typically lands inside its own <p> (since the placeholder
+      // word formed a paragraph). Replace <p>KEY</p> with the bare block so
+      // a <div> doesn't end up nested inside a <p> (invalid HTML).
+      if (display) {
+        const wrapped = `<p>${key}</p>`;
+        if (html.includes(wrapped)) {
+          html = html.split(wrapped).join(replacement);
+          continue;
         }
       }
-    );
-
-    // Process inline math: $...$
-    html = html.replace(
-      /\$([^$\n]+?)\$/g,
-      (_match, math) => {
-        // Skip if inside a code block
-        try {
-          const rendered = katexModule.renderToString(math, {
-            displayMode: false,
-            throwOnError: false,
-          });
-          return `<span class="katex-inline">${rendered}</span>`;
-        } catch {
-          return _match;
-        }
-      }
-    );
+      // Plain string replace — keys are unique and contain no regex metas.
+      html = html.split(key).join(replacement);
+    }
   } catch (e) {
     console.warn('KaTeX failed to load:', e);
   }
@@ -407,6 +460,16 @@ export async function renderMarkdown(
     codeBlockToolbar = true,
   } = options;
 
+  // Pull math out of the markdown source before remark touches it. We swap
+  // each $...$ / $$...$$ for a placeholder; KaTeX gets the original LaTeX
+  // unmangled by remark's `\\` collapse + GFM `&` escaping.
+  let mathBlocks: MathExtract['blocks'] = [];
+  if (katexOpt) {
+    const extracted = extractMath(content);
+    content = extracted.content;
+    mathBlocks = extracted.blocks;
+  }
+
   // Build the unified pipeline
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let processor: any = unified()
@@ -460,9 +523,9 @@ export async function renderMarkdown(
     html = await renderMermaidInHtml(html, mermaidTheme);
   }
 
-  // KaTeX math rendering
+  // Restore math placeholders with KaTeX-rendered HTML.
   if (katexOpt) {
-    html = await renderKatexInHtml(html);
+    html = await restoreMathInHtml(html, mathBlocks);
   }
 
   return html;

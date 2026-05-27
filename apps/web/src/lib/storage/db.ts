@@ -9,6 +9,9 @@ export interface DBWorkspace {
   theme: 'dark' | 'light' | 'system';
   fileCount: number;
   totalSize: number;
+  /** Optional per-workspace atmosphere — when set, switching to this
+      workspace also switches the ambient layer to this painting. */
+  atmosphere?: 'none' | 'fuji' | 'wave' | 'snow' | 'fields';
 }
 
 export interface DBFile {
@@ -21,9 +24,55 @@ export interface DBFile {
   size: number;
 }
 
+/**
+ * Point-in-time snapshot of a file's content. Stored alongside files so
+ * users can scrub back through "Save" + auto-snapshot history and restore
+ * any version, including in collab sessions (the restore broadcasts to
+ * peers through Yjs).
+ */
+export interface DBSnapshot {
+  id: string;
+  fileId: string;
+  workspaceId: string;
+  /** Frozen content at this moment. We store full text — small per row,
+      easy to restore, no diff-walk required. Capped at 50 per file. */
+  content: string;
+  /** When the snapshot was taken (epoch ms — sortable index). */
+  createdAt: number;
+  /** What triggered it. UI uses this to label rows. */
+  source: 'auto' | 'save' | 'manual' | 'collab-join';
+  /** Optional human label (manual snapshots). */
+  label?: string;
+  /** Helpful for display — word count at snapshot time. */
+  wordCount?: number;
+}
+
+/**
+ * Per-paragraph embedding vector for semantic search + related-notes +
+ * link suggestions. One row per (fileId, paragraphIndex). The embedding
+ * is a 384-dim float32 array (MiniLM-L6-v2 output dimensionality) stored
+ * as a single ArrayBuffer for fast cosine-similarity scoring later.
+ *
+ * Re-computed on every save; old rows for the file are dropped first so
+ * paragraph re-indexing doesn't leave stale vectors.
+ */
+export interface DBEmbedding {
+  id: string;                  // `${fileId}:${paragraphIndex}`
+  fileId: string;
+  workspaceId: string;
+  paragraphIndex: number;
+  /** First ~140 chars of the paragraph — keeps the search result preview
+      cheap (no need to re-read the full file from IDB at query time). */
+  preview: string;
+  /** Raw float32 vector — Dexie serializes ArrayBuffer faithfully. */
+  vector: ArrayBuffer;
+}
+
 class MarkViewDB extends Dexie {
   workspaces!: EntityTable<DBWorkspace, 'id'>;
   files!: EntityTable<DBFile, 'id'>;
+  snapshots!: EntityTable<DBSnapshot, 'id'>;
+  embeddings!: EntityTable<DBEmbedding, 'id'>;
 
   constructor() {
     super('markview');
@@ -48,6 +97,21 @@ class MarkViewDB extends Dexie {
           totalSize: files.reduce((sum: number, f: DBFile) => sum + (f.size || 0), 0),
         });
       }
+    });
+
+    // v3 — snapshots table for version history
+    this.version(3).stores({
+      workspaces: 'id, updatedAt',
+      files: 'id, workspaceId, [workspaceId+order]',
+      snapshots: 'id, fileId, [fileId+createdAt], createdAt',
+    });
+
+    // v4 — embeddings table for semantic search + related-notes
+    this.version(4).stores({
+      workspaces: 'id, updatedAt',
+      files: 'id, workspaceId, [workspaceId+order]',
+      snapshots: 'id, fileId, [fileId+createdAt], createdAt',
+      embeddings: 'id, fileId, workspaceId, [workspaceId+fileId]',
     });
   }
 }

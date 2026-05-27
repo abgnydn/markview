@@ -50,6 +50,19 @@ interface WorkspaceState {
   removeFile: (fileId: string) => Promise<void>;
   reorderFiles: (fromIndex: number, toIndex: number) => void;
   reorderWorkspaces: (fromIndex: number, toIndex: number) => void;
+  /**
+   * Move a file out of its current workspace into `targetWorkspaceId`.
+   * Drops it at the end of the target's file list. If the moved file was
+   * the active file in the source workspace, falls back to the next file
+   * there. Returns `true` if the move succeeded.
+   */
+  moveFileToWorkspace: (fileId: string, targetWorkspaceId: string) => Promise<boolean>;
+  /**
+   * Promote a single file into its own brand-new workspace. The source
+   * workspace loses the file; the new workspace gets it as its only file
+   * and becomes active.
+   */
+  promoteFileToNewWorkspace: (fileId: string, newTitle?: string) => Promise<void>;
 }
 
 function generateId(): string {
@@ -229,6 +242,18 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       activeFileContent,
       isContentLoading: false,
     });
+
+    // If this workspace has a saved atmosphere, switch the ambient layer
+    // to match. Import lazily to avoid a circular dep at module load.
+    try {
+      const dbWs = await db.workspaces.get(workspaceId);
+      if (dbWs?.atmosphere) {
+        const { useThemeStore } = await import('@/stores/theme-store');
+        useThemeStore.getState().setAtmosphere(dbWs.atmosphere);
+      }
+    } catch {
+      /* ignore — atmosphere persistence is best-effort */
+    }
   },
 
   // ---------- Delete Workspace ----------
@@ -336,6 +361,9 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
 
     const removedFile = files.find((f) => f.id === fileId);
     await db.files.delete(fileId);
+    // Drop embeddings + snapshots so we don't leave orphan rows.
+    await db.embeddings.where('fileId').equals(fileId).delete();
+    await db.snapshots.where('fileId').equals(fileId).delete();
 
     const newFiles = files.filter((f) => f.id !== fileId);
     const removedSize = removedFile?.size || 0;
@@ -387,6 +415,118 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const [moved] = newFiles.splice(fromIndex, 1);
     newFiles.splice(toIndex, 0, moved);
     set({ files: newFiles });
+  },
+
+  // ---------- Move File To Another Workspace ----------
+  moveFileToWorkspace: async (fileId, targetWorkspaceId) => {
+    const { workspaces, activeWorkspaceId, files: currentFiles, activeFileId } = get();
+    const dbFile = await db.files.get(fileId);
+    if (!dbFile) return false;
+    if (dbFile.workspaceId === targetWorkspaceId) return false;
+
+    const sourceWsId = dbFile.workspaceId;
+    const targetWs = workspaces.find((w) => w.id === targetWorkspaceId);
+    if (!targetWs) return false;
+
+    // Drop the file at the end of the target's file list.
+    const targetFiles = await db.files.where('workspaceId').equals(targetWorkspaceId).toArray();
+    const newOrder = targetFiles.length > 0 ? Math.max(...targetFiles.map((f) => f.order)) + 1 : 0;
+
+    await db.files.update(fileId, {
+      workspaceId: targetWorkspaceId,
+      order: newOrder,
+    });
+    const now = new Date();
+    await db.workspaces.update(sourceWsId, {
+      updatedAt: now,
+      fileCount: Math.max(0, (workspaces.find((w) => w.id === sourceWsId)?.fileCount ?? 1) - 1),
+      totalSize: Math.max(0, (workspaces.find((w) => w.id === sourceWsId)?.totalSize ?? dbFile.size) - dbFile.size),
+    });
+    await db.workspaces.update(targetWorkspaceId, {
+      updatedAt: now,
+      fileCount: (targetWs.fileCount || 0) + 1,
+      totalSize: (targetWs.totalSize || 0) + dbFile.size,
+    });
+
+    // Local state update — only the active workspace's `files` list lives
+    // in store; others are loaded on demand by switchWorkspace.
+    if (sourceWsId === activeWorkspaceId) {
+      const remaining = currentFiles.filter((f) => f.id !== fileId);
+      const wasActive = activeFileId === fileId;
+      let nextActiveFile: string | null = activeFileId;
+      let nextContent: string | null = get().activeFileContent;
+      if (wasActive) {
+        const nextFile = remaining[0] ?? null;
+        nextActiveFile = nextFile?.id ?? null;
+        if (nextFile) {
+          nextContent = (await db.files.get(nextFile.id))?.content ?? null;
+        } else {
+          nextContent = null;
+        }
+      }
+      set({
+        files: remaining,
+        activeFileId: nextActiveFile,
+        activeFileContent: nextContent,
+        workspaces: workspaces.map((w) =>
+          w.id === sourceWsId
+            ? { ...w, fileCount: Math.max(0, w.fileCount - 1), totalSize: Math.max(0, w.totalSize - dbFile.size), updatedAt: now }
+            : w.id === targetWorkspaceId
+              ? { ...w, fileCount: (w.fileCount || 0) + 1, totalSize: (w.totalSize || 0) + dbFile.size, updatedAt: now }
+              : w
+        ),
+      });
+    } else {
+      set({
+        workspaces: workspaces.map((w) =>
+          w.id === sourceWsId
+            ? { ...w, fileCount: Math.max(0, w.fileCount - 1), totalSize: Math.max(0, w.totalSize - dbFile.size), updatedAt: now }
+            : w.id === targetWorkspaceId
+              ? { ...w, fileCount: (w.fileCount || 0) + 1, totalSize: (w.totalSize || 0) + dbFile.size, updatedAt: now }
+              : w
+        ),
+      });
+    }
+
+    return true;
+  },
+
+  // ---------- Promote File To New Workspace ----------
+  promoteFileToNewWorkspace: async (fileId, newTitle) => {
+    const dbFile = await db.files.get(fileId);
+    if (!dbFile) return;
+
+    const title = newTitle || deriveDisplayName(dbFile.filename) || 'new workspace';
+    // Re-use createWorkspace + then removeFile from the original to avoid
+    // duplicating ID-generation + storage logic.
+    await get().createWorkspace(title, [{ filename: dbFile.filename, content: dbFile.content }]);
+    // The original file remains in its workspace; remove it now that the
+    // copy lives in the new one. We use the same fileId path: temporarily
+    // switch back to the original workspace to use removeFile cleanly.
+    const sourceWsId = dbFile.workspaceId;
+    const newActiveWsId = get().activeWorkspaceId;
+    if (sourceWsId !== newActiveWsId) {
+      // Delete directly from DB without switching context — removeFile's
+      // local-state updates only apply to the active workspace and we're
+      // already on the new one. The source workspace's file count gets
+      // recomputed lazily on next switchWorkspace.
+      await db.files.delete(fileId);
+      const sourceWs = get().workspaces.find((w) => w.id === sourceWsId);
+      if (sourceWs) {
+        await db.workspaces.update(sourceWsId, {
+          updatedAt: new Date(),
+          fileCount: Math.max(0, sourceWs.fileCount - 1),
+          totalSize: Math.max(0, sourceWs.totalSize - dbFile.size),
+        });
+        set({
+          workspaces: get().workspaces.map((w) =>
+            w.id === sourceWsId
+              ? { ...w, fileCount: Math.max(0, w.fileCount - 1), totalSize: Math.max(0, w.totalSize - dbFile.size), updatedAt: new Date() }
+              : w
+          ),
+        });
+      }
+    }
   },
 
   // ---------- Reorder Workspaces ----------

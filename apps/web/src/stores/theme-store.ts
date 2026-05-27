@@ -4,6 +4,14 @@ import { applyThemePreset } from '@/lib/themes/presets';
 
 type ThemeMode = 'dark' | 'light' | 'system';
 type ResolvedTheme = 'dark' | 'light';
+/**
+ * Atmosphere — an optional ambient layer painted behind the page that
+ * sets a mood without changing palette. Each atmosphere is a real
+ * public-domain artwork plus optional CSS animations (petals, rain, etc).
+ * Add more by appending to the union + ATMOSPHERES config in
+ * `components/atmosphere/atmospheres.ts`.
+ */
+export type Atmosphere = 'none' | 'fuji' | 'wave' | 'snow' | 'fields';
 
 interface ThemeState {
   mode: ThemeMode;
@@ -11,12 +19,14 @@ interface ThemeState {
   fontSize: number; // 12-24
   focusMode: boolean;
   colorScheme: string; // preset id
+  atmosphere: Atmosphere;
   setMode: (mode: ThemeMode) => void;
   setFontSize: (size: number) => void;
   increaseFontSize: () => void;
   decreaseFontSize: () => void;
   toggleFocusMode: () => void;
   setColorScheme: (schemeId: string) => void;
+  setAtmosphere: (atmosphere: Atmosphere) => void;
   initialize: () => void;
 }
 
@@ -42,17 +52,70 @@ function applyFontSize(size: number) {
   document.documentElement.style.setProperty('--content-font-size', `${size}px`);
 }
 
+function applyAtmosphere(atmosphere: Atmosphere) {
+  if (typeof document === 'undefined') return;
+  document.documentElement.setAttribute('data-atmosphere', atmosphere);
+}
+
+/**
+ * Wrap an appearance mutation in `document.startViewTransition()` so the
+ * browser snapshots the page, runs the mutation, then cross-fades from
+ * the old snapshot to the new in one coordinated repaint. Without this
+ * the browser repaints CSS-variable changes top-to-bottom, which the
+ * user sees as a cascade (bg image first → particles → markdown last).
+ *
+ * Falls back to running the mutation synchronously on browsers that
+ * don't expose the API (Firefox < 130 as of the cutoff).
+ */
+function withAppearanceTransition(mutate: () => void): void {
+  if (typeof document === 'undefined') {
+    mutate();
+    return;
+  }
+  const d = document as Document & {
+    startViewTransition?: (cb: () => void) => unknown;
+  };
+  if (typeof d.startViewTransition === 'function') {
+    d.startViewTransition(mutate);
+  } else {
+    mutate();
+  }
+}
+
 export const useThemeStore = create<ThemeState>((set, get) => ({
   mode: 'system',
   resolved: 'dark',
   fontSize: 16,
   focusMode: false,
   colorScheme: 'github',
+  atmosphere: 'none',
+
+  setAtmosphere: (atmosphere) => {
+    withAppearanceTransition(() => applyAtmosphere(atmosphere));
+    try { localStorage.setItem('markview-atmosphere', atmosphere); } catch { /* ignore */ }
+    set({ atmosphere });
+    // Persist to the active workspace so each workspace remembers its
+    // own atmosphere across switches.
+    void (async () => {
+      try {
+        const { useWorkspaceStore } = await import('@/stores/workspace-store');
+        const { db } = await import('@/lib/storage/db');
+        const wsId = useWorkspaceStore.getState().activeWorkspaceId;
+        if (wsId) {
+          await db.workspaces.update(wsId, { atmosphere });
+        }
+      } catch {
+        /* best-effort */
+      }
+    })();
+  },
 
   setMode: (mode) => {
     const resolved = resolveTheme(mode);
-    applyTheme(resolved);
-    applyThemePreset(get().colorScheme, resolved);
+    withAppearanceTransition(() => {
+      applyTheme(resolved);
+      applyThemePreset(get().colorScheme, resolved);
+    });
     localStorage.setItem('markview-theme', mode);
     set({ mode, resolved });
   },
@@ -80,7 +143,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
 
   setColorScheme: (schemeId) => {
     const { resolved } = get();
-    applyThemePreset(schemeId, resolved);
+    withAppearanceTransition(() => applyThemePreset(schemeId, resolved));
     localStorage.setItem('markview-color-scheme', schemeId);
     set({ colorScheme: schemeId });
   },
@@ -101,7 +164,10 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     const fontSize = savedSize ? parseInt(savedSize, 10) : 16;
     applyFontSize(fontSize);
 
-    set({ mode, resolved, fontSize, colorScheme: savedScheme });
+    const savedAtmosphere = (localStorage.getItem('markview-atmosphere') as Atmosphere | null) || 'none';
+    applyAtmosphere(savedAtmosphere);
+
+    set({ mode, resolved, fontSize, colorScheme: savedScheme, atmosphere: savedAtmosphere });
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     mq.addEventListener('change', () => {
