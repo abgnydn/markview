@@ -3,7 +3,13 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import { initTimeOfDayTint } from "@/lib/atmosphere/time-of-day";
+
+initTimeOfDayTint();
+
 import "./app/globals.css";
+// KaTeX base styles — required for math glyph positioning to work.
+import "katex/dist/katex.min.css";
 // Zen layer — loaded AFTER globals so the override wins. Makes the
 // editor feel like brain space: vanishing chrome, serif body, paper bg.
 import "./styles/zen.css";

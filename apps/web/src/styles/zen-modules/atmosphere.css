@@ -1,0 +1,275 @@
+/* ────────────────────────────────────────────────────────────────────────
+ * Atmosphere — ambient background layers behind the page. Lives below
+ * the content (z:0) and the paper-grain overlay (z:1). pointer-events
+ * off; never blocks interaction. Each atmosphere is opt-in via the
+ * theme store and rendered conditionally in viewer-page.
+ * ──────────────────────────────────────────────────────────────────────── */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* Cross-fade the whole layer as a unit (image + particles + credit) on
+     atmosphere swap. Component dims while the next painting is decoded
+     in the background, swaps src, then fades back — masks the discrete
+     change with a single coordinated transition instead of a top-to-
+     bottom paint cascade. */
+  transition: opacity 380ms ease;
+  opacity: 1;
+}
+.atmosphere.atmosphere-swapping {
+  opacity: 0.4;
+}
+
+/* Generic atmosphere rules — drive every painted background through CSS
+   custom properties supplied per-atmosphere by the React component. */
+.atmosphere-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--atm-focal, center 55%);
+  /* Mask fades the top quarter so the toolbar floats over quiet paper. */
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.35) 18%, rgba(0,0,0,0.88) 42%, #000 70%);
+          mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.35) 18%, rgba(0,0,0,0.88) 42%, #000 70%);
+  opacity: var(--atm-opacity-light, 0.6);
+  /* Combine the per-atmosphere filter with the time-of-day tint, so dawn/
+     dusk/night shift the painting's color temperature in real-time. */
+  filter: var(--atm-filter-light, saturate(0.92) contrast(0.96)) var(--atm-time-tint, none);
+  transition: filter 1.5s ease;
+}
+[data-theme='dark'] .atmosphere-image,
+.dark .atmosphere-image {
+  opacity: var(--atm-opacity-dark, 0.4);
+  filter: var(--atm-filter-dark, saturate(0.8) contrast(0.92) brightness(0.85)) var(--atm-time-tint, none);
+}
+
+/* Cursor-reactive Canvas overlay — fills the viewport above the CSS
+   particle field, pointer-events off so it never blocks clicks. */
+.atmosphere-cursor-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+/* Shared particle container — every kind sits in here at z:1 above the
+   painting but below the credit + content. */
+.atmosphere-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.atmosphere-particle {
+  position: absolute;
+  opacity: 0;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+/* ── Petals (Fuji) — pink ellipses falling down with horizontal drift. */
+.atmosphere-particle-petals {
+  top: -24px;
+  width: 14px;
+  height: 9px;
+  border-radius: 60% 40% 60% 40% / 80% 80% 20% 20%;
+  animation-name: fuji-petal-fall;
+  animation-timing-function: linear;
+  filter: blur(0.3px);
+  transform: scale(var(--scale, 1)) rotate(var(--rot, 0deg));
+}
+
+/* ── Snow (Hiroshige) — white circles falling slow, gentle sideways sway. */
+.atmosphere-particle-snow {
+  top: -12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.45);
+  animation-name: snow-fall;
+  animation-timing-function: ease-in-out;
+  filter: blur(0.4px);
+}
+@keyframes snow-fall {
+  0%   { transform: translate3d(0, -12px, 0);                       opacity: 0; }
+  8%   {                                                            opacity: var(--opacity-peak, 0.85); }
+  50%  { transform: translate3d(var(--sway, 0px), 55vh, 0);         opacity: var(--opacity-peak, 0.85); }
+  100% { transform: translate3d(calc(var(--sway, 0px) * -0.7), 110vh, 0); opacity: 0; }
+}
+
+/* ── Spray (Wave) — tiny droplets erupting upward from the wave crest. */
+.atmosphere-particle-spray {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(240, 250, 255, 0.95);
+  box-shadow: 0 0 6px rgba(200, 220, 255, 0.7);
+  animation-name: wave-spray;
+  animation-timing-function: cubic-bezier(0.18, 0.7, 0.4, 1);
+  transform: scale(var(--scale, 1));
+}
+@keyframes wave-spray {
+  0%   { transform: translate3d(0, 0, 0) scale(var(--scale, 1));                                            opacity: 0; }
+  8%   {                                                                                                    opacity: 0.95; }
+  60%  { transform: translate3d(calc(var(--launch-x) * 0.7), calc(var(--launch-y) * 0.7), 0) scale(calc(var(--scale, 1) * 0.85)); opacity: 0.7; }
+  100% { transform: translate3d(var(--launch-x), var(--launch-y), 0) scale(calc(var(--scale, 1) * 0.4));   opacity: 0; }
+}
+
+/* ── Motes (Fields) — golden dust drifting up + slow sideways float. */
+.atmosphere-particle-motes {
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 230, 150, 0.95), rgba(220, 180, 80, 0.4) 60%, rgba(220, 180, 80, 0) 100%);
+  box-shadow: 0 0 12px rgba(255, 215, 130, 0.5);
+  animation-name: motes-rise;
+  animation-timing-function: ease-in-out;
+  filter: blur(0.2px);
+}
+@keyframes motes-rise {
+  0%   { transform: translate3d(0, 0, 0);                                                opacity: 0; }
+  10%  {                                                                                 opacity: var(--opacity-peak, 0.8); }
+  50%  { transform: translate3d(var(--mote-x, 0px), -55vh, 0);                            opacity: var(--opacity-peak, 0.8); }
+  100% { transform: translate3d(calc(var(--mote-x, 0px) * -0.4), -110vh, 0);              opacity: 0; }
+}
+.atmosphere-credit {
+  position: absolute;
+  left: 20px;
+  bottom: 14px;
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--zen-fg-faint);
+  opacity: 0.7;
+  pointer-events: auto;
+  max-width: 72vw;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  line-height: 1.5;
+}
+.atmosphere-credit-artist {
+  text-transform: uppercase;
+  color: var(--zen-fg-soft);
+}
+.atmosphere-credit-detail {
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+/* Light theme: drop the text-shadow (the print is bright, we want crisp ink). */
+:root:not(.dark):not([data-theme='dark']) .atmosphere-credit {
+  text-shadow: 0 1px 2px rgba(255, 250, 245, 0.6);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+ * Readability scrim — when any atmosphere is on, give the markdown
+ * content column a soft paper-tinted backdrop so body text never has
+ * to fight a busy painting for legibility. The painting still shows in
+ * the margins; the prose floats on quiet vellum.
+ * ────────────────────────────────────────────────────────────────────── */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  position: relative;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
+  content: '';
+  position: absolute;
+  inset: -2vh -3vw;
+  background: var(--zen-bg);
+  opacity: 0.78;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 55%, transparent 92%);
+          mask-image: radial-gradient(ellipse at center, #000 55%, transparent 92%);
+  /* Slight blur so the painting reads as soft haze around the column. */
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 8px;
+}
+/* Light theme — the scrim wants higher opacity to keep dark ink crisp. */
+:root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
+html:not(.dark):not([data-theme='dark'])[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
+  opacity: 0.86;
+}
+/* Editor overlay sits on its own backdrop already — but lift its bg
+   opacity when an atmosphere is on so the painting doesn't leak through. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-overlay {
+  background: var(--zen-overlay) !important;
+}
+.atmosphere-fuji-petals {
+  position: absolute;
+  inset: 0;
+}
+.atmosphere-fuji-petal {
+  position: absolute;
+  top: -24px;
+  width: 14px;
+  height: 9px;
+  border-radius: 60% 40% 60% 40% / 80% 80% 20% 20%;
+  opacity: 0;
+  transform: scale(var(--scale, 1)) rotate(var(--rot, 0deg));
+  animation-name: fuji-petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  filter: blur(0.3px);
+}
+@keyframes fuji-petal-fall {
+  0%   { transform: translate3d(0, -24px, 0) rotate(var(--rot, 0deg)) scale(var(--scale, 1)); opacity: 0; }
+  10%  { opacity: 0.85; }
+  90%  { opacity: 0.7; }
+  100% { transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(calc(var(--rot, 0deg) + 540deg)) scale(var(--scale, 1)); opacity: 0; }
+}
+/* Light theme: nudge the print's exposure up so it doesn't fight the
+   cream paper. The mask above already keeps the top airy. */
+:root:not(.dark):not([data-theme='dark']) .atmosphere-fuji-image {
+  opacity: 0.66;
+  filter: saturate(0.92) contrast(0.94) brightness(1.02);
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Peer cursors (y-codemirror.next) — the colored bars + name labels
+ * that show where other people are typing in shared docs. Default style
+ * is loud + generic. Zen version: hairline cursor + tiny italic serif
+ * name tag floating in the gutter, like a margin annotation.
+ * ──────────────────────────────────────────────────────────────────────── */
+.cm-ySelection {
+  /* Soft watered tint behind the peer's text selection. */
+  opacity: 0.32 !important;
+}
+.cm-ySelectionCaret {
+  /* The actual cursor line — thin, color comes from the peer's color. */
+  border-left-width: 2px !important;
+  border-radius: 1px;
+  animation: zen-peer-cursor-breath 1400ms ease-in-out infinite;
+}
+@keyframes zen-peer-cursor-breath {
+  0%, 100% { opacity: 1; }
+  55%      { opacity: 0.5; }
+}
+.cm-ySelectionCaretDot {
+  /* The little dot at the top of the caret. */
+  border-radius: 50% !important;
+  width: 6px !important;
+  height: 6px !important;
+}
+.cm-ySelectionInfo {
+  /* The name tag that floats next to the cursor. Set it as a small
+     italic serif label on a paper card, hanging above the cursor like a
+     margin gloss in a printed book. */
+  font-family: var(--zen-serif) !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.005em !important;
+  text-transform: none !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+  top: -1.4em !important;
+  /* Cleaner shadow + a faint border for paper feel. */
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.25);
+  /* Don't animate; the cursor already does. */
+  opacity: 0.92 !important;
+  transition: opacity 200ms var(--zen-ease) !important;
+}
+/* Optional: keep the tag visible only when the cursor moves recently
+   (y-codemirror.next supports this via the data-yjs-* attributes). */
+.cm-ySelectionInfo:hover { opacity: 1 !important; }
+

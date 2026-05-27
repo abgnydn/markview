@@ -1,0 +1,342 @@
+/* ────────────────────────────────────────────────────────────────────────
+ * Mobile + touch — the hover-zone reveal pattern doesn't work without a
+ * real mouse. Show chrome permanently, drop multi-pane layouts, scale
+ * type down, hide rails that need gutter space. Trigger on either:
+ *   - touch device (no hover, coarse pointer)
+ *   - narrow viewport (under 768px) — covers shrunken desktop windows too
+ *
+ * Touch baseline patches:
+ *   - tap targets ≥ 44px (Apple HIG) on interactive elements
+ *   - 100dvh in place of 100vh so iOS Safari's bottom bar doesn't crop
+ *     full-height overlays (search / editor)
+ *   - env(safe-area-inset-*) padding on chrome that hugs the edges, so
+ *     the iPhone notch + home indicator don't sit on top of buttons
+ *   - :active states for visual tap feedback (no hover to fall back on)
+ *   - tap-highlight-color overridden — the default iOS blue flash is loud
+ *   - -webkit-touch-callout disabled on chrome icons so long-press doesn't
+ *     pop a "save image" sheet over a button
+ * ──────────────────────────────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse), (max-width: 768px) {
+  /* Global touch baseline. */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  html, body {
+    /* True viewport height on iOS Safari (handles the bottom bar). */
+    min-height: 100dvh;
+  }
+  /* Don't let a long-press on chrome icons pop the iOS image/link menu. */
+  .toolbar, .toolbar-btn,
+  .sidebar, .sidebar-item,
+  .workspace-tabs, .workspace-tab,
+  .editor-toolbar, .editor-format-btn,
+  .ed-nav, .ed-nav-cta, .ed-cta-primary, .ed-cta-secondary {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  /* Visible :active feedback for taps — no hover to fall back on. */
+  .toolbar-btn:active,
+  .editor-format-btn:active,
+  .editor-mode-btn:active,
+  .sidebar-item:active,
+  .theme-picker-item:active,
+  .ed-cta-primary:active,
+  .ed-cta-secondary:active,
+  .ed-nav-cta:active,
+  .github-import-btn:active {
+    opacity: 0.55;
+    transition: opacity 80ms ease;
+  }
+
+  /* Toolbar visible always — no hover trigger on touch. Safe-area top
+     padding so the notch / status bar doesn't sit on the row. */
+  .toolbar {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
+    /* Tighter on mobile so it doesn't dominate; +safe-area top so the
+       row clears the notch in landscape and the status bar in portrait. */
+    height: calc(48px + env(safe-area-inset-top, 0px)) !important;
+    padding: env(safe-area-inset-top, 0px) calc(12px + env(safe-area-inset-right, 0px)) 0 calc(12px + env(safe-area-inset-left, 0px)) !important;
+  }
+  /* Bump tap targets on chrome buttons to the Apple-HIG minimum (44px). */
+  .toolbar-btn,
+  .editor-format-btn,
+  .editor-mode-btn,
+  .editor-save-btn,
+  .editor-close-btn,
+  .code-copy-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 8px !important;
+  }
+  /* On mobile keep only essential toolbar buttons visible (search, editor,
+     theme, sidebar toggle, overflow). Secondary actions move to the
+     overflow `...` menu so the row stays scannable on a phone. */
+  .toolbar-secondary { display: none !important; }
+  /* Overflow trigger is the catch-all on mobile — keep it visible. */
+  .toolbar-overflow-container,
+  .toolbar-overflow-btn {
+    display: inline-flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  /* Collab share / presence — always visible while sharing. */
+  .collab-share-btn,
+  .collab-presence-bar { opacity: 1 !important; }
+  .collab-presence-bar {
+    top: calc(48px + env(safe-area-inset-top, 0px)) !important;
+  }
+  body:has(.collab-presence-bar) .workspace-tabs {
+    top: calc(48px + env(safe-area-inset-top, 0px) + 32px) !important;
+  }
+  /* Hide the hover-zone strips — they consume tap targets at the edges. */
+  .zen-zone-top,
+  .zen-zone-left,
+  .zen-zone-right { display: none !important; }
+
+  /* Workspace tabs always visible too, stacked under the toolbar.
+     Top offset includes the toolbar's own safe-area pad. */
+  .workspace-tabs {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
+    top: calc(48px + env(safe-area-inset-top, 0px)) !important;
+  }
+  .workspace-tab {
+    min-height: 40px !important;
+    padding: 8px 14px !important;
+  }
+
+  /* TOC (right rail) — hide on mobile. The page is one column anyway. */
+  .toc-container,
+  .right-rail,
+  aside.toc { display: none !important; }
+
+  /* Sidebar — drawer pattern. Keep slide-in behavior; bump width, add
+     a backdrop shadow, include left safe-area pad for landscape notches. */
+  .sidebar {
+    width: 280px !important;
+    max-width: 84vw !important;
+    padding-top: calc(48px + env(safe-area-inset-top, 0px)) !important;
+    padding-left: env(safe-area-inset-left, 0px) !important;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.4);
+    /* Smooth touch scrolling inside the drawer. */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  /* On mobile, sidebar opens via the existing `.sidebar-mobile-open` class
+     that viewer-page.tsx already toggles via a button click. */
+  .sidebar:not(.sidebar-mobile-open) {
+    transform: translateX(-100%) !important;
+  }
+  .sidebar.sidebar-mobile-open {
+    transform: translateX(0) !important;
+  }
+  .sidebar-item {
+    min-height: 44px !important;
+    padding: 10px 14px !important;
+    display: flex !important;
+    align-items: center;
+  }
+  /* Tap-off-to-close backdrop covers the rest of the viewport. */
+  .sidebar-backdrop {
+    background: rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  /* Main content: leave room for the always-visible toolbar (48 + safe-
+     area) and reduce horizontal padding so prose breathes on narrow
+     viewports. The bottom pad includes home-indicator clearance. */
+  .viewer-content {
+    padding:
+      calc(48px + env(safe-area-inset-top, 0px) + 4vh)
+      max(5vw, env(safe-area-inset-right, 0px))
+      calc(env(safe-area-inset-bottom, 0px) + 12vh)
+      max(5vw, env(safe-area-inset-left, 0px)) !important;
+  }
+
+  /* Scale typography down a notch for narrow columns. */
+  .markdown-content {
+    font-size: 17px !important;
+    line-height: 1.72 !important;
+  }
+  .markdown-content h1 {
+    font-size: 2em !important;
+    line-height: 1.08 !important;
+  }
+  .markdown-content h1 + p { font-size: 1.08em !important; }
+  /* Drop cap is too aggressive on narrow columns — disable. */
+  .markdown-content h1 + p::first-letter {
+    float: none;
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+  }
+  .markdown-content h2 { font-size: 1.4em !important; }
+  .markdown-content pre {
+    padding: 14px 14px !important;
+    font-size: 12.5px !important;
+    border-radius: 4px !important;
+  }
+  .code-block-toolbar { padding: 6px 12px 5px !important; }
+
+  /* Editor — full-viewport sheet with safe-area + dynamic-viewport height. */
+  .editor-overlay {
+    /* 100dvh = true viewport, accounts for iOS Safari's chrome. */
+    height: 100dvh !important;
+    padding:
+      env(safe-area-inset-top, 0px)
+      env(safe-area-inset-right, 0px)
+      env(safe-area-inset-bottom, 0px)
+      env(safe-area-inset-left, 0px) !important;
+  }
+  /* Single pane only. Split is unusable on a phone. */
+  .editor-mode-split .editor-edit-pane,
+  .editor-mode-split .editor-preview-pane {
+    width: 100% !important;
+  }
+  .editor-mode-split .editor-preview-pane { display: none !important; }
+  /* Hide the mode pills entirely since split is disabled. */
+  .editor-toolbar-center { display: none !important; }
+  .editor-toolbar { padding: 10px 12px !important; }
+  .editor-format-bar {
+    /* Always visible on touch; no hover. Compact + horizontally scrollable. */
+    opacity: 1 !important;
+    padding: 4px 10px !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Snap-scroll the toolbar so taps land squarely on a button. */
+    scroll-snap-type: x proximity;
+  }
+  .editor-format-bar::-webkit-scrollbar { display: none; }
+  .editor-format-btn { scroll-snap-align: center; }
+
+  /* CodeMirror content — tighter padding so the cursor lands close to the
+     top edge on small screens. Bottom padding leaves room for the iOS
+     keyboard above the home-indicator. */
+  .cm-content {
+    padding: 4vh 5vw calc(38vh + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  /* Editor body should also use the dynamic viewport so the on-screen
+     keyboard's appearance scrolls the cursor into view naturally. */
+  .editor-body {
+    height: calc(100dvh - 96px) !important; /* toolbar + format-bar */
+  }
+
+  /* Search modal — full-width sheet on mobile, safe-area-aware. */
+  .search-overlay {
+    padding:
+      env(safe-area-inset-top, 0px)
+      env(safe-area-inset-right, 0px)
+      env(safe-area-inset-bottom, 0px)
+      env(safe-area-inset-left, 0px) !important;
+  }
+  .search-dialog {
+    width: 92vw !important;
+    max-width: 92vw !important;
+    margin: 6vh auto !important;
+  }
+  .search-input { font-size: 16px !important; /* prevents iOS zoom-on-focus */ }
+  .search-result { min-height: 56px !important; padding: 12px 14px !important; }
+
+  /* Code blocks scroll horizontally with momentum on touch. */
+  .markdown-content pre {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  /* Tables: same. They'd overflow the column on a phone otherwise. */
+  .markdown-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Landing page — mobile breakpoints. Safe-area-aware on notched devices,
+ * tap targets bumped to 44px+, system font-size 16px+ on the input to
+ * stop iOS from zooming on focus.
+ * ──────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .ed-landing {
+    /* Pad against the iPhone notch + home indicator + landscape edges. */
+    padding:
+      env(safe-area-inset-top, 0px)
+      max(20px, env(safe-area-inset-right, 0px))
+      env(safe-area-inset-bottom, 0px)
+      max(20px, env(safe-area-inset-left, 0px));
+  }
+  .ed-nav { padding: 18px 0 14px; }
+  .ed-nav-link { display: none; }     /* GitHub link hidden — the footer link is enough */
+  .ed-nav-name { font-size: 15px; }
+  .ed-nav-cta {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+
+  .ed-hero { margin-top: 4vh; }
+  .ed-hero-eyebrow { font-size: 10px; letter-spacing: 0.18em; margin-bottom: 22px; }
+  .ed-hero-title { line-height: 1.06; margin-bottom: 20px; }
+  .ed-hero-sub { font-size: 16.5px; line-height: 1.55; margin-bottom: 28px; }
+  .ed-hero-cta-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .ed-cta-primary,
+  .ed-cta-secondary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 16px 22px;       /* min-height ≈ 48px */
+    min-height: 48px;
+    font-size: 12px;
+  }
+  .ed-hero-meta { font-size: 10.5px; line-height: 1.8; }
+  .ed-github-import { margin-top: 30px; }
+  .ed-github-import-label { font-size: 9px; }
+  .ed-github-import .github-import-input {
+    /* 16px+ keeps iOS Safari from auto-zooming when the field is focused. */
+    font-size: 16px;
+    padding: 13px 0;
+  }
+  .ed-github-import .github-import-btn {
+    padding: 12px 16px;
+    font-size: 10px;
+    min-height: 44px;
+  }
+  .ed-github-import .github-import-input-row { padding: 4px 4px 4px 12px; }
+
+  .ed-rule { margin: 50px auto; font-size: 16px; letter-spacing: 0.5em; }
+
+  .ed-features {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .ed-feature-title { font-size: 19px; }
+  .ed-feature-body { font-size: 14.5px; }
+
+  .ed-pullquote {
+    padding: 0 16px;
+    margin-bottom: 60px;
+  }
+
+  .ed-foot {
+    font-size: 9.5px;
+    gap: 8px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .ed-foot-link {
+    /* Bigger touch target around the small mono labels. */
+    padding: 6px 4px;
+    margin: -6px -4px;
+  }
+}

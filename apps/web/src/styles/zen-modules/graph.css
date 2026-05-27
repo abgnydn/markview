@@ -1,0 +1,216 @@
+/* ────────────────────────────────────────────────────────────────────────
+ * Graph view — force-directed map of the current workspace. Press `\`
+ * or click the graph icon to open. Files are nodes, markdown links are
+ * edges. Canvas-2D render, ~280 lines total, settles in seconds.
+ * ──────────────────────────────────────────────────────────────────────── */
+.graph-view-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  background: var(--zen-bg);
+  /* Pull in the html radial gradient via the body — we live above it. */
+}
+.graph-view-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+.graph-view-canvas:active { cursor: grabbing; }
+.graph-view-header {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  pointer-events: none;
+}
+.graph-view-title {
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zen-fg);
+  pointer-events: auto;
+}
+.graph-view-stats {
+  flex: 1;
+  font-family: var(--zen-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--zen-fg-faint);
+  pointer-events: auto;
+}
+.graph-view-close {
+  pointer-events: auto;
+  background: transparent;
+  border: 1px solid var(--zen-fg-ghost);
+  color: var(--zen-fg-faint);
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 200ms var(--zen-ease), border-color 200ms var(--zen-ease);
+}
+.graph-view-close:hover {
+  color: var(--zen-fg);
+  border-color: var(--zen-fg-faint);
+}
+.graph-view-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--zen-fg-faint);
+  opacity: 0;
+  animation: graph-view-hint-fade 6s ease forwards;
+}
+.graph-view-hint kbd {
+  font-family: var(--zen-mono);
+  font-size: 10px;
+  background: var(--zen-code-soft);
+  color: var(--zen-code);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin: 0 2px;
+}
+@keyframes graph-view-hint-fade {
+  0%   { opacity: 0; }
+  10%  { opacity: 0.7; }
+  70%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+.graph-view-tooltip {
+  position: absolute;
+  background: var(--zen-bg-deep);
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+  box-shadow: var(--zen-shadow-card);
+}
+.graph-view-tooltip-label {
+  font-family: var(--zen-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--zen-fg);
+}
+.graph-view-tooltip-meta {
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint);
+}
+
+/* Graph view — search input in header */
+.graph-view-search {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--zen-paper-tint);
+  border: 1px solid var(--zen-paper-line);
+  border-radius: 3px;
+  padding: 4px 8px;
+  min-width: 200px;
+  max-width: 280px;
+}
+.graph-view-search-icon { color: var(--zen-fg-faint); flex-shrink: 0; }
+.graph-view-search-input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font-family: var(--zen-mono);
+  font-size: 11px;
+  color: var(--zen-fg);
+}
+.graph-view-search-input::placeholder {
+  color: var(--zen-fg-faint);
+  font-style: italic;
+  font-family: var(--zen-serif);
+}
+.graph-view-search-clear {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--zen-fg-faint);
+  display: inline-flex;
+  padding: 2px;
+}
+.graph-view-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--zen-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--zen-fg-faint);
+  pointer-events: auto;
+}
+
+/* Graph view — tag legend (bottom-right cluster) */
+.graph-view-legend {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  background: var(--zen-bg-deep);
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+  box-shadow: var(--zen-shadow-card);
+  pointer-events: auto;
+}
+.graph-view-legend-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint);
+  margin-bottom: 4px;
+}
+.graph-view-legend-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--zen-fg-soft);
+  padding: 3px 4px;
+  border-radius: 3px;
+  text-align: left;
+  transition: background 200ms var(--zen-ease), color 200ms var(--zen-ease);
+}
+.graph-view-legend-tag:hover { background: var(--zen-paper-tint); color: var(--zen-fg); }
+.graph-view-legend-tag.is-active { background: var(--zen-accent-soft); color: var(--zen-fg); }
+.graph-view-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
