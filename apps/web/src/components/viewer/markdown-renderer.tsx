@@ -716,6 +716,127 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     };
   }, [html]);
 
+  // ── N3 Footnote popovers — clicking a `[1]` ref opens a small
+  // floating card with the footnote text right next to the marker
+  // instead of jump-scrolling to the bottom. Clicking the same ref
+  // again (or clicking outside) closes.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const refs = root.querySelectorAll<HTMLAnchorElement>('a[href^="#user-content-fn-"], a.footnote-ref');
+    if (refs.length === 0) return;
+    let pop: HTMLDivElement | null = null;
+    const closePop = () => {
+      if (pop) pop.classList.remove('mv-fn-popover-show');
+      window.setTimeout(() => { pop?.remove(); pop = null; }, 200);
+    };
+    const onClick = (e: Event) => {
+      const link = e.currentTarget as HTMLAnchorElement;
+      e.preventDefault();
+      const href = link.getAttribute('href') || '';
+      const targetId = href.replace(/^#/, '');
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      // Pull the footnote text minus the backref arrow.
+      const clone = target.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('a.data-footnote-backref, a.footnote-back').forEach((b) => b.remove());
+      closePop();
+      pop = document.createElement('div');
+      pop.className = 'mv-fn-popover';
+      pop.innerHTML = clone.innerHTML;
+      document.body.appendChild(pop);
+      const rect = link.getBoundingClientRect();
+      const left = Math.min(window.innerWidth - 380, Math.max(20, rect.left));
+      pop.style.left = `${left}px`;
+      pop.style.top = `${rect.bottom + 8}px`;
+      requestAnimationFrame(() => pop?.classList.add('mv-fn-popover-show'));
+    };
+    const onOutside = (e: MouseEvent) => {
+      if (!pop) return;
+      if (pop.contains(e.target as Node)) return;
+      if ((e.target as HTMLElement)?.closest('a[href^="#user-content-fn-"], a.footnote-ref')) return;
+      closePop();
+    };
+    refs.forEach((r) => r.addEventListener('click', onClick));
+    document.addEventListener('mousedown', onOutside);
+    return () => {
+      refs.forEach((r) => r.removeEventListener('click', onClick));
+      document.removeEventListener('mousedown', onOutside);
+      pop?.remove();
+    };
+  }, [html]);
+
+  // ── N11 ⌘-click wikilink → fly-in pane. Holding ⌘/Ctrl while
+  // clicking a [[wikilink]] opens a right-anchored sheet with the
+  // linked file's full content instead of navigating. Esc to close.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const links = root.querySelectorAll<HTMLAnchorElement>('a.internal-link');
+    if (links.length === 0) return;
+    let pane: HTMLDivElement | null = null;
+    let backdrop: HTMLDivElement | null = null;
+    const escapeHtml = (s: string) => s
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const close = () => {
+      if (!pane) return;
+      pane.classList.remove('mv-flyin-show');
+      const old = pane;
+      const olda = backdrop;
+      pane = null;
+      backdrop = null;
+      window.setTimeout(() => { old.remove(); olda?.remove(); }, 400);
+      document.removeEventListener('keydown', onKey);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    const open = async (filename: string) => {
+      close();
+      backdrop = document.createElement('div');
+      Object.assign(backdrop.style, {
+        position: 'fixed', inset: '0', zIndex: '5',
+        background: 'rgba(0,0,0,0.32)', backdropFilter: 'blur(2px)',
+      });
+      backdrop.addEventListener('click', close);
+      document.body.appendChild(backdrop);
+      pane = document.createElement('div');
+      pane.className = 'mv-flyin';
+      pane.innerHTML = `<div class="mv-flyin-title">${escapeHtml(filename)}</div><div>loading…</div>`;
+      document.body.appendChild(pane);
+      requestAnimationFrame(() => pane?.classList.add('mv-flyin-show'));
+      document.addEventListener('keydown', onKey);
+      try {
+        const { db } = await import('@/lib/storage/db');
+        const lookup = filename.replace(/^[./]+/, '');
+        const f = await db.files.where('filename').equalsIgnoreCase(lookup)
+          .or('filename').equalsIgnoreCase(`${lookup}.md`)
+          .first();
+        if (!pane) return;
+        if (!f) {
+          pane.innerHTML = `<div class="mv-flyin-title">${escapeHtml(filename)}</div><em>not found in this workspace</em>`;
+          return;
+        }
+        // Strip frontmatter, render markdown as plain text (no nested pipeline).
+        const stripped = f.content.replace(/^---[\s\S]*?---\n+/, '');
+        pane.innerHTML = `<div class="mv-flyin-title">${escapeHtml(f.displayName || f.filename)}</div><pre style="white-space:pre-wrap;font:inherit;margin:0">${escapeHtml(stripped.slice(0, 8000))}</pre>`;
+      } catch {
+        if (pane) pane.innerHTML = `<div class="mv-flyin-title">${escapeHtml(filename)}</div><em>failed to load</em>`;
+      }
+    };
+    const onClick = (e: MouseEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const link = e.currentTarget as HTMLAnchorElement;
+      const filename = (link.getAttribute('href') || '').replace(/^[./]+/, '');
+      void open(filename);
+    };
+    links.forEach((l) => l.addEventListener('click', onClick));
+    return () => {
+      links.forEach((l) => l.removeEventListener('click', onClick));
+      close();
+    };
+  }, [html]);
+
   return (
     <div className="markdown-content" ref={contentRef} style={{ fontSize: 'var(--content-font-size, 16px)' }}>
       {/* SECURITY: html is sanitized via rehype-sanitize in the rendering pipeline */}

@@ -303,7 +303,18 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   // commit the state mutation, so the snapshot the browser captures has
   // the old document fully painted and the new one ready to fade in.
   // Falls back to a normal set() on browsers without the API.
+  //
+  // N16 — per-file scroll memory. Before swapping, snapshot the
+  // outgoing file's scrollTop to localStorage; after the commit, fade
+  // in at the incoming file's saved position (or 0).
   setActiveFile: async (fileId) => {
+    const outgoingId = get().activeFileId;
+    const main = typeof document !== 'undefined'
+      ? document.querySelector<HTMLElement>('.viewer-main')
+      : null;
+    if (outgoingId && main && typeof localStorage !== 'undefined') {
+      try { localStorage.setItem(`mv-scroll-${outgoingId}`, String(main.scrollTop)); } catch { /* ignore */ }
+    }
     const dbFile = await db.files.get(fileId);
     const commit = () => {
       set({
@@ -319,6 +330,15 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       d.startViewTransition(commit);
     } else {
       commit();
+    }
+    // Restore scroll on next frames once new content has rendered.
+    if (typeof window !== 'undefined') {
+      let saved: number = 0;
+      try { saved = parseInt(localStorage.getItem(`mv-scroll-${fileId}`) || '0', 10) || 0; } catch { /* ignore */ }
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        const m = document.querySelector<HTMLElement>('.viewer-main');
+        if (m) m.scrollTop = saved;
+      }));
     }
   },
 

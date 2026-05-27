@@ -14,6 +14,9 @@ import { ReadingProgress } from '@/components/viewer/reading-progress';
 import { Breadcrumbs } from '@/components/viewer/breadcrumbs';
 import { FrontmatterCard } from '@/components/viewer/frontmatter-card';
 import { StickyTitle } from '@/components/viewer/sticky-title';
+import { AutosaveWhisper } from '@/components/viewer/autosave-whisper';
+import { CommandPalette } from '@/components/viewer/command-palette';
+import { ActivityLog } from '@/components/viewer/activity-log';
 
 // Heavy user-triggered overlays — lazy so the cold-open chunk stays
 // tight. The MarkdownEditor pulls in CodeMirror, PresentationMode pulls
@@ -37,6 +40,7 @@ import { useViewerOverlays } from '@/hooks/use-viewer-overlays';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 import { useViewerState } from '@/hooks/use-viewer-state';
 import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
+import { usePolishEffects } from '@/hooks/use-polish-effects';
 import { Upload } from 'lucide-react';
 import type { TocHeading } from '@/lib/markdown/pipeline';
 
@@ -159,6 +163,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
 
   // Keyboard shortcuts
   useKeyboardNav();
+  usePolishEffects();
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -233,6 +238,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         <PaintingAtmosphere atmosphere={atmosphere} paintingNonce={paintingNonce} />
       )}
       <ShareStatus />
+      <AutosaveWhisper />
+      <CommandPalette />
+      <ActivityLog />
       <WorkspaceTabs />
 
       {/* Standalone "+ new workspace" drop target. Becomes visible only
