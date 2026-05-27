@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbf8f3"/>
+      <stop offset="100%" stop-color="#f3ede1"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded paper card -->
+  <rect x="64" y="64" width="896" height="896" rx="180" ry="180" fill="url(#paper)" stroke="rgba(28,24,22,0.12)" stroke-width="6"/>
+  <!-- Italic serif M -->
+  <text x="512" y="752" text-anchor="middle"
+        font-family="'Iowan Old Style','Charter','New York','Source Serif Pro',Georgia,serif"
+        font-size="720" font-weight="800" font-style="italic" fill="#1c1816">M</text>
+  <!-- Hanging open-curly-quote in violet, top-right corner -->
+  <text x="880" y="316" text-anchor="end"
+        font-family="'Iowan Old Style','Charter',Georgia,serif"
+        font-size="360" font-weight="700" fill="#9b7dff" opacity="0.85">&#8220;</text>
+</svg>
