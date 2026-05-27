@@ -1,20 +1,31 @@
-/* SPDX-License-Identifier: Apache-2.0 */
+/* SPDX-License-Identifier: Apache-2.0
+ *
+ * Landing page — zen palette.
+ * Reads as a single chapter from the same book the editor renders:
+ * Iowan Old Style serif, warm paper, violet accent, mono small-caps for
+ * labels, asterism for breaks. Pulls its vars from zen.css so it follows
+ * the active theme (light or dark).
+ */
 
 .ed-landing {
   min-height: 100vh;
-  background: linear-gradient(180deg, #0c1018 0%, #060912 100%);
-  color: #e2e8f0;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  color: var(--zen-fg);
+  font-family: var(--zen-serif);
   padding: 0 32px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 2; /* sit above body::before paper grain */
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+ * Top nav — brand mark + minimal links.
+ * ──────────────────────────────────────────────────────────────────────── */
 .ed-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 0;
+  padding: 28px 0 22px;
   max-width: 1100px;
   width: 100%;
   margin: 0 auto;
@@ -22,191 +33,453 @@
 .ed-nav-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
-.ed-nav-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+/* Brand mark — a small paper card with an italic serif M and a violet
+   hanging open-curly-quote in the top-right corner. Same glyph the
+   blockquote uses, scaled down for a printer's stamp. */
+.ed-nav-mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 4px;
+  background: var(--zen-bg);
+  box-shadow: 0 1px 0 var(--zen-paper-tint);
+}
+.ed-nav-mark-m {
+  font-family: var(--zen-serif);
+  font-size: 20px;
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1;
+  color: var(--zen-fg);
+  letter-spacing: -0.02em;
+  margin-top: 2px;
+}
+.ed-nav-mark::after {
+  content: '\201C';
+  position: absolute;
+  top: -6px;
+  right: -2px;
+  font-family: var(--zen-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--zen-accent);
+  line-height: 1;
+  opacity: 0.7;
 }
 .ed-nav-name {
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: -0.01em;
+  font-family: var(--zen-serif);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--zen-fg);
 }
+
 .ed-nav-links {
   display: flex;
   align-items: center;
   gap: 22px;
 }
 .ed-nav-link {
-  color: rgba(232, 237, 246, 0.65);
+  color: var(--zen-fg-faint);
   text-decoration: none;
-  font-size: 14px;
-  letter-spacing: 0.01em;
-  transition: color 0.2s;
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: color 200ms var(--zen-ease);
 }
 .ed-nav-link:hover {
-  color: #e2e8f0;
+  color: var(--zen-fg);
 }
-
-.ed-nav-cta,
-.ed-cta-primary {
-  background: linear-gradient(180deg, #8b5cf6 0%, #6366f1 100%);
-  color: white;
-  border: 0;
-  border-radius: 999px;
-  padding: 9px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
+.ed-nav-cta {
+  background: transparent;
+  color: var(--zen-fg-faint);
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 3px;
+  padding: 6px 14px;
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   cursor: pointer;
-  letter-spacing: 0.01em;
-  transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.35);
+  transition: color 200ms var(--zen-ease), border-color 200ms var(--zen-ease);
 }
-.ed-nav-cta:hover,
-.ed-cta-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5);
+.ed-nav-cta:hover {
+  color: var(--zen-fg);
+  border-color: var(--zen-fg-faint);
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+ * Hero — editorial column, balanced, paper-quiet.
+ * ──────────────────────────────────────────────────────────────────────── */
 .ed-hero {
-  max-width: 760px;
+  max-width: 740px;
   width: 100%;
-  margin: 80px auto 0;
+  margin: 12vh auto 0;
   text-align: center;
 }
 .ed-hero-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: rgba(167, 139, 250, 0.85);
-  padding: 7px 16px;
-  border: 1px solid rgba(139, 92, 246, 0.25);
-  border-radius: 999px;
-  margin-bottom: 28px;
-  background: rgba(139, 92, 246, 0.06);
+  gap: 14px;
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint);
+  margin-bottom: 32px;
+}
+.ed-hero-eyebrow-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--zen-accent);
+  opacity: 0.55;
 }
 .ed-hero-title {
-  font-size: clamp(40px, 6vw, 72px);
-  line-height: 1.05;
-  letter-spacing: -0.025em;
-  margin: 0 0 22px;
+  font-family: var(--zen-serif);
+  font-size: clamp(40px, 6.4vw, 76px);
+  line-height: 1.04;
+  letter-spacing: -0.028em;
+  margin: 0 0 26px;
   font-weight: 700;
+  color: var(--zen-fg);
+  text-wrap: balance;
+  hanging-punctuation: first;
 }
 .ed-hero-accent {
-  background: linear-gradient(180deg, #67e8f9 0%, #a78bfa 50%, #f0abfc 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-style: italic;
+  color: var(--zen-accent);
+  font-weight: 700;
 }
 .ed-hero-sub {
-  font-size: 17px;
-  line-height: 1.55;
-  color: rgba(203, 213, 225, 0.78);
-  margin: 0 0 36px;
+  font-family: var(--zen-serif);
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--zen-fg-soft);
+  margin: 0 0 38px;
+  text-wrap: pretty;
 }
 .ed-hero-cta-row {
   display: flex;
   gap: 14px;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+.ed-cta-primary {
+  background: var(--zen-accent);
+  color: #fff;
+  border: 1px solid var(--zen-accent);
+  border-radius: 3px;
+  padding: 11px 22px;
+  font-family: var(--zen-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 200ms var(--zen-ease), transform 200ms var(--zen-ease), box-shadow 200ms var(--zen-ease);
+  box-shadow: 0 12px 36px -8px var(--zen-accent-glow);
+}
+.ed-cta-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 40px -8px var(--zen-accent-soft);
 }
 .ed-cta-secondary {
-  background: rgba(255, 255, 255, 0.04);
-  color: #e2e8f0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  padding: 9px 20px;
-  font-size: 14px;
+  background: transparent;
+  color: var(--zen-fg);
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 3px;
+  padding: 11px 22px;
+  font-family: var(--zen-mono);
+  font-size: 11px;
   font-weight: 500;
-  font-family: inherit;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   text-decoration: none;
-  letter-spacing: 0.01em;
-  transition: background 0.15s, border-color 0.15s;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  transition: color 200ms var(--zen-ease), border-color 200ms var(--zen-ease);
 }
 .ed-cta-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: var(--zen-fg-faint);
+  color: var(--zen-fg);
 }
 .ed-hero-meta {
-  font-size: 12px;
-  color: rgba(148, 163, 184, 0.58);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.02em;
+  font-family: var(--zen-mono);
+  font-size: 11px;
+  color: var(--zen-fg-faint);
+  letter-spacing: 0.04em;
 }
-.ed-hero-meta span {
-  color: rgba(203, 213, 225, 0.85);
+.ed-hero-meta kbd {
+  font-family: var(--zen-mono);
+  font-size: 10px;
+  color: var(--zen-code);
+  background: var(--zen-code-soft);
   padding: 1px 6px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 4px;
+  border-radius: 3px;
+  border: 0;
   margin: 0 2px;
 }
+.ed-hero-meta code {
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  color: var(--zen-code);
+  background: var(--zen-code-soft);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
 
-.ed-features {
-  max-width: 1100px;
+/* ────────────────────────────────────────────────────────────────────────
+ * GitHub import — zen-styled paper input.
+ * ──────────────────────────────────────────────────────────────────────── */
+.ed-github-import {
+  margin: 36px auto 0;
+  max-width: 560px;
   width: 100%;
-  margin: 90px auto 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 22px;
 }
-.ed-feature {
-  padding: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  transition: border-color 0.15s, transform 0.15s;
+.ed-github-import-label {
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint);
+  margin-bottom: 10px;
+  text-align: left;
 }
-.ed-feature:hover {
-  border-color: rgba(139, 92, 246, 0.25);
-  transform: translateY(-2px);
-}
-.ed-feature-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 10px;
-  color: #e2e8f0;
-  letter-spacing: -0.01em;
-}
-.ed-feature-body {
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: rgba(203, 213, 225, 0.7);
+.ed-github-import .github-import {
   margin: 0;
 }
-
-.ed-foot {
-  max-width: 1100px;
-  width: 100%;
-  margin: 80px auto 32px;
-  padding-top: 22px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 12px;
-  color: rgba(148, 163, 184, 0.65);
+.ed-github-import .github-import-input-row {
+  background: var(--zen-paper-tint);
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 4px;
+  padding: 4px 4px 4px 14px;
   display: flex;
   align-items: center;
   gap: 10px;
+  transition: border-color 200ms var(--zen-ease);
+}
+.ed-github-import .github-import-input-row:focus-within {
+  border-color: var(--zen-accent-soft);
+}
+.ed-github-import .github-import-icon {
+  color: var(--zen-fg-faint);
+  flex-shrink: 0;
+}
+.ed-github-import .github-import-input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--zen-fg);
+  font-family: var(--zen-mono);
+  font-size: 13px;
+  padding: 9px 0;
+}
+.ed-github-import .github-import-input::placeholder {
+  color: var(--zen-fg-faint);
+  font-style: italic;
+  font-family: var(--zen-serif);
+}
+.ed-github-import .github-import-btn {
+  background: transparent;
+  border: 1px solid var(--zen-fg-ghost);
+  color: var(--zen-fg-faint);
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color 200ms var(--zen-ease), border-color 200ms var(--zen-ease);
+}
+.ed-github-import .github-import-btn:hover:not(:disabled) {
+  color: var(--zen-accent);
+  border-color: var(--zen-accent-soft);
+}
+.ed-github-import .github-import-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ed-github-import .github-import-error {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e07a5f;
+  font-family: var(--zen-serif);
+  font-style: italic;
+  font-size: 13px;
+}
+.ed-github-import .spin {
+  animation: ed-spin 1s linear infinite;
+}
+@keyframes ed-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Asterism dividers — printerly section breaks.
+ * ──────────────────────────────────────────────────────────────────────── */
+.ed-rule {
+  max-width: 1100px;
+  width: 100%;
+  margin: 80px auto;
+  text-align: center;
+  font-family: var(--zen-serif);
+  letter-spacing: 0.6em;
+  color: var(--zen-fg-faint);
+  font-size: 18px;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Features — six magazine columns. Mono caps label, serif title + body.
+ * ──────────────────────────────────────────────────────────────────────── */
+.ed-features {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px 40px;
+}
+.ed-feature {
+  padding: 8px 0;
+}
+.ed-feature-label {
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zen-fg-faint);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--zen-fg-ghost);
+}
+.ed-feature-title {
+  font-family: var(--zen-serif);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  margin: 0 0 8px;
+  color: var(--zen-fg);
+  text-wrap: balance;
+}
+.ed-feature-body {
+  font-family: var(--zen-serif);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--zen-fg-soft);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Pull quote — magazine-style, hanging violet curly quote.
+ * ──────────────────────────────────────────────────────────────────────── */
+.ed-pullquote {
+  max-width: 740px;
+  width: 100%;
+  margin: 0 auto 80px;
+  padding: 0 32px;
+  text-align: center;
+  font-family: var(--zen-serif);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--zen-fg);
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+  position: relative;
+  border: 0;
+}
+.ed-pullquote::before {
+  content: '\201C';
+  display: block;
+  font-size: 2em;
+  line-height: 0.4;
+  color: var(--zen-accent);
+  opacity: 0.55;
+  margin-bottom: 0.4em;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Footer — quiet mono row.
+ * ──────────────────────────────────────────────────────────────────────── */
+.ed-foot {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto 32px;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--zen-fg-ghost);
+  font-family: var(--zen-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--zen-fg-faint);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ed-foot-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 .ed-foot-mark {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .ed-foot-sep {
   opacity: 0.45;
 }
 .ed-foot-link {
-  color: rgba(148, 163, 184, 0.78);
+  color: var(--zen-fg-faint);
   text-decoration: none;
-  transition: color 0.15s;
+  text-transform: uppercase;
+  transition: color 200ms var(--zen-ease);
 }
 .ed-foot-link:hover {
-  color: #e2e8f0;
+  color: var(--zen-fg);
+}
+.ed-foot-credit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--zen-serif);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--zen-fg-faint);
+  font-style: italic;
+}
+.ed-foot-credit-by {
+  font-family: var(--zen-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.ed-foot-credit-name {
+  font-family: var(--zen-serif);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--zen-fg);
+  text-decoration: none;
+  transition: color 200ms var(--zen-ease);
+}
+.ed-foot-credit-name:hover {
+  color: var(--zen-accent);
 }

@@ -13,6 +13,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.20.2",
     "@codemirror/commands": "^6.10.3",
     "@codemirror/lang-markdown": "^6.3.0",
     "@codemirror/language": "^6.12.3",
@@ -21,6 +22,7 @@
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.36.3",
     "@e965/xlsx": "^0.20.3",
+    "@huggingface/transformers": "^4.2.0",
     "@lezer/highlight": "^1.2.3",
     "@markview/core": "workspace:*",
     "@types/katex": "^0.16.8",

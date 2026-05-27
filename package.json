@@ -2,7 +2,7 @@
   "name": "markview",
   "version": "0.1.0",
   "packageManager": "bun@1.3.13",
-  "description": "Markview — markdown editor with real-time collab + share links. Web + native macOS app. Local-first.",
+  "description": "Markview — markdown editor with real-time collab + share links. Web + native desktop (macOS, Windows, Linux). Local-first.",
   "author": "Ahmet Barış Günaydın <hi@barisgunaydin.com>",
   "license": "Apache-2.0",
   "repository": {

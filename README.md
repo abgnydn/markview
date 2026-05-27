@@ -192,7 +192,7 @@ markview/
 │   ├── web/          # Next.js 16 — editor, /vault, /brain
 │   ├── hub/          # Hono server (port 3100) — local data bridge
 │   ├── mcp/          # MCP server — the SDK
-│   ├── desktop/      # Native macOS app (Tauri v2)
+│   ├── desktop/      # Native desktop app for macOS / Windows / Linux (Tauri v2)
 │   └── extension/    # Chrome extension for inline .md viewing
 ├── packages/
 │   └── core/         # Internal markdown engine
@@ -204,7 +204,7 @@ markview/
 | **web** | Next.js 16, React, three.js, Zustand, Shiki, Mermaid, KaTeX | The editor + 3D vault + brain |
 | **hub** | Hono, @hono/node-server | Local server: serves vault docs, watches AI sessions, MCP relay |
 | **mcp** | TypeScript, @modelcontextprotocol/sdk | The 23-tool MCP server |
-| **desktop** | Tauri v2, Rust, WebKit | Native macOS app with file associations |
+| **desktop** | Tauri v2, Rust, WebKit | Native desktop app — macOS (arm64/x64), Windows (x64), Linux (x64); file associations on each |
 | **extension** | Chrome Extensions API | View `.md` files inside the browser |
 
 ---

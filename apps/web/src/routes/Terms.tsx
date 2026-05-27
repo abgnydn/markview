@@ -30,7 +30,7 @@ export default function TermsPage() {
 
         <div className="landing-legal-content">
           <h2>1. Acceptance of Terms</h2>
-          <p>By accessing or using MarkView (&quot;the Service&quot;), including the web application at markview.ai, the native macOS application, Chrome extension, npm packages (@markview/core, @markview/react, @markview/webcomponent, @markview/mcp), and any related services, you agree to be bound by these Terms of Service.</p>
+          <p>By accessing or using MarkView (&quot;the Service&quot;), including the web application at markview.ai, the native desktop applications (macOS, Windows, Linux), Chrome extension, npm packages (@markview/core, @markview/react, @markview/webcomponent, @markview/mcp), and any related services, you agree to be bound by these Terms of Service.</p>
 
           <h2>2. Description of Service</h2>
           <p>MarkView is a markdown rendering and documentation viewing platform. The Service processes all data locally in your browser or on your device. MarkView does not transmit, store, or process your documents on any external server.</p>
