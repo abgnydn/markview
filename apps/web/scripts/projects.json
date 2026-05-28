@@ -68,6 +68,24 @@
     { "slug": "webgpu-fly",             "repo": "abgnydn/webgpu-fly" },
     { "slug": "webgpu-fusion-sdk",      "repo": "abgnydn/webgpu-fusion-sdk" },
     { "slug": "butterfly",              "repo": "abgnydn/butterfly" },
-    { "slug": "draw-instant",           "repo": "abgnydn/draw-instant" }
+    { "slug": "draw-instant",           "repo": "abgnydn/draw-instant" },
+
+    { "slug": "kernelfusion",           "repo": "abgnydn/kernelfusion" },
+    { "slug": "the-town",               "repo": "abgnydn/the-town" },
+    { "slug": "teklifci",               "repo": "abgnydn/teklifci" },
+    { "slug": "deps0",                  "repo": "abgnydn/deps0" },
+    { "slug": "the-swarm",              "repo": "abgnydn/the-swarm" },
+    { "slug": "swarm-paper-1",          "repo": "abgnydn/swarm-paper-1" },
+    { "slug": "mycosim",                "repo": "abgnydn/mycosim" },
+
+    { "slug": "swarm-bench",            "repo": "abgnydn/swarm-bench" },
+    { "slug": "swarm-bio",              "repo": "abgnydn/swarm-bio" },
+    { "slug": "swarm-ensemble",         "repo": "abgnydn/swarm-ensemble" },
+    { "slug": "swarm-relay",            "repo": "abgnydn/swarm-relay" },
+    { "slug": "swarm-platform",         "repo": "abgnydn/swarm-platform" },
+
+    { "slug": "webgpu-fusion-webllm",   "repo": "abgnydn/webgpu-fusion-webllm" },
+    { "slug": "webgpu-fusion-chat",     "repo": "abgnydn/webgpu-fusion-chat" },
+    { "slug": "webgpu-fusion-v2",       "repo": "abgnydn/webgpu-fusion-v2" }
   ]
 }

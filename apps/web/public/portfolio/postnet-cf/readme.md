@@ -78,7 +78,10 @@ All four pages are independent Durable Objects sharing the same Cloudflare proje
 | 39b | Adam-on-scalar (MEAZO-faithful) — bounded step caps at lr; loses to sym-AIMD with default hyperparams (see `docs/PHASE_39B_ADAM_ON_SCALAR.md`) | `f73fe22` |
 | 40-scope | NTK-Mirror local dry-run + integration plan — Qwen2.5-0.5B + 512 gates trained in 5 s, controller artifact dissected, Phase 40 ship sequence written (see `docs/PHASE_40_NTKMIRROR_PLAN.md`) | `b8d6ce6` |
 | 40-1 | Gate-selection pipeline — Python extractor + TS gate-apply hook + first baked artifact (Qwen-0.5B math, K=5000, 40 KB); parser round-trip verified across 16 checks | `08aa9b5` |
-| 40-2 | Federated NTK-Mirror controller DO + Python verifier — first end-to-end federated SPSA on a real LLM; R=30 → loss 1.7632→1.7629, ‖θ‖ 0→0.044 (see `docs/PHASE_40_NEXT2_NTK_DO.md`) | _uncommitted_ |
+| 40-2 | Federated NTK-Mirror controller DO + Python verifier — first end-to-end federated SPSA on a real LLM; R=30 → loss 1.7632→1.7629, ‖θ‖ 0→0.044 (see `docs/PHASE_40_NEXT2_NTK_DO.md`) | `00fda9e` |
+| 40-3 | Trusted-auditor loss oracle — reactivates Phase 39 sym-AIMD η + byzantine defense via piggybacked `audit_loss_before` field; R=30 → η drifts 1.0e-3→2.5e-3 (grow=19 shr=0), 1.75× more loss descent (see `docs/PHASE_40_NEXT3_LOSS_ORACLE.md`) | `91fb1c1` |
+| 40-4a | Browser worker for head-classifier — `public/head.html` + `public/head-spsa-worker.js`; completes the Phase 38/39 demo arc (open a URL, click Join, federate-train an AG News classifier in your tab) | `ae9541c` |
+| 40-4b-s1 | Qwen+gates ONNX export — `scripts/export-qwen-with-gates.py` produces a Qwen-0.5B-Instruct ONNX with per-layer gate multipliers as a forward input; validated zero-diff vs base PyTorch at all-ones gates (see `docs/PHASE_40_NEXT4B_QWEN_ONNX.md`) | _uncommitted_ |
 
 Each phase ships a real change to the protocol or the demo and is documented either in `docs/` or in a per-phase commit message that includes the empirical result.
 

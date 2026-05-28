@@ -2,6 +2,8 @@
 
 ## 2026-05-28
 
+- `14:19` **feat(atmosphere): real 3D painting via Three.js + fix light-theme sid…** — +187 −170 — [`85aeb64`](https://github.com/abgnydn/markview/commit/85aeb6486ea03d6ae21801850b041f197028ca1e)
+- `14:03` **fix(atmosphere): anchor foreground in depth parallax + un-block swap** — +462 −151 — [`4f17671`](https://github.com/abgnydn/markview/commit/4f17671f02a0c6e9d434e563a59488181217f7a1)
 - `13:43` **feat(atmosphere): depth-aware painting parallax via Depth Anything v2** — +1294 −65 — [`5bf8eb8`](https://github.com/abgnydn/markview/commit/5bf8eb8110640f92588bfedc539d54dd403936cc)
 - `13:25` **fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam** — +17418 −18 — [`1d28274`](https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b)
 - `12:44` **feat(viewer): final 3 polish items — annotations + smart-cap + cursor…** — +670 −0 — [`ea52a8e`](https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6)
@@ -62,5 +64,3 @@
 - `13:05` **chore(deps): npm update + clean up empty sandbox dirs** — +1032 −353 — [`2721669`](https://github.com/abgnydn/markview/commit/2721669b03e809e22bd07ee9160f9c3d063e6984)
 - `12:06` **chore(security): swap werift → @roamhq/wrtc, eliminate last 3 vulnera…** — +180 −620 — [`f300bd4`](https://github.com/abgnydn/markview/commit/f300bd4eab97bcb4af4ed3cd985a9ccfb0c3627b)
 - `10:38` **chore(security): cut vulnerabilities 7→3 via overrides + xlsx fork** — +4468 −4051 — [`51acbc9`](https://github.com/abgnydn/markview/commit/51acbc96db0f2c4a9379554e03289c30a019fe83)
-- `07:28` **chore: delete /investors page + dep cleanup** — +54 −272 — [`92e3c58`](https://github.com/abgnydn/markview/commit/92e3c5849594f97160854c203380d9a8734b47aa)
-- `07:19` **fix: agent CLI command, MCP tool count log, dep cleanup** — +426 −258 — [`4858d06`](https://github.com/abgnydn/markview/commit/4858d06a991ecf6a35783587967601d6aa9a1c33)

@@ -65,9 +65,14 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
 
       const scene = new THREE.Scene();
 
-      // Perspective camera — moderate FOV, sits 1.6 units from the plane.
-      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 10);
-      camera.position.set(0, 0, 1.6);
+      // Perspective camera — moderate FOV, sits at CAM_DIST from the
+      // plane. The plane is then SCALED to cover the camera's visible
+      // frustum at z=0 (object-fit: cover), with a buffer so depth
+      // displacement + orbit can't reveal the edges.
+      const FOV_DEG = 40;
+      const CAM_DIST = 1.6;
+      const camera = new THREE.PerspectiveCamera(FOV_DEG, window.innerWidth / window.innerHeight, 0.1, 10);
+      camera.position.set(0, 0, CAM_DIST);
       camera.lookAt(0, 0, 0);
 
       // Lights. Directional from upper-left gives high-depth peaks a
@@ -97,13 +102,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       depthTex.minFilter = THREE.LinearFilter;
       depthTex.magFilter = THREE.LinearFilter;
 
-      // Plane — aspect-fit to canvas. Subdivided into a 192×128 grid
-      // so vertex displacement reads as continuous surface, not blocky.
+      // Plane — built at the painting's native aspect (planeH=1,
+      // planeW=paintAspect). We then scale the mesh to fully cover
+      // the camera's visible frustum (recomputed on resize).
       const paintImg = paintingTex.image as HTMLImageElement;
       const paintAspect = paintImg.width / paintImg.height;
-      const planeH = 2;
-      const planeW = planeH * paintAspect;
-      const geom = new THREE.PlaneGeometry(planeW, planeH, 192, 128);
+      const geom = new THREE.PlaneGeometry(paintAspect, 1, 192, 128);
       // Compute per-vertex normals AFTER displacement — done in the
       // shader via finite-difference on the depth texture.
 
@@ -180,6 +184,20 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       const mesh = new THREE.Mesh(geom, material);
       scene.add(mesh);
 
+      // Cover-fit the plane to the camera frustum at z=0 (with 10%
+      // buffer for depth displacement + camera orbit). Re-run on every
+      // resize so the painting always fills the viewport.
+      const fitMesh = () => {
+        const visibleH = 2 * CAM_DIST * Math.tan(THREE.MathUtils.degToRad(FOV_DEG) / 2);
+        const visibleW = visibleH * camera.aspect;
+        // Cover: pick the larger of (match height) or (match width).
+        const heightToFit = visibleH;
+        const heightFromWidth = visibleW / paintAspect;
+        const scale = Math.max(heightToFit, heightFromWidth) * 1.10;
+        mesh.scale.set(scale, scale, 1);
+      };
+      fitMesh();
+
       // Cursor — drives a soft camera orbit (yaw/pitch ≤ ~5°).
       let cursorTarget = { x: 0, y: 0 };
       let cursorCur = { x: 0, y: 0 };
@@ -195,6 +213,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         renderer.setSize(window.innerWidth, window.innerHeight, false);
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
+        fitMesh();
       };
       window.addEventListener('resize', resize);
 
@@ -205,11 +224,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         cursorCur.y += (cursorTarget.y - cursorCur.y) * 0.05;
         // Camera orbits a tiny arc around the painting center. Subtle
         // enough to feel like head movement, not like a UI animation.
-        const yaw = -cursorCur.x * 0.10;
-        const pitch = cursorCur.y * 0.08;
-        camera.position.x = Math.sin(yaw) * 1.6;
-        camera.position.y = Math.sin(pitch) * 1.6;
-        camera.position.z = Math.cos(yaw) * 1.6 + Math.abs(pitch) * -0.1;
+        // Amplitude tuned to stay inside the 10% cover-fit buffer.
+        const yaw = -cursorCur.x * 0.06;
+        const pitch = cursorCur.y * 0.05;
+        camera.position.x = Math.sin(yaw) * CAM_DIST;
+        camera.position.y = Math.sin(pitch) * CAM_DIST;
+        camera.position.z = Math.cos(yaw) * CAM_DIST;
         camera.lookAt(0, 0, 0);
         (material.uniforms.uTime as { value: number }).value = (performance.now() - start) / 1000;
         renderer.render(scene, camera);
