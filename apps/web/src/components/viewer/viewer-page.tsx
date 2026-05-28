@@ -16,6 +16,7 @@ import { FrontmatterCard } from '@/components/viewer/frontmatter-card';
 import { StickyTitle } from '@/components/viewer/sticky-title';
 import { ReadingDepthDial } from '@/components/viewer/reading-depth-dial';
 import { MiniMap } from '@/components/viewer/mini-map';
+import { AnnotationsLayer } from '@/components/viewer/annotations-layer';
 import { AutosaveWhisper } from '@/components/viewer/autosave-whisper';
 import { CommandPalette } from '@/components/viewer/command-palette';
 import { ActivityLog } from '@/components/viewer/activity-log';
@@ -247,6 +248,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       )}
       <ShareStatus />
       <PresenceAvatars />
+      <AnnotationsLayer fileId={activeFileId} refreshKey={activeFileId ?? ''} />
       <AutosaveWhisper />
       <CommandPalette />
       <ActivityLog />

@@ -23,6 +23,7 @@ import { autocompletion, CompletionContext, closeBrackets } from '@codemirror/au
 import type * as Y from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 import { MarkdownRenderer } from './markdown-renderer';
+import { smartCapitalize, cursorTrailPlugin } from './editor-extras';
 import { markviewCompletions, invalidateCompletionCache } from './editor-completions';
 
 interface MarkdownEditorProps {
@@ -300,6 +301,12 @@ function buildExtensions(
     syntaxHighlighting(markviewHighlight),
     focusParagraphPlugin,
     markviewTheme,
+    // R13 + R18 — quietly land smart capitalize + cursor trail. Both
+    // gated by behavior (auto-cap only after sentence boundary +
+    // space; cursor ghosts only when typing > 5/sec) so a casual
+    // typist sees nothing unusual.
+    smartCapitalize(),
+    cursorTrailPlugin,
     // R16 — Smart-paste: when the user pastes a bare URL that ends
     // up on its own line (after the paste), auto-convert it to a
     // markdown link `[host](url)`. Future work: a CORS proxy on the

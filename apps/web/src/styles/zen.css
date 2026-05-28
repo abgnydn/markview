@@ -3296,6 +3296,129 @@ body:hover .mv-depth-dial { opacity: 0.7; }
   color: var(--zen-muted, rgba(255, 255, 255, 0.5));
 }
 
+/* R11 — Margin annotations. Dot column sits flush against the right
+   edge of the content column; hovering a dot expands a card to the
+   left. Orphans (re-anchor failed) cluster at the bottom of the
+   viewport in a faded ring. */
+.mv-anno-dots {
+  position: absolute;
+  top: 0;
+  right: calc(max(2vw, 24px));
+  width: 14px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.mv-anno-dot {
+  position: absolute;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--zen-accent, #b9a4ff);
+  border: 1px solid rgba(11, 10, 13, 0.6);
+  box-shadow: 0 0 8px rgba(185, 164, 255, 0.45);
+  opacity: 0.72;
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+.mv-anno-dot:hover,
+.mv-anno-dot.is-hover {
+  opacity: 1;
+  transform: scale(1.35);
+}
+.mv-anno-dot-orphan {
+  background: transparent;
+  border-color: var(--zen-muted, rgba(255, 255, 255, 0.4));
+  box-shadow: none;
+  position: fixed;
+  bottom: 16vh;
+  right: calc(max(2vw, 24px));
+}
+
+/* Card that surfaces on dot hover. Position is set inline (absolute,
+   page-coord top); width is fixed so the card always sits in the
+   right gutter outside the content column. */
+.mv-anno-card {
+  position: absolute;
+  right: calc(max(2vw, 24px) + 22px);
+  width: 280px;
+  z-index: 4;
+  padding: 12px 14px 14px;
+  background: var(--zen-bg, rgba(11, 10, 13, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 1px solid rgba(185, 164, 255, 0.5);
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  font-family: var(--zen-serif, Georgia, serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--zen-soft, rgba(255, 255, 255, 0.78));
+  animation: mv-fade-in 220ms ease both;
+}
+.mv-anno-anchor {
+  font-family: var(--zen-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 12px;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.55));
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 8px;
+}
+.mv-anno-note { white-space: pre-wrap; }
+.mv-anno-delete {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.4));
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+}
+.mv-anno-delete:hover { color: #fca5a5; }
+.mv-anno-card-edit { z-index: 1003; }
+.mv-anno-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--zen-fg, rgba(255, 255, 255, 0.9));
+  font-family: var(--zen-serif, Georgia, serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  padding: 8px 10px;
+  border-radius: 4px;
+  min-height: 76px;
+  resize: vertical;
+  outline: none;
+  margin-bottom: 10px;
+}
+.mv-anno-input:focus { border-color: rgba(185, 164, 255, 0.4); }
+.mv-anno-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.mv-anno-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: var(--zen-soft, rgba(255, 255, 255, 0.72));
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.mv-anno-btn-primary {
+  background: rgba(185, 164, 255, 0.16);
+  border-color: rgba(185, 164, 255, 0.4);
+  color: var(--zen-accent, #b9a4ff);
+}
+
 /* N11 ⌘-click wikilink fly-in pane — a right-anchored 420px sheet with
    the linked file's content. Component is .mv-flyin; .mv-flyin-show
    drives the slide. */
