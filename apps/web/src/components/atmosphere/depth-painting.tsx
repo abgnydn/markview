@@ -160,23 +160,78 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           }
         `,
         fragmentShader: `
-          precision mediump float;
+          precision highp float;
           uniform sampler2D uPaint;
+          uniform sampler2D uDepth;
           uniform vec3 uLightDir;
           uniform float uAmbient;
+          uniform float uTime;
           varying vec2 vUv;
           varying float vDepth;
           varying vec3 vNormal;
 
+          // Cheap value-noise for the sky drift.
+          float hash21(vec2 p) {
+            return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+          }
+          float vnoise(vec2 p) {
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            float a = hash21(i);
+            float b = hash21(i + vec2(1.0, 0.0));
+            float c = hash21(i + vec2(0.0, 1.0));
+            float d = hash21(i + vec2(1.0, 1.0));
+            vec2 u = f * f * (3.0 - 2.0 * f);
+            return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+          }
+
           void main() {
-            vec3 base = texture2D(uPaint, vUv).rgb;
+            // Living motion bands by depth — picked from the depth map
+            // so each painting auto-segments:
+            //   far  (depth 0.00–0.35): SKY — slow horizontal drift +
+            //                            very low-frequency vertical wobble
+            //   mid  (depth 0.35–0.65): WATER / MIST — sinusoidal ripple
+            //   near (depth 0.65–1.00): SUBJECT — rock still
+            float far  = smoothstep(0.40, 0.05, vDepth);
+            float mid  = smoothstep(0.30, 0.45, vDepth) *
+                         (1.0 - smoothstep(0.60, 0.78, vDepth));
+            // 'near' has no motion; subjects hold.
+
+            // Sky drift — slow horizontal flow + tiny vertical wobble.
+            // Multi-octave so clouds feel like real clouds, not a sine bar.
+            float t = uTime * 0.035;
+            vec2 skyOff = vec2(
+              (vnoise(vec2(vUv.x * 3.0 + t * 2.4, vUv.y * 1.6)) - 0.5) * 0.018
+              + sin(uTime * 0.07 + vUv.y * 1.4) * 0.006,
+              (vnoise(vec2(vUv.x * 2.2, vUv.y * 2.4 + t * 1.3)) - 0.5) * 0.006
+            );
+
+            // Water / mist ripple — small high-frequency sinusoid that
+            // shimmers across the surface.
+            vec2 midOff = vec2(
+              sin(uTime * 0.55 + vUv.x * 14.0 + vUv.y * 4.0) * 0.0035,
+              cos(uTime * 0.42 + vUv.y * 18.0 + vUv.x * 6.0) * 0.0045
+            );
+
+            vec2 motion = skyOff * far + midOff * mid;
+
+            // Sample the painting through the motion offset.
+            vec3 base = texture2D(uPaint, vUv + motion).rgb;
+
             // Lambert shading from the depth-derived normal.
             float ndotl = max(dot(normalize(vNormal), normalize(uLightDir)), 0.0);
             float shade = uAmbient + (1.0 - uAmbient) * ndotl;
-            // Subtle aerial perspective — distant zones (low depth)
-            // gain a touch of haze toward a warm paper color.
+
+            // Subtle aerial perspective — distant zones gain a touch of
+            // warm-paper haze, so the sky recedes spatially.
             vec3 haze = mix(vec3(0.86, 0.82, 0.74), base, smoothstep(0.0, 0.55, vDepth));
-            gl_FragColor = vec4(haze * shade, 1.0);
+
+            // Mid-band ripple gets a tiny specular kick when it crests,
+            // so water actually catches the light.
+            float ripple = sin(uTime * 0.55 + vUv.x * 14.0 + vUv.y * 4.0);
+            float specMid = pow(max(ripple, 0.0), 6.0) * mid * 0.25;
+
+            gl_FragColor = vec4(haze * shade + vec3(specMid), 1.0);
           }
         `,
       });
@@ -222,11 +277,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       const draw = () => {
         cursorCur.x += (cursorTarget.x - cursorCur.x) * 0.05;
         cursorCur.y += (cursorTarget.y - cursorCur.y) * 0.05;
-        // Camera orbits a tiny arc around the painting center. Subtle
-        // enough to feel like head movement, not like a UI animation.
-        // Amplitude tuned to stay inside the 10% cover-fit buffer.
-        const yaw = -cursorCur.x * 0.06;
-        const pitch = cursorCur.y * 0.05;
+        // Camera now barely moves — the painting's own depth-band
+        // motion (sky drift, water ripple, subject still) IS the life.
+        // The camera adds a whisper of orbit so the cursor still feels
+        // connected to the scene.
+        const yaw = -cursorCur.x * 0.025;
+        const pitch = cursorCur.y * 0.02;
         camera.position.x = Math.sin(yaw) * CAM_DIST;
         camera.position.y = Math.sin(pitch) * CAM_DIST;
         camera.position.z = Math.cos(yaw) * CAM_DIST;
