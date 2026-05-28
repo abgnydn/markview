@@ -4,6 +4,7 @@
 
 > 🌐 **Live site:** [iz-b0n.pages.dev](https://iz-b0n.pages.dev)
 > 📊 **Browse the bench:** [iz-b0n.pages.dev/bench/](https://iz-b0n.pages.dev/bench/)
+> 🏭 **Per-facility pages** (e.g. [Büyükçekmece Cement](https://iz-b0n.pages.dev/bench/akcansa-buyukcekmece/)): one URL per plant with audit-grade Scope 1, conformal CI, source PDFs, EnMAP scene index, Beirle NOx cross-check — and a printable [audit summary](https://iz-b0n.pages.dev/bench/akcansa-buyukcekmece/audit-summary/) you can hand to your verifier.
 > 🧪 **Verify in your browser (3 sec WebGPU train):** [iz-b0n.pages.dev/verify/](https://iz-b0n.pages.dev/verify/)
 > 📖 **How to use this:** [iz-b0n.pages.dev/use/](https://iz-b0n.pages.dev/use/)
 > 📝 **arXiv preprint draft:** [paper/iz_v0.md](paper/iz_v0.md)
@@ -30,6 +31,7 @@ uv sync && playwright install chromium
 # Build the bench
 .venv/bin/python bin/export_bench_browser.py
 .venv/bin/python bin/build_facilities_json.py
+.venv/bin/python bin/build_facility_pages.py   # 59 per-facility pages + audit summaries
 
 # Run the headline LODO eval
 python3 -m http.server 8765 --bind 127.0.0.1 --directory src/iz_browser &

@@ -2,6 +2,10 @@
 
 ## 2026-05-28
 
+- `16:08` **feat(cinemagraph): Colab notebook + Replicate cloud backend** — +311 −60 — [`a9f9bce`](https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a)
+- `15:04` **feat(atmosphere): cinemagraph pipeline — SVD renderer + Three.js Vide…** — +337 −16 — [`53bc354`](https://github.com/abgnydn/markview/commit/53bc354d02f3bd6f6ffaa22a0b73747cfbc96ba4)
+- `14:33` **feat(atmosphere): living paintings — depth-band motion in the shader** — +15874 −10 — [`5962fc5`](https://github.com/abgnydn/markview/commit/5962fc528b50654cfd4197e99150bb058953cb41)
+- `14:24` **fix(atmosphere): cover-fit the 3D painting plane to the camera frustum** — +63 −13917 — [`c6cfa91`](https://github.com/abgnydn/markview/commit/c6cfa91065f3938e27e3b3bf796995678d330bb1)
 - `14:19` **feat(atmosphere): real 3D painting via Three.js + fix light-theme sid…** — +187 −170 — [`85aeb64`](https://github.com/abgnydn/markview/commit/85aeb6486ea03d6ae21801850b041f197028ca1e)
 - `14:03` **fix(atmosphere): anchor foreground in depth parallax + un-block swap** — +462 −151 — [`4f17671`](https://github.com/abgnydn/markview/commit/4f17671f02a0c6e9d434e563a59488181217f7a1)
 - `13:43` **feat(atmosphere): depth-aware painting parallax via Depth Anything v2** — +1294 −65 — [`5bf8eb8`](https://github.com/abgnydn/markview/commit/5bf8eb8110640f92588bfedc539d54dd403936cc)
@@ -60,7 +64,3 @@
 ## 2026-05-19
 
 - `13:52` **chore(security+a11y+arch): Google-engineer-review fixes wave 1** — +353 −12 — [`2cb52d5`](https://github.com/abgnydn/markview/commit/2cb52d5b1a6a9595c22c04df7a64c567a542940f)
-- `13:17` **chore(deps): major bumps — TS 6, ESLint 10, lucide-react 1, lint-stag…** — +822 −110 — [`11d61e1`](https://github.com/abgnydn/markview/commit/11d61e1204e5dac2d15992ce3987f0c7051c5ba5)
-- `13:05` **chore(deps): npm update + clean up empty sandbox dirs** — +1032 −353 — [`2721669`](https://github.com/abgnydn/markview/commit/2721669b03e809e22bd07ee9160f9c3d063e6984)
-- `12:06` **chore(security): swap werift → @roamhq/wrtc, eliminate last 3 vulnera…** — +180 −620 — [`f300bd4`](https://github.com/abgnydn/markview/commit/f300bd4eab97bcb4af4ed3cd985a9ccfb0c3627b)
-- `10:38` **chore(security): cut vulnerabilities 7→3 via overrides + xlsx fork** — +4468 −4051 — [`51acbc9`](https://github.com/abgnydn/markview/commit/51acbc96db0f2c4a9379554e03289c30a019fe83)

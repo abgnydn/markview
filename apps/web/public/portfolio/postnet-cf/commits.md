@@ -2,6 +2,12 @@
 
 ## 2026-05-28
 
+- `16:26` **phase 40 next-6: close the byzantine hole — no-self-audit + magnitude…** — +208 −32 — [`4ff5190`](https://github.com/abgnydn/postnet-cf/commit/4ff51909de9febfc2c1f21fb856f05f91c19099e)
+- `15:58` **phase 40 next-5b: WebGPU EP fallback + attack mode + TARGET=2 + a byz…** — +226 −42 — [`ca1e621`](https://github.com/abgnydn/postnet-cf/commit/ca1e621dde68f1141ca7e8266e9cd7d11e9399a5)
+- `15:21` **phase 40 next-4-b session 5: end-to-end federated LLM training in a b…** — +476 −35 — [`5276b96`](https://github.com/abgnydn/postnet-cf/commit/5276b96e430b67a17f331e3cb7fd606611d0b571)
+- `15:04` **phase 40 next-4-b session 4: live-tested in chrome — found ORT-web in…** — +142 −9 — [`f5a13c4`](https://github.com/abgnydn/postnet-cf/commit/f5a13c40ce14b4fb432cbb544819aa434cf34bb8)
+- `14:33` **phase 40 next-4-b session 3: browser worker + demo page (NTK + Qwen)** — +853 −9 — [`b10579c`](https://github.com/abgnydn/postnet-cf/commit/b10579c5fc41b78c93312a054fa659a2c1ed0036)
+- `14:25` **phase 40 next-4-b session 2: int8 dynamic quantization** — +314 −12 — [`57b83ee`](https://github.com/abgnydn/postnet-cf/commit/57b83ee6646cfa7042051a1a501b6476e257a8ff)
 - `14:15` **phase 40 next-4-b session 1: Qwen+gates ONNX export wrapper** — +388 −11 — [`e36765a`](https://github.com/abgnydn/postnet-cf/commit/e36765a766096e57d2d933ffee054b1b4462559d)
 - `14:05` **phase 40 next-4-a: browser worker for the head-classifier (Phase 38/3…** — +604 −10 — [`ae9541c`](https://github.com/abgnydn/postnet-cf/commit/ae9541c3d2ded0fffc80d69d37d93e821f40cd61)
 - `13:58` **phase 40 next-3: trusted-auditor loss oracle → Phase 39 adaptation re…** — +350 −52 — [`91fb1c1`](https://github.com/abgnydn/postnet-cf/commit/91fb1c12144623d917002d643e20c9b23f068f45)
@@ -55,12 +61,3 @@
 - `07:39` **phase 5: char-LM tournament — real ML loss** — +1013 −3 — [`60fc2bc`](https://github.com/abgnydn/postnet-cf/commit/60fc2bc2aa0e0f17f8e2f9eb405ba629e37d1074)
 - `07:34` **phase 4: ternary-weight tournament** — +1210 −3 — [`107a43d`](https://github.com/abgnydn/postnet-cf/commit/107a43ddfab12ce3d844a7948906ef7bcc6c8ecf)
 - `06:54` **phase 3: R2 snapshots + binary bootstrap** — +262 −21 — [`43e5676`](https://github.com/abgnydn/postnet-cf/commit/43e56768ec70f13e52bc87136819209afca2098a)
-- `06:47` **phase 2: delta-only broadcasts via applied_since** — +319 −122 — [`9f27c7d`](https://github.com/abgnydn/postnet-cf/commit/9f27c7d6b338e34b1ac213ec7671a9e8b1a560ef)
-- `03:36` **phase 1: tournament / flip-and-accept protocol** — +940 −4 — [`364a2ec`](https://github.com/abgnydn/postnet-cf/commit/364a2ecc016bf10607c9986ddc12fef13cbe46de)
-
-## 2026-05-21
-
-- `13:30` **fix: clear joined set on task reset + add headless verifier** — +144 −0 — [`b66bfb7`](https://github.com/abgnydn/postnet-cf/commit/b66bfb70ce7e85ea59bcfc8f4ecf2dca3631802d)
-- `07:50` **multi-task selector: wave / circle / xor** — +120 −31 — [`51ca81f`](https://github.com/abgnydn/postnet-cf/commit/51ca81ff5f88bfd18c02cf5e5a1e63320286e3de)
-- `07:42` **adam optimizer + fusedx integration plan** — +239 −18 — [`f44fdf4`](https://github.com/abgnydn/postnet-cf/commit/f44fdf4a28a6770d3bdba19b775a1e45e6f0b992)
-- `07:32` **initial commit: federated SGD over Cloudflare Durable Object** — +2404 −0 — [`98b554b`](https://github.com/abgnydn/postnet-cf/commit/98b554b9badd1bce5e03ec6f2fc582892810ada5)

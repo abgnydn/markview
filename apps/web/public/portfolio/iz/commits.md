@@ -2,6 +2,7 @@
 
 ## 2026-05-28
 
+- `14:56` **v0.1.2: per-facility pages + audit summaries + claim form + accurate map** — +19967 −863 — [`d4f8ee2`](https://github.com/abgnydn/iz/commit/d4f8ee2dc44d77654b364b199700f98bbc7b8286)
 - `08:03` **outreach: EnMAP access how-to (v0.2 unblock)** — +130 −0 — [`01806b1`](https://github.com/abgnydn/iz/commit/01806b190003cbd632e34d01dd461171869a032c)
 - `07:58` **data: ship EnMAP scene index + Beirle NOx catalog + S5P aggregated** — +6069 −0 — [`5193e3f`](https://github.com/abgnydn/iz/commit/5193e3ff5d33aaaac81d2ebac525d0ebda558c78)
 - `07:57` **v0.1.1: EnMAP scene index + Beirle NOx cross-match + conformal CI** — +491 −0 — [`21205aa`](https://github.com/abgnydn/iz/commit/21205aa65efc48d612ffaead2be1ba4ff9dbc6ab)

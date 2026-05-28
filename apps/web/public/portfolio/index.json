@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-28T14:25:37.045Z",
+  "generated_at": "2026-05-28T16:36:19.661Z",
   "project_count": 47,
   "river_count": 500,
   "projects": [
@@ -104,20 +104,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-05-28T14:19:52Z",
+      "pushed_at": "2026-05-28T16:08:30Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "85aeb6486ea03d6ae21801850b041f197028ca1e",
-        "short_sha": "85aeb64",
-        "message": "feat(atmosphere): real 3D painting via Three.js + fix light-theme sid…",
+        "sha": "a9f9bcebac246341ae0bf42659ccd90d0bfb159a",
+        "short_sha": "a9f9bce",
+        "message": "feat(cinemagraph): Colab notebook + Replicate cloud backend",
         "type": "feat",
-        "date": "2026-05-28T14:19:46Z",
-        "url": "https://github.com/abgnydn/markview/commit/85aeb6486ea03d6ae21801850b041f197028ca1e",
-        "additions": 187,
-        "deletions": 170
+        "date": "2026-05-28T16:08:25Z",
+        "url": "https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a",
+        "additions": 311,
+        "deletions": 60
       }
     },
     {
@@ -135,20 +135,20 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-05-28T14:15:33Z",
+      "pushed_at": "2026-05-28T16:29:49Z",
       "default_branch": "main",
       "latest_tag": null,
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "e36765a766096e57d2d933ffee054b1b4462559d",
-        "short_sha": "e36765a",
-        "message": "phase 40 next-4-b session 1: Qwen+gates ONNX export wrapper",
+        "sha": "4ff51909de9febfc2c1f21fb856f05f91c19099e",
+        "short_sha": "4ff5190",
+        "message": "phase 40 next-6: close the byzantine hole — no-self-audit + magnitude…",
         "type": "other",
-        "date": "2026-05-28T14:15:31Z",
-        "url": "https://github.com/abgnydn/postnet-cf/commit/e36765a766096e57d2d933ffee054b1b4462559d",
-        "additions": 388,
-        "deletions": 11
+        "date": "2026-05-28T16:26:18Z",
+        "url": "https://github.com/abgnydn/postnet-cf/commit/4ff51909de9febfc2c1f21fb856f05f91c19099e",
+        "additions": 208,
+        "deletions": 32
       }
     },
     {
@@ -166,20 +166,51 @@
       "language_color": "#e34c26",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-05-28T08:03:52Z",
+      "pushed_at": "2026-05-28T15:13:19Z",
       "default_branch": "master",
-      "latest_tag": "v0.1.1",
-      "commits_30d": 33,
-      "commits_synced": 33,
+      "latest_tag": "v0.1.2",
+      "commits_30d": 34,
+      "commits_synced": 34,
       "last_commit": {
-        "sha": "01806b190003cbd632e34d01dd461171869a032c",
-        "short_sha": "01806b1",
-        "message": "outreach: EnMAP access how-to (v0.2 unblock)",
+        "sha": "d4f8ee2dc44d77654b364b199700f98bbc7b8286",
+        "short_sha": "d4f8ee2",
+        "message": "v0.1.2: per-facility pages + audit summaries + claim form + accurate map",
         "type": "other",
-        "date": "2026-05-28T08:03:40Z",
-        "url": "https://github.com/abgnydn/iz/commit/01806b190003cbd632e34d01dd461171869a032c",
-        "additions": 130,
-        "deletions": 0
+        "date": "2026-05-28T14:56:14Z",
+        "url": "https://github.com/abgnydn/iz/commit/d4f8ee2dc44d77654b364b199700f98bbc7b8286",
+        "additions": 19967,
+        "deletions": 863
+      }
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "tagline": "Local-first grammar + writing assistant for macOS. Native overlay across all apps. Harper rules + fine-tuned Gemma 3 270M LoRA. 100% on-device.",
+      "repo": "abgnydn/quill",
+      "repo_url": "https://github.com/abgnydn/quill",
+      "live_url": null,
+      "featured": false,
+      "order": null,
+      "private": false,
+      "archived": false,
+      "language": "Rust",
+      "language_color": "#dea584",
+      "stars": 0,
+      "topics": [],
+      "pushed_at": "2026-05-28T16:03:13Z",
+      "default_branch": "master",
+      "latest_tag": "v2.0.0",
+      "commits_30d": 50,
+      "commits_synced": 50,
+      "last_commit": {
+        "sha": "207c34cd2ea4dfcc96133492503b62f68a29c839",
+        "short_sha": "207c34c",
+        "message": "v2.0: ship faithful-rewrite LoRA on Qwen 2.5-1.5B (34% → 70%)",
+        "type": "other",
+        "date": "2026-05-28T16:00:18Z",
+        "url": "https://github.com/abgnydn/quill/commit/207c34cd2ea4dfcc96133492503b62f68a29c839",
+        "additions": 922,
+        "deletions": 18
       }
     },
     {
@@ -193,8 +224,8 @@
       "order": null,
       "private": false,
       "archived": false,
-      "language": null,
-      "language_color": null,
+      "language": "TypeScript",
+      "language_color": "#3178c6",
       "stars": 0,
       "topics": [],
       "pushed_at": "2026-05-28T14:24:20Z",
@@ -255,8 +286,8 @@
       "order": null,
       "private": false,
       "archived": false,
-      "language": null,
-      "language_color": null,
+      "language": "WGSL",
+      "language_color": "#1a5e9a",
       "stars": 0,
       "topics": [],
       "pushed_at": "2026-05-28T14:24:07Z",
@@ -335,37 +366,6 @@
         "url": "https://github.com/abgnydn/butterfly/commit/8ed3ecaba1506f7544f138a2ff38cd92c987c8e7",
         "additions": 1329,
         "deletions": 0
-      }
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "tagline": "Local-first grammar + writing assistant for macOS. Native overlay across all apps. Harper rules + fine-tuned Gemma 3 270M LoRA. 100% on-device.",
-      "repo": "abgnydn/quill",
-      "repo_url": "https://github.com/abgnydn/quill",
-      "live_url": null,
-      "featured": false,
-      "order": null,
-      "private": false,
-      "archived": false,
-      "language": "Rust",
-      "language_color": "#dea584",
-      "stars": 0,
-      "topics": [],
-      "pushed_at": "2026-05-28T13:25:49Z",
-      "default_branch": "master",
-      "latest_tag": "v1.4.1",
-      "commits_30d": 30,
-      "commits_synced": 30,
-      "last_commit": {
-        "sha": "7fbcaf1d360603276402f8b65c500591048f6f1e",
-        "short_sha": "7fbcaf1",
-        "message": "v0.9 phase 2: local LoRA training via bundled llama-finetune-lora",
-        "type": "other",
-        "date": "2026-05-22T07:33:47Z",
-        "url": "https://github.com/abgnydn/quill/commit/7fbcaf1d360603276402f8b65c500591048f6f1e",
-        "additions": 444,
-        "deletions": 15
       }
     },
     {
@@ -1538,6 +1538,162 @@
   ],
   "commits": [
     {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "4ff51909de9febfc2c1f21fb856f05f91c19099e",
+      "short_sha": "4ff5190",
+      "message": "phase 40 next-6: close the byzantine hole — no-self-audit + magnitude…",
+      "type": "other",
+      "date": "2026-05-28T16:26:18Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/4ff51909de9febfc2c1f21fb856f05f91c19099e",
+      "additions": 208,
+      "deletions": 32
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "a9f9bcebac246341ae0bf42659ccd90d0bfb159a",
+      "short_sha": "a9f9bce",
+      "message": "feat(cinemagraph): Colab notebook + Replicate cloud backend",
+      "type": "feat",
+      "date": "2026-05-28T16:08:25Z",
+      "url": "https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a",
+      "additions": 311,
+      "deletions": 60
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "207c34cd2ea4dfcc96133492503b62f68a29c839",
+      "short_sha": "207c34c",
+      "message": "v2.0: ship faithful-rewrite LoRA on Qwen 2.5-1.5B (34% → 70%)",
+      "type": "other",
+      "date": "2026-05-28T16:00:18Z",
+      "url": "https://github.com/abgnydn/quill/commit/207c34cd2ea4dfcc96133492503b62f68a29c839",
+      "additions": 922,
+      "deletions": 18
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "ca1e621dde68f1141ca7e8266e9cd7d11e9399a5",
+      "short_sha": "ca1e621",
+      "message": "phase 40 next-5b: WebGPU EP fallback + attack mode + TARGET=2 + a byz…",
+      "type": "other",
+      "date": "2026-05-28T15:58:46Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/ca1e621dde68f1141ca7e8266e9cd7d11e9399a5",
+      "additions": 226,
+      "deletions": 42
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "5276b96e430b67a17f331e3cb7fd606611d0b571",
+      "short_sha": "5276b96",
+      "message": "phase 40 next-4-b session 5: end-to-end federated LLM training in a b…",
+      "type": "other",
+      "date": "2026-05-28T15:21:36Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/5276b96e430b67a17f331e3cb7fd606611d0b571",
+      "additions": 476,
+      "deletions": 35
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "f5a13c40ce14b4fb432cbb544819aa434cf34bb8",
+      "short_sha": "f5a13c4",
+      "message": "phase 40 next-4-b session 4: live-tested in chrome — found ORT-web in…",
+      "type": "other",
+      "date": "2026-05-28T15:04:19Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/f5a13c40ce14b4fb432cbb544819aa434cf34bb8",
+      "additions": 142,
+      "deletions": 9
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "53bc354d02f3bd6f6ffaa22a0b73747cfbc96ba4",
+      "short_sha": "53bc354",
+      "message": "feat(atmosphere): cinemagraph pipeline — SVD renderer + Three.js Vide…",
+      "type": "feat",
+      "date": "2026-05-28T15:04:16Z",
+      "url": "https://github.com/abgnydn/markview/commit/53bc354d02f3bd6f6ffaa22a0b73747cfbc96ba4",
+      "additions": 337,
+      "deletions": 16
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "d4f8ee2dc44d77654b364b199700f98bbc7b8286",
+      "short_sha": "d4f8ee2",
+      "message": "v0.1.2: per-facility pages + audit summaries + claim form + accurate map",
+      "type": "other",
+      "date": "2026-05-28T14:56:14Z",
+      "url": "https://github.com/abgnydn/iz/commit/d4f8ee2dc44d77654b364b199700f98bbc7b8286",
+      "additions": 19967,
+      "deletions": 863
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "b10579c5fc41b78c93312a054fa659a2c1ed0036",
+      "short_sha": "b10579c",
+      "message": "phase 40 next-4-b session 3: browser worker + demo page (NTK + Qwen)",
+      "type": "other",
+      "date": "2026-05-28T14:33:40Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/b10579c5fc41b78c93312a054fa659a2c1ed0036",
+      "additions": 853,
+      "deletions": 9
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "5962fc528b50654cfd4197e99150bb058953cb41",
+      "short_sha": "5962fc5",
+      "message": "feat(atmosphere): living paintings — depth-band motion in the shader",
+      "type": "feat",
+      "date": "2026-05-28T14:33:13Z",
+      "url": "https://github.com/abgnydn/markview/commit/5962fc528b50654cfd4197e99150bb058953cb41",
+      "additions": 15874,
+      "deletions": 10
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "57b83ee6646cfa7042051a1a501b6476e257a8ff",
+      "short_sha": "57b83ee",
+      "message": "phase 40 next-4-b session 2: int8 dynamic quantization",
+      "type": "other",
+      "date": "2026-05-28T14:25:44Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/57b83ee6646cfa7042051a1a501b6476e257a8ff",
+      "additions": 314,
+      "deletions": 12
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "c6cfa91065f3938e27e3b3bf796995678d330bb1",
+      "short_sha": "c6cfa91",
+      "message": "fix(atmosphere): cover-fit the 3D painting plane to the camera frustum",
+      "type": "fix",
+      "date": "2026-05-28T14:24:44Z",
+      "url": "https://github.com/abgnydn/markview/commit/c6cfa91065f3938e27e3b3bf796995678d330bb1",
+      "additions": 63,
+      "deletions": 13917
+    },
+    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -1642,6 +1798,19 @@
       "deletions": 65
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "703e7ea28d962775c2b2e2b36337d254325f491c",
+      "short_sha": "703e7ea",
+      "message": "v2.0 step 2: rejection-sampling data-gen script",
+      "type": "other",
+      "date": "2026-05-28T13:28:33Z",
+      "url": "https://github.com/abgnydn/quill/commit/703e7ea28d962775c2b2e2b36337d254325f491c",
+      "additions": 233,
+      "deletions": 0
+    },
+    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -1668,6 +1837,19 @@
       "deletions": 18
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "66f2c4ad789ca569c5ddaf6b4c228ff797a741af",
+      "short_sha": "66f2c4a",
+      "message": "v1.4.1: ship the +16pp template fix to users",
+      "type": "other",
+      "date": "2026-05-28T13:24:09Z",
+      "url": "https://github.com/abgnydn/quill/commit/66f2c4ad789ca569c5ddaf6b4c228ff797a741af",
+      "additions": 8,
+      "deletions": 3
+    },
+    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -1679,6 +1861,19 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/b8d6ce64dc851e957cfd700419886eb332bba85c",
       "additions": 264,
       "deletions": 1
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "149bd7607a8f0fab9bc691cb81c869c3560ad7c0",
+      "short_sha": "149bd76",
+      "message": "v1.4.1: ChatML system+user split — 18% → 34% on eval, zero training",
+      "type": "other",
+      "date": "2026-05-28T12:51:04Z",
+      "url": "https://github.com/abgnydn/quill/commit/149bd7607a8f0fab9bc691cb81c869c3560ad7c0",
+      "additions": 79,
+      "deletions": 15
     },
     {
       "slug": "markview",
@@ -1822,6 +2017,19 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/ea8caf50dd75f3f5a37432d0b0581c4793f5ba58",
       "additions": 204,
       "deletions": 64
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "5ba9f51224e18a605a78eb91be1c29868534d46b",
+      "short_sha": "5ba9f51",
+      "message": "v2.0 step 1: eval harness for faithful-rewrite training",
+      "type": "other",
+      "date": "2026-05-28T11:16:14Z",
+      "url": "https://github.com/abgnydn/quill/commit/5ba9f51224e18a605a78eb91be1c29868534d46b",
+      "additions": 365,
+      "deletions": 0
     },
     {
       "slug": "markview",
@@ -2279,6 +2487,19 @@
       "deletions": 8
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "76b4cf5b608e311e7e490b45345e5c77b2f6917e",
+      "short_sha": "76b4cf5",
+      "message": "v1.4.0: refactor pass before training sprint",
+      "type": "other",
+      "date": "2026-05-27T11:19:28Z",
+      "url": "https://github.com/abgnydn/quill/commit/76b4cf5b608e311e7e490b45345e5c77b2f6917e",
+      "additions": 16,
+      "deletions": 266
+    },
+    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -2474,6 +2695,32 @@
       "deletions": 0
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "0ac88736c8a34c7bb0e420b19de34eb947103bbc",
+      "short_sha": "0ac8873",
+      "message": "v1.3.4: popover stickiness + stricter rewrite instruction",
+      "type": "other",
+      "date": "2026-05-27T09:16:23Z",
+      "url": "https://github.com/abgnydn/quill/commit/0ac88736c8a34c7bb0e420b19de34eb947103bbc",
+      "additions": 39,
+      "deletions": 11
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "5c10cda75728219731092e8f2888592333e50bf4",
+      "short_sha": "5c10cda",
+      "message": "v1.3.3: stop main from collapsing — page scrolls instead",
+      "type": "other",
+      "date": "2026-05-27T09:02:45Z",
+      "url": "https://github.com/abgnydn/quill/commit/5c10cda75728219731092e8f2888592333e50bf4",
+      "additions": 8,
+      "deletions": 7
+    },
+    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -2526,6 +2773,19 @@
       "deletions": 3
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "18cf8d29e2628cb0dc800c28b07cfd4d35d099d2",
+      "short_sha": "18cf8d2",
+      "message": "v1.3.2: tray icon + branding leak + training explainer + textarea min…",
+      "type": "other",
+      "date": "2026-05-27T08:35:04Z",
+      "url": "https://github.com/abgnydn/quill/commit/18cf8d29e2628cb0dc800c28b07cfd4d35d099d2",
+      "additions": 120,
+      "deletions": 9
+    },
+    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -2539,6 +2799,19 @@
       "deletions": 25
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "f2907a15be578860d0c8719edc835cded76f667e",
+      "short_sha": "f2907a1",
+      "message": "v1.3.1: Full installer variant — both models pre-bundled",
+      "type": "other",
+      "date": "2026-05-27T08:16:12Z",
+      "url": "https://github.com/abgnydn/quill/commit/f2907a15be578860d0c8719edc835cded76f667e",
+      "additions": 127,
+      "deletions": 31
+    },
+    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -2550,6 +2823,19 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/3d7e01762e4e77aade5d951fc536c8b17ca25021",
       "additions": 208,
       "deletions": 76
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "83c92a7d94a193c40e85cafeebb7378dae7555f4",
+      "short_sha": "83c92a7",
+      "message": "v1.3.0: multi-model picker — LFM2.5-1.2B-Instruct as premium download",
+      "type": "other",
+      "date": "2026-05-27T08:05:28Z",
+      "url": "https://github.com/abgnydn/quill/commit/83c92a7d94a193c40e85cafeebb7378dae7555f4",
+      "additions": 593,
+      "deletions": 10
     },
     {
       "slug": "iz",
@@ -2617,6 +2903,19 @@
       "deletions": 0
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "151cb077437a5c579cd6f1a4b941591f2e71d480",
+      "short_sha": "151cb07",
+      "message": "v1.2.1: instruction quality fixes for the rewrite panel",
+      "type": "other",
+      "date": "2026-05-27T07:38:15Z",
+      "url": "https://github.com/abgnydn/quill/commit/151cb077437a5c579cd6f1a4b941591f2e71d480",
+      "additions": 83,
+      "deletions": 4
+    },
+    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -2628,6 +2927,19 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/0eebb55d30d2d81accc93964112b06db31b0d659",
       "additions": 759,
       "deletions": 85
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "893a8c77960ef9aa1c405a6520d46fd54be03c50",
+      "short_sha": "893a8c7",
+      "message": "v1.2.0: color-coded categories + tone chips + pause presets",
+      "type": "other",
+      "date": "2026-05-27T07:24:09Z",
+      "url": "https://github.com/abgnydn/quill/commit/893a8c77960ef9aa1c405a6520d46fd54be03c50",
+      "additions": 313,
+      "deletions": 16
     },
     {
       "slug": "iz",
@@ -2643,6 +2955,19 @@
       "deletions": 204
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "81015e817799e525386a7d802064f921616cd738",
+      "short_sha": "81015e8",
+      "message": "v1.1.2: 300ms hide + 18px trigger + popover is word-only",
+      "type": "other",
+      "date": "2026-05-27T07:13:19Z",
+      "url": "https://github.com/abgnydn/quill/commit/81015e817799e525386a7d802064f921616cd738",
+      "additions": 29,
+      "deletions": 38
+    },
+    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -2656,6 +2981,19 @@
       "deletions": 81
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "12a455ce03f3dab310c0046fe284606a4c928816",
+      "short_sha": "12a455c",
+      "message": "v1.1.1: selection-update fires on every tick",
+      "type": "other",
+      "date": "2026-05-27T07:06:11Z",
+      "url": "https://github.com/abgnydn/quill/commit/12a455ce03f3dab310c0046fe284606a4c928816",
+      "additions": 40,
+      "deletions": 30
+    },
+    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -2667,6 +3005,19 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/30a35d0c95e8fd7a2dd088777b8305dae98594dc",
       "additions": 119,
       "deletions": 13
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "3a9aafb638799bf4aa4ee9960953f9cbcd583387",
+      "short_sha": "3a9aafb",
+      "message": "v1.1.0: Grammarly-style selection trigger + dedicated rewrite panel",
+      "type": "other",
+      "date": "2026-05-27T07:00:30Z",
+      "url": "https://github.com/abgnydn/quill/commit/3a9aafb638799bf4aa4ee9960953f9cbcd583387",
+      "additions": 418,
+      "deletions": 4
     },
     {
       "slug": "iz",
@@ -2695,6 +3046,45 @@
       "deletions": 0
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "ec207528d0923f57c4f6fd37a4826c4af27a94f1",
+      "short_sha": "ec20752",
+      "message": "v1.0.9: stale-underlines fix + context-aware hide + sentence-scoped r…",
+      "type": "other",
+      "date": "2026-05-27T06:42:08Z",
+      "url": "https://github.com/abgnydn/quill/commit/ec207528d0923f57c4f6fd37a4826c4af27a94f1",
+      "additions": 101,
+      "deletions": 32
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "0e481c5809e4641439c8864b67696171ba4c7c6e",
+      "short_sha": "0e481c5",
+      "message": "v1.0.8: clamp popover to screen.availHeight, not window.innerHeight",
+      "type": "other",
+      "date": "2026-05-27T06:37:37Z",
+      "url": "https://github.com/abgnydn/quill/commit/0e481c5809e4641439c8864b67696171ba4c7c6e",
+      "additions": 30,
+      "deletions": 14
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "28b22129e72dce0c0866dd0cf4ddc1facb5df803",
+      "short_sha": "28b2212",
+      "message": "v1.0.7: popover doesn't overflow + sticks 3s instead of 600ms",
+      "type": "other",
+      "date": "2026-05-27T06:31:42Z",
+      "url": "https://github.com/abgnydn/quill/commit/28b22129e72dce0c0866dd0cf4ddc1facb5df803",
+      "additions": 35,
+      "deletions": 18
+    },
+    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -2706,6 +3096,45 @@
       "url": "https://github.com/abgnydn/iz/commit/a8cba1363de4b33a5a97dfe1d1db80ef7e1066c8",
       "additions": 813,
       "deletions": 175
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "7eafefff9f8a99413e67a139414473eed926d272",
+      "short_sha": "7eafeff",
+      "message": "v1.0.6: ignore focus-steal events so buttons actually apply",
+      "type": "other",
+      "date": "2026-05-27T06:25:57Z",
+      "url": "https://github.com/abgnydn/quill/commit/7eafefff9f8a99413e67a139414473eed926d272",
+      "additions": 21,
+      "deletions": 4
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "1a12c1392d36cffb3a2dc6441603e113c0674c35",
+      "short_sha": "1a12c13",
+      "message": "v1.0.5: remove desktop chip + sweep remaining 'Quill' strings",
+      "type": "other",
+      "date": "2026-05-27T06:16:05Z",
+      "url": "https://github.com/abgnydn/quill/commit/1a12c1392d36cffb3a2dc6441603e113c0674c35",
+      "additions": 27,
+      "deletions": 40
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "466be3311f8e07e073c750e90a92d33c08fa7ef6",
+      "short_sha": "466be33",
+      "message": "chore(install): auto-cleanup old versions on every build",
+      "type": "chore",
+      "date": "2026-05-27T06:07:44Z",
+      "url": "https://github.com/abgnydn/quill/commit/466be3311f8e07e073c750e90a92d33c08fa7ef6",
+      "additions": 37,
+      "deletions": 0
     },
     {
       "slug": "webgpu-q",
@@ -2732,6 +3161,19 @@
       "url": "https://github.com/abgnydn/iz/commit/c3317ccaf7cca8925566d4de87da190b06a4eb1e",
       "additions": 202,
       "deletions": 0
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "f5d630131767d89bf2153188bc18ca8be89ded72",
+      "short_sha": "f5d6301",
+      "message": "v1.0.4: popover bottom-right of word + rewrite diagnostics",
+      "type": "other",
+      "date": "2026-05-27T06:01:00Z",
+      "url": "https://github.com/abgnydn/quill/commit/f5d630131767d89bf2153188bc18ca8be89ded72",
+      "additions": 28,
+      "deletions": 5
     },
     {
       "slug": "iz",
@@ -2773,6 +3215,32 @@
       "deletions": 30
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "30517955c22f902bdf83b7d7b208a34982e4acd1",
+      "short_sha": "3051795",
+      "message": "v1.0.3: fix apply target + popover stickiness + tray labels",
+      "type": "other",
+      "date": "2026-05-27T05:43:11Z",
+      "url": "https://github.com/abgnydn/quill/commit/30517955c22f902bdf83b7d7b208a34982e4acd1",
+      "additions": 154,
+      "deletions": 17
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "0cd2c00fe4f57047b32f42fc49634c0ee36d2122",
+      "short_sha": "0cd2c00",
+      "message": "v1.0.2: real app icon — pen-nib silhouette",
+      "type": "other",
+      "date": "2026-05-27T05:04:53Z",
+      "url": "https://github.com/abgnydn/quill/commit/0cd2c00fe4f57047b32f42fc49634c0ee36d2122",
+      "additions": 51,
+      "deletions": 0
+    },
+    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -2797,6 +3265,19 @@
       "url": "https://github.com/abgnydn/iz/commit/26f1127256e48ae5bb29a03f8b25e6e6a39dc1e4",
       "additions": 5283,
       "deletions": 0
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "a96c170c1fb1ef29ee15317da9f8f6fff9f643bc",
+      "short_sha": "a96c170",
+      "message": "v1.0.1: rename Quill → Nib in the .app surface",
+      "type": "other",
+      "date": "2026-05-27T04:53:33Z",
+      "url": "https://github.com/abgnydn/quill/commit/a96c170c1fb1ef29ee15317da9f8f6fff9f643bc",
+      "additions": 16,
+      "deletions": 13
     },
     {
       "slug": "webgpu-q",
@@ -2861,6 +3342,136 @@
       "date": "2026-05-27T04:13:53Z",
       "url": "https://github.com/abgnydn/webgpu-q/commit/be040d16c1a5150878156e49dfc632bf7aeb9d58",
       "additions": 145,
+      "deletions": 3
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "be4519e0467e74879c96e9faccbcb3832a13e9da",
+      "short_sha": "be4519e",
+      "message": "feat(lints): enable Harper style + clarity rules (BoringWords, Posses…",
+      "type": "feat",
+      "date": "2026-05-27T03:58:47Z",
+      "url": "https://github.com/abgnydn/quill/commit/be4519e0467e74879c96e9faccbcb3832a13e9da",
+      "additions": 89,
+      "deletions": 10
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "9ca8ec79b3663ef4623c49b0baa31baae040607d",
+      "short_sha": "9ca8ec7",
+      "message": "feat(inference): multi-variant AI rewrite (3 alternatives)",
+      "type": "feat",
+      "date": "2026-05-27T03:58:41Z",
+      "url": "https://github.com/abgnydn/quill/commit/9ca8ec79b3663ef4623c49b0baa31baae040607d",
+      "additions": 363,
+      "deletions": 0
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "700e3e20b24a2a5c030134ffcf0a935aba043e03",
+      "short_sha": "700e3e2",
+      "message": "feat(ui): Settings panel — dictionary + pause + per-app overrides",
+      "type": "feat",
+      "date": "2026-05-27T03:58:31Z",
+      "url": "https://github.com/abgnydn/quill/commit/700e3e20b24a2a5c030134ffcf0a935aba043e03",
+      "additions": 462,
+      "deletions": 0
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "7df887dd7fb8513669a8e80b76cbf14fcf54c7fe",
+      "short_sha": "7df887d",
+      "message": "feat(overlay): Why-expansion + Accept all / Dismiss all in popover",
+      "type": "feat",
+      "date": "2026-05-27T03:58:25Z",
+      "url": "https://github.com/abgnydn/quill/commit/7df887dd7fb8513669a8e80b76cbf14fcf54c7fe",
+      "additions": 208,
+      "deletions": 0
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "77a43b649902d9b204783ac1afce625a1c2f4598",
+      "short_sha": "77a43b6",
+      "message": "feat(tray): Pause/Resume + Open Settings menu items",
+      "type": "feat",
+      "date": "2026-05-27T03:58:16Z",
+      "url": "https://github.com/abgnydn/quill/commit/77a43b649902d9b204783ac1afce625a1c2f4598",
+      "additions": 82,
+      "deletions": 27
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "6c07083cd1f4d310a4528fef95e2477fea69cae2",
+      "short_sha": "6c07083",
+      "message": "feat(tier-a-backend): personal dictionary + pause + per-app overrides",
+      "type": "feat",
+      "date": "2026-05-27T03:34:40Z",
+      "url": "https://github.com/abgnydn/quill/commit/6c07083cd1f4d310a4528fef95e2477fea69cae2",
+      "additions": 297,
+      "deletions": 26
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "880fcdb65b9a12c63e8712680d23116a67e4621f",
+      "short_sha": "880fcdb",
+      "message": "feat(overlay): block URL bars by denying AXTextField in browser bundles",
+      "type": "feat",
+      "date": "2026-05-26T13:36:32Z",
+      "url": "https://github.com/abgnydn/quill/commit/880fcdb65b9a12c63e8712680d23116a67e4621f",
+      "additions": 71,
+      "deletions": 0
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "f47bc7cc262671d102a45a9eda311b13f426f2fc",
+      "short_sha": "f47bc7c",
+      "message": "feat(overlay): engagement filter — only engage where Grammarly engages",
+      "type": "feat",
+      "date": "2026-05-26T13:35:49Z",
+      "url": "https://github.com/abgnydn/quill/commit/f47bc7cc262671d102a45a9eda311b13f426f2fc",
+      "additions": 329,
+      "deletions": 15
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "674e785f3bc275a20aa66a0404704811bc16a639",
+      "short_sha": "674e785",
+      "message": "v1.0: swap base model to LFM2.5-350M + ChatML template",
+      "type": "other",
+      "date": "2026-05-26T13:34:27Z",
+      "url": "https://github.com/abgnydn/quill/commit/674e785f3bc275a20aa66a0404704811bc16a639",
+      "additions": 13,
+      "deletions": 9
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "3b21ba2502f71b1599d74bab8ebfc41dff1d9ecb",
+      "short_sha": "3b21ba2",
+      "message": "chore(build): add release-dev profile + install-dev.sh --fast flag",
+      "type": "chore",
+      "date": "2026-05-26T13:34:12Z",
+      "url": "https://github.com/abgnydn/quill/commit/3b21ba2502f71b1599d74bab8ebfc41dff1d9ecb",
+      "additions": 40,
       "deletions": 3
     },
     {
@@ -3826,19 +4437,6 @@
       "deletions": 24
     },
     {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "9f27c7d6b338e34b1ac213ec7671a9e8b1a560ef",
-      "short_sha": "9f27c7d",
-      "message": "phase 2: delta-only broadcasts via applied_since",
-      "type": "other",
-      "date": "2026-05-22T06:47:29Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/9f27c7d6b338e34b1ac213ec7671a9e8b1a560ef",
-      "additions": 319,
-      "deletions": 122
-    },
-    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -3969,19 +4567,6 @@
       "deletions": 20576
     },
     {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "364a2ecc016bf10607c9986ddc12fef13cbe46de",
-      "short_sha": "364a2ec",
-      "message": "phase 1: tournament / flip-and-accept protocol",
-      "type": "other",
-      "date": "2026-05-22T03:36:32Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/364a2ecc016bf10607c9986ddc12fef13cbe46de",
-      "additions": 940,
-      "deletions": 4
-    },
-    {
       "slug": "panel",
       "name": "panel",
       "language": "Python",
@@ -3993,19 +4578,6 @@
       "url": "https://github.com/abgnydn/panel/commit/17db75d14e223dd06912337178468485dd3622d3",
       "additions": 1472,
       "deletions": 835
-    },
-    {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "b66bfb70ce7e85ea59bcfc8f4ecf2dca3631802d",
-      "short_sha": "b66bfb7",
-      "message": "fix: clear joined set on task reset + add headless verifier",
-      "type": "fix",
-      "date": "2026-05-21T13:30:00Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/b66bfb70ce7e85ea59bcfc8f4ecf2dca3631802d",
-      "additions": 144,
-      "deletions": 0
     },
     {
       "slug": "tether",
@@ -4177,19 +4749,6 @@
       "deletions": 0
     },
     {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "51ca81ff5f88bfd18c02cf5e5a1e63320286e3de",
-      "short_sha": "51ca81f",
-      "message": "multi-task selector: wave / circle / xor",
-      "type": "other",
-      "date": "2026-05-21T07:50:01Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/51ca81ff5f88bfd18c02cf5e5a1e63320286e3de",
-      "additions": 120,
-      "deletions": 31
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -4201,19 +4760,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/c8d13e4cf63accd39da3b329b6a4203546c40f1a",
       "additions": 96,
       "deletions": 3
-    },
-    {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "f44fdf4a28a6770d3bdba19b775a1e45e6f0b992",
-      "short_sha": "f44fdf4",
-      "message": "adam optimizer + fusedx integration plan",
-      "type": "other",
-      "date": "2026-05-21T07:42:42Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/f44fdf4a28a6770d3bdba19b775a1e45e6f0b992",
-      "additions": 239,
-      "deletions": 18
     },
     {
       "slug": "quill",
@@ -4240,19 +4786,6 @@
       "url": "https://github.com/abgnydn/iz/commit/b353c05612722e3c78183da5e365bb13349efac2",
       "additions": 2948,
       "deletions": 2
-    },
-    {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "98b554b9badd1bce5e03ec6f2fc582892810ada5",
-      "short_sha": "98b554b",
-      "message": "initial commit: federated SGD over Cloudflare Durable Object",
-      "type": "other",
-      "date": "2026-05-21T07:32:03Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/98b554b9badd1bce5e03ec6f2fc582892810ada5",
-      "additions": 2404,
-      "deletions": 0
     },
     {
       "slug": "iz",
@@ -4476,19 +5009,6 @@
       "deletions": 0
     },
     {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "0369db0b48c7fbd1dc5d247e57672880991f8c2e",
-      "short_sha": "0369db0",
-      "message": "refactor: split modules, polish overlay UX, add install script",
-      "type": "refactor",
-      "date": "2026-05-20T16:47:25Z",
-      "url": "https://github.com/abgnydn/quill/commit/0369db0b48c7fbd1dc5d247e57672880991f8c2e",
-      "additions": 1123,
-      "deletions": 660
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -4593,19 +5113,6 @@
       "deletions": 12
     },
     {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "b599063e91c4375a68050b7c947fd2d161e447a1",
-      "short_sha": "b599063",
-      "message": "overlay v0.2 — full grammarly-grade: inline underlines + apply + AI r…",
-      "type": "other",
-      "date": "2026-05-19T13:42:02Z",
-      "url": "https://github.com/abgnydn/quill/commit/b599063e91c4375a68050b7c947fd2d161e447a1",
-      "additions": 677,
-      "deletions": 150
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -4671,32 +5178,6 @@
       "deletions": 9
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "11d61e1204e5dac2d15992ce3987f0c7051c5ba5",
-      "short_sha": "11d61e1",
-      "message": "chore(deps): major bumps — TS 6, ESLint 10, lucide-react 1, lint-stag…",
-      "type": "chore",
-      "date": "2026-05-19T13:17:52Z",
-      "url": "https://github.com/abgnydn/markview/commit/11d61e1204e5dac2d15992ce3987f0c7051c5ba5",
-      "additions": 822,
-      "deletions": 110
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "cd308cee1757fad213773ed6bffc508ee0fb753c",
-      "short_sha": "cd308ce",
-      "message": "overlay: capabilities + axui filter + e2e tests for the focus pipeline",
-      "type": "other",
-      "date": "2026-05-19T13:09:16Z",
-      "url": "https://github.com/abgnydn/quill/commit/cd308cee1757fad213773ed6bffc508ee0fb753c",
-      "additions": 571,
-      "deletions": 5
-    },
-    {
       "slug": "context-vault",
       "name": "context-vault",
       "language": "JavaScript",
@@ -4749,45 +5230,6 @@
       "deletions": 189
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "2721669b03e809e22bd07ee9160f9c3d063e6984",
-      "short_sha": "2721669",
-      "message": "chore(deps): npm update + clean up empty sandbox dirs",
-      "type": "chore",
-      "date": "2026-05-19T13:05:01Z",
-      "url": "https://github.com/abgnydn/markview/commit/2721669b03e809e22bd07ee9160f9c3d063e6984",
-      "additions": 1032,
-      "deletions": 353
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "f300bd4eab97bcb4af4ed3cd985a9ccfb0c3627b",
-      "short_sha": "f300bd4",
-      "message": "chore(security): swap werift → @roamhq/wrtc, eliminate last 3 vulnera…",
-      "type": "chore",
-      "date": "2026-05-19T12:06:24Z",
-      "url": "https://github.com/abgnydn/markview/commit/f300bd4eab97bcb4af4ed3cd985a9ccfb0c3627b",
-      "additions": 180,
-      "deletions": 620
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "51acbc96db0f2c4a9379554e03289c30a019fe83",
-      "short_sha": "51acbc9",
-      "message": "chore(security): cut vulnerabilities 7→3 via overrides + xlsx fork",
-      "type": "chore",
-      "date": "2026-05-19T10:38:50Z",
-      "url": "https://github.com/abgnydn/markview/commit/51acbc96db0f2c4a9379554e03289c30a019fe83",
-      "additions": 4468,
-      "deletions": 4051
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -4812,19 +5254,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/9d8f0bce6ebe41a3bcdf6b5045dbb3a627c9e81e",
       "additions": 1247,
       "deletions": 1
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "0bede06b10fa18e1ab82943f39264d1b01a7006a",
-      "short_sha": "0bede06",
-      "message": "shell: bundle GGUF as tauri resource for drag-install .app",
-      "type": "other",
-      "date": "2026-05-19T07:10:33Z",
-      "url": "https://github.com/abgnydn/quill/commit/0bede06b10fa18e1ab82943f39264d1b01a7006a",
-      "additions": 55,
-      "deletions": 21
     },
     {
       "slug": "wonderlab",
@@ -4864,45 +5293,6 @@
       "url": "https://github.com/abgnydn/wonderlab/commit/95999307d595141da207fbb37fae698ee4929d5e",
       "additions": 3446,
       "deletions": 110
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "f5e0fa5873eb86131579406d2332061aa01aaa70",
-      "short_sha": "f5e0fa5",
-      "message": "train: harden convert_local.py — idempotent + uv-aware + index override",
-      "type": "other",
-      "date": "2026-05-18T19:16:26Z",
-      "url": "https://github.com/abgnydn/quill/commit/f5e0fa5873eb86131579406d2332061aa01aaa70",
-      "additions": 44,
-      "deletions": 29
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "c720b8d6c5aa1ea5adc5aafd7d4372c91324dd70",
-      "short_sha": "c720b8d",
-      "message": "train: scripts/convert_local.py — mac-side fallback when modal is blo…",
-      "type": "other",
-      "date": "2026-05-18T17:31:37Z",
-      "url": "https://github.com/abgnydn/quill/commit/c720b8d6c5aa1ea5adc5aafd7d4372c91324dd70",
-      "additions": 160,
-      "deletions": 0
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "f055fd31199ffa07354f674e93c81f426adea630",
-      "short_sha": "f055fd3",
-      "message": "train: modal_convert.py — salvage path for interrupted runs",
-      "type": "other",
-      "date": "2026-05-18T17:27:54Z",
-      "url": "https://github.com/abgnydn/quill/commit/f055fd31199ffa07354f674e93c81f426adea630",
-      "additions": 190,
-      "deletions": 0
     },
     {
       "slug": "neuropulse",
@@ -5061,19 +5451,6 @@
       "deletions": 0
     },
     {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "dfca6760539176712e991f5e273178b780905723",
-      "short_sha": "dfca676",
-      "message": "train: re-enable unsloth fast lora + halve seq len",
-      "type": "other",
-      "date": "2026-05-18T16:01:06Z",
-      "url": "https://github.com/abgnydn/quill/commit/dfca6760539176712e991f5e273178b780905723",
-      "additions": 10,
-      "deletions": 6
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -5085,19 +5462,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/94a616dbb1a9712bef7b70c1a24ab1a6ed443153",
       "additions": 412,
       "deletions": 0
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "b54453ee45f2adbaecda8418e1003b8459a728d7",
-      "short_sha": "b54453e",
-      "message": "train: relax modal image deps — trust unsloth's resolver",
-      "type": "other",
-      "date": "2026-05-18T15:42:19Z",
-      "url": "https://github.com/abgnydn/quill/commit/b54453ee45f2adbaecda8418e1003b8459a728d7",
-      "additions": 10,
-      "deletions": 13
     },
     {
       "slug": "context-vault",
@@ -5137,19 +5501,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/b599ef1b2bc2ecea378fc42a6da9a7e84959dabd",
       "additions": 43,
       "deletions": 0
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "0123bca2087df9e2bb18319795f0437fb2b0a007",
-      "short_sha": "0123bca",
-      "message": "train: modal L4 script — replaces the colab trap",
-      "type": "other",
-      "date": "2026-05-18T14:50:18Z",
-      "url": "https://github.com/abgnydn/quill/commit/0123bca2087df9e2bb18319795f0437fb2b0a007",
-      "additions": 265,
-      "deletions": 5
     },
     {
       "slug": "veil",
@@ -5295,19 +5646,6 @@
       "deletions": 5043
     },
     {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "5a2c24ab6504ba4f48ca967532119f18efba97df",
-      "short_sha": "5a2c24a",
-      "message": "shell: inference scaffold (llama-cpp-2 behind 'llm' feature)",
-      "type": "other",
-      "date": "2026-05-15T07:38:58Z",
-      "url": "https://github.com/abgnydn/quill/commit/5a2c24ab6504ba4f48ca967532119f18efba97df",
-      "additions": 505,
-      "deletions": 14
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -5319,71 +5657,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/fe4c46d61e56d4b79c360e622be95668ccf9f8b1",
       "additions": 1312,
       "deletions": 8
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "8b782c34592de6ef4128e98a34bcc5b9a582c8b6",
-      "short_sha": "8b782c3",
-      "message": "train: add self-contained colab.ipynb for the vs code colab extension",
-      "type": "other",
-      "date": "2026-05-15T07:07:06Z",
-      "url": "https://github.com/abgnydn/quill/commit/8b782c34592de6ef4128e98a34bcc5b9a582c8b6",
-      "additions": 316,
-      "deletions": 1
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "61124a7903ae17e577d54e1e093129115205d1c0",
-      "short_sha": "61124a7",
-      "message": "train: migrate to unsloth — 30x faster, free colab t4 path",
-      "type": "other",
-      "date": "2026-05-15T06:59:26Z",
-      "url": "https://github.com/abgnydn/quill/commit/61124a7903ae17e577d54e1e093129115205d1c0",
-      "additions": 813,
-      "deletions": 237
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "d11e8d43be286a13ee2800a210db0f43b8eb2f4c",
-      "short_sha": "d11e8d4",
-      "message": "train: align train.py with trl 1.4 + transformers 5.8 api",
-      "type": "other",
-      "date": "2026-05-15T04:36:38Z",
-      "url": "https://github.com/abgnydn/quill/commit/d11e8d43be286a13ee2800a210db0f43b8eb2f4c",
-      "additions": 10,
-      "deletions": 6
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "234da5de80c91980b102b9e8c5001c1dcd7437f0",
-      "short_sha": "234da5d",
-      "message": "perf: hoist harper LintGroup into tauri managed state",
-      "type": "perf",
-      "date": "2026-05-15T04:33:29Z",
-      "url": "https://github.com/abgnydn/quill/commit/234da5de80c91980b102b9e8c5001c1dcd7437f0",
-      "additions": 2389,
-      "deletions": 28
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "bd8c941312d67305c07d847e6302b471299655ed",
-      "short_sha": "bd8c941",
-      "message": "initial scaffold: tauri + harper shell, gemma 270m train rig",
-      "type": "other",
-      "date": "2026-05-15T04:18:11Z",
-      "url": "https://github.com/abgnydn/quill/commit/bd8c941312d67305c07d847e6302b471299655ed",
-      "additions": 5452,
-      "deletions": 0
     },
     {
       "slug": "panel",
@@ -7763,279 +8036,6 @@
       "url": "https://github.com/abgnydn/webgpu-fly/commit/ffb73415acadb1d07da99de29295c979dade4969",
       "additions": 223,
       "deletions": 59
-    },
-    {
-      "slug": "webgpu-transformer-fusion",
-      "name": "webgpu-transformer-fusion",
-      "language": "JavaScript",
-      "sha": "11373b9c4062f9894762a32937e24c87e4eac07b",
-      "short_sha": "11373b9",
-      "message": "Add CI, CHANGELOG, README badges",
-      "type": "other",
-      "date": "2026-05-04T11:04:08Z",
-      "url": "https://github.com/abgnydn/webgpu-transformer-fusion/commit/11373b9c4062f9894762a32937e24c87e4eac07b",
-      "additions": 83,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-p2p-evolution",
-      "name": "webgpu-p2p-evolution",
-      "language": "JavaScript",
-      "sha": "ca3c5de562cc9a90cf2868928d023da7cdaa500f",
-      "short_sha": "ca3c5de",
-      "message": "Add CI, CHANGELOG, README badges",
-      "type": "other",
-      "date": "2026-05-04T11:02:55Z",
-      "url": "https://github.com/abgnydn/webgpu-p2p-evolution/commit/ca3c5de562cc9a90cf2868928d023da7cdaa500f",
-      "additions": 86,
-      "deletions": 0
-    },
-    {
-      "slug": "wgpu-adas-bench",
-      "name": "wgpu-adas-bench",
-      "language": "Rust",
-      "sha": "7088ed6bc388731b0d75f92e0150dec61716939d",
-      "short_sha": "7088ed6",
-      "message": "Add CI, CHANGELOG, README badges",
-      "type": "other",
-      "date": "2026-05-04T11:01:21Z",
-      "url": "https://github.com/abgnydn/wgpu-adas-bench/commit/7088ed6bc388731b0d75f92e0150dec61716939d",
-      "additions": 82,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-fusion-max",
-      "name": "webgpu-fusion-max",
-      "language": "HTML",
-      "sha": "e08be45ce5d82a53421a88ee25b1f36c86dd393c",
-      "short_sha": "e08be45",
-      "message": "Add CI, CHANGELOG, README badges",
-      "type": "other",
-      "date": "2026-05-04T10:59:52Z",
-      "url": "https://github.com/abgnydn/webgpu-fusion-max/commit/e08be45ce5d82a53421a88ee25b1f36c86dd393c",
-      "additions": 79,
-      "deletions": 0
-    },
-    {
-      "slug": "safenpm",
-      "name": "safenpm",
-      "language": "TypeScript",
-      "sha": "c55ea57f7e2a3a9a265b0cb3cc8a91866752e974",
-      "short_sha": "c55ea57",
-      "message": "Add CI, CHANGELOG, README badges; reset version to 0.1.0",
-      "type": "other",
-      "date": "2026-05-04T10:58:19Z",
-      "url": "https://github.com/abgnydn/safenpm/commit/c55ea57f7e2a3a9a265b0cb3cc8a91866752e974",
-      "additions": 74,
-      "deletions": 2
-    },
-    {
-      "slug": "webgpu-fusion-sdk",
-      "name": "webgpu-fusion-sdk",
-      "language": "TypeScript",
-      "sha": "2e73c5a565a37c47ab2783a707db714445f1f961",
-      "short_sha": "2e73c5a",
-      "message": "chore(npm): bump 0.1.0 → 0.2.0 to publish under correct @webgpu-fusio…",
-      "type": "chore",
-      "date": "2026-05-04T10:56:20Z",
-      "url": "https://github.com/abgnydn/webgpu-fusion-sdk/commit/2e73c5a565a37c47ab2783a707db714445f1f961",
-      "additions": 1,
-      "deletions": 1
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "fd2ffffc7d044a38e7e3a0dd40682d1ad5bebfc9",
-      "short_sha": "fd2ffff",
-      "message": "Add CI, CHANGELOG, README badges",
-      "type": "other",
-      "date": "2026-05-04T10:55:58Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/fd2ffffc7d044a38e7e3a0dd40682d1ad5bebfc9",
-      "additions": 84,
-      "deletions": 0
-    },
-    {
-      "slug": "gpubench",
-      "name": "gpubench",
-      "language": "TypeScript",
-      "sha": "f8c7bb65ccf7dc4e3c24fffa50cfbe275edc3de1",
-      "short_sha": "f8c7bb6",
-      "message": "Add CI, CHANGELOG, README badges; bump v0.1.0",
-      "type": "other",
-      "date": "2026-05-04T10:52:57Z",
-      "url": "https://github.com/abgnydn/gpubench/commit/f8c7bb65ccf7dc4e3c24fffa50cfbe275edc3de1",
-      "additions": 77,
-      "deletions": 1
-    },
-    {
-      "slug": "wgpu-native-bench",
-      "name": "wgpu-native-bench",
-      "language": "Rust",
-      "sha": "55b03e1afcfd856db9ae68283fbc77804062b34c",
-      "short_sha": "55b03e1",
-      "message": "CI: trigger on master too",
-      "type": "ci",
-      "date": "2026-05-04T10:50:47Z",
-      "url": "https://github.com/abgnydn/wgpu-native-bench/commit/55b03e1afcfd856db9ae68283fbc77804062b34c",
-      "additions": 2,
-      "deletions": 2
-    },
-    {
-      "slug": "wgpu-native-bench",
-      "name": "wgpu-native-bench",
-      "language": "Rust",
-      "sha": "f5109aa5e5ceb23e6817f681a1609f0e1681e81b",
-      "short_sha": "f5109aa",
-      "message": "Add LICENSE, CI workflow, CHANGELOG, README badges",
-      "type": "other",
-      "date": "2026-05-04T10:50:00Z",
-      "url": "https://github.com/abgnydn/wgpu-native-bench/commit/f5109aa5e5ceb23e6817f681a1609f0e1681e81b",
-      "additions": 111,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-kernel-fusion",
-      "name": "webgpu-kernel-fusion",
-      "language": "JavaScript",
-      "sha": "5c5974cb937bc37a493d42b87f7347f1510a3f74",
-      "short_sha": "5c5974c",
-      "message": "Add LICENSE, CI, CHANGELOG, README badges; bump v0.1.0",
-      "type": "other",
-      "date": "2026-05-04T10:47:01Z",
-      "url": "https://github.com/abgnydn/webgpu-kernel-fusion/commit/5c5974cb937bc37a493d42b87f7347f1510a3f74",
-      "additions": 125,
-      "deletions": 1
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "1584aa5659ead6935109278922b440b48e2b4a3f",
-      "short_sha": "1584aa5",
-      "message": "Fix ReferenceError in setupWelcome — settings was removed earlier",
-      "type": "other",
-      "date": "2026-05-04T10:35:11Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/1584aa5659ead6935109278922b440b48e2b4a3f",
-      "additions": 1,
-      "deletions": 2
-    },
-    {
-      "slug": "webgpu-fly",
-      "name": "webgpu-fly",
-      "language": "TypeScript",
-      "sha": "226fb0ec49a450ca0c0ce9243cf813e546e02fb3",
-      "short_sha": "226fb0e",
-      "message": "Cloudflare deploy + boot overlay + click-place-target + Codex links",
-      "type": "other",
-      "date": "2026-05-04T10:32:29Z",
-      "url": "https://github.com/abgnydn/webgpu-fly/commit/226fb0ec49a450ca0c0ce9243cf813e546e02fb3",
-      "additions": 284,
-      "deletions": 65
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "fb674c9cf29326f68e1b2addb5659b9ebb3502f6",
-      "short_sha": "fb674c9",
-      "message": "Voice off by default — gate audio.speak with a settings toggle",
-      "type": "other",
-      "date": "2026-05-04T10:26:58Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/fb674c9cf29326f68e1b2addb5659b9ebb3502f6",
-      "additions": 37,
-      "deletions": 3
-    },
-    {
-      "slug": "gpubench",
-      "name": "gpubench",
-      "language": "TypeScript",
-      "sha": "f5218f04630c9f6643890d0542f03768834cfbf8",
-      "short_sha": "f5218f0",
-      "message": "refactor: drop the Zero-TVM benchmark surface; surface companion card…",
-      "type": "refactor",
-      "date": "2026-05-04T10:21:56Z",
-      "url": "https://github.com/abgnydn/gpubench/commit/f5218f04630c9f6643890d0542f03768834cfbf8",
-      "additions": 133,
-      "deletions": 4729
-    },
-    {
-      "slug": "gpubench",
-      "name": "gpubench",
-      "language": "TypeScript",
-      "sha": "77f75fefca81e9fd8e70628541d6008c1e47c678",
-      "short_sha": "77f75fe",
-      "message": "chore: cross-site directory + token aliases + project doc",
-      "type": "chore",
-      "date": "2026-05-04T10:11:55Z",
-      "url": "https://github.com/abgnydn/gpubench/commit/77f75fefca81e9fd8e70628541d6008c1e47c678",
-      "additions": 361,
-      "deletions": 34
-    },
-    {
-      "slug": "gpubench",
-      "name": "gpubench",
-      "language": "TypeScript",
-      "sha": "ce25db8f4773d2bcd0bde7003a9c8448d9e50b70",
-      "short_sha": "ce25db8",
-      "message": "fix(api): use Marketplace STORAGE_POSTGRES_URL instead of stale POSTG…",
-      "type": "fix",
-      "date": "2026-05-04T10:07:35Z",
-      "url": "https://github.com/abgnydn/gpubench/commit/ce25db8f4773d2bcd0bde7003a9c8448d9e50b70",
-      "additions": 28,
-      "deletions": 6
-    },
-    {
-      "slug": "webgpu-fly",
-      "name": "webgpu-fly",
-      "language": "TypeScript",
-      "sha": "27896b4e7c5a9e0d94f135457ab19e2ad4631b0f",
-      "short_sha": "27896b4",
-      "message": "Real MANC spine — Janelia connectome wired into the runtime",
-      "type": "other",
-      "date": "2026-05-04T09:51:17Z",
-      "url": "https://github.com/abgnydn/webgpu-fly/commit/27896b4e7c5a9e0d94f135457ab19e2ad4631b0f",
-      "additions": 481,
-      "deletions": 15
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "7276913d3f3bea194181b43faa05e2dd1d9d6b35",
-      "short_sha": "7276913",
-      "message": "fix(ui): byte-fallback decode, draggable panels, working speed slider",
-      "type": "fix",
-      "date": "2026-05-04T09:37:15Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/7276913d3f3bea194181b43faa05e2dd1d9d6b35",
-      "additions": 203,
-      "deletions": 55
-    },
-    {
-      "slug": "webgpu-fly",
-      "name": "webgpu-fly",
-      "language": "TypeScript",
-      "sha": "2810020556013201ee53a216a9fc942de4962b07",
-      "short_sha": "2810020",
-      "message": "Public deploy plumbing — vercel.json + env-var asset URLs",
-      "type": "other",
-      "date": "2026-05-04T09:17:50Z",
-      "url": "https://github.com/abgnydn/webgpu-fly/commit/2810020556013201ee53a216a9fc942de4962b07",
-      "additions": 131,
-      "deletions": 7
-    },
-    {
-      "slug": "webgpu-fly",
-      "name": "webgpu-fly",
-      "language": "TypeScript",
-      "sha": "eaaefd89cc387269213e54b930a604e91b19959b",
-      "short_sha": "eaaefd8",
-      "message": "Visual polish: follow-cam, pulsing target, spine activity readout",
-      "type": "other",
-      "date": "2026-05-04T09:12:25Z",
-      "url": "https://github.com/abgnydn/webgpu-fly/commit/eaaefd89cc387269213e54b930a604e91b19959b",
-      "additions": 62,
-      "deletions": 18
     }
   ],
   "errors": []
