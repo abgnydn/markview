@@ -29,6 +29,7 @@ const MarkdownEditor = lazy(() => import('@/components/viewer/markdown-editor').
 const FileBrowser = lazy(() => import('@/components/viewer/file-browser').then((m) => ({ default: m.FileBrowser })));
 const GraphView = lazy(() => import('@/components/viewer/graph-view').then((m) => ({ default: m.GraphView })));
 const AiChat = lazy(() => import('@/components/viewer/ai-chat').then((m) => ({ default: m.AiChat })));
+const CardsMode = lazy(() => import('@/components/viewer/cards-mode').then((m) => ({ default: m.CardsMode })));
 
 // PresenceBar replaced by the floating <ShareStatus /> widget (bottom-right).
 import { ShareStatus } from '@/components/collab/share-status';
@@ -94,6 +95,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
     vaultOpen, setVaultOpen,
     fileBrowserOpen, setFileBrowserOpen,
     aiChatOpen, setAiChatOpen,
+    cardsOpen, setCardsOpen,
   } = useViewerOverlays();
 
   // Bumps when the atmosphere painting should re-pick — handles both
@@ -319,6 +321,15 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       {aiChatOpen && (
         <Suspense fallback={null}>
           <AiChat onClose={() => setAiChatOpen(false)} />
+        </Suspense>
+      )}
+
+      {cardsOpen && activeFileContent && (
+        <Suspense fallback={null}>
+          <CardsMode
+            content={frontmatterResult ? frontmatterResult.content : activeFileContent}
+            onClose={() => setCardsOpen(false)}
+          />
         </Suspense>
       )}
 

@@ -16,6 +16,7 @@ export function useViewerOverlays() {
   const [vaultOpen, setVaultOpen] = useState(false);
   const [fileBrowserOpen, setFileBrowserOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [cardsOpen, setCardsOpen] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
@@ -29,24 +30,33 @@ export function useViewerOverlays() {
         setVaultOpen((v) => !v);
         return;
       }
+      // `c` (non-typing, no modifier) toggles cards mode — alternative
+      // to the linear scroll where each H2 becomes a swipeable card.
+      if (!isTyping && !e.metaKey && !e.ctrlKey && !e.altKey && e.key === 'c') {
+        e.preventDefault();
+        setCardsOpen((v) => !v);
+        return;
+      }
       if (!isTyping && (e.metaKey || e.ctrlKey) && e.key === 'j') {
         e.preventDefault();
         setAiChatOpen((v) => !v);
         return;
       }
       if (e.key === 'Escape') {
-        if (vaultOpen) { e.preventDefault(); setVaultOpen(false); }
+        if (cardsOpen) { e.preventDefault(); setCardsOpen(false); }
+        else if (vaultOpen) { e.preventDefault(); setVaultOpen(false); }
         else if (aiChatOpen) { e.preventDefault(); setAiChatOpen(false); }
         else if (fileBrowserOpen) { e.preventDefault(); setFileBrowserOpen(false); }
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [vaultOpen, aiChatOpen, fileBrowserOpen]);
+  }, [vaultOpen, aiChatOpen, fileBrowserOpen, cardsOpen]);
 
   return {
     vaultOpen, setVaultOpen,
     fileBrowserOpen, setFileBrowserOpen,
     aiChatOpen, setAiChatOpen,
+    cardsOpen, setCardsOpen,
   };
 }
