@@ -3826,39 +3826,40 @@ body:hover .mv-atm-dots,
 .mv-atm-dot-fields { color: #f59e0b; }
 
 /* ────────────────────────────────────────────────────────────────────────
- * Brush-stroke cursors v2 — replace the concentric-rings cursors with
- * actual ink marks. The default cursor is a tapered diagonal brush
- * stroke (calligraphy nib), the pointer is a fountain-pen nib with a
- * tiny ink reservoir, the text caret is a flared italic-serif beam.
- * Each has the appropriate hotspot at the active tip.
+ * Brand-mark cursors v3 — the cursor is a miniature echo of the
+ * Markview wordmark itself: a small dense ink dot with a tiny hanging
+ * accent mark to the upper right (the violet quote that hangs off the
+ * italic M). Recolored per atmosphere. Hotspot is the dot.
  *
- * SVG note: these are inline data URIs; %23 is URL-escaped `#` for hex
- * colors, `path` strokes are `linecap: round` so the strokes feel
- * hand-drawn rather than CAD.
+ * Pointer cursor is a refined arrow with a white outline for legibility
+ * on any background. Text caret is a true italic-serif I-beam with
+ * subtle serif feet — single calligraphic stroke, no triangular flares.
  * ──────────────────────────────────────────────────────────────────────── */
 body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='%23b9a4ff' stroke-width='2.4' stroke-linecap='round' fill='none' opacity='0.92'/><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='white' stroke-width='0.6' stroke-linecap='round' fill='none' opacity='0.45'/><circle cx='4' cy='19' r='1.5' fill='%23b9a4ff' opacity='0.95'/><circle cx='3.5' cy='18.5' r='0.5' fill='white' opacity='0.55'/></svg>") 4 19, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23b9a4ff' opacity='0.10'/><circle cx='9' cy='11' r='2.4' fill='%23b9a4ff' opacity='0.96'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.55'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23b9a4ff' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.92'/></svg>") 9 11, default;
 }
 :root:not(.dark):not([data-theme='dark']) body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='%231c1b22' stroke-width='2.4' stroke-linecap='round' fill='none' opacity='0.85'/><circle cx='4' cy='19' r='1.5' fill='%231c1b22' opacity='0.9'/></svg>") 4 19, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='2.4' fill='%231c1b22' opacity='0.9'/><circle cx='8.3' cy='10.3' r='0.55' fill='%23fbf8f3' opacity='0.7'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%231c1b22' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.88'/></svg>") 9 11, default;
 }
 html[data-atmosphere='fuji'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='%23f9a8d4' stroke-width='2.6' stroke-linecap='round' fill='none' opacity='0.95'/><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='white' stroke-width='0.6' stroke-linecap='round' fill='none' opacity='0.5'/><circle cx='4' cy='19' r='1.6' fill='%23f9a8d4'/></svg>") 4 19, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23f9a8d4' opacity='0.14'/><circle cx='9' cy='11' r='2.4' fill='%23f9a8d4' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.6'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23f9a8d4' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
 }
 html[data-atmosphere='wave'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='%233b82f6' stroke-width='2.6' stroke-linecap='round' fill='none' opacity='0.95'/><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='white' stroke-width='0.6' stroke-linecap='round' fill='none' opacity='0.5'/><circle cx='4' cy='19' r='1.6' fill='%233b82f6'/></svg>") 4 19, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%233b82f6' opacity='0.14'/><circle cx='9' cy='11' r='2.4' fill='%233b82f6' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.6'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%233b82f6' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
 }
 html[data-atmosphere='snow'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='%23cbd5e1' stroke-width='2.6' stroke-linecap='round' fill='none' opacity='0.95'/><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='white' stroke-width='0.7' stroke-linecap='round' fill='none' opacity='0.55'/><circle cx='4' cy='19' r='1.6' fill='%23cbd5e1'/></svg>") 4 19, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23cbd5e1' opacity='0.16'/><circle cx='9' cy='11' r='2.4' fill='%23cbd5e1' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.7'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23cbd5e1' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
 }
 html[data-atmosphere='fields'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='%23f59e0b' stroke-width='2.6' stroke-linecap='round' fill='none' opacity='0.95'/><path d='M4 19 Q 9 14 13 11 Q 16 9 19 5' stroke='white' stroke-width='0.6' stroke-linecap='round' fill='none' opacity='0.5'/><circle cx='4' cy='19' r='1.6' fill='%23f59e0b'/></svg>") 4 19, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23f59e0b' opacity='0.14'/><circle cx='9' cy='11' r='2.4' fill='%23f59e0b' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.6'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23f59e0b' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
 }
 
+/* Pointer over clickable surfaces — refined diagonal arrow with a
+   white outline so it reads on any background. Hotspot at the tip. */
 button, a, [role='button'], .toolbar-btn,
 .sidebar-item, .workspace-tab, .toc-item, .search-result,
 .mv-palette-item, .mv-atm-dot {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M3 3 L3 16 Q3 17 4 16 L7 13 L9.5 17.5 Q10 18.3 10.8 17.9 L12.2 17.2 Q13 16.8 12.5 16 L10 12 L14.5 12 Q15.5 12 14.8 11.2 Z' fill='%23b9a4ff' stroke='white' stroke-width='0.7' stroke-linejoin='round' opacity='0.96'/><circle cx='3' cy='3' r='0.8' fill='white' opacity='0.7'/></svg>") 3 3, pointer;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><path d='M3 3 L3 14 L6.2 11.4 L8.4 16 L10.5 15.1 L8.3 10.6 L12.6 10.6 Z' fill='%23b9a4ff' stroke='white' stroke-width='0.9' stroke-linejoin='round' opacity='0.96'/></svg>") 3 3, pointer;
 }
 :root:not(.dark):not([data-theme='dark']) button,
 :root:not(.dark):not([data-theme='dark']) a,
@@ -3870,15 +3871,17 @@ button, a, [role='button'], .toolbar-btn,
 :root:not(.dark):not([data-theme='dark']) .search-result,
 :root:not(.dark):not([data-theme='dark']) .mv-palette-item,
 :root:not(.dark):not([data-theme='dark']) .mv-atm-dot {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M3 3 L3 16 Q3 17 4 16 L7 13 L9.5 17.5 Q10 18.3 10.8 17.9 L12.2 17.2 Q13 16.8 12.5 16 L10 12 L14.5 12 Q15.5 12 14.8 11.2 Z' fill='%231c1b22' stroke='%23fbf8f3' stroke-width='0.7' stroke-linejoin='round' opacity='0.95'/></svg>") 3 3, pointer;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><path d='M3 3 L3 14 L6.2 11.4 L8.4 16 L10.5 15.1 L8.3 10.6 L12.6 10.6 Z' fill='%231c1b22' stroke='%23fbf8f3' stroke-width='0.9' stroke-linejoin='round' opacity='0.95'/></svg>") 3 3, pointer;
 }
 
+/* Text caret — true italic-serif I-beam: slightly slanted vertical
+   stem plus subtle serif feet at top and bottom. Hotspot centered. */
 input, textarea, .cm-content, [contenteditable='true'] {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='24' viewBox='0 0 14 24'><path d='M7 4 Q 9 4 8.5 5 Q 8 6 7.2 6 L7.2 18 Q 8 18 8.5 19 Q 9 20 7 20 Q 5 20 5.5 19 Q 6 18 6.8 18 L6.8 6 Q 6 6 5.5 5 Q 5 4 7 4 Z' fill='%23b9a4ff' opacity='0.92'/></svg>") 7 12, text;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='24' viewBox='0 0 14 24'><line x1='8' y1='4' x2='6' y2='20' stroke='%23b9a4ff' stroke-width='1.6' stroke-linecap='round' opacity='0.94'/><line x1='5' y1='4.4' x2='11' y2='4.4' stroke='%23b9a4ff' stroke-width='1.1' stroke-linecap='round' opacity='0.78'/><line x1='3' y1='19.6' x2='9' y2='19.6' stroke='%23b9a4ff' stroke-width='1.1' stroke-linecap='round' opacity='0.78'/></svg>") 7 12, text;
 }
 :root:not(.dark):not([data-theme='dark']) input,
 :root:not(.dark):not([data-theme='dark']) textarea,
 :root:not(.dark):not([data-theme='dark']) .cm-content,
 :root:not(.dark):not([data-theme='dark']) [contenteditable='true'] {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='24' viewBox='0 0 14 24'><path d='M7 4 Q 9 4 8.5 5 Q 8 6 7.2 6 L7.2 18 Q 8 18 8.5 19 Q 9 20 7 20 Q 5 20 5.5 19 Q 6 18 6.8 18 L6.8 6 Q 6 6 5.5 5 Q 5 4 7 4 Z' fill='%231c1b22' opacity='0.9'/></svg>") 7 12, text;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='24' viewBox='0 0 14 24'><line x1='8' y1='4' x2='6' y2='20' stroke='%231c1b22' stroke-width='1.6' stroke-linecap='round' opacity='0.92'/><line x1='5' y1='4.4' x2='11' y2='4.4' stroke='%231c1b22' stroke-width='1.1' stroke-linecap='round' opacity='0.78'/><line x1='3' y1='19.6' x2='9' y2='19.6' stroke='%231c1b22' stroke-width='1.1' stroke-linecap='round' opacity='0.78'/></svg>") 7 12, text;
 }

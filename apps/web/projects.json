@@ -1,0 +1,71 @@
+{
+  "$schema_note": "Edit this file to add/remove projects from the portfolio hub. Fields: slug (URL slug, also folder name under public/portfolio/<slug>/); repo (owner/name on GitHub); featured (bool — pins to hero row); order (number — featured row ordering, lower = leftmost); url (optional live deployment URL); tagline (optional override of the GitHub description). Everything else — description, language, stars, topics, commits — is pulled live by scripts/sync-portfolio.mjs.",
+  "owner_default": "abgnydn",
+  "projects": [
+    {
+      "slug": "neuropulse",
+      "repo": "abgnydn/neuropulse",
+      "featured": true,
+      "order": 1,
+      "url": "https://neuropulse.live",
+      "tagline": "Live 3.8B-param forward pass in the browser with mech-interp ablation."
+    },
+    {
+      "slug": "webgpu-q",
+      "repo": "abgnydn/webgpu-q",
+      "featured": true,
+      "order": 2,
+      "tagline": "WebGPU quantum many-body + chemistry simulator. 401 tests, FCI-validated."
+    },
+    {
+      "slug": "markview",
+      "repo": "abgnydn/markview",
+      "featured": true,
+      "order": 3,
+      "url": "https://markview.ai",
+      "tagline": "The editor you're using right now."
+    },
+    {
+      "slug": "postnet-cf",
+      "repo": "abgnydn/postnet-cf",
+      "featured": true,
+      "order": 4,
+      "url": "https://postnet-cf.abgunaydin94.workers.dev",
+      "tagline": "Federated SGD over Cloudflare Durable Objects. 50% Byzantine tolerance."
+    },
+    {
+      "slug": "iz",
+      "repo": "abgnydn/iz",
+      "featured": true,
+      "order": 5,
+      "tagline": "TR-MRV-Bench — open emissions benchmark beating EU CBAM by 85.9%."
+    },
+
+    { "slug": "quill",                  "repo": "abgnydn/quill" },
+    { "slug": "safenpm",                "repo": "abgnydn/safenpm" },
+    { "slug": "panel",                  "repo": "abgnydn/panel" },
+    { "slug": "gpubench",               "repo": "abgnydn/gpubench",        "url": "https://gpubench.dev" },
+    { "slug": "zero-tvm",               "repo": "abgnydn/zero-tvm" },
+    { "slug": "wonderlab",              "repo": "abgnydn/wonderlab" },
+    { "slug": "webgpu-dna",             "repo": "abgnydn/webgpu-dna" },
+    { "slug": "webgpu-p2p-evolution",   "repo": "abgnydn/webgpu-p2p-evolution" },
+    { "slug": "webgpu-transformer-fusion", "repo": "abgnydn/webgpu-transformer-fusion" },
+    { "slug": "wgpu-adas-bench",        "repo": "abgnydn/wgpu-adas-bench" },
+    { "slug": "webgpu-fusion-max",      "repo": "abgnydn/webgpu-fusion-max" },
+    { "slug": "wgpu-native-bench",      "repo": "abgnydn/wgpu-native-bench" },
+    { "slug": "webgpu-kernel-fusion",   "repo": "abgnydn/webgpu-kernel-fusion" },
+    { "slug": "zero-burn-lab",          "repo": "abgnydn/zero-burn-lab" },
+
+    { "slug": "fused-lora",             "repo": "abgnydn/fused-lora" },
+    { "slug": "fusedx",                 "repo": "abgnydn/fusedx" },
+    { "slug": "hub",                    "repo": "abgnydn/hub" },
+    { "slug": "vault",                  "repo": "abgnydn/vault" },
+    { "slug": "veil",                   "repo": "abgnydn/veil" },
+    { "slug": "temple",                 "repo": "abgnydn/temple" },
+    { "slug": "context-vault",          "repo": "abgnydn/context-vault" },
+    { "slug": "tether",                 "repo": "abgnydn/tether" },
+    { "slug": "swarm-engine",           "repo": "abgnydn/swarm-engine" },
+    { "slug": "webgpu-fly",             "repo": "abgnydn/webgpu-fly" },
+    { "slug": "webgpu-fusion-sdk",      "repo": "abgnydn/webgpu-fusion-sdk" }
+  ]
+}
