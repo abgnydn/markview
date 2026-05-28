@@ -19,7 +19,11 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT      = resolve(__dirname, "..");                       // apps/web
-const MANIFEST  = resolve(ROOT, "projects.json");
+// Manifest lives next to this script (apps/web/scripts/projects.json),
+// NOT in apps/web/ — Vite's dev server would otherwise resolve the URL
+// /projects to the JSON file before the SPA fallback can hand it to the
+// React router.
+const MANIFEST  = resolve(__dirname, "projects.json");
 const OUT_DIR   = resolve(ROOT, "public", "portfolio");
 const TOKEN     = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
 

@@ -2,6 +2,7 @@
 
 ## 2026-05-28
 
+- `13:25` **phase 40 next-1: gate extractor + TS gate-apply + first baked artifact** — +623 −9 — [`08aa9b5`](https://github.com/abgnydn/postnet-cf/commit/08aa9b56492c29952b9fc73c970b60b802f03e41)
 - `13:14` **phase 40 scope: NTK-Mirror local dry-run + integration plan written** — +264 −1 — [`b8d6ce6`](https://github.com/abgnydn/postnet-cf/commit/b8d6ce64dc851e957cfd700419886eb332bba85c)
 - `11:18` **docs: README phase-table catchup + prod-validated through phase 39b** — +5 −6 — [`d181ed7`](https://github.com/abgnydn/postnet-cf/commit/d181ed7c9096d197d902095afd3f1dfe6536c0a2)
 - `10:45` **phase 39b: Adam-on-scalar (MEAZO-faithful) — bounded step, loses to s…** — +989 −4 — [`f73fe22`](https://github.com/abgnydn/postnet-cf/commit/f73fe22fb0b53dcf215bf92a7750040a11bf1604)

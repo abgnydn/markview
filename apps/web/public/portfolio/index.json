@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-28T13:24:47.069Z",
+  "generated_at": "2026-05-28T13:39:03.077Z",
   "project_count": 30,
   "river_count": 500,
   "projects": [
@@ -104,20 +104,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-05-28T12:44:15Z",
+      "pushed_at": "2026-05-28T13:25:58Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "ea52a8e37a1f3108b37fa7180be002f41da78ba6",
-        "short_sha": "ea52a8e",
-        "message": "feat(viewer): final 3 polish items — annotations + smart-cap + cursor…",
-        "type": "feat",
-        "date": "2026-05-28T12:44:10Z",
-        "url": "https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6",
-        "additions": 670,
-        "deletions": 0
+        "sha": "1d28274b61777aad4f5d9f091682510b5ba7af0b",
+        "short_sha": "1d28274",
+        "message": "fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam",
+        "type": "fix",
+        "date": "2026-05-28T13:25:52Z",
+        "url": "https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b",
+        "additions": 17418,
+        "deletions": 18
       }
     },
     {
@@ -135,20 +135,20 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-05-28T13:14:28Z",
+      "pushed_at": "2026-05-28T13:25:58Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 45,
-      "commits_synced": 45,
+      "commits_30d": 46,
+      "commits_synced": 46,
       "last_commit": {
-        "sha": "b8d6ce64dc851e957cfd700419886eb332bba85c",
-        "short_sha": "b8d6ce6",
-        "message": "phase 40 scope: NTK-Mirror local dry-run + integration plan written",
+        "sha": "08aa9b56492c29952b9fc73c970b60b802f03e41",
+        "short_sha": "08aa9b5",
+        "message": "phase 40 next-1: gate extractor + TS gate-apply + first baked artifact",
         "type": "other",
-        "date": "2026-05-28T13:14:26Z",
-        "url": "https://github.com/abgnydn/postnet-cf/commit/b8d6ce64dc851e957cfd700419886eb332bba85c",
-        "additions": 264,
-        "deletions": 1
+        "date": "2026-05-28T13:25:57Z",
+        "url": "https://github.com/abgnydn/postnet-cf/commit/08aa9b56492c29952b9fc73c970b60b802f03e41",
+        "additions": 623,
+        "deletions": 9
       }
     },
     {
@@ -197,9 +197,9 @@
       "language_color": "#dea584",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-05-27T09:18:22Z",
+      "pushed_at": "2026-05-28T13:25:49Z",
       "default_branch": "master",
-      "latest_tag": "v1.3.4",
+      "latest_tag": "v1.4.1",
       "commits_30d": 30,
       "commits_synced": 30,
       "last_commit": {
@@ -1010,6 +1010,32 @@
     }
   ],
   "commits": [
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "08aa9b56492c29952b9fc73c970b60b802f03e41",
+      "short_sha": "08aa9b5",
+      "message": "phase 40 next-1: gate extractor + TS gate-apply + first baked artifact",
+      "type": "other",
+      "date": "2026-05-28T13:25:57Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/08aa9b56492c29952b9fc73c970b60b802f03e41",
+      "additions": 623,
+      "deletions": 9
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "1d28274b61777aad4f5d9f091682510b5ba7af0b",
+      "short_sha": "1d28274",
+      "message": "fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam",
+      "type": "fix",
+      "date": "2026-05-28T13:25:52Z",
+      "url": "https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b",
+      "additions": 17418,
+      "deletions": 18
+    },
     {
       "slug": "postnet-cf",
       "name": "postnet-cf",
@@ -4443,19 +4469,6 @@
       "deletions": 0
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "4c136da0f674b6473d1b88abe40c48766876a22a",
-      "short_sha": "4c136da",
-      "message": "fix: drop stale davakasasi remnants in vault-topbar + vault-overlay",
-      "type": "fix",
-      "date": "2026-05-18T16:18:04Z",
-      "url": "https://github.com/abgnydn/markview/commit/4c136da0f674b6473d1b88abe40c48766876a22a",
-      "additions": 375,
-      "deletions": 5844
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -7496,19 +7509,6 @@
       "url": "https://github.com/abgnydn/webgpu-fly/commit/bd87d84b1634cd244783d773898f3f8c9d129ce7",
       "additions": 13,
       "deletions": 9
-    },
-    {
-      "slug": "webgpu-fly",
-      "name": "webgpu-fly",
-      "language": "TypeScript",
-      "sha": "d821d8f17c7bd75794c215c7055283aa331c1adc",
-      "short_sha": "d821d8f",
-      "message": "closed-loop one-shot: target dead ahead, FOV 150°, scene fits",
-      "type": "other",
-      "date": "2026-05-01T18:33:12Z",
-      "url": "https://github.com/abgnydn/webgpu-fly/commit/d821d8f17c7bd75794c215c7055283aa331c1adc",
-      "additions": 13,
-      "deletions": 7
     }
   ],
   "errors": []

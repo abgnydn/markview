@@ -2,6 +2,7 @@
 
 ## 2026-05-28
 
+- `13:25` **fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam** — +17418 −18 — [`1d28274`](https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b)
 - `12:44` **feat(viewer): final 3 polish items — annotations + smart-cap + cursor…** — +670 −0 — [`ea52a8e`](https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6)
 - `12:35` **feat(viewer): 4 more polish items — mini-map, smart-paste, audio wave…** — +463 −0 — [`73e3f52`](https://github.com/abgnydn/markview/commit/73e3f52c654005b4d67dc669f1889849fc4f7572)
 - `11:28` **feat(ui): round-3 polish — 13 of 20 items shipped** — +656 −29 — [`f5e98c2`](https://github.com/abgnydn/markview/commit/f5e98c2f7cbaa4c5d28752f63ffcea2aaee1ee94)
@@ -63,7 +64,3 @@
 - `07:28` **chore: delete /investors page + dep cleanup** — +54 −272 — [`92e3c58`](https://github.com/abgnydn/markview/commit/92e3c5849594f97160854c203380d9a8734b47aa)
 - `07:19` **fix: agent CLI command, MCP tool count log, dep cleanup** — +426 −258 — [`4858d06`](https://github.com/abgnydn/markview/commit/4858d06a991ecf6a35783587967601d6aa9a1c33)
 - `07:13` **docs(readme): update MCP tool count (23 → 30) + document hub dep for …** — +10 −3 — [`d06e886`](https://github.com/abgnydn/markview/commit/d06e8863d0a76fe1e48e083b7637d4d1ab82f0ff)
-
-## 2026-05-18
-
-- `16:18` **fix: drop stale davakasasi remnants in vault-topbar + vault-overlay** — +375 −5844 — [`4c136da`](https://github.com/abgnydn/markview/commit/4c136da0f674b6473d1b88abe40c48766876a22a)

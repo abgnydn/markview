@@ -8,6 +8,7 @@ import { Routes, Route } from "react-router-dom";
 const Home = lazy(() => import("./routes/Home"));
 const Privacy = lazy(() => import("./routes/Privacy"));
 const Terms = lazy(() => import("./routes/Terms"));
+const Projects = lazy(() => import("./routes/Projects"));
 
 function Loading() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/projects" element={<Projects />} />
       </Routes>
     </Suspense>
   );

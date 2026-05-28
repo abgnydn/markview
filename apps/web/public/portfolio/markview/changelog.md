@@ -11,6 +11,7 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **fix**: fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam — [`1d28274`](https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b)
 - **feat**: feat(viewer): final 3 polish items — annotations + smart-cap + cursor… — [`ea52a8e`](https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6)
 - **feat**: feat(viewer): 4 more polish items — mini-map, smart-paste, audio wave… — [`73e3f52`](https://github.com/abgnydn/markview/commit/73e3f52c654005b4d67dc669f1889849fc4f7572)
 - **feat**: feat(ui): round-3 polish — 13 of 20 items shipped — [`f5e98c2`](https://github.com/abgnydn/markview/commit/f5e98c2f7cbaa4c5d28752f63ffcea2aaee1ee94)
@@ -22,4 +23,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix(ui): un-hide paragraphs + TOC scroll-spy + slower motion + 14 new… — [`ccef112`](https://github.com/abgnydn/markview/commit/ccef112cd5d6a55c1278261c92fae1a709e2daaa)
 - **feat**: feat(ui): 19 polish items — lighter, smoother, more alive — [`966d63e`](https://github.com/abgnydn/markview/commit/966d63e021856f0c36bbf5cfe7d75ae61fd9b7df)
 - **fix**: fix(zen): hoist zen-module @imports to top of zen.css — [`99d8601`](https://github.com/abgnydn/markview/commit/99d86018b321dec98720e7d2e2ea56ff3f37e22a)
-- **fix**: fix(collab): share-as-URL recipient + signaling worker root path — [`499112e`](https://github.com/abgnydn/markview/commit/499112ee08cf335c7b33165fb007c11beb148025)

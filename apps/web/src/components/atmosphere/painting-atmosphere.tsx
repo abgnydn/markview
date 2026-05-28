@@ -5,6 +5,7 @@ import { ATMOSPHERES, pickPaintingFor, type ParticleKind } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
 import { CursorParticles } from './cursor-particles';
+import { DepthPainting } from './depth-painting';
 
 interface PaintingAtmosphereProps {
   atmosphere: Exclude<Atmosphere, 'none'>;
@@ -126,17 +127,17 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       style={style}
       aria-hidden="true"
     >
-      {/* No `key` — we reuse the same <img> element across swaps so the
-          browser keeps showing the old pixels until the new src is
-          decoded (preload + RAF gate in the effect above). With opacity
-          easing on .atmosphere-swapping the whole layer cross-fades as
-          a unit. */}
-      <img
+      {/* DepthPainting computes a per-painting depth map (Depth Anything
+          v2 small via transformers.js, cached in Cache API per browser)
+          and renders the painting through a WebGL2 fragment shader that
+          offsets UV by cursor·depth + perlin wobble. The mountain stays
+          put while the sky drifts; the painting subtly tilts toward the
+          cursor. Falls back to a plain <img> while depth is computing or
+          when WebGL isn't available. */}
+      <DepthPainting
         className="atmosphere-image"
         src={displayed.painting.imageSrc}
-        alt=""
-        loading="eager"
-        decoding="async"
+        paintingKey={displayed.painting.key}
       />
 
       {displayedCfg.particles !== 'none' && (
