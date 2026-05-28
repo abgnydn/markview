@@ -124,6 +124,11 @@ export const ATMOSPHERES: Record<Exclude<Atmosphere, 'none'>, AtmosphereConfig> 
     filterLight: 'saturate(0.85) contrast(0.95) brightness(1.05)',
     filterDark: 'saturate(0.70) contrast(0.95) brightness(0.92)',
     paintings: [
+      // snow-36531 and snow-56188 are different impressions of the SAME
+      // Karasaki Pine in Rain print and read as duplicates when rotated;
+      // dropped them. snow-57043 is technically rain (Shōno) but visually
+      // distinct from the Kanbara village so the rotation reads as two
+      // distinct atmospheres rather than four near-clones.
       {
         key: 'kanbara-evening',
         imageSrc: '/atmospheres/snow-hiroshige.jpg',
@@ -132,25 +137,11 @@ export const ATMOSPHERES: Record<Exclude<Atmosphere, 'none'>, AtmosphereConfig> 
         focal: 'center 50%',
       },
       {
-        key: 'karasaki-night',
-        imageSrc: '/atmospheres/snow-36531.jpg',
-        attribution: 'Utagawa Hiroshige',
-        attributionDetail: 'Night Rain at Karasaki, c. 1834 · The Met (CC0)',
-        focal: 'center 50%',
-      },
-      {
         key: 'shono-white-rain',
         imageSrc: '/atmospheres/snow-57043.jpg',
         attribution: 'Utagawa Hiroshige',
         attributionDetail: 'White Rain at Shōno, 1833-34 · The Met (CC0)',
         focal: 'center 50%',
-      },
-      {
-        key: 'karasaki-pine',
-        imageSrc: '/atmospheres/snow-56188.jpg',
-        attribution: 'Utagawa Hiroshige',
-        attributionDetail: 'Evening Rain on Karasaki Pine, c. 1834 · The Met (CC0)',
-        focal: 'center 55%',
       },
     ],
   },
