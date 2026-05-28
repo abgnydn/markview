@@ -60,6 +60,31 @@
   color: var(--zen-fg);
   border-color: var(--zen-fg-faint);
 }
+/* Constellation/Force toggle — same shape as the close button but
+   with the accent color when constellation mode is active. */
+.graph-view-mode-btn {
+  pointer-events: auto;
+  background: transparent;
+  border: 1px solid var(--zen-fg-ghost);
+  color: var(--zen-fg-faint);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--zen-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 200ms var(--zen-ease), border-color 200ms var(--zen-ease), background 200ms var(--zen-ease);
+}
+.graph-view-mode-btn:hover { color: var(--zen-fg); border-color: var(--zen-fg-faint); }
+.graph-view-mode-btn.is-active {
+  color: var(--zen-accent, #b9a4ff);
+  border-color: rgba(185, 164, 255, 0.6);
+  background: rgba(185, 164, 255, 0.10);
+}
 .graph-view-hint {
   position: absolute;
   top: 50%;

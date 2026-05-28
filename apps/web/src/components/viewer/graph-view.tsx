@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { X, Search as SearchIcon, GitMerge, Tag as TagIcon } from 'lucide-react';
+import { X, Search as SearchIcon, GitMerge, Tag as TagIcon, Sparkles } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { db } from '@/lib/storage/db';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
@@ -47,6 +47,13 @@ export function GraphView({ onClose }: GraphViewProps) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  // B2 — Constellation mode: pause the force simulation, persist node
+  // positions per workspace, render with brighter glow so nodes feel
+  // like stars instead of wired graph atoms. Drag-to-arrange becomes
+  // the only motion; layout becomes spatial memory you actually own.
+  const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
+  const constellationKey = activeWorkspaceId ? `mv-constellation-${activeWorkspaceId}` : '';
+  const [constellation, setConstellation] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const nodesRef = useRef<Node[]>([]);
   const edgesRef = useRef<Edge[]>([]);
@@ -265,8 +272,13 @@ export function GraphView({ onClose }: GraphViewProps) {
     canvas.addEventListener('wheel', onWheel, { passive: false });
 
     const tick = () => {
-      simulate(nodesRef.current, edgesRef.current, dragRef.current.mode === 'node' ? dragRef.current.id : null);
-      draw(ctx, nodesRef.current, edgesRef.current, viewRef.current, hoverId, activeFileId, focusNeighborhood, searchMatches, tagPaletteRef.current);
+      // In constellation mode the simulation is frozen — only manual
+      // drags move nodes. Skip the simulate() call entirely; the
+      // existing onMouseMove handler still updates the dragged node.
+      if (!constellation) {
+        simulate(nodesRef.current, edgesRef.current, dragRef.current.mode === 'node' ? dragRef.current.id : null);
+      }
+      draw(ctx, nodesRef.current, edgesRef.current, viewRef.current, hoverId, activeFileId, focusNeighborhood, searchMatches, tagPaletteRef.current, constellation);
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
@@ -280,7 +292,33 @@ export function GraphView({ onClose }: GraphViewProps) {
       canvas.removeEventListener('wheel', onWheel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hoverId, activeFileId, focusId, focusNeighborhood, searchMatches]);
+  }, [hoverId, activeFileId, focusId, focusNeighborhood, searchMatches, constellation]);
+
+  // Constellation persistence — when nodes are arranged manually, save
+  // their (x,y) per-workspace so the layout survives reload + return
+  // visits. Restore on toggle ON; save on toggle OFF and every 2s
+  // while in constellation mode to catch in-progress drags.
+  useEffect(() => {
+    if (!constellationKey) return;
+    if (constellation) {
+      try {
+        const raw = localStorage.getItem(constellationKey);
+        if (raw) {
+          const saved = JSON.parse(raw) as Record<string, { x: number; y: number }>;
+          for (const n of nodesRef.current) {
+            const p = saved[n.id];
+            if (p) { n.x = p.x; n.y = p.y; n.vx = 0; n.vy = 0; }
+          }
+        }
+      } catch { /* corrupt entry — ignore */ }
+      const saveTimer = window.setInterval(() => {
+        const out: Record<string, { x: number; y: number }> = {};
+        for (const n of nodesRef.current) out[n.id] = { x: n.x, y: n.y };
+        try { localStorage.setItem(constellationKey, JSON.stringify(out)); } catch { /* quota */ }
+      }, 2_000);
+      return () => window.clearInterval(saveTimer);
+    }
+  }, [constellation, constellationKey]);
 
   const orphanCount = nodesRef.current.filter((n) => n.outDeg + n.inDeg === 0).length;
   const tags = Array.from(tagPaletteRef.current.entries());
@@ -309,6 +347,15 @@ export function GraphView({ onClose }: GraphViewProps) {
           <GitMerge size={11} /> {nodesRef.current.length} · {edgesRef.current.length}
           {orphanCount > 0 && <> · {orphanCount} orphan{orphanCount === 1 ? '' : 's'}</>}
         </span>
+        <button
+          className={`graph-view-mode-btn${constellation ? ' is-active' : ''}`}
+          onClick={() => setConstellation((v) => !v)}
+          title={constellation
+            ? 'Switch to force-graph mode'
+            : 'Switch to constellation mode (drag-arranged, saved per workspace)'}
+        >
+          <Sparkles size={12} /> {constellation ? 'Force' : 'Constellation'}
+        </button>
         <button className="graph-view-close" onClick={onClose} title="Close (Esc)">
           <X size={16} />
         </button>
@@ -429,12 +476,22 @@ function draw(
   focusSet: Set<string> | null,
   searchSet: Set<string> | null,
   tagPalette: Map<string, string>,
+  constellation = false,
 ) {
   const W = ctx.canvas.width;
   const H = ctx.canvas.height;
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, W, H);
+  // Constellation backdrop: deep indigo→near-black radial gradient so
+  // the bright nodes feel like stars on night sky instead of UI atoms.
+  if (constellation) {
+    const grd = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.6);
+    grd.addColorStop(0, '#0b0c1a');
+    grd.addColorStop(1, '#04050a');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+  }
   ctx.restore();
 
   ctx.save();

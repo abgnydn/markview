@@ -716,53 +716,136 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     };
   }, [html]);
 
-  // ── N3 Footnote popovers — clicking a `[1]` ref opens a small
-  // floating card with the footnote text right next to the marker
-  // instead of jump-scrolling to the bottom. Clicking the same ref
-  // again (or clicking outside) closes.
+  // ── N3 Footnote popovers + B1 Margin footnotes — hover a `[1]`
+  // ref to surface the footnote text in the right margin (where the
+  // TOC lives) when the viewport is wide enough (≥ 1180px). On narrow
+  // viewports falls back to a floating popover anchored under the
+  // marker. Click toggles a "pinned" version that stays open.
+  //
+  // Wide viewport gives you the magazine experience: read the body
+  // and the footnote at the same time, no popover, no scroll jump.
   useEffect(() => {
     const root = contentRef.current;
     if (!root) return;
     const refs = root.querySelectorAll<HTMLAnchorElement>('a[href^="#user-content-fn-"], a.footnote-ref');
     if (refs.length === 0) return;
     let pop: HTMLDivElement | null = null;
+    let pinned = false;
+    let hoverTimer: number | null = null;
+    let hideTimer: number | null = null;
+
     const closePop = () => {
-      if (pop) pop.classList.remove('mv-fn-popover-show');
-      window.setTimeout(() => { pop?.remove(); pop = null; }, 200);
+      if (pop) pop.classList.remove('mv-fn-popover-show', 'mv-fn-margin-show');
+      const old = pop;
+      pop = null;
+      pinned = false;
+      window.setTimeout(() => old?.remove(), 220);
     };
-    const onClick = (e: Event) => {
-      const link = e.currentTarget as HTMLAnchorElement;
-      e.preventDefault();
+    const useMargin = () => window.innerWidth >= 1180;
+
+    const place = (link: HTMLAnchorElement, isPin: boolean) => {
       const href = link.getAttribute('href') || '';
       const targetId = href.replace(/^#/, '');
       const target = document.getElementById(targetId);
       if (!target) return;
-      // Pull the footnote text minus the backref arrow.
       const clone = target.cloneNode(true) as HTMLElement;
       clone.querySelectorAll('a.data-footnote-backref, a.footnote-back').forEach((b) => b.remove());
       closePop();
       pop = document.createElement('div');
-      pop.className = 'mv-fn-popover';
       pop.innerHTML = clone.innerHTML;
       document.body.appendChild(pop);
       const rect = link.getBoundingClientRect();
-      const left = Math.min(window.innerWidth - 380, Math.max(20, rect.left));
-      pop.style.left = `${left}px`;
-      pop.style.top = `${rect.bottom + 8}px`;
-      requestAnimationFrame(() => pop?.classList.add('mv-fn-popover-show'));
+
+      if (useMargin()) {
+        // Margin mode — anchor vertically to the marker, sit in the
+        // right gutter outside the content column.
+        pop.className = 'mv-fn-margin';
+        const main = root.closest('.viewer-main') as HTMLElement | null;
+        const content = root.closest('.viewer-content') as HTMLElement | null;
+        const right = content
+          ? Math.max(20, window.innerWidth - content.getBoundingClientRect().right - 18)
+          : 32;
+        pop.style.right = `${right}px`;
+        pop.style.top = `${rect.top}px`;
+        pop.style.maxWidth = `${Math.min(280, right - 24)}px`;
+        // Discreet number label so the user knows which marker it ties to.
+        const num = link.textContent?.replace(/[^\d]/g, '') || '';
+        if (num) {
+          const tag = document.createElement('span');
+          tag.className = 'mv-fn-margin-num';
+          tag.textContent = num;
+          pop.prepend(tag);
+        }
+        // Track scrolling so the margin note stays glued to its marker.
+        const onScroll = () => {
+          if (!pop || !link.isConnected) return;
+          pop.style.top = `${link.getBoundingClientRect().top}px`;
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        main?.addEventListener('scroll', onScroll, { passive: true });
+        (pop as HTMLDivElement & { _cleanup?: () => void })._cleanup = () => {
+          window.removeEventListener('scroll', onScroll);
+          main?.removeEventListener('scroll', onScroll);
+        };
+        requestAnimationFrame(() => pop?.classList.add('mv-fn-margin-show'));
+      } else {
+        // Popover mode — anchor under the marker.
+        pop.className = 'mv-fn-popover';
+        const left = Math.min(window.innerWidth - 380, Math.max(20, rect.left));
+        pop.style.left = `${left}px`;
+        pop.style.top = `${rect.bottom + 8}px`;
+        requestAnimationFrame(() => pop?.classList.add('mv-fn-popover-show'));
+      }
+      pinned = isPin;
+    };
+
+    const onEnter = (e: Event) => {
+      const link = e.currentTarget as HTMLAnchorElement;
+      if (hideTimer !== null) { window.clearTimeout(hideTimer); hideTimer = null; }
+      if (pinned) return;
+      hoverTimer = window.setTimeout(() => place(link, false), 220);
+    };
+    const onLeave = () => {
+      if (hoverTimer !== null) { window.clearTimeout(hoverTimer); hoverTimer = null; }
+      if (pinned) return;
+      hideTimer = window.setTimeout(() => {
+        const c = (pop as (HTMLDivElement & { _cleanup?: () => void }) | null)?._cleanup;
+        c?.();
+        closePop();
+      }, 240);
+    };
+    const onClick = (e: Event) => {
+      e.preventDefault();
+      const link = e.currentTarget as HTMLAnchorElement;
+      // Click pins the footnote so it stays open across mouse moves.
+      place(link, true);
     };
     const onOutside = (e: MouseEvent) => {
       if (!pop) return;
       if (pop.contains(e.target as Node)) return;
       if ((e.target as HTMLElement)?.closest('a[href^="#user-content-fn-"], a.footnote-ref')) return;
+      const c = (pop as (HTMLDivElement & { _cleanup?: () => void }) | null)?._cleanup;
+      c?.();
       closePop();
     };
-    refs.forEach((r) => r.addEventListener('click', onClick));
+    refs.forEach((r) => {
+      r.addEventListener('mouseenter', onEnter);
+      r.addEventListener('mouseleave', onLeave);
+      r.addEventListener('click', onClick);
+    });
     document.addEventListener('mousedown', onOutside);
     return () => {
-      refs.forEach((r) => r.removeEventListener('click', onClick));
+      refs.forEach((r) => {
+        r.removeEventListener('mouseenter', onEnter);
+        r.removeEventListener('mouseleave', onLeave);
+        r.removeEventListener('click', onClick);
+      });
       document.removeEventListener('mousedown', onOutside);
+      const c = (pop as (HTMLDivElement & { _cleanup?: () => void }) | null)?._cleanup;
+      c?.();
       pop?.remove();
+      if (hoverTimer !== null) window.clearTimeout(hoverTimer);
+      if (hideTimer !== null) window.clearTimeout(hideTimer);
     };
   }, [html]);
 
