@@ -83,19 +83,58 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       sun.position.set(-0.7, 0.6, 0.9);
       scene.add(sun);
 
-      // Load the painting texture (we already preloaded via the parent's
-      // image preloader, so this hits the cache).
-      const texLoader = new THREE.TextureLoader();
-      const paintingTex = await new Promise<InstanceType<typeof THREE.Texture>>((resolve, reject) => {
-        texLoader.load(src, (t) => {
-          t.colorSpace = THREE.SRGBColorSpace;
-          t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-          t.minFilter = THREE.LinearFilter;
-          t.magFilter = THREE.LinearFilter;
-          resolve(t);
-        }, undefined, reject);
-      });
-      if (cancelled) { paintingTex.dispose(); renderer.dispose(); return; }
+      // Prefer a cinemagraph MP4 next to the JPG if one was pre-rendered
+      // (see tools/cinemagraph/render.py). Use a HEAD probe so we only
+      // pay the discovery cost once per src, then either:
+      //   - bind a <video> as a Three.js VideoTexture (the painting now
+      //     actually MOVES — clouds drift, waves crash), or
+      //   - fall back to a still-image TextureLoader.
+      const mp4Url = src.replace(/\.(jpe?g|png|webp|avif)$/i, '.mp4');
+      let videoEl: HTMLVideoElement | null = null;
+      let paintingTex: InstanceType<typeof THREE.Texture> | null = null;
+      let paintImg: { width: number; height: number } = { width: 1, height: 1 };
+
+      const probeRes = await fetch(mp4Url, { method: 'HEAD' }).catch(() => null);
+      const hasMp4 = !!probeRes && probeRes.ok;
+      if (cancelled) { renderer.dispose(); return; }
+
+      if (hasMp4) {
+        videoEl = document.createElement('video');
+        videoEl.src = mp4Url;
+        videoEl.crossOrigin = 'anonymous';
+        videoEl.muted = true;
+        videoEl.loop = true;
+        videoEl.playsInline = true;
+        videoEl.preload = 'auto';
+        await new Promise<void>((resolve, reject) => {
+          videoEl!.addEventListener('loadeddata', () => resolve(), { once: true });
+          videoEl!.addEventListener('error', () => reject(new Error('video load failed')), { once: true });
+        }).catch(() => { videoEl = null; });
+        if (videoEl && !cancelled) {
+          try { await videoEl.play(); } catch { /* autoplay denied — VideoTexture still updates on user gesture */ }
+          paintingTex = new THREE.VideoTexture(videoEl);
+          paintingTex.colorSpace = THREE.SRGBColorSpace;
+          paintingTex.minFilter = THREE.LinearFilter;
+          paintingTex.magFilter = THREE.LinearFilter;
+          paintImg = { width: videoEl.videoWidth, height: videoEl.videoHeight };
+        }
+      }
+
+      if (!videoEl) {
+        const texLoader = new THREE.TextureLoader();
+        paintingTex = await new Promise<InstanceType<typeof THREE.Texture>>((resolve, reject) => {
+          texLoader.load(src, (t) => {
+            t.colorSpace = THREE.SRGBColorSpace;
+            t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            t.minFilter = THREE.LinearFilter;
+            t.magFilter = THREE.LinearFilter;
+            resolve(t);
+          }, undefined, reject);
+        });
+        const img = paintingTex.image as HTMLImageElement;
+        paintImg = { width: img.width, height: img.height };
+      }
+      if (cancelled) { paintingTex!.dispose(); renderer.dispose(); return; }
 
       // Depth map as a CanvasTexture (the ImageBitmap from ensureDepth).
       const depthTex = new THREE.CanvasTexture(depthResult.bitmap);
@@ -105,15 +144,16 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       // Plane — built at the painting's native aspect (planeH=1,
       // planeW=paintAspect). We then scale the mesh to fully cover
       // the camera's visible frustum (recomputed on resize).
-      const paintImg = paintingTex.image as HTMLImageElement;
       const paintAspect = paintImg.width / paintImg.height;
       const geom = new THREE.PlaneGeometry(paintAspect, 1, 192, 128);
       // Compute per-vertex normals AFTER displacement — done in the
       // shader via finite-difference on the depth texture.
 
+      // paintingTex is guaranteed defined past the fallback branch — TS
+      // can't follow the conditional assignment so we re-narrow here.
       const material = new THREE.ShaderMaterial({
         uniforms: {
-          uPaint:      { value: paintingTex },
+          uPaint:      { value: paintingTex! },
           uDepth:      { value: depthTex },
           uDisplace:   { value: 0.22 },        // Z extents — peaks rise this much
           uTime:       { value: 0.0 },
@@ -297,9 +337,13 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('resize', resize);
         if (rafId) cancelAnimationFrame(rafId);
+        if (videoEl) {
+          try { videoEl.pause(); } catch { /* */ }
+          videoEl.src = '';
+        }
         geom.dispose();
         material.dispose();
-        paintingTex.dispose();
+        paintingTex!.dispose();
         depthTex.dispose();
         renderer.dispose();
       };
