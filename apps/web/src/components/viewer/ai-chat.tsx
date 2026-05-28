@@ -43,7 +43,35 @@ export function AiChat({ onClose }: AiChatProps) {
   const files = useWorkspaceStore((s) => s.files);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
 
-  const [turns, setTurns] = useState<Turn[]>([]);
+  // R17 — Per-workspace chat memory. Each workspace gets its own
+  // localStorage-backed thread keyed by workspace id, so the thinking
+  // you did in `research/` survives a context switch to `posts/` and
+  // is right there when you come back. We persist only finished turns
+  // (no in-flight tokens) to keep the JSON small and resumable.
+  const memoryKey = activeWorkspaceId ? `mv-ai-chat-${activeWorkspaceId}` : '';
+  const [turns, setTurns] = useState<Turn[]>(() => {
+    if (typeof window === 'undefined' || !memoryKey) return [];
+    try {
+      const raw = localStorage.getItem(memoryKey);
+      if (!raw) return [];
+      const parsed: unknown = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed as Turn[] : [];
+    } catch { return []; }
+  });
+  // Reload thread when the active workspace changes.
+  useEffect(() => {
+    if (!memoryKey) { setTurns([]); return; }
+    try {
+      const raw = localStorage.getItem(memoryKey);
+      setTurns(raw ? (JSON.parse(raw) as Turn[]) : []);
+    } catch { setTurns([]); }
+  }, [memoryKey]);
+  // Persist completed turns on every change.
+  useEffect(() => {
+    if (!memoryKey) return;
+    const finished = turns.filter((t) => t.status === 'done');
+    try { localStorage.setItem(memoryKey, JSON.stringify(finished)); } catch { /* quota */ }
+  }, [turns, memoryKey]);
   const [input, setInput] = useState('');
   const [optedIn, setOptedIn] = useState<boolean>(() => isGenerativeOptedIn());
   const [status, setStatus] = useState<GenStatus>({ state: 'idle' });

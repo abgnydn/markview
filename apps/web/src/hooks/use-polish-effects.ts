@@ -124,4 +124,85 @@ export function usePolishEffects(): void {
       document.body.classList.remove('mv-idle');
     };
   }, []);
+
+  // R1 — Spotlight focus. Press `f` (non-typing) to toggle. While
+  // active, body.mv-spotlight dims every paragraph in the content
+  // column to 18%; the paragraph closest to the cursor brightens.
+  // rAF-throttled hit-test against pointer position.
+  useEffect(() => {
+    let active = false;
+    let lastTarget: Element | null = null;
+    let raf = 0;
+    let lastX = 0, lastY = 0;
+    const updateFocus = () => {
+      raf = 0;
+      if (!active) return;
+      const el = document.elementFromPoint(lastX, lastY);
+      if (!el) return;
+      const para = el.closest('.markdown-content p, .markdown-content li, .markdown-content blockquote, .markdown-content pre');
+      if (para === lastTarget) return;
+      lastTarget?.classList.remove('mv-spotlight-focus');
+      para?.classList.add('mv-spotlight-focus');
+      lastTarget = para;
+    };
+    const onMove = (e: MouseEvent) => {
+      lastX = e.clientX; lastY = e.clientY;
+      if (raf === 0) raf = requestAnimationFrame(updateFocus);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+      if (e.key !== 'f' && e.key !== 'F') return;
+      e.preventDefault();
+      active = !active;
+      document.body.classList.toggle('mv-spotlight', active);
+      if (active) {
+        window.addEventListener('mousemove', onMove);
+      } else {
+        window.removeEventListener('mousemove', onMove);
+        lastTarget?.classList.remove('mv-spotlight-focus');
+        lastTarget = null;
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('mousemove', onMove);
+      document.body.classList.remove('mv-spotlight');
+      lastTarget?.classList.remove('mv-spotlight-focus');
+      if (raf !== 0) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // R5 — Reading-rhythm chime. Every 25 min while the tab is visible,
+  // play a single soft bell + briefly bump the body grain so the page
+  // pulses once. Per-session only; refresh resets the timer. Stops
+  // chiming after 4 reminders without interaction.
+  useEffect(() => {
+    let strikes = 0;
+    const tick = async () => {
+      if (document.hidden) return;
+      if (strikes >= 4) return;
+      strikes++;
+      try {
+        const { playUiSound } = await import('@/lib/atmosphere/audio');
+        playUiSound('chime');
+      } catch { /* audio module not loaded — fine */ }
+      // Visual pulse via grain alpha for ~900ms.
+      document.documentElement.style.setProperty('--zen-grain-alpha', '0.075');
+      window.setTimeout(() => {
+        document.documentElement.style.removeProperty('--zen-grain-alpha');
+      }, 900);
+    };
+    const resetStrikes = () => { strikes = 0; };
+    const interval = window.setInterval(tick, 25 * 60 * 1000);
+    window.addEventListener('keydown', resetStrikes);
+    window.addEventListener('pointerdown', resetStrikes);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('keydown', resetStrikes);
+      window.removeEventListener('pointerdown', resetStrikes);
+    };
+  }, []);
 }

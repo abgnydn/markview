@@ -2899,6 +2899,280 @@ body.mv-keyhint-show [data-keyhint]::after {
   .mv-cards-counter { font-size: 9.5px; }
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+ * Round-3 polish — 20 items across spotlight focus, mini-map, code
+ * collapse, image lightbox, magazine lead-in, vertical writing mode,
+ * sticky table headers, depth dial, anchor # in margin, link tooltip,
+ * pomodoro chime, heading breadcrumb.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* R1 — Spotlight focus. Body.mv-spotlight dims every paragraph in the
+   content column to 18%; the .mv-spotlight-focus paragraph that the
+   hook anchors to the cursor brightens back to 100%. Pure CSS + a
+   single mouseover-throttled JS update. */
+body.mv-spotlight .markdown-content p,
+body.mv-spotlight .markdown-content li,
+body.mv-spotlight .markdown-content blockquote,
+body.mv-spotlight .markdown-content pre {
+  transition: opacity 320ms ease;
+  opacity: 0.18;
+}
+body.mv-spotlight .markdown-content .mv-spotlight-focus {
+  opacity: 1;
+}
+
+/* R6 — Magazine lead-in. The H1 + first paragraph render slightly
+   larger with tighter leading, the way printed magazines stage the
+   deck. Only the FIRST <p> after the H1 gets the lift — subsequent
+   paragraphs return to body size. */
+.markdown-content h1 + p {
+  font-size: 1.12em;
+  line-height: 1.62;
+  letter-spacing: -0.005em;
+}
+
+/* R7 — Vertical writing mode. Opt-in via html.mv-vertical (toggle in
+   command palette / settings). Flips writing-mode for the content
+   column only — chrome stays horizontal. Looks remarkable with the
+   serif body + atmosphere paintings. */
+html.mv-vertical .viewer-content,
+html.mv-vertical .markdown-content {
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed;
+  /* The default content max-width is horizontal; in vertical mode
+     we want a max-HEIGHT instead. */
+  max-height: 78vh !important;
+  max-width: none !important;
+  margin: 4vh auto !important;
+  padding: 0 6vw !important;
+}
+html.mv-vertical .markdown-content h1,
+html.mv-vertical .markdown-content h2,
+html.mv-vertical .markdown-content h3 { letter-spacing: 0.04em; }
+html.mv-vertical .markdown-content pre,
+html.mv-vertical .markdown-content table {
+  writing-mode: horizontal-tb;
+  display: inline-block;
+}
+
+/* R8 — Sticky table headers. Long tables become scrollable horizontally
+   (already handled on mobile); now the thead row also pins inside the
+   table itself when you scroll past it vertically. Pairs with the
+   existing sortable columns. */
+.markdown-content table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--zen-bg, #0b0a0d);
+  /* Hairline shadow so the sticky row reads as separated from the
+     scrolling body once it's pinned. */
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.10);
+}
+:root:not(.dark):not([data-theme='dark']) .markdown-content table thead th {
+  background: var(--zen-bg, #fbf8f3);
+  box-shadow: inset 0 -1px 0 rgba(40, 30, 20, 0.12);
+}
+
+/* R3 — Code block collapse. Long pre.code-block (> 20 lines, marked
+   by the renderer with .mv-code-collapsible) collapses to 20-line
+   max-height with a soft fade + a click-to-expand pill at the bottom.
+   .mv-code-expanded removes the cap. */
+.mv-code-collapsible {
+  position: relative;
+  max-height: 28em;
+  overflow: hidden;
+  transition: max-height 380ms ease;
+}
+.mv-code-collapsible::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 6em;
+  background: linear-gradient(180deg, transparent 0%, var(--zen-bg, #0b0a0d) 90%);
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+.mv-code-collapsible.mv-code-expanded {
+  max-height: none;
+  overflow: visible;
+}
+.mv-code-collapsible.mv-code-expanded::after { opacity: 0; }
+.mv-code-expand-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: var(--zen-bg, #0b0a0d);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: var(--zen-soft, rgba(255, 255, 255, 0.7));
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+.mv-code-expand-btn:hover {
+  color: var(--zen-fg);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+.mv-code-collapsible.mv-code-expanded .mv-code-expand-btn {
+  position: static;
+  transform: none;
+  margin: 8px auto 0;
+  display: block;
+}
+
+/* R4 — Image ken-burns lightbox. Click any image, full-viewport view
+   slowly pans + zooms over ~8s. Clicking outside or pressing Esc closes. */
+.mv-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(4, 4, 8, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: mv-fade-in 280ms ease both;
+  cursor: zoom-out;
+}
+.mv-lightbox-img {
+  max-width: 92vw;
+  max-height: 92vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+  transform-origin: center;
+}
+@keyframes mv-kenburns {
+  0%   { transform: scale(1)    translate(0, 0); }
+  25%  { transform: scale(1.05) translate(-1%, 0.5%); }
+  50%  { transform: scale(1.07) translate(-1.5%, -0.5%); }
+  75%  { transform: scale(1.05) translate(0.5%, -1%); }
+  100% { transform: scale(1)    translate(0, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mv-lightbox-img { animation: mv-kenburns 16s ease-in-out infinite; }
+}
+.markdown-content img {
+  cursor: zoom-in;
+  transition: opacity 200ms ease;
+}
+.markdown-content img:hover { opacity: 0.92; }
+
+/* R10 — Anchor # in margin. On hover of any heading, a faint # appears
+   in the left margin; clicking copies the stable URL to that heading. */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 { position: relative; }
+.mv-heading-anchor {
+  position: absolute;
+  right: 100%;
+  margin-right: 14px;
+  top: 0.4em;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.35));
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 0.62em;
+  letter-spacing: 0;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 220ms ease, color 220ms ease;
+  cursor: pointer;
+  user-select: none;
+}
+.markdown-content h1:hover .mv-heading-anchor,
+.markdown-content h2:hover .mv-heading-anchor,
+.markdown-content h3:hover .mv-heading-anchor {
+  opacity: 0.5;
+}
+.mv-heading-anchor:hover { opacity: 1 !important; color: var(--zen-accent, #b9a4ff); }
+
+/* R12 — Reading depth dial. Slim vertical thermometer bottom-right
+   showing how deep in the doc you are. Filled portion uses the
+   atmosphere accent color. */
+.mv-depth-dial {
+  position: fixed;
+  right: calc(env(safe-area-inset-right, 0px) + 14px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14vh);
+  z-index: 4;
+  width: 3px;
+  height: 26vh;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 320ms ease;
+  pointer-events: none;
+}
+body:hover .mv-depth-dial { opacity: 0.7; }
+.mv-depth-dial-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg,
+    rgba(185, 164, 255, 0) 0%,
+    rgba(185, 164, 255, 0.55) 60%,
+    rgba(185, 164, 255, 0.95) 100%);
+  border-radius: 2px;
+  transition: height 140ms ease;
+}
+
+/* R14 — External link tooltip with favicon. Hovering an external link
+   shows a tiny mono pill below with host + favicon image. */
+.mv-link-tooltip {
+  position: fixed;
+  z-index: 1003;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px 5px 5px;
+  background: var(--zen-bg, rgba(11, 10, 13, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--zen-soft, rgba(255, 255, 255, 0.7));
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.mv-link-tooltip.mv-link-tooltip-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.mv-link-tooltip img {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+/* R9 — Live heading breadcrumb. Extends the existing .sticky-title
+   pattern: instead of a single H1 mini-title, render H1 › H2 › H3 as
+   the user scrolls deeper. Pipe separator in mono. */
+.sticky-title-crumbs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.sticky-title-sep {
+  color: var(--zen-muted, rgba(255, 255, 255, 0.3));
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10px;
+  opacity: 0.6;
+}
+
 /* N11 ⌘-click wikilink fly-in pane — a right-anchored 420px sheet with
    the linked file's content. Component is .mv-flyin; .mv-flyin-show
    drives the slide. */

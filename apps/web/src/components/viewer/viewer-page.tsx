@@ -14,6 +14,7 @@ import { ReadingProgress } from '@/components/viewer/reading-progress';
 import { Breadcrumbs } from '@/components/viewer/breadcrumbs';
 import { FrontmatterCard } from '@/components/viewer/frontmatter-card';
 import { StickyTitle } from '@/components/viewer/sticky-title';
+import { ReadingDepthDial } from '@/components/viewer/reading-depth-dial';
 import { AutosaveWhisper } from '@/components/viewer/autosave-whisper';
 import { CommandPalette } from '@/components/viewer/command-palette';
 import { ActivityLog } from '@/components/viewer/activity-log';
@@ -247,6 +248,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       <CommandPalette />
       <ActivityLog />
       <AtmosphereDots />
+      <ReadingDepthDial />
       <WorkspaceTabs />
 
       {/* Standalone "+ new workspace" drop target. Becomes visible only

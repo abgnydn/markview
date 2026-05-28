@@ -920,6 +920,154 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     };
   }, [html]);
 
+  // ── R3 Code collapse — long <pre> blocks (>20 lines) collapse to
+  // 28em with a fade and a click-to-expand pill. Idempotent: only
+  // augments blocks that don't already have .mv-code-collapsible.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const blocks = root.querySelectorAll<HTMLPreElement>('pre');
+    blocks.forEach((pre) => {
+      if (pre.classList.contains('mv-code-collapsible')) return;
+      const text = pre.textContent || '';
+      const lines = text.split('\n').length;
+      if (lines <= 20) return;
+      pre.classList.add('mv-code-collapsible');
+      const btn = document.createElement('button');
+      btn.className = 'mv-code-expand-btn';
+      btn.type = 'button';
+      btn.textContent = `+ ${lines - 20} more lines`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const expanded = pre.classList.toggle('mv-code-expanded');
+        btn.textContent = expanded ? 'collapse' : `+ ${lines - 20} more lines`;
+      });
+      pre.appendChild(btn);
+    });
+  }, [html]);
+
+  // ── R4 Image ken-burns lightbox — click any <img> in the content to
+  // open a full-viewport zoom with a slow 16s loop pan. Esc + backdrop
+  // click close. One global overlay node reused per click.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const imgs = root.querySelectorAll<HTMLImageElement>('img');
+    if (imgs.length === 0) return;
+    let overlay: HTMLDivElement | null = null;
+    const close = () => {
+      overlay?.remove();
+      overlay = null;
+      document.removeEventListener('keydown', onKey);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    const onClick = (e: MouseEvent) => {
+      const src = (e.currentTarget as HTMLImageElement).src;
+      const alt = (e.currentTarget as HTMLImageElement).alt;
+      if (!src) return;
+      e.preventDefault();
+      close();
+      overlay = document.createElement('div');
+      overlay.className = 'mv-lightbox-overlay';
+      const img = document.createElement('img');
+      img.className = 'mv-lightbox-img';
+      img.src = src;
+      img.alt = alt;
+      overlay.appendChild(img);
+      overlay.addEventListener('click', close);
+      document.body.appendChild(overlay);
+      document.addEventListener('keydown', onKey);
+    };
+    imgs.forEach((i) => i.addEventListener('click', onClick));
+    return () => {
+      imgs.forEach((i) => i.removeEventListener('click', onClick));
+      close();
+    };
+  }, [html]);
+
+  // ── R10 Heading anchor — adds a faint `#` to the left of h1/h2/h3
+  // that copies the stable URL on click. Idempotent.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const headings = root.querySelectorAll<HTMLHeadingElement>('h1[id], h2[id], h3[id]');
+    headings.forEach((h) => {
+      if (h.querySelector('.mv-heading-anchor')) return;
+      const a = document.createElement('a');
+      a.className = 'mv-heading-anchor';
+      a.textContent = '#';
+      a.href = `#${h.id}`;
+      a.title = 'Copy link to this heading';
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const url = `${window.location.origin}${window.location.pathname}#${h.id}`;
+        void navigator.clipboard.writeText(url).then(() => {
+          window.dispatchEvent(new CustomEvent('markview:toast', {
+            detail: { message: 'heading link copied' },
+          }));
+        }).catch(() => { /* clipboard rejected */ });
+      });
+      h.insertBefore(a, h.firstChild);
+    });
+  }, [html]);
+
+  // ── R14 External link tooltip — hover any external <a> to surface
+  // the host + favicon in a tiny mono pill below the cursor. One
+  // shared overlay node, 200ms hover delay, fades out on leave.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const links = root.querySelectorAll<HTMLAnchorElement>('a[href^="http://"], a[href^="https://"]');
+    if (links.length === 0) return;
+    let tip: HTMLDivElement | null = null;
+    let hoverTimer: number | null = null;
+    const close = () => {
+      tip?.classList.remove('mv-link-tooltip-show');
+      const old = tip;
+      tip = null;
+      window.setTimeout(() => old?.remove(), 220);
+    };
+    const onEnter = (e: Event) => {
+      const link = e.currentTarget as HTMLAnchorElement;
+      let host = '';
+      try { host = new URL(link.href).host; } catch { return; }
+      if (hoverTimer !== null) window.clearTimeout(hoverTimer);
+      hoverTimer = window.setTimeout(() => {
+        close();
+        tip = document.createElement('div');
+        tip.className = 'mv-link-tooltip';
+        const img = document.createElement('img');
+        img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=32`;
+        img.alt = '';
+        img.referrerPolicy = 'no-referrer';
+        tip.appendChild(img);
+        tip.appendChild(document.createTextNode(host));
+        document.body.appendChild(tip);
+        const rect = link.getBoundingClientRect();
+        const left = Math.min(window.innerWidth - 280, Math.max(8, rect.left));
+        tip.style.left = `${left}px`;
+        tip.style.top = `${rect.bottom + 6}px`;
+        requestAnimationFrame(() => tip?.classList.add('mv-link-tooltip-show'));
+      }, 220);
+    };
+    const onLeave = () => {
+      if (hoverTimer !== null) { window.clearTimeout(hoverTimer); hoverTimer = null; }
+      close();
+    };
+    links.forEach((l) => {
+      l.addEventListener('mouseenter', onEnter);
+      l.addEventListener('mouseleave', onLeave);
+    });
+    return () => {
+      links.forEach((l) => {
+        l.removeEventListener('mouseenter', onEnter);
+        l.removeEventListener('mouseleave', onLeave);
+      });
+      if (hoverTimer !== null) window.clearTimeout(hoverTimer);
+      close();
+    };
+  }, [html]);
+
   return (
     <div className="markdown-content" ref={contentRef} style={{ fontSize: 'var(--content-font-size, 16px)' }}>
       {/* SECURITY: html is sanitized via rehype-sanitize in the rendering pipeline */}
