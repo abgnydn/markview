@@ -3173,6 +3173,129 @@ body:hover .mv-depth-dial { opacity: 0.7; }
   opacity: 0.6;
 }
 
+/* R2 — Mini-map. Sits under the TOC in the right rail. Hidden on
+   narrow viewports (TOC also hides). */
+.mv-mini-map {
+  width: 100%;
+  height: 22vh;
+  margin-top: 18px;
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  padding-left: 12px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 280ms ease;
+}
+.mv-mini-map:hover { opacity: 0.9; }
+.mv-mini-map-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 1024px) {
+  .mv-mini-map { display: none; }
+}
+
+/* R15 — Audio waveform under <audio>. Slim violet bars drawn over a
+   canvas; click to scrub. */
+.mv-audio-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1.2em 0;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+.mv-audio-play {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(185, 164, 255, 0.18);
+  border: 1px solid rgba(185, 164, 255, 0.4);
+  color: var(--zen-accent, #b9a4ff);
+  cursor: pointer;
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mv-audio-canvas {
+  flex: 1;
+  height: 36px;
+  cursor: pointer;
+  display: block;
+}
+.mv-audio-time {
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 11px;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.5));
+  width: 80px;
+  text-align: right;
+}
+
+/* R18 — Cursor trail. Per-character ghost decorations in the editor
+   that fade out over 200ms. Class .mv-cursor-ghost applied to spans
+   inserted by the CodeMirror decoration. */
+@keyframes mv-cursor-ghost-fade {
+  from { opacity: 0.5; }
+  to   { opacity: 0; }
+}
+.mv-cursor-ghost {
+  display: inline-block;
+  color: var(--zen-accent, #b9a4ff);
+  animation: mv-cursor-ghost-fade 220ms ease-out forwards;
+  pointer-events: none;
+}
+
+/* R19 — Mini presence avatars. Cluster of italic-serif initials above
+   the ShareStatus pill in the bottom-right. Each avatar is a small
+   circle, peer color as ring + text. */
+.mv-presence-cluster {
+  position: fixed;
+  right: calc(env(safe-area-inset-right, 0px) + 20px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(11, 10, 13, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+.mv-presence-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--peer-color, currentColor);
+  background: transparent;
+  color: var(--peer-color, var(--zen-fg));
+  font-family: var(--zen-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.mv-presence-avatar:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 12px var(--peer-color, rgba(185, 164, 255, 0.5));
+}
+.mv-presence-overflow {
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.5));
+}
+
 /* N11 ⌘-click wikilink fly-in pane — a right-anchored 420px sheet with
    the linked file's content. Component is .mv-flyin; .mv-flyin-show
    drives the slide. */

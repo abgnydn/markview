@@ -300,6 +300,28 @@ function buildExtensions(
     syntaxHighlighting(markviewHighlight),
     focusParagraphPlugin,
     markviewTheme,
+    // R16 — Smart-paste: when the user pastes a bare URL that ends
+    // up on its own line (after the paste), auto-convert it to a
+    // markdown link `[host](url)`. Future work: a CORS proxy on the
+    // share-worker for og:title fetching → real rich cards.
+    EditorView.domEventHandlers({
+      paste(event, view) {
+        const text = event.clipboardData?.getData('text/plain') ?? '';
+        const m = text.trim().match(/^(https?:\/\/[^\s]+)$/i);
+        if (!m) return false;
+        let host = '';
+        try { host = new URL(m[1]!).host.replace(/^www\./, ''); } catch { return false; }
+        // Replace only if the paste lands on an otherwise-empty line.
+        const { state } = view;
+        const line = state.doc.lineAt(state.selection.main.head);
+        if (line.text.trim() !== '') return false;
+        event.preventDefault();
+        view.dispatch({
+          changes: { from: line.from, to: line.to, insert: `[${host}](${m[1]!})` },
+        });
+        return true;
+      },
+    }),
     keymap.of([
       ...defaultKeymap,
       ...historyKeymap,

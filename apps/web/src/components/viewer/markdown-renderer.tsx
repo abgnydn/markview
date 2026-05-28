@@ -1011,6 +1011,120 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     });
   }, [html]);
 
+  // ── R15 Audio waveform — for any <audio> tag in the content, render
+  // a slim violet waveform + play/scrub UI. Decodes the audio once via
+  // Web Audio's AudioContext + drawBuffer, draws one bar per pixel.
+  // Idempotent: skips already-enhanced players.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    const audios = root.querySelectorAll<HTMLAudioElement>('audio:not([data-mv-enhanced])');
+    audios.forEach((audio) => {
+      audio.setAttribute('data-mv-enhanced', '1');
+      audio.controls = false;
+      audio.preload = 'metadata';
+      const src = audio.currentSrc || audio.querySelector('source')?.src || audio.src;
+      if (!src) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'mv-audio-wrap';
+      const play = document.createElement('button');
+      play.type = 'button';
+      play.className = 'mv-audio-play';
+      play.textContent = '▶';
+      const canvas = document.createElement('canvas');
+      canvas.className = 'mv-audio-canvas';
+      const time = document.createElement('span');
+      time.className = 'mv-audio-time';
+      time.textContent = '0:00';
+      wrap.append(play, canvas, time);
+      audio.parentNode?.insertBefore(wrap, audio);
+      audio.style.display = 'none';
+
+      let peaks: Float32Array | null = null;
+      const drawWaveform = () => {
+        const ctx2 = canvas.getContext('2d');
+        if (!ctx2) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        ctx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx2.clearRect(0, 0, w, h);
+        const progress = audio.duration > 0 ? audio.currentTime / audio.duration : 0;
+        const bars = Math.floor(w / 2);
+        for (let i = 0; i < bars; i++) {
+          const x = i * 2;
+          const peak = peaks ? peaks[Math.floor((i / bars) * peaks.length)] ?? 0.1 : 0.3;
+          const barH = Math.max(2, peak * h * 0.9);
+          ctx2.fillStyle = (i / bars) < progress
+            ? 'rgba(185, 164, 255, 0.85)'
+            : 'rgba(255, 255, 255, 0.18)';
+          ctx2.fillRect(x, (h - barH) / 2, 1.4, barH);
+        }
+      };
+
+      // Decode the file into amplitude peaks; runs once, lazy on play.
+      const decode = async () => {
+        try {
+          const resp = await fetch(src);
+          const buf = await resp.arrayBuffer();
+          const AC = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext);
+          const ac = new AC();
+          const decoded = await ac.decodeAudioData(buf);
+          const ch = decoded.getChannelData(0);
+          const samples = 200;
+          const block = Math.floor(ch.length / samples);
+          const out = new Float32Array(samples);
+          for (let i = 0; i < samples; i++) {
+            let max = 0;
+            for (let j = 0; j < block; j++) {
+              const v = Math.abs(ch[i * block + j] ?? 0);
+              if (v > max) max = v;
+            }
+            out[i] = max;
+          }
+          peaks = out;
+          drawWaveform();
+          void ac.close();
+        } catch { /* decode failed — leave placeholder bars */ }
+      };
+
+      const fmt = (s: number) => {
+        if (!isFinite(s)) return '0:00';
+        const m = Math.floor(s / 60), r = Math.floor(s % 60);
+        return `${m}:${r.toString().padStart(2, '0')}`;
+      };
+
+      play.addEventListener('click', () => {
+        if (audio.paused) {
+          if (!peaks) void decode();
+          void audio.play();
+          play.textContent = '❚❚';
+        } else {
+          audio.pause();
+          play.textContent = '▶';
+        }
+      });
+      canvas.addEventListener('click', (e) => {
+        if (!audio.duration) return;
+        const r = canvas.getBoundingClientRect();
+        audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+        drawWaveform();
+      });
+      audio.addEventListener('timeupdate', () => {
+        time.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+        drawWaveform();
+      });
+      audio.addEventListener('loadedmetadata', () => {
+        time.textContent = `0:00 / ${fmt(audio.duration)}`;
+        drawWaveform();
+      });
+      audio.addEventListener('ended', () => { play.textContent = '▶'; });
+      // Initial paint of placeholder bars.
+      requestAnimationFrame(drawWaveform);
+      window.addEventListener('resize', drawWaveform);
+    });
+  }, [html]);
+
   // ── R14 External link tooltip — hover any external <a> to surface
   // the host + favicon in a tiny mono pill below the cursor. One
   // shared overlay node, 200ms hover delay, fades out on leave.

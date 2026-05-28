@@ -15,6 +15,7 @@ import { Breadcrumbs } from '@/components/viewer/breadcrumbs';
 import { FrontmatterCard } from '@/components/viewer/frontmatter-card';
 import { StickyTitle } from '@/components/viewer/sticky-title';
 import { ReadingDepthDial } from '@/components/viewer/reading-depth-dial';
+import { MiniMap } from '@/components/viewer/mini-map';
 import { AutosaveWhisper } from '@/components/viewer/autosave-whisper';
 import { CommandPalette } from '@/components/viewer/command-palette';
 import { ActivityLog } from '@/components/viewer/activity-log';
@@ -34,6 +35,7 @@ const CardsMode = lazy(() => import('@/components/viewer/cards-mode').then((m) =
 
 // PresenceBar replaced by the floating <ShareStatus /> widget (bottom-right).
 import { ShareStatus } from '@/components/collab/share-status';
+import { PresenceAvatars } from '@/components/collab/presence-avatars';
 import { RelatedNotes } from '@/components/viewer/related-notes';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
 import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
@@ -244,6 +246,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         <PaintingAtmosphere atmosphere={atmosphere} paintingNonce={paintingNonce} />
       )}
       <ShareStatus />
+      <PresenceAvatars />
       <AutosaveWhisper />
       <CommandPalette />
       <ActivityLog />
@@ -397,6 +400,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         {!focusMode && (
           <div className="viewer-right-rail">
             <TableOfContents headings={headings} scrollContainerRef={contentRef} />
+            <MiniMap refreshKey={activeFileId ?? ''} />
             <RelatedNotes
               content={activeFileContent}
               fileId={activeFileId}
