@@ -1,3 +1,5 @@
+replicate>=1.0.0          # cloud backend (default — works on any machine)
+# Local backend (only needed if you pass --cloud local; skip on 16 GB Macs)
 torch>=2.4.0
 diffusers>=0.30.0
 transformers>=4.45.0

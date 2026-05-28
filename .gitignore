@@ -61,3 +61,7 @@ apps/web/lint-results.json
 .claw/settings.local.json
 .claw/sessions/
 .clawhip/
+
+# Cinemagraph render venv
+tools/cinemagraph/.venv/
+tools/cinemagraph/.cine-tmp/

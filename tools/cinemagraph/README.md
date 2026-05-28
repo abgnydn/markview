@@ -6,6 +6,18 @@ Stable Video Diffusion XT. Drop the resulting `.mp4` next to its
 picks it up — paintings become living cinemagraphs (waves crash,
 clouds drift, snow falls).
 
+## Quick path: Colab (recommended)
+
+Free T4 GPU, no payment, ~30s per painting, ~8 minutes for all 14.
+Open `colab.ipynb` in Colab, set `Runtime → T4 GPU`, run cells top to
+bottom. Last cell zips the MP4s + auto-downloads — extract the zip
+into `apps/web/public/atmospheres/` in your local checkout, commit,
+deploy.
+
+[Open in Colab](https://colab.research.google.com/github/abgnydn/markview/blob/main/tools/cinemagraph/colab.ipynb)
+
+## Alternate path: local render
+
 ## Setup (one-time)
 
 ```bash
