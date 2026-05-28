@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
+import { useEffect, useState } from 'react';
+import { Volume2, VolumeX, RefreshCw, Shuffle, Sun } from 'lucide-react';
 import { useThemeStore, type Atmosphere } from '@/stores/theme-store';
+import {
+  isAtmosphereMuted, setAtmosphereMuted,
+  setAtmosphereAudio, unlockAtmosphereAudio,
+} from '@/lib/atmosphere/audio';
+import { nextPaintingFor, shufflePaintingFor } from '@/components/atmosphere/atmospheres';
+import { getTimeTintMode, setTimeTintMode } from '@/lib/atmosphere/time-of-day';
 
 const OPTIONS: Array<{ id: Atmosphere; label: string }> = [
   { id: 'none',   label: 'Paper · no atmosphere' },
@@ -11,17 +19,64 @@ const OPTIONS: Array<{ id: Atmosphere; label: string }> = [
 ];
 
 /**
- * AtmosphereDots — five floating dots bottom-left, one per atmosphere.
- * Quietly hidden until the user moves the mouse anywhere on the page,
- * then fades in. Click any dot to swap the atmosphere without opening
- * the sidebar. The active one fills in its mood color with a soft glow.
+ * AtmosphereDots — the entire atmosphere control surface lives here,
+ * bottom-left of the viewport. Sidebar no longer carries any of it.
  *
- * Sits at z:4, pointer-events on, picks up the same view-transition
- * cross-fade as the sidebar atmosphere picker.
+ *   [ ° ° ° ° ° ]   | [🔊]  [↻]  [⇄]  [☀]
+ *    mood dots        sound  next shuffle time-of-day toggle
+ *
+ * The four icon buttons are hidden while atmosphere === 'none' (no
+ * audio/painting to control, no point in the time-of-day tint).
+ *
+ * The whole strip fades in only when the user moves the mouse, so it
+ * stays out of the way during reading.
  */
 export function AtmosphereDots() {
   const atmosphere = useThemeStore((s) => s.atmosphere);
   const setAtmosphere = useThemeStore((s) => s.setAtmosphere);
+  const isLive = atmosphere !== 'none';
+
+  const [muted, setMuted] = useState(() => isAtmosphereMuted());
+  const [tintOn, setTintOn] = useState(() => getTimeTintMode() !== 'off');
+
+  // Keep local state in sync if some other surface changes the audio
+  // mute (e.g., a future settings panel).
+  useEffect(() => {
+    const sync = () => setMuted(isAtmosphereMuted());
+    window.addEventListener('storage', sync);
+    return () => window.removeEventListener('storage', sync);
+  }, []);
+
+  const toggleMute = () => {
+    const next = !muted;
+    setMuted(next);
+    setAtmosphereMuted(next);
+    if (!next && isLive) {
+      unlockAtmosphereAudio();
+      setAtmosphereAudio(atmosphere);
+    }
+  };
+
+  const toggleTint = () => {
+    const next = !tintOn;
+    setTintOn(next);
+    setTimeTintMode(next ? 'auto' : 'off');
+  };
+
+  const cycleNext = () => {
+    if (!isLive) return;
+    nextPaintingFor(atmosphere as Exclude<Atmosphere, 'none'>);
+    window.dispatchEvent(new Event('markview:cycle-painting'));
+  };
+  const cycleShuffle = () => {
+    if (!isLive) return;
+    shufflePaintingFor(atmosphere as Exclude<Atmosphere, 'none'>);
+    window.dispatchEvent(new Event('markview:cycle-painting'));
+  };
+
+  const playTick = () => {
+    void import('@/lib/atmosphere/audio').then(({ playUiSound }) => playUiSound('tick'));
+  };
 
   return (
     <div className="mv-atm-dots" role="group" aria-label="Atmosphere">
@@ -34,10 +89,57 @@ export function AtmosphereDots() {
           className={`mv-atm-dot mv-atm-dot-${opt.id}${atmosphere === opt.id ? ' mv-atm-dot-active' : ''}`}
           onClick={() => {
             setAtmosphere(opt.id);
-            void import('@/lib/atmosphere/audio').then(({ playUiSound }) => playUiSound('tick'));
+            playTick();
           }}
         />
       ))}
+
+      {/* Divider — only when there's something to control. */}
+      {isLive && <span className="mv-atm-sep" aria-hidden="true" />}
+
+      {isLive && (
+        <>
+          <button
+            type="button"
+            className="mv-atm-icon"
+            onClick={toggleMute}
+            title={muted ? 'Unmute ambient audio' : 'Mute ambient audio'}
+            aria-label={muted ? 'Unmute' : 'Mute'}
+          >
+            {muted ? <VolumeX size={12} /> : <Volume2 size={12} />}
+          </button>
+          <button
+            type="button"
+            className="mv-atm-icon"
+            onClick={cycleNext}
+            title="Next painting"
+            aria-label="Next painting"
+          >
+            <RefreshCw size={12} />
+          </button>
+          <button
+            type="button"
+            className="mv-atm-icon"
+            onClick={cycleShuffle}
+            title="Shuffle painting"
+            aria-label="Shuffle painting"
+          >
+            <Shuffle size={12} />
+          </button>
+        </>
+      )}
+
+      {/* Time-of-day toggle — always available, even with no atmosphere,
+          since the tint applies to the page background too. */}
+      <button
+        type="button"
+        className={`mv-atm-icon${tintOn ? ' is-on' : ''}`}
+        onClick={toggleTint}
+        title={tintOn ? 'Time-of-day tint · on (auto)' : 'Time-of-day tint · off'}
+        aria-label="Toggle time-of-day tint"
+      >
+        <Sun size={12} />
+      </button>
     </div>
   );
 }

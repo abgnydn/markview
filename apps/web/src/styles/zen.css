@@ -3835,6 +3835,40 @@ body:hover .mv-atm-dots,
 .mv-atm-dot-snow   { color: #cbd5e1; }
 .mv-atm-dot-fields { color: #f59e0b; }
 
+/* Subtle divider between mood dots + control icons. */
+.mv-atm-sep {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.10);
+  margin: 0 2px;
+}
+:root:not(.dark):not([data-theme='dark']) .mv-atm-sep {
+  background: rgba(40, 30, 20, 0.12);
+}
+
+/* Icon buttons in the same pill — sound / next / shuffle / time. */
+.mv-atm-icon {
+  background: transparent;
+  border: none;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.45));
+  cursor: pointer;
+  padding: 3px 4px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 180ms ease, background 180ms ease;
+}
+.mv-atm-icon:hover {
+  color: var(--zen-fg, rgba(255, 255, 255, 0.95));
+  background: rgba(255, 255, 255, 0.06);
+}
+.mv-atm-icon.is-on {
+  color: var(--zen-accent, #b9a4ff);
+}
+:root:not(.dark):not([data-theme='dark']) .mv-atm-icon:hover {
+  background: rgba(40, 30, 20, 0.06);
+}
+
 /* ────────────────────────────────────────────────────────────────────────
  * Brand-mark cursors v3 — the cursor is a miniature echo of the
  * Markview wordmark itself: a small dense ink dot with a tiny hanging

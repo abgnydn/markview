@@ -17,9 +17,15 @@
  * Override: setting `<html data-time-tint="off">` disables the layer.
  */
 
-export type TimeTintMode = 'auto' | 'off' | 'dawn' | 'day' | 'dusk' | 'night';
+// Simplified to a two-state toggle: 'auto' follows the local clock
+// (dawn/day/dusk/night derived from the current hour); 'off' disables
+// the layer entirely. The old per-phase manual overrides were removed —
+// no one was reaching for them and the picker was cluttering the
+// atmosphere controls strip.
+export type TimeTintMode = 'auto' | 'off';
 
-const TINTS: Record<Exclude<TimeTintMode, 'auto' | 'off'>, string> = {
+type Phase = 'dawn' | 'day' | 'dusk' | 'night';
+const TINTS: Record<Phase, string> = {
   dawn:  'sepia(0.18) hue-rotate(-10deg) saturate(1.05) brightness(1.04)',
   day:   'none',
   dusk:  'sepia(0.22) hue-rotate(14deg) saturate(1.1) brightness(0.95)',
@@ -36,7 +42,7 @@ try {
 
 let updateHandle: number | null = null;
 
-function phaseForHour(h: number): Exclude<TimeTintMode, 'auto' | 'off'> {
+function phaseForHour(h: number): Phase {
   if (h >= 5 && h < 8) return 'dawn';
   if (h >= 8 && h < 17) return 'day';
   if (h >= 17 && h < 20) return 'dusk';
@@ -51,7 +57,7 @@ function apply() {
     root.setAttribute('data-time-phase', 'off');
     return;
   }
-  const phase = mode === 'auto' ? phaseForHour(new Date().getHours()) : mode;
+  const phase = phaseForHour(new Date().getHours());
   root.style.setProperty('--atm-time-tint', TINTS[phase]);
   root.setAttribute('data-time-phase', phase);
 }
@@ -79,6 +85,5 @@ export function getTimeTintMode(): TimeTintMode {
 
 export function currentTimeTintPhase(): string {
   if (mode === 'off') return 'off';
-  if (mode === 'auto') return phaseForHour(new Date().getHours());
-  return mode;
+  return phaseForHour(new Date().getHours());
 }
