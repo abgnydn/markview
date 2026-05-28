@@ -15,185 +15,174 @@ interface DepthPaintingProps {
 }
 
 /**
- * DepthPainting — renders an atmosphere painting with depth-aware
- * parallax. The painting is sampled as a WebGL texture; a depth map
- * computed by Depth Anything v2 (cached per painting) drives a UV
- * offset based on cursor position + a slow ambient noise. Net effect:
- * the painting subtly "tilts" toward the cursor and breathes on its
- * own. The mountain stays put while the sky drifts.
+ * DepthPainting — paintings rendered as a true 3D bas-relief.
  *
- * Falls back to a plain <img> when WebGL or the depth pipeline isn't
- * available — same DOM rectangle, so the surrounding atmosphere layer
- * is unaffected.
+ * Pipeline:
+ *  1. ensureDepth() computes / fetches a depth map per painting via
+ *     Depth Anything v2 small (cached in the Cache API).
+ *  2. We build a real Three.js scene: a 192×128 subdivided PlaneGeometry,
+ *     a CustomShaderMaterial that samples the painting as base color
+ *     and displaces each vertex along Z by the depth value, and a
+ *     PerspectiveCamera that orbits subtly with the cursor.
+ *  3. A DirectionalLight at 30°/-20° plus AmbientLight gives the
+ *     bas-relief surface real Lambert shading — peaks catch light,
+ *     valleys fall into shadow.
+ *  4. Slow time-driven Z bias adds a faint breathing motion.
+ *
+ * Unlike a UV-displacement shader, the camera + lighting are real, so
+ * the painting reads as actual surface, not a parallax trick.
+ *
+ * Falls back to a plain <img> while depth computes / when WebGL2 is
+ * unavailable / when the GPU initialization fails.
  */
 export function DepthPainting({ src, paintingKey, opacity = 1, className, style }: DepthPaintingProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [ready, setReady] = useState(false);
-  // The depth pipeline can take 1-3s the first time; until it lands we
-  // show the plain image so there's never a blank frame.
   const [fallback, setFallback] = useState(true);
 
   useEffect(() => {
-    // On every src change, immediately show the fallback img so the
-    // user sees the new painting at the same instant the atmosphere
-    // swap commits. The depth pipeline (which may take 1–3s on first
-    // visit) finishes in the background, then the canvas fades in
-    // over the still-visible img.
     setReady(false);
     setFallback(true);
     if (!isWebGLSupported()) return;
     let cancelled = false;
-    let rafId = 0;
     let cleanup: (() => void) | null = null;
 
     (async () => {
       const depthResult = await ensureDepth(src);
-      if (cancelled || !depthResult) {
-        setFallback(true);
-        return;
-      }
+      if (cancelled || !depthResult) { setFallback(true); return; }
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const gl = canvas.getContext('webgl2', { antialias: true, premultipliedAlpha: false });
-      if (!gl) { setFallback(true); return; }
-
-      // ─── Shaders ───────────────────────────────────────────────
-      const vsSrc = `#version 300 es
-        in vec2 a_pos;
-        out vec2 v_uv;
-        void main() {
-          v_uv = vec2(a_pos.x * 0.5 + 0.5, 1.0 - (a_pos.y * 0.5 + 0.5));
-          gl_Position = vec4(a_pos, 0.0, 1.0);
-        }
-      `;
-      const fsSrc = `#version 300 es
-        precision mediump float;
-        in vec2 v_uv;
-        out vec4 outColor;
-        uniform sampler2D u_paint;
-        uniform sampler2D u_depth;
-        uniform vec2 u_cursor;       // -1..1
-        uniform float u_time;        // seconds
-        uniform float u_intensity;   // 0..1
-        uniform float u_paintAspect; // w/h of painting
-        uniform float u_canvasAspect; // w/h of canvas
-
-        float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-        float noise(vec2 p) {
-          vec2 i = floor(p);
-          vec2 f = fract(p);
-          float a = hash(i);
-          float b = hash(i + vec2(1.0, 0.0));
-          float c = hash(i + vec2(0.0, 1.0));
-          float d = hash(i + vec2(1.0, 1.0));
-          vec2 u = f * f * (3.0 - 2.0 * f);
-          return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
-        }
-
-        void main() {
-          // cover-fit the painting to the canvas (object-fit: cover).
-          vec2 uv = v_uv;
-          float ar = u_paintAspect / u_canvasAspect;
-          if (ar > 1.0) { uv.x = (uv.x - 0.5) / ar + 0.5; }
-          else          { uv.y = (uv.y - 0.5) * ar + 0.5; }
-
-          // Anchor the foreground. We want the subject (mountain, wave
-          // crest, snow-village) to be ROCK STILL while only the
-          // background drifts. So we use (1 - depth) raised to 1.6
-          // power as the displacement weight — values near depth=1
-          // (closest to camera, the subject) get ~0 weight; only the
-          // far-away sky / mist contributes.
-          float depth = texture(u_depth, uv).r;
-          float bg = pow(clamp(1.0 - depth, 0.0, 1.0), 1.6);
-
-          // Cursor parallax — only the background slides under the
-          // anchored foreground. Larger amplitude than before because
-          // the foreground is no longer fighting against it.
-          vec2 cursorOff = -u_cursor * bg * 0.028 * u_intensity;
-
-          // Ambient breath — drifty for far layers, frozen for near.
-          float t = u_time * 0.04;
-          vec2 wob = vec2(
-            noise(vec2(t, depth * 7.0)) - 0.5,
-            noise(vec2(depth * 9.0, t * 0.7)) - 0.5
-          ) * bg * 0.018 * u_intensity;
-
-          vec2 finalUv = uv + cursorOff + wob;
-          outColor = texture(u_paint, finalUv);
-        }
-      `;
-
-      const compile = (type: number, src: string): WebGLShader | null => {
-        const s = gl.createShader(type);
-        if (!s) return null;
-        gl.shaderSource(s, src);
-        gl.compileShader(s);
-        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-          console.warn('[depth] shader compile error', gl.getShaderInfoLog(s));
-          gl.deleteShader(s);
-          return null;
-        }
-        return s;
-      };
-      const vs = compile(gl.VERTEX_SHADER, vsSrc);
-      const fs = compile(gl.FRAGMENT_SHADER, fsSrc);
-      if (!vs || !fs) { setFallback(true); return; }
-      const prog = gl.createProgram();
-      if (!prog) { setFallback(true); return; }
-      gl.attachShader(prog, vs);
-      gl.attachShader(prog, fs);
-      gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { setFallback(true); return; }
-      gl.useProgram(prog);
-
-      // Fullscreen quad
-      const quad = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
-      const buf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
-      const aPos = gl.getAttribLocation(prog, 'a_pos');
-      gl.enableVertexAttribArray(aPos);
-      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
-
-      // Load painting texture
-      const paintImg = new Image();
-      paintImg.crossOrigin = 'anonymous';
-      paintImg.src = src;
-      await paintImg.decode();
+      // Three.js is lazy-loaded — bundle stays small for users who
+      // never enable an atmosphere.
+      const THREE = await import('three');
       if (cancelled) return;
 
-      const makeTex = (image: TexImageSource): WebGLTexture | null => {
-        const tex = gl.createTexture();
-        if (!tex) return null;
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        return tex;
-      };
-      const paintTex = makeTex(paintImg);
-      const depthTex = makeTex(depthResult.bitmap);
-      if (!paintTex || !depthTex) { setFallback(true); return; }
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-      const uPaint = gl.getUniformLocation(prog, 'u_paint');
-      const uDepth = gl.getUniformLocation(prog, 'u_depth');
-      const uCursor = gl.getUniformLocation(prog, 'u_cursor');
-      const uTime = gl.getUniformLocation(prog, 'u_time');
-      const uIntensity = gl.getUniformLocation(prog, 'u_intensity');
-      const uPaintAr = gl.getUniformLocation(prog, 'u_paintAspect');
-      const uCanvasAr = gl.getUniformLocation(prog, 'u_canvasAspect');
-      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, paintTex); gl.uniform1i(uPaint, 0);
-      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, depthTex); gl.uniform1i(uDepth, 1);
+      const scene = new THREE.Scene();
 
+      // Perspective camera — moderate FOV, sits 1.6 units from the plane.
+      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 10);
+      camera.position.set(0, 0, 1.6);
+      camera.lookAt(0, 0, 0);
+
+      // Lights. Directional from upper-left gives high-depth peaks a
+      // bright rim; the ambient fills shadow so dark valleys aren't lost.
+      const ambient = new THREE.AmbientLight(0xffffff, 0.78);
+      scene.add(ambient);
+      const sun = new THREE.DirectionalLight(0xffffff, 1.15);
+      sun.position.set(-0.7, 0.6, 0.9);
+      scene.add(sun);
+
+      // Load the painting texture (we already preloaded via the parent's
+      // image preloader, so this hits the cache).
+      const texLoader = new THREE.TextureLoader();
+      const paintingTex = await new Promise<InstanceType<typeof THREE.Texture>>((resolve, reject) => {
+        texLoader.load(src, (t) => {
+          t.colorSpace = THREE.SRGBColorSpace;
+          t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          t.minFilter = THREE.LinearFilter;
+          t.magFilter = THREE.LinearFilter;
+          resolve(t);
+        }, undefined, reject);
+      });
+      if (cancelled) { paintingTex.dispose(); renderer.dispose(); return; }
+
+      // Depth map as a CanvasTexture (the ImageBitmap from ensureDepth).
+      const depthTex = new THREE.CanvasTexture(depthResult.bitmap);
+      depthTex.minFilter = THREE.LinearFilter;
+      depthTex.magFilter = THREE.LinearFilter;
+
+      // Plane — aspect-fit to canvas. Subdivided into a 192×128 grid
+      // so vertex displacement reads as continuous surface, not blocky.
+      const paintImg = paintingTex.image as HTMLImageElement;
       const paintAspect = paintImg.width / paintImg.height;
-      gl.uniform1f(uPaintAr, paintAspect);
-      gl.uniform1f(uIntensity, 1.0);
+      const planeH = 2;
+      const planeW = planeH * paintAspect;
+      const geom = new THREE.PlaneGeometry(planeW, planeH, 192, 128);
+      // Compute per-vertex normals AFTER displacement — done in the
+      // shader via finite-difference on the depth texture.
 
-      // Cursor tracking — store target + ease toward it each frame.
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          uPaint:      { value: paintingTex },
+          uDepth:      { value: depthTex },
+          uDisplace:   { value: 0.22 },        // Z extents — peaks rise this much
+          uTime:       { value: 0.0 },
+          uLightDir:   { value: new THREE.Vector3(-0.7, 0.6, 0.9).normalize() },
+          uAmbient:    { value: 0.78 },
+        },
+        vertexShader: `
+          uniform sampler2D uDepth;
+          uniform float uDisplace;
+          uniform float uTime;
+          varying vec2 vUv;
+          varying float vDepth;
+          varying vec3 vNormal;
+
+          float sampleDepth(vec2 uv) {
+            return texture2D(uDepth, vec2(uv.x, 1.0 - uv.y)).r;
+          }
+
+          void main() {
+            vUv = uv;
+            float d = sampleDepth(uv);
+            vDepth = d;
+
+            // Small ambient breath via time: low-frequency sine in Z for
+            // higher-depth (foreground) zones only — sky stays calm.
+            float breath = sin(uTime * 0.18 + d * 6.0) * 0.005 * d;
+
+            // Finite-difference normal from the depth map. Samples
+            // four neighbors at 1/192 (texel step on the long axis).
+            float e = 1.0 / 192.0;
+            float dL = sampleDepth(uv + vec2(-e, 0.0));
+            float dR = sampleDepth(uv + vec2( e, 0.0));
+            float dD = sampleDepth(uv + vec2(0.0,-e));
+            float dU = sampleDepth(uv + vec2(0.0, e));
+            vec3 n = normalize(vec3(
+              (dL - dR) * uDisplace * 8.0,
+              (dD - dU) * uDisplace * 8.0,
+              1.0
+            ));
+            vNormal = n;
+
+            vec3 displaced = position + normal * (d * uDisplace + breath);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+          }
+        `,
+        fragmentShader: `
+          precision mediump float;
+          uniform sampler2D uPaint;
+          uniform vec3 uLightDir;
+          uniform float uAmbient;
+          varying vec2 vUv;
+          varying float vDepth;
+          varying vec3 vNormal;
+
+          void main() {
+            vec3 base = texture2D(uPaint, vUv).rgb;
+            // Lambert shading from the depth-derived normal.
+            float ndotl = max(dot(normalize(vNormal), normalize(uLightDir)), 0.0);
+            float shade = uAmbient + (1.0 - uAmbient) * ndotl;
+            // Subtle aerial perspective — distant zones (low depth)
+            // gain a touch of haze toward a warm paper color.
+            vec3 haze = mix(vec3(0.86, 0.82, 0.74), base, smoothstep(0.0, 0.55, vDepth));
+            gl_FragColor = vec4(haze * shade, 1.0);
+          }
+        `,
+      });
+
+      const mesh = new THREE.Mesh(geom, material);
+      scene.add(mesh);
+
+      // Cursor — drives a soft camera orbit (yaw/pitch ≤ ~5°).
       let cursorTarget = { x: 0, y: 0 };
-      let cursorCurrent = { x: 0, y: 0 };
+      let cursorCur = { x: 0, y: 0 };
       const onMove = (e: MouseEvent) => {
         cursorTarget = {
           x: (e.clientX / window.innerWidth) * 2 - 1,
@@ -202,26 +191,28 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       };
       window.addEventListener('mousemove', onMove);
 
-      // Resize handler — adapt canvas DPR-aware.
       const resize = () => {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        canvas.style.width = `${window.innerWidth}px`;
-        canvas.style.height = `${window.innerHeight}px`;
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.uniform1f(uCanvasAr, canvas.width / canvas.height);
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
       };
-      resize();
       window.addEventListener('resize', resize);
 
       const start = performance.now();
+      let rafId = 0;
       const draw = () => {
-        cursorCurrent.x += (cursorTarget.x - cursorCurrent.x) * 0.06;
-        cursorCurrent.y += (cursorTarget.y - cursorCurrent.y) * 0.06;
-        gl.uniform2f(uCursor, cursorCurrent.x, cursorCurrent.y);
-        gl.uniform1f(uTime, (performance.now() - start) / 1000);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        cursorCur.x += (cursorTarget.x - cursorCur.x) * 0.05;
+        cursorCur.y += (cursorTarget.y - cursorCur.y) * 0.05;
+        // Camera orbits a tiny arc around the painting center. Subtle
+        // enough to feel like head movement, not like a UI animation.
+        const yaw = -cursorCur.x * 0.10;
+        const pitch = cursorCur.y * 0.08;
+        camera.position.x = Math.sin(yaw) * 1.6;
+        camera.position.y = Math.sin(pitch) * 1.6;
+        camera.position.z = Math.cos(yaw) * 1.6 + Math.abs(pitch) * -0.1;
+        camera.lookAt(0, 0, 0);
+        (material.uniforms.uTime as { value: number }).value = (performance.now() - start) / 1000;
+        renderer.render(scene, camera);
         rafId = requestAnimationFrame(draw);
       };
       rafId = requestAnimationFrame(draw);
@@ -229,11 +220,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       cleanup = () => {
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('resize', resize);
-        cancelAnimationFrame(rafId);
-        gl.deleteProgram(prog);
-        gl.deleteTexture(paintTex);
-        gl.deleteTexture(depthTex);
-        gl.deleteBuffer(buf);
+        if (rafId) cancelAnimationFrame(rafId);
+        geom.dispose();
+        material.dispose();
+        paintingTex.dispose();
+        depthTex.dispose();
+        renderer.dispose();
       };
 
       setReady(true);
@@ -242,16 +234,14 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
 
     return () => {
       cancelled = true;
-      if (rafId) cancelAnimationFrame(rafId);
       cleanup?.();
     };
   }, [src, paintingKey]);
 
   return (
     <>
-      {/* Always-on plain <img> while depth is computing / when WebGL
-          isn't supported. Once the canvas is ready it overlays this
-          element exactly, so the user sees a seamless transition. */}
+      {/* Plain image while depth + Three.js scene boot, and as the
+          permanent fallback when WebGL/WebGPU/WASM all fail. */}
       {fallback && (
         <img
           className={className}
@@ -271,7 +261,6 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           opacity: ready && !fallback ? opacity : 0,
           transition: 'opacity 700ms ease',
           pointerEvents: 'none',
-          // Sits on top of the fallback image at the same rectangle.
           position: 'absolute',
           inset: 0,
         }}

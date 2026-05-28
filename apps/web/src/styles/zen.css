@@ -77,6 +77,11 @@
   /* Dark: dim non-active paragraphs to ~50% of the warm cream — visible
      enough to keep context, faint enough to focus the active paragraph. */
   --zen-dim-opacity: 0.42;
+  /* Aliases — the polish layer (round 2/3) wrote --zen-soft and
+     --zen-muted; route them to the existing -fg-soft / -fg-faint
+     tiers so the polish CSS picks up the correct theme color. */
+  --zen-soft:  var(--zen-fg-dark-soft);
+  --zen-muted: var(--zen-fg-dark-faint);
 }
 
 :root:not(.dark):not([data-theme='dark']) {
@@ -96,6 +101,11 @@
   --zen-grain-alpha: 0.05;
   /* Light: keep dim higher so dark ink on cream still reads. */
   --zen-dim-opacity: 0.6;
+  /* Polish-layer aliases — point at the LIGHT tiers so sidebar text,
+     muted labels, and every other "soft" surface read as dark ink on
+     cream instead of inheriting the white fallback. */
+  --zen-soft:  var(--zen-fg-light-soft);
+  --zen-muted: var(--zen-fg-light-faint);
 }
 
 /* ────────────────────────────────────────────────────────────────────────
