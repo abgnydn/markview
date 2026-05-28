@@ -2,6 +2,7 @@
 
 ## 2026-05-28
 
+- `17:01` **phase 40 next-6e: empirical — live byzantine defense + loss curve** — +178 −3 — [`f791d19`](https://github.com/abgnydn/postnet-cf/commit/f791d1932bc0381e5e2e24fa23c6eaaeb83d849d)
 - `16:26` **phase 40 next-6: close the byzantine hole — no-self-audit + magnitude…** — +208 −32 — [`4ff5190`](https://github.com/abgnydn/postnet-cf/commit/4ff51909de9febfc2c1f21fb856f05f91c19099e)
 - `15:58` **phase 40 next-5b: WebGPU EP fallback + attack mode + TARGET=2 + a byz…** — +226 −42 — [`ca1e621`](https://github.com/abgnydn/postnet-cf/commit/ca1e621dde68f1141ca7e8266e9cd7d11e9399a5)
 - `15:21` **phase 40 next-4-b session 5: end-to-end federated LLM training in a b…** — +476 −35 — [`5276b96`](https://github.com/abgnydn/postnet-cf/commit/5276b96e430b67a17f331e3cb7fd606611d0b571)
@@ -60,4 +61,3 @@
 - `07:43` **phase 6: sharded snapshots — parallel bootstrap** — +144 −39 — [`bf2112c`](https://github.com/abgnydn/postnet-cf/commit/bf2112cfccb3ea96e401f82480884479c455869d)
 - `07:39` **phase 5: char-LM tournament — real ML loss** — +1013 −3 — [`60fc2bc`](https://github.com/abgnydn/postnet-cf/commit/60fc2bc2aa0e0f17f8e2f9eb405ba629e37d1074)
 - `07:34` **phase 4: ternary-weight tournament** — +1210 −3 — [`107a43d`](https://github.com/abgnydn/postnet-cf/commit/107a43ddfab12ce3d844a7948906ef7bcc6c8ecf)
-- `06:54` **phase 3: R2 snapshots + binary bootstrap** — +262 −21 — [`43e5676`](https://github.com/abgnydn/postnet-cf/commit/43e56768ec70f13e52bc87136819209afca2098a)

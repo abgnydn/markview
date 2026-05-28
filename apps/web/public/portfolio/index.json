@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-28T16:36:19.661Z",
+  "generated_at": "2026-05-28T21:58:40.706Z",
   "project_count": 47,
   "river_count": 500,
   "projects": [
@@ -62,20 +62,20 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-05-28T12:25:10Z",
+      "pushed_at": "2026-05-28T17:39:54Z",
       "default_branch": "main",
       "latest_tag": "v0.8.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "67d345d478faa28927d16a3dfcedbd46b9205e47",
-        "short_sha": "67d345d",
-        "message": "bench(naphthalene): parallel JK_DF — HF SCF 86 s → 34 s (2.5×)",
-        "type": "bench",
-        "date": "2026-05-28T12:25:09Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/67d345d478faa28927d16a3dfcedbd46b9205e47",
-        "additions": 5,
-        "deletions": 5
+        "sha": "416dbe4d56eac4115bf1ea64d8c05a060b767766",
+        "short_sha": "416dbe4",
+        "message": "diag(swarm): topology sweep — 4 tabs × 2 inner beats 2 tabs × 4 inner",
+        "type": "other",
+        "date": "2026-05-28T17:32:15Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/416dbe4d56eac4115bf1ea64d8c05a060b767766",
+        "additions": 17,
+        "deletions": 10
       }
     },
     {
@@ -104,20 +104,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-05-28T16:08:30Z",
+      "pushed_at": "2026-05-28T18:00:41Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "a9f9bcebac246341ae0bf42659ccd90d0bfb159a",
-        "short_sha": "a9f9bce",
-        "message": "feat(cinemagraph): Colab notebook + Replicate cloud backend",
-        "type": "feat",
-        "date": "2026-05-28T16:08:25Z",
-        "url": "https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a",
-        "additions": 311,
-        "deletions": 60
+        "sha": "119a732239c4e8f3ab038b0ed344e50e083fac22",
+        "short_sha": "119a732",
+        "message": "fix(atmosphere): attach video to DOM + timeout fallback + SW cache bump",
+        "type": "fix",
+        "date": "2026-05-28T18:00:16Z",
+        "url": "https://github.com/abgnydn/markview/commit/119a732239c4e8f3ab038b0ed344e50e083fac22",
+        "additions": 35,
+        "deletions": 8
       }
     },
     {
@@ -135,20 +135,20 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-05-28T16:29:49Z",
+      "pushed_at": "2026-05-28T17:16:07Z",
       "default_branch": "main",
       "latest_tag": null,
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "4ff51909de9febfc2c1f21fb856f05f91c19099e",
-        "short_sha": "4ff5190",
-        "message": "phase 40 next-6: close the byzantine hole — no-self-audit + magnitude…",
+        "sha": "f791d1932bc0381e5e2e24fa23c6eaaeb83d849d",
+        "short_sha": "f791d19",
+        "message": "phase 40 next-6e: empirical — live byzantine defense + loss curve",
         "type": "other",
-        "date": "2026-05-28T16:26:18Z",
-        "url": "https://github.com/abgnydn/postnet-cf/commit/4ff51909de9febfc2c1f21fb856f05f91c19099e",
-        "additions": 208,
-        "deletions": 32
+        "date": "2026-05-28T17:01:35Z",
+        "url": "https://github.com/abgnydn/postnet-cf/commit/f791d1932bc0381e5e2e24fa23c6eaaeb83d849d",
+        "additions": 178,
+        "deletions": 3
       }
     },
     {
@@ -1538,6 +1538,188 @@
   ],
   "commits": [
     {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "119a732239c4e8f3ab038b0ed344e50e083fac22",
+      "short_sha": "119a732",
+      "message": "fix(atmosphere): attach video to DOM + timeout fallback + SW cache bump",
+      "type": "fix",
+      "date": "2026-05-28T18:00:16Z",
+      "url": "https://github.com/abgnydn/markview/commit/119a732239c4e8f3ab038b0ed344e50e083fac22",
+      "additions": 35,
+      "deletions": 8
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "ea9a4b218fde4f4308c55241a03bbcfa429dc247",
+      "short_sha": "ea9a4b2",
+      "message": "feat(atmosphere): ship 14 cinemagraph MP4s — paintings are now alive",
+      "type": "feat",
+      "date": "2026-05-28T17:51:16Z",
+      "url": "https://github.com/abgnydn/markview/commit/ea9a4b218fde4f4308c55241a03bbcfa429dc247",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "416dbe4d56eac4115bf1ea64d8c05a060b767766",
+      "short_sha": "416dbe4",
+      "message": "diag(swarm): topology sweep — 4 tabs × 2 inner beats 2 tabs × 4 inner",
+      "type": "other",
+      "date": "2026-05-28T17:32:15Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/416dbe4d56eac4115bf1ea64d8c05a060b767766",
+      "additions": 17,
+      "deletions": 10
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "ae83213b5bff3443336ca73a9a5114b485fd387a",
+      "short_sha": "ae83213",
+      "message": "perf(swarm): inner-parallelism inside each worker tab — naphthalene",
+      "type": "perf",
+      "date": "2026-05-28T17:28:44Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/ae83213b5bff3443336ca73a9a5114b485fd387a",
+      "additions": 22,
+      "deletions": 7
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "dcd8ee7734f4182d94b8faf279a25c32ed3d7bae",
+      "short_sha": "dcd8ee7",
+      "message": "fix(swarm): pin anthracene swarm e2e to STO-3G (passes) with cc-pVDZ",
+      "type": "fix",
+      "date": "2026-05-28T17:22:01Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/dcd8ee7734f4182d94b8faf279a25c32ed3d7bae",
+      "additions": 11,
+      "deletions": 6
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "4e995f7a33330ba2e5ce4434da1847e2053c78d5",
+      "short_sha": "4e995f7",
+      "message": "refactor(atmosphere): one bottom-left strip — drop sidebar atmosphere…",
+      "type": "refactor",
+      "date": "2026-05-28T17:19:36Z",
+      "url": "https://github.com/abgnydn/markview/commit/4e995f7a33330ba2e5ce4434da1847e2053c78d5",
+      "additions": 159,
+      "deletions": 266
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "a14f134bb0e339aea2fbe8cd562aaaf374d56dbe",
+      "short_sha": "a14f134",
+      "message": "diag(swarm): anthracene STO-3G converges in 4-tab swarm — isolates the",
+      "type": "other",
+      "date": "2026-05-28T17:10:20Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/a14f134bb0e339aea2fbe8cd562aaaf374d56dbe",
+      "additions": 20,
+      "deletions": 4
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "6d0c3e67290a9896e3f7a028831c6b8963c9f18d",
+      "short_sha": "6d0c3e6",
+      "message": "fix(particles): curl-noise wind + z-depth parallax (AAA pattern)",
+      "type": "fix",
+      "date": "2026-05-28T17:08:44Z",
+      "url": "https://github.com/abgnydn/markview/commit/6d0c3e67290a9896e3f7a028831c6b8963c9f18d",
+      "additions": 66,
+      "deletions": 41
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "f791d1932bc0381e5e2e24fa23c6eaaeb83d849d",
+      "short_sha": "f791d19",
+      "message": "phase 40 next-6e: empirical — live byzantine defense + loss curve",
+      "type": "other",
+      "date": "2026-05-28T17:01:35Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/f791d1932bc0381e5e2e24fa23c6eaaeb83d849d",
+      "additions": 178,
+      "deletions": 3
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "0f0b1c6ff0930bd1da1a61313e2e9b110daf05bb",
+      "short_sha": "0f0b1c6",
+      "message": "fix(particles): natural shapes + sparser densities — stop looking spr…",
+      "type": "fix",
+      "date": "2026-05-28T17:01:33Z",
+      "url": "https://github.com/abgnydn/markview/commit/0f0b1c6ff0930bd1da1a61313e2e9b110daf05bb",
+      "additions": 106,
+      "deletions": 72
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "246463c9a25051cf51e981ec399000fc68037733",
+      "short_sha": "246463c",
+      "message": "feat(projects): 90-day heatmap + 20 UI affordances on /projects",
+      "type": "feat",
+      "date": "2026-05-28T16:53:59Z",
+      "url": "https://github.com/abgnydn/markview/commit/246463c9a25051cf51e981ec399000fc68037733",
+      "additions": 2023,
+      "deletions": 909
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "f1a2fa77e68eed6b405c33a181cdcb400ebfffb0",
+      "short_sha": "f1a2fa7",
+      "message": "feat(swarm): anthracene cc-pVDZ 4-tab swarm — architecture works,",
+      "type": "feat",
+      "date": "2026-05-28T16:53:14Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/f1a2fa77e68eed6b405c33a181cdcb400ebfffb0",
+      "additions": 245,
+      "deletions": 0
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "0504af440a12745a79e2430571465771ea63f609",
+      "short_sha": "0504af4",
+      "message": "feat(atmosphere): GPU particle system — thousands of particles + wind…",
+      "type": "feat",
+      "date": "2026-05-28T16:51:32Z",
+      "url": "https://github.com/abgnydn/markview/commit/0504af440a12745a79e2430571465771ea63f609",
+      "additions": 478,
+      "deletions": 18
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "22ae86a9a981ffa918765043bf897d6288b1210e",
+      "short_sha": "22ae86a",
+      "message": "feat(swarm): scale swarm HF SCF to 4 tabs on naphthalene cc-pVDZ",
+      "type": "feat",
+      "date": "2026-05-28T16:29:53Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/22ae86a9a981ffa918765043bf897d6288b1210e",
+      "additions": 226,
+      "deletions": 0
+    },
+    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -1551,6 +1733,32 @@
       "deletions": 32
     },
     {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "07c09bea46766fdf110d5ab733631384a9fd1f7d",
+      "short_sha": "07c09be",
+      "message": "feat(swarm): full distributed HF SCF across 2 browser tabs — works",
+      "type": "feat",
+      "date": "2026-05-28T16:23:41Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/07c09bea46766fdf110d5ab733631384a9fd1f7d",
+      "additions": 265,
+      "deletions": 2
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "ba1c272b67f5568c9815a26ff5844f01b338bf46",
+      "short_sha": "ba1c272",
+      "message": "feat(swarm): distribute JK_DF build across 2 tabs via BroadcastChannel",
+      "type": "feat",
+      "date": "2026-05-28T16:08:34Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/ba1c272b67f5568c9815a26ff5844f01b338bf46",
+      "additions": 217,
+      "deletions": 0
+    },
+    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -1562,6 +1770,32 @@
       "url": "https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a",
       "additions": 311,
       "deletions": 60
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "9103ed62d18662bcf7561cd046542ac68b268641",
+      "short_sha": "9103ed6",
+      "message": "diag(jk): prove P-partition correctness for distributed JK_DF",
+      "type": "other",
+      "date": "2026-05-28T16:06:11Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/9103ed62d18662bcf7561cd046542ac68b268641",
+      "additions": 157,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "78146ec758f294173c0da5789a1e1d4aa4db5804",
+      "short_sha": "78146ec",
+      "message": "diag(swarm): multi-tab SAB partitioning MVP — break-the-memory-wall i…",
+      "type": "other",
+      "date": "2026-05-28T16:01:59Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/78146ec758f294173c0da5789a1e1d4aa4db5804",
+      "additions": 152,
+      "deletions": 0
     },
     {
       "slug": "quill",
@@ -1590,6 +1824,19 @@
       "deletions": 42
     },
     {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "d097625178a4c0e4bb55ebdc63a51f3a672eef8a",
+      "short_sha": "d097625",
+      "message": "diag(jk): worker-count sweep — find optimal poolSize per hardware",
+      "type": "other",
+      "date": "2026-05-28T15:22:17Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/d097625178a4c0e4bb55ebdc63a51f3a672eef8a",
+      "additions": 88,
+      "deletions": 0
+    },
+    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -1601,6 +1848,19 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/5276b96e430b67a17f331e3cb7fd606611d0b571",
       "additions": 476,
       "deletions": 35
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "73f5d2b0f4f6d65ebf050ff35368efcfb131006a",
+      "short_sha": "73f5d2b",
+      "message": "perf(jk): 4× SIMD unroll on X-build inner loop",
+      "type": "perf",
+      "date": "2026-05-28T15:11:54Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/73f5d2b0f4f6d65ebf050ff35368efcfb131006a",
+      "additions": 22,
+      "deletions": 0
     },
     {
       "slug": "postnet-cf",
@@ -1629,6 +1889,19 @@
       "deletions": 16
     },
     {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "3e020e4ce463678e92410e82e772b8716cb948d2",
+      "short_sha": "3e020e4",
+      "message": "perf(jk): exploit K symmetry in build_jk_df_slice — SCF 20 s → 17 s",
+      "type": "perf",
+      "date": "2026-05-28T14:56:19Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/3e020e4ce463678e92410e82e772b8716cb948d2",
+      "additions": 22,
+      "deletions": 2
+    },
+    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -1640,6 +1913,19 @@
       "url": "https://github.com/abgnydn/iz/commit/d4f8ee2dc44d77654b364b199700f98bbc7b8286",
       "additions": 19967,
       "deletions": 863
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "5cacb7ecf64328a4df984f2cb5d975a353431e4d",
+      "short_sha": "5cacb7e",
+      "message": "perf(jk): reuse JK_DF worker scratch buffers — SCF 43 s → 20 s",
+      "type": "perf",
+      "date": "2026-05-28T14:38:27Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/5cacb7ecf64328a4df984f2cb5d975a353431e4d",
+      "additions": 27,
+      "deletions": 2
     },
     {
       "slug": "postnet-cf",
@@ -1666,6 +1952,32 @@
       "url": "https://github.com/abgnydn/markview/commit/5962fc528b50654cfd4197e99150bb058953cb41",
       "additions": 15874,
       "deletions": 10
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "d9b633abd15c98d651ed3dcf730720d4eb968c26",
+      "short_sha": "d9b633a",
+      "message": "perf(hf): pre-warm JK_DF workers before SCF iter loop",
+      "type": "perf",
+      "date": "2026-05-28T14:30:32Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/d9b633abd15c98d651ed3dcf730720d4eb968c26",
+      "additions": 48,
+      "deletions": 1
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "563e8d1c0b6b78d5b58b08b694ff82b3cf4fe7b1",
+      "short_sha": "563e8d1",
+      "message": "diag(hf): per-iter SCF profiling via opts.profileCallback",
+      "type": "other",
+      "date": "2026-05-28T14:26:06Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/563e8d1c0b6b78d5b58b08b694ff82b3cf4fe7b1",
+      "additions": 150,
+      "deletions": 0
     },
     {
       "slug": "postnet-cf",
@@ -1718,6 +2030,19 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/e36765a766096e57d2d933ffee054b1b4462559d",
       "additions": 388,
       "deletions": 11
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "312350541440ddff906ce7070d66e51259ae48ff",
+      "short_sha": "3123505",
+      "message": "perf(df): release V tensor SAB before SCF — drops peak resident from",
+      "type": "perf",
+      "date": "2026-05-28T14:10:16Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/312350541440ddff906ce7070d66e51259ae48ff",
+      "additions": 8,
+      "deletions": 0
     },
     {
       "slug": "postnet-cf",
@@ -1861,6 +2186,19 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/b8d6ce64dc851e957cfd700419886eb332bba85c",
       "additions": 264,
       "deletions": 1
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "10cfe14e1976173e8ad7bee9f880cd4dac13d5fc",
+      "short_sha": "10cfe14",
+      "message": "perf(df): parallel V build + parallel B back-sub on Cholesky path —",
+      "type": "perf",
+      "date": "2026-05-28T13:05:53Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/10cfe14e1976173e8ad7bee9f880cd4dac13d5fc",
+      "additions": 443,
+      "deletions": 21
     },
     {
       "slug": "quill",
@@ -2643,45 +2981,6 @@
       "deletions": 122
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "6ae20c1437216c8db5e95bf60573762cecfb694c",
-      "short_sha": "6ae20c1",
-      "message": "docs(limitations): comprehensive HF parallel scaling table + 4-way SI…",
-      "type": "docs",
-      "date": "2026-05-27T10:19:33Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/6ae20c1437216c8db5e95bf60573762cecfb694c",
-      "additions": 29,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "d4f4fd3c4d40e671a6cbe9390a5a41c2f17e063b",
-      "short_sha": "d4f4fd3",
-      "message": "chore(wasm-eri): rebuild pkg + fix doc-comment placement for fock_one…",
-      "type": "chore",
-      "date": "2026-05-27T09:37:48Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/d4f4fd3c4d40e671a6cbe9390a5a41c2f17e063b",
-      "additions": 17,
-      "deletions": 14
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "49e920afcbe6b5824ee2c9750e81248dd8b20b5e",
-      "short_sha": "49e920a",
-      "message": "perf(wasm-eri): SIMD JK inner loop — benzene HF SCF 1.89 s → 1.24 s (…",
-      "type": "perf",
-      "date": "2026-05-27T09:29:37Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/49e920afcbe6b5824ee2c9750e81248dd8b20b5e",
-      "additions": 74,
-      "deletions": 10
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -2721,32 +3020,6 @@
       "deletions": 7
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "3b26389315d130e058d421ecfca02f9cccfc01ba",
-      "short_sha": "3b26389",
-      "message": "perf(wasm-eri): r_aux_table buffer pooling — benzene ERI 16.8 s → 15.6 s",
-      "type": "perf",
-      "date": "2026-05-27T09:02:29Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/3b26389315d130e058d421ecfca02f9cccfc01ba",
-      "additions": 70,
-      "deletions": 14
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "f11c96c2f7920ebd4fdecd73e3333d1d025004ba",
-      "short_sha": "f11c96c",
-      "message": "perf(wasm-eri): pair-table cache — benzene ERI 25.3 s → 16.8 s (1.51×)",
-      "type": "perf",
-      "date": "2026-05-27T08:53:22Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/f11c96c2f7920ebd4fdecd73e3333d1d025004ba",
-      "additions": 211,
-      "deletions": 123
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -2758,19 +3031,6 @@
       "url": "https://github.com/abgnydn/iz/commit/cbdce1dc56c662464a0c1b1402ba5b2e48315604",
       "additions": 703,
       "deletions": 659
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "780f512b27eaeb6a54f90abd7d16d75cc653417a",
-      "short_sha": "780f512",
-      "message": "perf(hf-scf): WASM JK build kernel — benzene HF SCF 5.2 s → 1.9 s (2.…",
-      "type": "perf",
-      "date": "2026-05-27T08:38:04Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/780f512b27eaeb6a54f90abd7d16d75cc653417a",
-      "additions": 661,
-      "deletions": 3
     },
     {
       "slug": "quill",
@@ -2812,19 +3072,6 @@
       "deletions": 31
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "3d7e01762e4e77aade5d951fc536c8b17ca25021",
-      "short_sha": "3d7e017",
-      "message": "perf(parallel-eri): persistent worker pool + WASM-native Schwarz Q-table",
-      "type": "perf",
-      "date": "2026-05-27T08:12:47Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/3d7e01762e4e77aade5d951fc536c8b17ca25021",
-      "additions": 208,
-      "deletions": 76
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -2849,19 +3096,6 @@
       "url": "https://github.com/abgnydn/iz/commit/da4d525f041e699e6f73e976934cb490d3047974",
       "additions": 446,
       "deletions": 3
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "9f9737c008eab17e87660c25f7fe9b1bfe94880e",
-      "short_sha": "9f9737c",
-      "message": "perf(wasm-eri): branch-free hot path — benzene ERI 38.5 s → 25.3 s (1…",
-      "type": "perf",
-      "date": "2026-05-27T08:04:28Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/9f9737c008eab17e87660c25f7fe9b1bfe94880e",
-      "additions": 95,
-      "deletions": 26
     },
     {
       "slug": "postnet-cf",
@@ -2890,19 +3124,6 @@
       "deletions": 582
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "8e2562a3d0b59eefb124c9ea85c381b5d71a241f",
-      "short_sha": "8e2562a",
-      "message": "build(wasm-eri): enable wasm-simd128 — honest negative result",
-      "type": "build",
-      "date": "2026-05-27T07:38:23Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/8e2562a3d0b59eefb124c9ea85c381b5d71a241f",
-      "additions": 2,
-      "deletions": 0
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -2914,19 +3135,6 @@
       "url": "https://github.com/abgnydn/quill/commit/151cb077437a5c579cd6f1a4b941591f2e71d480",
       "additions": 83,
       "deletions": 4
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "0eebb55d30d2d81accc93964112b06db31b0d659",
-      "short_sha": "0eebb55",
-      "message": "perf(wasm-eri): WASM × Workers compound — benzene ERI 14 min → 38 s (…",
-      "type": "perf",
-      "date": "2026-05-27T07:31:04Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/0eebb55d30d2d81accc93964112b06db31b0d659",
-      "additions": 759,
-      "deletions": 85
     },
     {
       "slug": "quill",
@@ -2994,19 +3202,6 @@
       "deletions": 30
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "30a35d0c95e8fd7a2dd088777b8305dae98594dc",
-      "short_sha": "30a35d0",
-      "message": "bench(wasm-eri): benzene end-to-end with WASM — 14 min → 3 min (4.67×)",
-      "type": "bench",
-      "date": "2026-05-27T07:04:04Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/30a35d0c95e8fd7a2dd088777b8305dae98594dc",
-      "additions": 119,
-      "deletions": 13
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -3031,19 +3226,6 @@
       "url": "https://github.com/abgnydn/iz/commit/ff321deb25432e6b891cd4717a3e471d3908fa89",
       "additions": 577,
       "deletions": 291
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "d02a0bf31daee416c15946cf1f77a25ee275d47a",
-      "short_sha": "d02a0bf",
-      "message": "perf(eri): Rust+WASM ERI kernel — 4.18× over JIT'd TypeScript",
-      "type": "perf",
-      "date": "2026-05-27T06:42:21Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/d02a0bf31daee416c15946cf1f77a25ee275d47a",
-      "additions": 988,
-      "deletions": 0
     },
     {
       "slug": "quill",
@@ -3137,19 +3319,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "c32358e6f01ad4eb2c5c859456bfee1ff1ee36d4",
-      "short_sha": "c32358e",
-      "message": "feat(parallel-eri): Web Worker parallel ERI build — 1.89× at n=60",
-      "type": "feat",
-      "date": "2026-05-27T06:06:06Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/c32358e6f01ad4eb2c5c859456bfee1ff1ee36d4",
-      "additions": 309,
-      "deletions": 4
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -3241,19 +3410,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "d53175b1ca5f26727a3dee2d0c6e1a5015842f90",
-      "short_sha": "d53175b",
-      "message": "bench(parallel-hf): benzene cc-pVDZ unlocked — 6.43× at n=120",
-      "type": "bench",
-      "date": "2026-05-27T05:02:55Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/d53175b1ca5f26727a3dee2d0c6e1a5015842f90",
-      "additions": 27,
-      "deletions": 34
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -3280,32 +3436,6 @@
       "deletions": 13
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "8fdcaa77e201de8a31c305a1d42ce85a48d7c0a7",
-      "short_sha": "8fdcaa7",
-      "message": "perf(eri): cache bra/ket pair tables in ERI_cg — 23-31% ERI-build spe…",
-      "type": "perf",
-      "date": "2026-05-27T04:44:44Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/8fdcaa77e201de8a31c305a1d42ce85a48d7c0a7",
-      "additions": 67,
-      "deletions": 23
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "9939b93a66cd5d9ad6efe97a8780cf9ec63411aa",
-      "short_sha": "9939b93",
-      "message": "bench(eri-screening): Schwarz at default 1e-10 skips 0.0% on ethane c…",
-      "type": "bench",
-      "date": "2026-05-27T04:30:04Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/9939b93a66cd5d9ad6efe97a8780cf9ec63411aa",
-      "additions": 130,
-      "deletions": 5
-    },
-    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -3330,19 +3460,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/440dfb7ee4d56ae18133c2c5c6efd6e37f263168",
       "additions": 373,
       "deletions": 2
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "be040d16c1a5150878156e49dfc632bf7aeb9d58",
-      "short_sha": "be040d1",
-      "message": "bench(df-hf): honest result — CD-DF is 11.5-20.5× SLOWER than direct HF",
-      "type": "bench",
-      "date": "2026-05-27T04:13:53Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/be040d16c1a5150878156e49dfc632bf7aeb9d58",
-      "additions": 145,
-      "deletions": 3
     },
     {
       "slug": "quill",
@@ -3473,19 +3590,6 @@
       "url": "https://github.com/abgnydn/quill/commit/3b21ba2502f71b1599d74bab8ebfc41dff1d9ecb",
       "additions": 40,
       "deletions": 3
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "f59b37d1207ef8e240604332d44ec2bfbb1b3f45",
-      "short_sha": "f59b37d",
-      "message": "bench(parallel-hf): scaling on furan cc-pVDZ — 4.01× at n=95",
-      "type": "bench",
-      "date": "2026-05-26T13:11:11Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/f59b37d1207ef8e240604332d44ec2bfbb1b3f45",
-      "additions": 138,
-      "deletions": 23
     },
     {
       "slug": "iz",
@@ -4411,19 +4515,6 @@
       "deletions": 8
     },
     {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "43e56768ec70f13e52bc87136819209afca2098a",
-      "short_sha": "43e5676",
-      "message": "phase 3: R2 snapshots + binary bootstrap",
-      "type": "other",
-      "date": "2026-05-22T06:54:19Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/43e56768ec70f13e52bc87136819209afca2098a",
-      "additions": 262,
-      "deletions": 21
-    },
-    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -4476,32 +4567,6 @@
       "deletions": 105
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "da956266a2ce4a6cc0589626b5bea7e69482e72a",
-      "short_sha": "da95626",
-      "message": "chore: pre-push hook uses bun typecheck",
-      "type": "chore",
-      "date": "2026-05-22T06:42:23Z",
-      "url": "https://github.com/abgnydn/markview/commit/da956266a2ce4a6cc0589626b5bea7e69482e72a",
-      "additions": 8,
-      "deletions": 9
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "c76582c48f75ab307cf2bcf2e4e7064436ff2451",
-      "short_sha": "c76582c",
-      "message": "fix: drop Tailwind @import + fix tsconfig extends path",
-      "type": "fix",
-      "date": "2026-05-22T06:41:55Z",
-      "url": "https://github.com/abgnydn/markview/commit/c76582c48f75ab307cf2bcf2e4e7064436ff2451",
-      "additions": 5,
-      "deletions": 4
-    },
-    {
       "slug": "safenpm",
       "name": "safenpm",
       "language": "TypeScript",
@@ -4513,19 +4578,6 @@
       "url": "https://github.com/abgnydn/safenpm/commit/9a95179125e4520af886eccff8dbf1e21d9268d8",
       "additions": 12,
       "deletions": 11
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "5c462148045125ee0f0cdfcfb95bfea684423475",
-      "short_sha": "5c46214",
-      "message": "chore: migrate apps/web Next.js → Bun + Vite",
-      "type": "chore",
-      "date": "2026-05-22T06:39:01Z",
-      "url": "https://github.com/abgnydn/markview/commit/5c462148045125ee0f0cdfcfb95bfea684423475",
-      "additions": 3117,
-      "deletions": 25927
     },
     {
       "slug": "safenpm",
@@ -4552,19 +4604,6 @@
       "url": "https://github.com/abgnydn/safenpm/commit/c012d78642f136657142801d17bf628b02aa3fae",
       "additions": 0,
       "deletions": 16
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "04dc586674a875f3851f84578addb1299bcd81e0",
-      "short_sha": "04dc586",
-      "message": "chore: strip AI brain + bridge + SDK from v1",
-      "type": "chore",
-      "date": "2026-05-22T06:31:32Z",
-      "url": "https://github.com/abgnydn/markview/commit/04dc586674a875f3851f84578addb1299bcd81e0",
-      "additions": 96,
-      "deletions": 20576
     },
     {
       "slug": "panel",
@@ -4892,19 +4931,6 @@
       "deletions": 1
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "52ada09f0ba2c24e8924f51cefde67dfb64c1c8b",
-      "short_sha": "52ada09",
-      "message": "chore(quality): wave 3 — non-null fixes, vault-orbit split, workspace…",
-      "type": "chore",
-      "date": "2026-05-20T17:27:23Z",
-      "url": "https://github.com/abgnydn/markview/commit/52ada09f0ba2c24e8924f51cefde67dfb64c1c8b",
-      "additions": 256,
-      "deletions": 88
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -4968,19 +4994,6 @@
       "url": "https://github.com/abgnydn/fused-lora/commit/f180275bda527a00102a6d2027ebd48a7cfb865e",
       "additions": 8601,
       "deletions": 320
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "bcd7388025206d319412bcedf931d8a195849b32",
-      "short_sha": "bcd7388",
-      "message": "chore(quality): wave 2 — console migration, jsdom tests, a11y baseline",
-      "type": "chore",
-      "date": "2026-05-20T16:55:22Z",
-      "url": "https://github.com/abgnydn/markview/commit/bcd7388025206d319412bcedf931d8a195849b32",
-      "additions": 223,
-      "deletions": 25
     },
     {
       "slug": "quill",
@@ -5098,19 +5111,6 @@
       "url": "https://github.com/abgnydn/iz/commit/ae2e595f2b515ce0cc0593d2ad9f357b6eda75dc",
       "additions": 1542,
       "deletions": 6
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "2cb52d5b1a6a9595c22c04df7a64c567a542940f",
-      "short_sha": "2cb52d5",
-      "message": "chore(security+a11y+arch): Google-engineer-review fixes wave 1",
-      "type": "chore",
-      "date": "2026-05-19T13:52:37Z",
-      "url": "https://github.com/abgnydn/markview/commit/2cb52d5b1a6a9595c22c04df7a64c567a542940f",
-      "additions": 353,
-      "deletions": 12
     },
     {
       "slug": "iz",

@@ -2,6 +2,13 @@
 
 ## 2026-05-28
 
+- `18:00` **fix(atmosphere): attach video to DOM + timeout fallback + SW cache bump** — +35 −8 — [`119a732`](https://github.com/abgnydn/markview/commit/119a732239c4e8f3ab038b0ed344e50e083fac22)
+- `17:51` **feat(atmosphere): ship 14 cinemagraph MP4s — paintings are now alive** — +0 −0 — [`ea9a4b2`](https://github.com/abgnydn/markview/commit/ea9a4b218fde4f4308c55241a03bbcfa429dc247)
+- `17:19` **refactor(atmosphere): one bottom-left strip — drop sidebar atmosphere…** — +159 −266 — [`4e995f7`](https://github.com/abgnydn/markview/commit/4e995f7a33330ba2e5ce4434da1847e2053c78d5)
+- `17:08` **fix(particles): curl-noise wind + z-depth parallax (AAA pattern)** — +66 −41 — [`6d0c3e6`](https://github.com/abgnydn/markview/commit/6d0c3e67290a9896e3f7a028831c6b8963c9f18d)
+- `17:01` **fix(particles): natural shapes + sparser densities — stop looking spr…** — +106 −72 — [`0f0b1c6`](https://github.com/abgnydn/markview/commit/0f0b1c6ff0930bd1da1a61313e2e9b110daf05bb)
+- `16:53` **feat(projects): 90-day heatmap + 20 UI affordances on /projects** — +2023 −909 — [`246463c`](https://github.com/abgnydn/markview/commit/246463c9a25051cf51e981ec399000fc68037733)
+- `16:51` **feat(atmosphere): GPU particle system — thousands of particles + wind…** — +478 −18 — [`0504af4`](https://github.com/abgnydn/markview/commit/0504af440a12745a79e2430571465771ea63f609)
 - `16:08` **feat(cinemagraph): Colab notebook + Replicate cloud backend** — +311 −60 — [`a9f9bce`](https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a)
 - `15:04` **feat(atmosphere): cinemagraph pipeline — SVD renderer + Three.js Vide…** — +337 −16 — [`53bc354`](https://github.com/abgnydn/markview/commit/53bc354d02f3bd6f6ffaa22a0b73747cfbc96ba4)
 - `14:33` **feat(atmosphere): living paintings — depth-band motion in the shader** — +15874 −10 — [`5962fc5`](https://github.com/abgnydn/markview/commit/5962fc528b50654cfd4197e99150bb058953cb41)
@@ -51,16 +58,3 @@
 - `06:48` **feat(share): port CF share + Yjs signaling workers from Tether v2** — +911 −24 — [`67603e8`](https://github.com/abgnydn/markview/commit/67603e828cb7ffd4b1c255c9f29c95e3a56c8e0f)
 - `06:47` **chore(desktop): align Tauri config with Bun + add beforeBuildCommand** — +690 −860 — [`229740b`](https://github.com/abgnydn/markview/commit/229740b5eb1a344f1984dcfcbcff866bf03534d4)
 - `06:44` **feat(editor): swap textarea for CodeMirror 6 with markdown highlighting** — +182 −105 — [`ccf736c`](https://github.com/abgnydn/markview/commit/ccf736c1104071318aa96b2fba3907e8d17ac85e)
-- `06:42` **chore: pre-push hook uses bun typecheck** — +8 −9 — [`da95626`](https://github.com/abgnydn/markview/commit/da956266a2ce4a6cc0589626b5bea7e69482e72a)
-- `06:41` **fix: drop Tailwind @import + fix tsconfig extends path** — +5 −4 — [`c76582c`](https://github.com/abgnydn/markview/commit/c76582c48f75ab307cf2bcf2e4e7064436ff2451)
-- `06:39` **chore: migrate apps/web Next.js → Bun + Vite** — +3117 −25927 — [`5c46214`](https://github.com/abgnydn/markview/commit/5c462148045125ee0f0cdfcfb95bfea684423475)
-- `06:31` **chore: strip AI brain + bridge + SDK from v1** — +96 −20576 — [`04dc586`](https://github.com/abgnydn/markview/commit/04dc586674a875f3851f84578addb1299bcd81e0)
-
-## 2026-05-20
-
-- `17:27` **chore(quality): wave 3 — non-null fixes, vault-orbit split, workspace…** — +256 −88 — [`52ada09`](https://github.com/abgnydn/markview/commit/52ada09f0ba2c24e8924f51cefde67dfb64c1c8b)
-- `16:55` **chore(quality): wave 2 — console migration, jsdom tests, a11y baseline** — +223 −25 — [`bcd7388`](https://github.com/abgnydn/markview/commit/bcd7388025206d319412bcedf931d8a195849b32)
-
-## 2026-05-19
-
-- `13:52` **chore(security+a11y+arch): Google-engineer-review fixes wave 1** — +353 −12 — [`2cb52d5`](https://github.com/abgnydn/markview/commit/2cb52d5b1a6a9595c22c04df7a64c567a542940f)
