@@ -34,6 +34,7 @@ const AiChat = lazy(() => import('@/components/viewer/ai-chat').then((m) => ({ d
 import { ShareStatus } from '@/components/collab/share-status';
 import { RelatedNotes } from '@/components/viewer/related-notes';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
+import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
 import { useAtmosphereRotation } from '@/hooks/use-atmosphere-rotation';
 import { useEmbeddingsBackfill } from '@/hooks/use-embeddings-backfill';
 import { useViewerOverlays } from '@/hooks/use-viewer-overlays';
@@ -41,6 +42,7 @@ import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 import { useViewerState } from '@/hooks/use-viewer-state';
 import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
 import { usePolishEffects } from '@/hooks/use-polish-effects';
+import { useTextFragmentShare } from '@/hooks/use-text-fragment-share';
 import { Upload } from 'lucide-react';
 import type { TocHeading } from '@/lib/markdown/pipeline';
 
@@ -164,6 +166,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // Keyboard shortcuts
   useKeyboardNav();
   usePolishEffects();
+  useTextFragmentShare();
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -241,6 +244,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       <AutosaveWhisper />
       <CommandPalette />
       <ActivityLog />
+      <AtmosphereDots />
       <WorkspaceTabs />
 
       {/* Standalone "+ new workspace" drop target. Becomes visible only

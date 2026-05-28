@@ -39,8 +39,11 @@ export function useViewerState() {
     await db.files.update(activeFileId, { content: newContent });
     // #12 Quiet save indicator — broadcast so WorkspaceTabs can pulse
     // a dot on the active tab for 800ms instead of showing a toast.
+    // Plus a soft bronze chime through the atmosphere audio bus (only
+    // audible if the user already unmuted ambient audio).
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('markview:file-saved', { detail: { fileId: activeFileId } }));
+      void import('@/lib/atmosphere/audio').then(({ playUiSound }) => playUiSound('chime'));
     }
     // Reload content in store
     useWorkspaceStore.getState().setActiveFile(activeFileId);

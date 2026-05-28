@@ -305,10 +305,11 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
       </header>
       <ConfirmDialog
         isOpen={showClearConfirm}
-        title="Clear All Workspaces"
-        description="This will permanently remove all downloaded packages and workspace sessions from your local browser cache. Are you sure?"
-        confirmText="Clear All"
+        title="Clear all workspaces"
+        description="Permanently remove every workspace from your browser cache. This can't be undone."
+        confirmText="Clear all"
         cancelText="Cancel"
+        tone="danger"
         onConfirm={() => {
           workspaces.forEach(ws => deleteWorkspace(ws.id));
           if (onGoHome) onGoHome();

@@ -228,9 +228,10 @@ export function WorkspaceTabs() {
       </div>
       <ConfirmDialog
         isOpen={workspaceToClose !== null}
-        title="Close Workspace"
-        description="Are you sure you want to close this workspace and remove it from your sessions? You can always recreate it later by reopening the folder."
-        confirmText="Close Workspace"
+        title="Close workspace"
+        description="Close this workspace and remove it from your sessions? You can always recreate it later by reopening the folder."
+        confirmText="Close workspace"
+        tone="danger"
         onConfirm={() => {
           if (workspaceToClose) deleteWorkspace(workspaceToClose);
           setWorkspaceToClose(null);

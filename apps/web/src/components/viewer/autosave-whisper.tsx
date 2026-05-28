@@ -16,19 +16,26 @@ export function AutosaveWhisper() {
   useEffect(() => {
     let hideTimer: number | null = null;
     let agingTimer: number | null = null;
-    const onSaved = () => {
-      setLabel('saved · just now');
+    const show = (msg: string, age?: { afterMs: number; replaceWith: string }) => {
+      setLabel(msg);
       setVisible(true);
       if (hideTimer !== null) window.clearTimeout(hideTimer);
       if (agingTimer !== null) window.clearTimeout(agingTimer);
-      // Age the label after 8s, then hide at 12s, so the whisper
-      // reads as a quiet timestamp rather than a flashing toast.
-      agingTimer = window.setTimeout(() => setLabel('saved · 8s ago'), 8_000);
-      hideTimer = window.setTimeout(() => setVisible(false), 12_000);
+      if (age) {
+        agingTimer = window.setTimeout(() => setLabel(age.replaceWith), age.afterMs);
+      }
+      hideTimer = window.setTimeout(() => setVisible(false), age ? 12_000 : 2_400);
+    };
+    const onSaved = () => show('saved · just now', { afterMs: 8_000, replaceWith: 'saved · 8s ago' });
+    const onToast = (e: Event) => {
+      const detail = (e as CustomEvent<{ message?: string }>).detail;
+      if (detail?.message) show(detail.message);
     };
     window.addEventListener('markview:file-saved', onSaved);
+    window.addEventListener('markview:toast', onToast as EventListener);
     return () => {
       window.removeEventListener('markview:file-saved', onSaved);
+      window.removeEventListener('markview:toast', onToast as EventListener);
       if (hideTimer !== null) window.clearTimeout(hideTimer);
       if (agingTimer !== null) window.clearTimeout(agingTimer);
     };
