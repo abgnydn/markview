@@ -118,13 +118,18 @@
   aside.toc { display: none !important; }
 
   /* Sidebar — drawer pattern. Keep slide-in behavior; bump width, add
-     a backdrop shadow, include left safe-area pad for landscape notches. */
+     a backdrop shadow, include left safe-area pad for landscape notches.
+     z-index MUST stay above .sidebar-backdrop or the backdrop's
+     backdrop-filter blurs the sidebar (the symptom: sidebar text looks
+     hazy on mobile). zen.css base sets .sidebar { z-index: 40 } which
+     loses to the backdrop's 999 — overriding here. */
   .sidebar {
     width: 280px !important;
     max-width: 84vw !important;
     padding-top: calc(48px + env(safe-area-inset-top, 0px)) !important;
     padding-left: env(safe-area-inset-left, 0px) !important;
     box-shadow: 0 0 60px rgba(0, 0, 0, 0.4);
+    z-index: 1001 !important;
     /* Smooth touch scrolling inside the drawer. */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -143,11 +148,14 @@
     display: flex !important;
     align-items: center;
   }
-  /* Tap-off-to-close backdrop covers the rest of the viewport. */
+  /* Tap-off-to-close backdrop covers the rest of the viewport. Stays
+     BEHIND the sidebar (z:1000 vs sidebar's 1001) so the blur affects
+     the content underneath, not the sidebar itself. */
   .sidebar-backdrop {
     background: rgba(0, 0, 0, 0.45) !important;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1000 !important;
   }
 
   /* Main content: leave room for the always-visible toolbar (48 + safe-

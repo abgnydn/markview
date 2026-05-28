@@ -27,17 +27,19 @@ export function TableOfContents({ headings, scrollContainerRef }: TocProps) {
       setActiveId('');
       return;
     }
+    // Listen on BOTH window and the candidate container — zen.css sets
+    // .viewer-main { overflow: visible } so the body scrolls, but on
+    // some layouts the container itself is the scroller. Cheap to
+    // listen on both; only one fires per scroll.
     const container = scrollContainerRef?.current;
-    const scrollTarget: HTMLElement | Window = container ?? window;
 
     let raf = 0;
     const recompute = () => {
       raf = 0;
-      // Sample the container's box. For window-scroll fall back to a
-      // synthetic { top: 0, bottom: innerHeight } rect.
-      const top = container ? container.getBoundingClientRect().top : 0;
-      const height = container ? container.clientHeight : window.innerHeight;
-      const triggerY = top + height * 0.28;
+      // The reference frame is the viewport. Headings live in normal
+      // flow, so their getBoundingClientRect().top tracks the window's
+      // scroll regardless of which element actually scrolls.
+      const triggerY = window.innerHeight * 0.28;
 
       let active = headings[0]?.id ?? '';
       for (const h of headings) {
@@ -56,11 +58,13 @@ export function TableOfContents({ headings, scrollContainerRef }: TocProps) {
     };
 
     recompute();
-    scrollTarget.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
+    container?.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      scrollTarget.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
+      container?.removeEventListener('scroll', onScroll);
       if (raf !== 0) cancelAnimationFrame(raf);
     };
   }, [headings, scrollContainerRef]);

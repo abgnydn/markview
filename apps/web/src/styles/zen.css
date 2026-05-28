@@ -2858,3 +2858,48 @@ body.mv-fast-scroll .atmosphere-cursor-canvas { opacity: 0.4; }
   color: var(--zen-muted, rgba(255, 255, 255, 0.35));
   letter-spacing: 0.08em;
 }
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Custom cursor per appearance — a tiny ink-dot that shifts color with
+ * the active theme + atmosphere. Hotspot at (8,8) so the dot's center
+ * aligns with the actual pointer location. Fallback to `default` so
+ * browsers that don't accept SVG cursors keep the system pointer.
+ *
+ * Per-mood color (matched to each atmosphere's palette):
+ *   default-dark    → violet (matches the brand accent)
+ *   default-light   → ink black
+ *   fuji            → cherry-blossom pink
+ *   wave            → cobalt blue
+ *   snow            → silver
+ *   fields          → wheat amber
+ *
+ * Set on body so interactive elements (buttons, links, inputs) can
+ * still override with their own cursor (pointer, text, etc.).
+ * ──────────────────────────────────────────────────────────────────────── */
+body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'><circle cx='9' cy='9' r='2.4' fill='%23b9a4ff' opacity='0.92'/><circle cx='9' cy='9' r='6' fill='none' stroke='%23b9a4ff' stroke-width='0.6' opacity='0.35'/></svg>") 9 9, default;
+}
+:root:not(.dark):not([data-theme='dark']) body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'><circle cx='9' cy='9' r='2.4' fill='%231c1b22' opacity='0.85'/><circle cx='9' cy='9' r='6' fill='none' stroke='%231c1b22' stroke-width='0.6' opacity='0.3'/></svg>") 9 9, default;
+}
+html[data-atmosphere='fuji'] body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'><circle cx='9' cy='9' r='2.6' fill='%23f9a8d4' opacity='0.95'/><circle cx='9' cy='9' r='6' fill='none' stroke='%23f9a8d4' stroke-width='0.6' opacity='0.4'/></svg>") 9 9, default;
+}
+html[data-atmosphere='wave'] body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'><circle cx='9' cy='9' r='2.6' fill='%2360a5fa' opacity='0.95'/><circle cx='9' cy='9' r='6' fill='none' stroke='%2360a5fa' stroke-width='0.6' opacity='0.4'/></svg>") 9 9, default;
+}
+html[data-atmosphere='snow'] body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'><circle cx='9' cy='9' r='2.6' fill='%23e2e8f0' opacity='0.95'/><circle cx='9' cy='9' r='6' fill='none' stroke='%23e2e8f0' stroke-width='0.6' opacity='0.4'/></svg>") 9 9, default;
+}
+html[data-atmosphere='fields'] body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'><circle cx='9' cy='9' r='2.6' fill='%23fbbf24' opacity='0.95'/><circle cx='9' cy='9' r='6' fill='none' stroke='%23fbbf24' stroke-width='0.6' opacity='0.4'/></svg>") 9 9, default;
+}
+/* Interactive elements: keep the system pointer/text cursors so users
+   still get UX cues for what's clickable / typeable. */
+button, a, [role='button'], .toolbar-btn,
+.sidebar-item, .workspace-tab, .toc-item, .search-result {
+  cursor: pointer;
+}
+input, textarea, .cm-content, [contenteditable='true'] {
+  cursor: text;
+}
