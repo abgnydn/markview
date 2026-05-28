@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ATMOSPHERES, pickPaintingFor, type ParticleKind } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
-import { CursorParticles } from './cursor-particles';
+import { WebGLParticles } from './webgl-particles';
 import { DepthPainting } from './depth-painting';
 
 interface PaintingAtmosphereProps {
@@ -141,23 +141,12 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       />
 
       {displayedCfg.particles !== 'none' && (
-        <>
-          {/* Cheap CSS-driven ambient field (always on, dozens of particles
-              animated via keyframes). */}
-          <div className={`atmosphere-particles atmosphere-particles-${displayedCfg.particles}`}>
-            {particles.map((p) => (
-              <span
-                key={p.key}
-                className={`atmosphere-particle atmosphere-particle-${displayedCfg.particles}`}
-                style={p.style}
-              />
-            ))}
-          </div>
-          {/* Canvas overlay — small reactive flock that responds to the
-              cursor (repulsion + click burst). Sits on top of the CSS
-              field but uses fewer particles to keep it cheap. */}
-          <CursorParticles kind={displayedCfg.particles} />
-        </>
+        /* GPU particle system — ~3000 particles per atmosphere driven
+           by a Perlin wind field, cursor force, gravity, life/respawn
+           cycle, and a per-atmosphere sprite texture. Replaces both
+           the old CSS keyframe field and the small canvas flock with
+           a single richer layer. */
+        <WebGLParticles kind={displayedCfg.particles} />
       )}
 
       <div className="atmosphere-credit">
