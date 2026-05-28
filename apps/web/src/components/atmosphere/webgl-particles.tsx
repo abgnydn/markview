@@ -214,41 +214,46 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
   },
 };
 
-// ── Wind field — 2D Perlin-ish noise + slow rotating bias ───────────────
+// ── Wind field — 2D CURL NOISE ──────────────────────────────────────────
 //
-// We don't ship a real noise lib; a hash-based fade-curve noise gives us
-// the spatial coherence we want (~2.5 KB of code in the closure). The
-// "bias" is a slowly-rotating global direction so the whole field
-// gradually drifts left, then right, etc.
+// Value noise (what we used before) is divergent — particles flow OUT of
+// some regions and pile up in others, which reads as uniform sideways
+// drift across the screen. Curl noise is the perpendicular gradient of
+// a scalar field, so it's divergence-free: vectors swirl into eddies
+// the way real air does over a wing. That's the difference between
+// "snow blown sideways" and "snow caught in a real gust."
+//
+// Implementation: hash-based 2D value noise + finite-difference curl.
+// ~30 lines, fast enough to call once per particle per frame.
 
 function makeWindField() {
-  // Simple value noise.
-  const hash = (x: number, y: number) =>
-    fract(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453);
   const fract = (x: number) => x - Math.floor(x);
   const fade = (t: number) => t * t * (3 - 2 * t);
+  const hash = (x: number, y: number) =>
+    fract(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453);
 
-  return (x: number, y: number, t: number): [number, number] => {
-    // Slow bias rotation: full circle every 80s.
-    const bias = (t * Math.PI) / 40;
-    const biasX = Math.cos(bias) * 16;
-    const biasY = Math.sin(bias) * 6;
-
-    // Sample 2D noise at low frequency, returns angle.
-    const fx = x * 0.0018 + t * 0.04;
-    const fy = y * 0.0018 + t * 0.03;
-    const ix = Math.floor(fx);
-    const iy = Math.floor(fy);
-    const fX = fade(fx - ix);
-    const fY = fade(fy - iy);
+  function noise2(x: number, y: number): number {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fX = fade(x - ix), fY = fade(y - iy);
     const a = hash(ix, iy);
     const b = hash(ix + 1, iy);
     const c = hash(ix, iy + 1);
     const d = hash(ix + 1, iy + 1);
-    const n = a + (b - a) * fX + (c - a) * fY + (a - b - c + d) * fX * fY;
-    const ang = n * Math.PI * 2;
-    const mag = 22;
-    return [Math.cos(ang) * mag + biasX, Math.sin(ang) * mag * 0.4 + biasY];
+    return a + (b - a) * fX + (c - a) * fY + (a - b - c + d) * fX * fY;
+  }
+
+  return (x: number, y: number, t: number): [number, number] => {
+    const fx = x * 0.0022 + t * 0.05;
+    const fy = y * 0.0022 + t * 0.04;
+    const eps = 0.6;
+    // Curl of the 2D noise scalar: returns ⟂ to ∇noise, which spirals
+    // around peaks instead of flowing past them.
+    const dx = (noise2(fx, fy + eps) - noise2(fx, fy - eps)) / (2 * eps);
+    const dy = (noise2(fx + eps, fy) - noise2(fx - eps, fy)) / (2 * eps);
+    const mag = 26;
+    // Slow global drift so the eddies travel across the screen.
+    const drift = Math.sin(t * 0.07) * 8;
+    return [dx * mag + drift, -dy * mag];
   };
 }
 
@@ -299,12 +304,15 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const rotations = new Float32Array(count);
       const alphas = new Float32Array(count);
 
-      // Velocity + life live in JS only (not uploaded to GPU).
+      // Velocity + life + DEPTH live in JS only (not uploaded to GPU).
+      // `depth` 0=far (small + slow + dim), 1=near (large + fast + bright).
+      // Distributed via sqrt so more particles sit "far" (natural perspective).
       const vx = new Float32Array(count);
       const vy = new Float32Array(count);
       const life = new Float32Array(count);
       const lifeMax = new Float32Array(count);
       const rotV = new Float32Array(count);    // rotation velocity rad/s
+      const depth = new Float32Array(count);   // 0..1, near = bigger/faster/brighter
 
       const W = () => window.innerWidth;
       const H = () => window.innerHeight;
@@ -327,9 +335,17 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
             break;
         }
         positions[i * 3 + 2] = 0;
+        // Depth — squared distribution so most particles are "far" and
+        // a few are "near" (matches what you see looking through real air).
+        const u = Math.random();
+        depth[i] = u * u;
         vx[i] = cfg.initialVx();
         vy[i] = cfg.initialVy();
-        sizes[i] = cfg.baseSize + Math.random() * cfg.sizeJitter;
+        // Per-particle size scales with depth: near = base + jitter,
+        // far = base * 0.35. Gives real depth-of-field rather than a
+        // flat curtain of identical specks.
+        const dScale = 0.35 + depth[i] * 0.65;
+        sizes[i] = (cfg.baseSize + Math.random() * cfg.sizeJitter) * dScale;
         rotations[i] = Math.random() * Math.PI * 2;
         rotV[i] = cfg.rotates ? (Math.random() - 0.5) * 1.8 : 0;
         const lm = cfg.lifeMin + Math.random() * (cfg.lifeMax - cfg.lifeMin);
@@ -423,25 +439,31 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           // Position in centered coords.
           const px = positions[ix];
           const py = positions[ix + 1];
+          // Depth scale — far particles move slower, fall slower, dim.
+          const d = depth[i];
+          const speedScale = 0.4 + d * 0.6;
 
-          // Wind.
+          // Curl-noise wind. Far particles get less of the wind so
+          // distant snow doesn't whip around like nearby snow.
           const [wx, wy] = wind(px + W() / 2, H() / 2 - py, tSec);
-          vx[i] += wx * cfg.windStrength * dt;
-          vy[i] += wy * cfg.windStrength * dt;
+          vx[i] += wx * cfg.windStrength * speedScale * dt;
+          vy[i] += wy * cfg.windStrength * speedScale * dt;
 
-          // Gravity (positive = down → reduces y).
-          vy[i] -= cfg.gravity * dt;
+          // Gravity (positive = down → reduces y). Also depth-scaled.
+          vy[i] -= cfg.gravity * speedScale * dt;
 
-          // Cursor force (push particles away from cursor).
+          // Cursor force (push particles away from cursor) — only the
+          // near layer responds strongly so the cursor reads as
+          // genuinely close to the viewer, not a global wind.
           const dx = px - cursorX;
           const dy = py - cursorY;
-          const d2 = dx * dx + dy * dy;
+          const dist2 = dx * dx + dy * dy;
           const r = cfg.cursorRadius;
-          if (d2 < r * r && d2 > 0.001) {
-            const d = Math.sqrt(d2);
-            const force = (1 - d / r) * cfg.cursorForce * 220;
-            vx[i] += (dx / d) * force * dt;
-            vy[i] += (dy / d) * force * dt;
+          if (dist2 < r * r && dist2 > 0.001) {
+            const dist = Math.sqrt(dist2);
+            const force = (1 - dist / r) * cfg.cursorForce * 220 * (0.3 + d * 0.7);
+            vx[i] += (dx / dist) * force * dt;
+            vy[i] += (dy / dist) * force * dt;
           }
 
           // Drag.
@@ -453,12 +475,15 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           positions[ix + 1] = py + vy[i] * dt;
           rotations[i] += rotV[i] * dt;
 
-          // Life + alpha. Cubic ease in+out at ends.
+          // Life + alpha + depth-driven dim. Far particles top out at
+          // ~0.55 alpha — they read as atmosphere haze rather than
+          // crisp foreground.
           life[i] -= dt;
           const lm = lifeMax[i];
           const u = life[i] / lm;             // 1 → 0
           const fade = u < 0.85 ? Math.min(1, u / 0.2) : (1 - u) / 0.15;
-          alphas[i] = Math.max(0, Math.min(1, fade));
+          const depthAlpha = 0.45 + d * 0.55;
+          alphas[i] = Math.max(0, Math.min(1, fade * depthAlpha));
 
           // Respawn if life expired OR if it's far offscreen.
           const offX = positions[ix] < -W() * 0.6 || positions[ix] > W() * 0.6;
