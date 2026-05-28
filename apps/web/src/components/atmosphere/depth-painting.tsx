@@ -100,18 +100,44 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
 
       if (hasMp4) {
         videoEl = document.createElement('video');
-        videoEl.src = mp4Url;
-        videoEl.crossOrigin = 'anonymous';
+        // muted + playsInline + autoplay attribute are required for
+        // browser autoplay; some browsers (Safari) also refuse to
+        // decode video elements that aren't in the DOM, so we attach
+        // it off-screen.
         videoEl.muted = true;
         videoEl.loop = true;
         videoEl.playsInline = true;
+        videoEl.autoplay = true;
         videoEl.preload = 'auto';
-        await new Promise<void>((resolve, reject) => {
-          videoEl!.addEventListener('loadeddata', () => resolve(), { once: true });
-          videoEl!.addEventListener('error', () => reject(new Error('video load failed')), { once: true });
-        }).catch(() => { videoEl = null; });
+        videoEl.crossOrigin = 'anonymous';
+        Object.assign(videoEl.style, {
+          position: 'fixed',
+          left: '-9999px',
+          top: '-9999px',
+          width: '2px',
+          height: '2px',
+          opacity: '0',
+          pointerEvents: 'none',
+        });
+        document.body.appendChild(videoEl);
+        videoEl.src = mp4Url;
+        // Wait for the first frame to be available (readyState >= 2 =
+        // HAVE_CURRENT_DATA). 6s ceiling so a hung video doesn't
+        // freeze the atmosphere setup forever.
+        const ready = await Promise.race([
+          new Promise<boolean>((resolve) => {
+            videoEl!.addEventListener('loadeddata', () => resolve(true), { once: true });
+            videoEl!.addEventListener('error', () => resolve(false), { once: true });
+          }),
+          new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 6_000)),
+        ]);
+        if (!ready) {
+          console.warn('[atmosphere] video load failed / timed out for', mp4Url, '— falling back to still image');
+          videoEl.remove();
+          videoEl = null;
+        }
         if (videoEl && !cancelled) {
-          try { await videoEl.play(); } catch { /* autoplay denied — VideoTexture still updates on user gesture */ }
+          try { await videoEl.play(); } catch { /* autoplay denied — VideoTexture still updates after user gesture */ }
           paintingTex = new THREE.VideoTexture(videoEl);
           paintingTex.colorSpace = THREE.SRGBColorSpace;
           paintingTex.minFilter = THREE.LinearFilter;
@@ -340,6 +366,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         if (videoEl) {
           try { videoEl.pause(); } catch { /* */ }
           videoEl.src = '';
+          videoEl.remove();
         }
         geom.dispose();
         material.dispose();
