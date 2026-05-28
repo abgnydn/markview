@@ -47,135 +47,169 @@ interface KindConfig {
 }
 
 // ── Per-atmosphere sprite drawers + physics ─────────────────────────────
+//
+// Earlier version used radial-gradient halos for every sprite which
+// made the screen read as "perfume spray." Real snow / petals / water
+// droplets are OPAQUE shapes with sharp edges and just a hint of
+// anti-aliasing. Each drawer below renders a solid form with a
+// minimal feather, not a glow.
 
 const drawPetal = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.clearRect(0, 0, s, s);
   const cx = s / 2, cy = s / 2;
-  const grad = ctx.createRadialGradient(cx, cy, 1, cx, cy, s * 0.45);
-  grad.addColorStop(0, 'rgba(255, 215, 230, 1)');
-  grad.addColorStop(0.6, 'rgba(249, 168, 212, 0.85)');
-  grad.addColorStop(1, 'rgba(249, 168, 212, 0)');
+  // Real petal: opaque oval, slightly darker rim, faint vein highlight.
+  // Tapered teardrop shape via two-bezier outline.
+  ctx.beginPath();
+  ctx.moveTo(cx - s * 0.35, cy);
+  ctx.quadraticCurveTo(cx, cy - s * 0.30, cx + s * 0.40, cy - s * 0.04);
+  ctx.quadraticCurveTo(cx, cy + s * 0.30, cx - s * 0.35, cy);
+  ctx.closePath();
+  // Two-stop linear fill — body lighter top-left, rim darker bottom-right.
+  const grad = ctx.createLinearGradient(cx - s * 0.3, cy - s * 0.25, cx + s * 0.3, cy + s * 0.25);
+  grad.addColorStop(0, 'rgba(252, 213, 230, 1)');
+  grad.addColorStop(0.6, 'rgba(249, 168, 212, 1)');
+  grad.addColorStop(1, 'rgba(208, 124, 168, 1)');
   ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, s * 0.38, s * 0.22, 0, 0, Math.PI * 2);
   ctx.fill();
-  // small highlight crescent
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+  // Single vein down the long axis.
+  ctx.strokeStyle = 'rgba(180, 110, 150, 0.5)';
+  ctx.lineWidth = Math.max(0.6, s * 0.025);
   ctx.beginPath();
-  ctx.ellipse(cx - s * 0.08, cy - s * 0.04, s * 0.12, s * 0.06, -0.3, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.moveTo(cx - s * 0.30, cy);
+  ctx.quadraticCurveTo(cx, cy - s * 0.05, cx + s * 0.35, cy - s * 0.02);
+  ctx.stroke();
 };
 
 const drawSnow = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.clearRect(0, 0, s, s);
   const cx = s / 2, cy = s / 2;
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 0.5);
+  // Opaque white disk with a single-pixel feather. Reads as a crisp
+  // snowflake, not a glow. Two-stop gradient gives natural anti-alias.
+  const grad = ctx.createRadialGradient(cx, cy, s * 0.30, cx, cy, s * 0.40);
   grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-  grad.addColorStop(0.5, 'rgba(232, 240, 252, 0.65)');
-  grad.addColorStop(1, 'rgba(232, 240, 252, 0)');
+  grad.addColorStop(0.85, 'rgba(255, 255, 255, 1)');
+  grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
   ctx.fillStyle = grad;
   ctx.beginPath();
-  ctx.arc(cx, cy, s * 0.45, 0, Math.PI * 2);
+  ctx.arc(cx, cy, s * 0.40, 0, Math.PI * 2);
   ctx.fill();
 };
 
 const drawSpray = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.clearRect(0, 0, s, s);
   const cx = s / 2, cy = s / 2;
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 0.45);
-  grad.addColorStop(0, 'rgba(220, 240, 255, 0.95)');
-  grad.addColorStop(0.55, 'rgba(160, 200, 240, 0.45)');
-  grad.addColorStop(1, 'rgba(160, 200, 240, 0)');
-  ctx.fillStyle = grad;
+  // Small opaque water droplet — slightly elongated like a real airborne
+  // droplet, white-blue core, sharp edge.
   ctx.beginPath();
-  ctx.arc(cx, cy, s * 0.45, 0, Math.PI * 2);
+  ctx.ellipse(cx, cy, s * 0.28, s * 0.34, 0, 0, Math.PI * 2);
+  const grad = ctx.createLinearGradient(cx, cy - s * 0.3, cx, cy + s * 0.3);
+  grad.addColorStop(0, 'rgba(240, 250, 255, 1)');
+  grad.addColorStop(1, 'rgba(170, 210, 240, 1)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  // Tiny specular highlight, top-left.
+  ctx.beginPath();
+  ctx.ellipse(cx - s * 0.08, cy - s * 0.10, s * 0.06, s * 0.04, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
   ctx.fill();
 };
 
 const drawMote = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.clearRect(0, 0, s, s);
   const cx = s / 2, cy = s / 2;
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 0.5);
-  grad.addColorStop(0, 'rgba(255, 240, 200, 1)');
-  grad.addColorStop(0.4, 'rgba(245, 200, 120, 0.7)');
+  // Motes are the one kind that SHOULD glow — they're suspended pollen /
+  // sun-dust catching light, not solid objects. Keep the soft halo but
+  // tighten the core so they read as warm specks, not blobs.
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 0.45);
+  grad.addColorStop(0, 'rgba(255, 240, 195, 1)');
+  grad.addColorStop(0.25, 'rgba(245, 205, 130, 0.8)');
   grad.addColorStop(1, 'rgba(245, 200, 120, 0)');
   ctx.fillStyle = grad;
   ctx.beginPath();
-  ctx.arc(cx, cy, s * 0.5, 0, Math.PI * 2);
+  ctx.arc(cx, cy, s * 0.45, 0, Math.PI * 2);
   ctx.fill();
 };
 
 const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
   petals: {
-    count: 2800,
-    spriteSize: 32,
+    // Cherry-blossom flurries IRL are sparse — a few dozen visible at a
+    // time, not hundreds. Big size variance so a couple of large petals
+    // dominate against many small distant ones.
+    count: 700,
+    spriteSize: 36,
     sprite: drawPetal,
-    gravity: 14,
-    drag: 0.05,
-    baseSize: 11,
-    sizeJitter: 6,
-    lifeMin: 14,
-    lifeMax: 26,
-    windStrength: 1.0,
-    cursorForce: 0.45,
+    gravity: 6,
+    drag: 0.04,
+    baseSize: 10,
+    sizeJitter: 18,        // 10–28px — strong size variance
+    lifeMin: 18,
+    lifeMax: 32,
+    windStrength: 0.95,
+    cursorForce: 0.35,
     cursorRadius: 180,
     spawnFrom: 'top',
-    initialVy: () => 10 + Math.random() * 18,
-    initialVx: () => (Math.random() - 0.5) * 16,
+    initialVy: () => 4 + Math.random() * 10,
+    initialVx: () => (Math.random() - 0.5) * 14,
     rotates: true,
   },
   snow: {
-    count: 4200,
-    spriteSize: 24,
+    // Snowfall density tuned to "calm flurry," not blizzard. Most flakes
+    // are tiny (3-6px) with occasional larger ones (up to 11px).
+    count: 1400,
+    spriteSize: 22,
     sprite: drawSnow,
-    gravity: 22,
-    drag: 0.08,
-    baseSize: 5,
-    sizeJitter: 4,
-    lifeMin: 18,
-    lifeMax: 30,
-    windStrength: 0.55,
-    cursorForce: 0.30,
-    cursorRadius: 140,
+    gravity: 14,
+    drag: 0.06,
+    baseSize: 3,
+    sizeJitter: 8,
+    lifeMin: 22,
+    lifeMax: 36,
+    windStrength: 0.45,
+    cursorForce: 0.22,
+    cursorRadius: 130,
     spawnFrom: 'top',
-    initialVy: () => 15 + Math.random() * 25,
-    initialVx: () => (Math.random() - 0.5) * 6,
+    initialVy: () => 10 + Math.random() * 18,
+    initialVx: () => (Math.random() - 0.5) * 4,
     rotates: false,
   },
   spray: {
-    count: 1800,
-    spriteSize: 24,
+    // Spray off a wave crest — a handful of large droplets per burst,
+    // many small mist droplets behind. Short-lived.
+    count: 600,
+    spriteSize: 18,
     sprite: drawSpray,
-    gravity: 80,
-    drag: 0.35,
-    baseSize: 6,
-    sizeJitter: 5,
-    lifeMin: 1.2,
-    lifeMax: 2.4,
-    windStrength: 0.3,
-    cursorForce: 0.6,
+    gravity: 110,
+    drag: 0.32,
+    baseSize: 3,
+    sizeJitter: 7,
+    lifeMin: 0.9,
+    lifeMax: 2.1,
+    windStrength: 0.25,
+    cursorForce: 0.5,
     cursorRadius: 160,
     spawnFrom: 'bottom-band',
-    initialVy: () => -(60 + Math.random() * 180),
-    initialVx: () => (Math.random() - 0.5) * 160,
+    initialVy: () => -(70 + Math.random() * 200),
+    initialVx: () => (Math.random() - 0.5) * 180,
     rotates: false,
   },
   motes: {
-    count: 2000,
-    spriteSize: 24,
+    // Sun-dust / pollen — should feel sparse and slow. The "glow" is the
+    // point of motes so keep their soft halo but thin out the density.
+    count: 500,
+    spriteSize: 18,
     sprite: drawMote,
-    gravity: -8,            // floats up
+    gravity: -5,
     drag: 0.10,
-    baseSize: 7,
-    sizeJitter: 5,
-    lifeMin: 18,
-    lifeMax: 34,
-    windStrength: 0.4,
-    cursorForce: 0.25,
-    cursorRadius: 150,
+    baseSize: 4,
+    sizeJitter: 6,
+    lifeMin: 22,
+    lifeMax: 38,
+    windStrength: 0.35,
+    cursorForce: 0.20,
+    cursorRadius: 140,
     spawnFrom: 'bottom-band',
-    initialVy: () => -(8 + Math.random() * 14),
-    initialVx: () => (Math.random() - 0.5) * 8,
+    initialVy: () => -(6 + Math.random() * 10),
+    initialVx: () => (Math.random() - 0.5) * 6,
     rotates: false,
   },
 };
