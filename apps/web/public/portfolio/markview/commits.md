@@ -2,6 +2,7 @@
 
 ## 2026-05-28
 
+- `13:43` **feat(atmosphere): depth-aware painting parallax via Depth Anything v2** — +1294 −65 — [`5bf8eb8`](https://github.com/abgnydn/markview/commit/5bf8eb8110640f92588bfedc539d54dd403936cc)
 - `13:25` **fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam** — +17418 −18 — [`1d28274`](https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b)
 - `12:44` **feat(viewer): final 3 polish items — annotations + smart-cap + cursor…** — +670 −0 — [`ea52a8e`](https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6)
 - `12:35` **feat(viewer): 4 more polish items — mini-map, smart-paste, audio wave…** — +463 −0 — [`73e3f52`](https://github.com/abgnydn/markview/commit/73e3f52c654005b4d67dc669f1889849fc4f7572)
@@ -63,4 +64,3 @@
 - `10:38` **chore(security): cut vulnerabilities 7→3 via overrides + xlsx fork** — +4468 −4051 — [`51acbc9`](https://github.com/abgnydn/markview/commit/51acbc96db0f2c4a9379554e03289c30a019fe83)
 - `07:28` **chore: delete /investors page + dep cleanup** — +54 −272 — [`92e3c58`](https://github.com/abgnydn/markview/commit/92e3c5849594f97160854c203380d9a8734b47aa)
 - `07:19` **fix: agent CLI command, MCP tool count log, dep cleanup** — +426 −258 — [`4858d06`](https://github.com/abgnydn/markview/commit/4858d06a991ecf6a35783587967601d6aa9a1c33)
-- `07:13` **docs(readme): update MCP tool count (23 → 30) + document hub dep for …** — +10 −3 — [`d06e886`](https://github.com/abgnydn/markview/commit/d06e8863d0a76fe1e48e083b7637d4d1ab82f0ff)

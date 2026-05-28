@@ -35,20 +35,27 @@ body.proj-route-mounted {
 
   position: relative;
   min-height: 100vh;
-  width: 100%;
-  background:
-    radial-gradient(ellipse at 50% 0%, var(--proj-bg) 0%, var(--proj-bg-deep) 100%);
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 32px 120px;
+  background: transparent;
   color: var(--proj-fg);
   font-family: var(--proj-serif);
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 0 24px 120px;
   z-index: 1;
 }
 
-/* Subtle paper grain — same trick as zen.css, scoped to this surface. */
-.proj-shell::before {
+/* Page-wide warm-paper background + grain. Painted on body so the
+   gradient covers viewport edges even when content is narrower than vw. */
+body.proj-route-mounted {
+  background:
+    radial-gradient(ellipse at 50% 0%, #0b0a0d 0%, #050406 100%) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh;
+}
+body.proj-route-mounted::after {
   content: "";
   position: fixed;
   inset: 0;
@@ -57,13 +64,6 @@ body.proj-route-mounted {
   opacity: 0.04;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
-
-.proj-shell > * {
-  position: relative;
-  z-index: 1;
-  max-width: 1080px;
-  margin-inline: auto;
 }
 
 /* ── loading / error ─────────────────────────────────────────────────── */

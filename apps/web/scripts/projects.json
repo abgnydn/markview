@@ -66,6 +66,8 @@
     { "slug": "tether",                 "repo": "abgnydn/tether" },
     { "slug": "swarm-engine",           "repo": "abgnydn/swarm-engine" },
     { "slug": "webgpu-fly",             "repo": "abgnydn/webgpu-fly" },
-    { "slug": "webgpu-fusion-sdk",      "repo": "abgnydn/webgpu-fusion-sdk" }
+    { "slug": "webgpu-fusion-sdk",      "repo": "abgnydn/webgpu-fusion-sdk" },
+    { "slug": "butterfly",              "repo": "abgnydn/butterfly" },
+    { "slug": "draw-instant",           "repo": "abgnydn/draw-instant" }
   ]
 }

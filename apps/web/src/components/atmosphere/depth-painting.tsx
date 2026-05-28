@@ -34,7 +34,14 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
   const [fallback, setFallback] = useState(true);
 
   useEffect(() => {
-    if (!isWebGLSupported()) { setFallback(true); return; }
+    // On every src change, immediately show the fallback img so the
+    // user sees the new painting at the same instant the atmosphere
+    // swap commits. The depth pipeline (which may take 1–3s on first
+    // visit) finishes in the background, then the canvas fades in
+    // over the still-visible img.
+    setReady(false);
+    setFallback(true);
+    if (!isWebGLSupported()) return;
     let cancelled = false;
     let rafId = 0;
     let cleanup: (() => void) | null = null;
@@ -90,21 +97,26 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           if (ar > 1.0) { uv.x = (uv.x - 0.5) / ar + 0.5; }
           else          { uv.y = (uv.y - 0.5) * ar + 0.5; }
 
+          // Anchor the foreground. We want the subject (mountain, wave
+          // crest, snow-village) to be ROCK STILL while only the
+          // background drifts. So we use (1 - depth) raised to 1.6
+          // power as the displacement weight — values near depth=1
+          // (closest to camera, the subject) get ~0 weight; only the
+          // far-away sky / mist contributes.
           float depth = texture(u_depth, uv).r;
-          // Depth as signed: nearer to camera = positive offset.
-          float depthS = depth - 0.5;
+          float bg = pow(clamp(1.0 - depth, 0.0, 1.0), 1.6);
 
-          // Cursor-driven parallax — closer pixels move opposite to the
-          // cursor (typical depth-photo behavior).
-          vec2 cursorOff = -u_cursor * depthS * 0.018 * u_intensity;
+          // Cursor parallax — only the background slides under the
+          // anchored foreground. Larger amplitude than before because
+          // the foreground is no longer fighting against it.
+          vec2 cursorOff = -u_cursor * bg * 0.028 * u_intensity;
 
-          // Ambient breath via cheap noise — wave-y for high-depth (sky),
-          // still for low-depth (foreground).
-          float t = u_time * 0.05;
+          // Ambient breath — drifty for far layers, frozen for near.
+          float t = u_time * 0.04;
           vec2 wob = vec2(
             noise(vec2(t, depth * 7.0)) - 0.5,
-            noise(vec2(depth * 9.0, t)) - 0.5
-          ) * abs(depthS) * 0.012 * u_intensity;
+            noise(vec2(depth * 9.0, t * 0.7)) - 0.5
+          ) * bg * 0.018 * u_intensity;
 
           vec2 finalUv = uv + cursorOff + wob;
           outColor = texture(u_paint, finalUv);

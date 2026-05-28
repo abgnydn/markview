@@ -77,7 +77,8 @@ All four pages are independent Durable Objects sharing the same Cloudflare proje
 | 39 | Adaptive η on SPSA tournament — symmetric AIMD beats fixed-η: 1.84× loss descent, +16 pp acc (R=90). MEAZO claim supported (see `docs/PHASE_39_ADAPTIVE_ETA.md`) | `4c6cb26` |
 | 39b | Adam-on-scalar (MEAZO-faithful) — bounded step caps at lr; loses to sym-AIMD with default hyperparams (see `docs/PHASE_39B_ADAM_ON_SCALAR.md`) | `f73fe22` |
 | 40-scope | NTK-Mirror local dry-run + integration plan — Qwen2.5-0.5B + 512 gates trained in 5 s, controller artifact dissected, Phase 40 ship sequence written (see `docs/PHASE_40_NTKMIRROR_PLAN.md`) | `b8d6ce6` |
-| 40-1 | Gate-selection pipeline — Python extractor + TS gate-apply hook + first baked artifact (Qwen-0.5B math, K=5000, 40 KB); parser round-trip verified across 16 checks | _uncommitted_ |
+| 40-1 | Gate-selection pipeline — Python extractor + TS gate-apply hook + first baked artifact (Qwen-0.5B math, K=5000, 40 KB); parser round-trip verified across 16 checks | `08aa9b5` |
+| 40-2 | Federated NTK-Mirror controller DO + Python verifier — first end-to-end federated SPSA on a real LLM; R=30 → loss 1.7632→1.7629, ‖θ‖ 0→0.044 (see `docs/PHASE_40_NEXT2_NTK_DO.md`) | _uncommitted_ |
 
 Each phase ships a real change to the protocol or the demo and is documented either in `docs/` or in a per-phase commit message that includes the empirical result.
 
