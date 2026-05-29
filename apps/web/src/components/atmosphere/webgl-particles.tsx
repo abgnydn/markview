@@ -46,6 +46,12 @@ interface KindConfig {
   initialVy: () => number;  // starting vertical velocity
   initialVx: () => number;  // starting horizontal velocity
   rotates: boolean;
+  // Persistent accumulation — particles that "land" (low velocity in
+  // a high-depth zone) write a soft splat to the accumulation canvas
+  // that fades over time. accumulate=0 disables the layer entirely
+  // for that kind (spray + motes never settle).
+  accumulate: number;       // splat alpha 0..1 when a particle lands
+  accumulateFadePerSec: number; // per-second multiplicative decay of the layer
 }
 
 // ── Per-atmosphere sprite drawers + physics ─────────────────────────────
@@ -55,6 +61,17 @@ interface KindConfig {
 // droplets are OPAQUE shapes with sharp edges and just a hint of
 // anti-aliasing. Each drawer below renders a solid form with a
 // minimal feather, not a glow.
+
+// Per-kind splat tint used by the accumulation layer. Matches each
+// sprite's signature color so settled dust reads as "made of this".
+function splatColor(kind: Exclude<ParticleKind, 'none'>, alpha: number): string {
+  switch (kind) {
+    case 'petals': return `rgba(249, 168, 212, ${alpha})`;
+    case 'snow':   return `rgba(255, 255, 255, ${alpha})`;
+    case 'spray':  return `rgba(190, 220, 245, ${alpha})`;
+    case 'motes':  return `rgba(245, 205, 130, ${alpha})`;
+  }
+}
 
 const drawPetal = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.clearRect(0, 0, s, s);
@@ -144,6 +161,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     drag: 0.04,
     terminalV: 36,        // cherry blossom petals fall slow — ~36 px/s max
     stretch: 0.05,        // barely any stretch — petals tumble, don't streak
+    accumulate: 0.45,     // petals settle visibly — pink dust on the bottom edges
+    accumulateFadePerSec: 0.018,  // ~55 s half-life
     baseSize: 10,
     sizeJitter: 18,        // 10–28px — strong size variance
     lifeMin: 18,
@@ -166,6 +185,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     drag: 0.06,
     terminalV: 80,        // snow falls steady; gusts can push past briefly
     stretch: 0.20,        // mild streak on fast gusts (real snow blur)
+    accumulate: 0.55,     // snow PILES UP — strongest accumulation of any kind
+    accumulateFadePerSec: 0.010,  // ~95 s half-life (snow stays put longer)
     baseSize: 3,
     sizeJitter: 8,
     lifeMin: 22,
@@ -188,6 +209,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     drag: 0.32,
     terminalV: 280,       // spray bursts fast — water droplets streak when airborne
     stretch: 0.45,        // strongest streak — looks like real flying droplets
+    accumulate: 0.0,      // water spray evaporates, doesn't settle
+    accumulateFadePerSec: 0.0,
     baseSize: 3,
     sizeJitter: 7,
     lifeMin: 0.9,
@@ -210,6 +233,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     drag: 0.10,
     terminalV: 24,        // motes drift slow, never streak
     stretch: 0.0,         // no motion blur on glowing motes
+    accumulate: 0.0,      // sun-dust never settles (floats up forever)
+    accumulateFadePerSec: 0.0,
     baseSize: 4,
     sizeJitter: 6,
     lifeMin: 22,
@@ -428,6 +453,32 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const points = new THREE.Points(geom, material);
       scene.add(points);
 
+      // ── Accumulation Canvas2D layer ────────────────────────────────
+      // Settled particles (low velocity in a foreground zone) splat
+      // here as a soft sprite. Layer fades per-second. Sits BELOW the
+      // WebGL particles canvas (z-index in CSS via .mv-accumulation).
+      const accumCanvas = document.createElement('canvas');
+      accumCanvas.className = 'mv-accumulation';
+      accumCanvas.setAttribute('aria-hidden', 'true');
+      Object.assign(accumCanvas.style, {
+        position: 'absolute',
+        inset: '0',
+        pointerEvents: 'none',
+        zIndex: '1',
+      });
+      const setAccumSize = () => {
+        const dprA = Math.min(window.devicePixelRatio || 1, 2);
+        accumCanvas.width = window.innerWidth * dprA;
+        accumCanvas.height = window.innerHeight * dprA;
+        accumCanvas.style.width = `${window.innerWidth}px`;
+        accumCanvas.style.height = `${window.innerHeight}px`;
+      };
+      setAccumSize();
+      canvas.parentElement?.insertBefore(accumCanvas, canvas);
+      const accumCtx = accumCanvas.getContext('2d')!;
+      const accumDpr = Math.min(window.devicePixelRatio || 1, 2);
+      const accumOn = cfg.accumulate > 0;
+
       // ── Inputs ────────────────────────────────────────────────────
       let cursorX = 0, cursorY = 0;
       const onMove = (e: MouseEvent) => {
@@ -444,6 +495,9 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         camera.top = window.innerHeight / 2;
         camera.bottom = -window.innerHeight / 2;
         camera.updateProjectionMatrix();
+        // Resizing the accumulation canvas clears it (browser behavior).
+        // Acceptable — we lose accumulated dust on window resize.
+        setAccumSize();
       };
       window.addEventListener('resize', onResize);
 
@@ -524,10 +578,53 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           const depthAlpha = 0.45 + d * 0.55;
           alphas[i] = Math.max(0, Math.min(1, fade * depthAlpha * alphaBase[i]));
 
-          // Respawn if life expired OR if it's far offscreen.
+          // Settling — when a particle is in the lower band AND
+          // moving slowly AND the kind accumulates, write a soft
+          // splat into the accumulation canvas and respawn.
+          // The lower-band check is a proxy for "landed on the
+          // foreground" (we don't have access to the painting depth
+          // map here; the lower half of the screen is generally
+          // the foreground zone in our paintings).
+          let settled = false;
+          if (accumOn && speed < cfg.terminalV * 0.25 && positions[ix + 1] < -H() * 0.18) {
+            // Translate centered coords → top-left pixel coords for
+            // the accumulation canvas. DPR-scaled.
+            const sx = (positions[ix] + W() / 2) * accumDpr;
+            const sy = (H() / 2 - positions[ix + 1]) * accumDpr;
+            const sR = (sizes[i] * 0.42) * accumDpr;
+            // Soft radial splat in the kind's signature color via
+            // additive blend. Subtle per particle; accumulates over
+            // many settled particles.
+            const g = accumCtx.createRadialGradient(sx, sy, 0, sx, sy, sR);
+            const splatA = cfg.accumulate * alphaBase[i];
+            // Reuse the sprite's center-color by re-running the kind's
+            // drawer into a tiny aux canvas would be heavier — instead
+            // we pick per-kind splat colors that match.
+            g.addColorStop(0, splatColor(kind, splatA));
+            g.addColorStop(1, splatColor(kind, 0));
+            accumCtx.globalCompositeOperation = 'lighter';
+            accumCtx.fillStyle = g;
+            accumCtx.beginPath();
+            accumCtx.arc(sx, sy, sR, 0, Math.PI * 2);
+            accumCtx.fill();
+            settled = true;
+          }
+
+          // Respawn if life expired OR offscreen OR just settled.
           const offX = positions[ix] < -W() * 0.6 || positions[ix] > W() * 0.6;
           const offY = positions[ix + 1] < -H() * 0.7 || positions[ix + 1] > H() * 0.7;
-          if (life[i] <= 0 || offX || offY) respawn(i, false);
+          if (life[i] <= 0 || offX || offY || settled) respawn(i, false);
+        }
+
+        // Fade the accumulation layer per-second. We multiply the
+        // entire canvas's alpha by (1 - fadePerSec * dt) using a
+        // destination-out fill — cheap and uniform.
+        if (accumOn && cfg.accumulateFadePerSec > 0) {
+          const fadeAlpha = cfg.accumulateFadePerSec * dt;
+          accumCtx.globalCompositeOperation = 'destination-out';
+          accumCtx.fillStyle = `rgba(0,0,0,${fadeAlpha})`;
+          accumCtx.fillRect(0, 0, accumCanvas.width, accumCanvas.height);
+          accumCtx.globalCompositeOperation = 'source-over';
         }
 
         // Mark attributes for GPU upload.
@@ -545,6 +642,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('resize', onResize);
         if (raf) cancelAnimationFrame(raf);
+        accumCanvas.remove();
         geom.dispose();
         material.dispose();
         spriteTex.dispose();
