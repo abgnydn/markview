@@ -83,18 +83,23 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       sun.position.set(-0.7, 0.6, 0.9);
       scene.add(sun);
 
-      // Prefer a cinemagraph MP4 next to the JPG if one was pre-rendered
-      // (see tools/cinemagraph/render.py). Use a HEAD probe so we only
-      // pay the discovery cost once per src, then either:
-      //   - bind a <video> as a Three.js VideoTexture (the painting now
-      //     actually MOVES — clouds drift, waves crash), or
-      //   - fall back to a still-image TextureLoader.
+      // Cinemagraph MP4 path is wired but disabled — SVD-XT's native
+      // 1024×576 output looked soft against the 1920×1314 source JPGs.
+      // Re-enable by flipping CINEMAGRAPH_ENABLED to true once we have
+      // an upscale pass (Real-ESRGAN x2 → 2048×1152) in the Colab
+      // notebook. The still-image branch below preserves all the
+      // "alive" feel via the depth-band motion shader + Lambert lighting
+      // on the depth mesh — clouds drift, water surface ripples, the
+      // subject anchors — at native painting resolution.
+      const CINEMAGRAPH_ENABLED = false;
       const mp4Url = src.replace(/\.(jpe?g|png|webp|avif)$/i, '.mp4');
       let videoEl: HTMLVideoElement | null = null;
       let paintingTex: InstanceType<typeof THREE.Texture> | null = null;
       let paintImg: { width: number; height: number } = { width: 1, height: 1 };
 
-      const probeRes = await fetch(mp4Url, { method: 'HEAD' }).catch(() => null);
+      const probeRes = CINEMAGRAPH_ENABLED
+        ? await fetch(mp4Url, { method: 'HEAD' }).catch(() => null)
+        : null;
       const hasMp4 = !!probeRes && probeRes.ok;
       if (cancelled) { renderer.dispose(); return; }
 
