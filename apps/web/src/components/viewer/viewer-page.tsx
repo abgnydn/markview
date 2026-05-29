@@ -13,13 +13,10 @@ import { WorkspaceTabs } from '@/components/workspace/workspace-tabs';
 import { ReadingProgress } from '@/components/viewer/reading-progress';
 import { Breadcrumbs } from '@/components/viewer/breadcrumbs';
 import { FrontmatterCard } from '@/components/viewer/frontmatter-card';
-import { StickyTitle } from '@/components/viewer/sticky-title';
-import { ReadingDepthDial } from '@/components/viewer/reading-depth-dial';
 import { MiniMap } from '@/components/viewer/mini-map';
 import { AnnotationsLayer } from '@/components/viewer/annotations-layer';
 import { AutosaveWhisper } from '@/components/viewer/autosave-whisper';
 import { CommandPalette } from '@/components/viewer/command-palette';
-import { ActivityLog } from '@/components/viewer/activity-log';
 
 // Heavy user-triggered overlays — lazy so the cold-open chunk stays
 // tight. The MarkdownEditor pulls in CodeMirror, PresentationMode pulls
@@ -32,7 +29,6 @@ const MarkdownEditor = lazy(() => import('@/components/viewer/markdown-editor').
 const FileBrowser = lazy(() => import('@/components/viewer/file-browser').then((m) => ({ default: m.FileBrowser })));
 const GraphView = lazy(() => import('@/components/viewer/graph-view').then((m) => ({ default: m.GraphView })));
 const AiChat = lazy(() => import('@/components/viewer/ai-chat').then((m) => ({ default: m.AiChat })));
-const CardsMode = lazy(() => import('@/components/viewer/cards-mode').then((m) => ({ default: m.CardsMode })));
 
 // PresenceBar replaced by the floating <ShareStatus /> widget (bottom-right).
 import { ShareStatus } from '@/components/collab/share-status';
@@ -99,7 +95,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
     vaultOpen, setVaultOpen,
     fileBrowserOpen, setFileBrowserOpen,
     aiChatOpen, setAiChatOpen,
-    cardsOpen, setCardsOpen,
   } = useViewerOverlays();
 
   // Bumps when the atmosphere painting should re-pick — handles both
@@ -251,9 +246,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       <AnnotationsLayer fileId={activeFileId} refreshKey={activeFileId ?? ''} />
       <AutosaveWhisper />
       <CommandPalette />
-      <ActivityLog />
       <AtmosphereDots />
-      <ReadingDepthDial />
       <WorkspaceTabs />
 
       {/* Standalone "+ new workspace" drop target. Becomes visible only
@@ -331,15 +324,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         </Suspense>
       )}
 
-      {cardsOpen && activeFileContent && (
-        <Suspense fallback={null}>
-          <CardsMode
-            content={frontmatterResult ? frontmatterResult.content : activeFileContent}
-            onClose={() => setCardsOpen(false)}
-          />
-        </Suspense>
-      )}
-
       <div className="viewer-layout">
         {mobileSidebarOpen && (
           <div className="sidebar-backdrop" onClick={() => setMobileSidebarOpen(false)} />
@@ -352,7 +336,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         )}
         <main className="viewer-main" ref={contentRef}>
           <ReadingProgress scrollContainerRef={contentRef} />
-          <StickyTitle contentRef={contentRef} />
           <div className="viewer-content">
             <Breadcrumbs filepath={displayFilename} />
             <div className="viewer-file-header">

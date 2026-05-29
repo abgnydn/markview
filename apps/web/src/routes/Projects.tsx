@@ -56,6 +56,8 @@ interface PortfolioIndex {
   generated_at: string;
   project_count: number;
   river_count: number;
+  activity_90d_total?: number;
+  activity_90d?: Record<string, number>; // dayKey → count, aggregated across all repos
   projects: Project[];
   commits: RiverCommit[];
   errors: { slug: string; repo: string; error: string }[];
@@ -223,13 +225,9 @@ function groupBursts(commits: RiverCommit[]): RiverItem[] {
 
 // 90-day calendar grid for the activity heatmap. Returns a 7×N matrix
 // where N is the number of weeks shown (~13–14 depending on weekday math).
-// Same 90-day window as the sparkline so the two read as one rhythm story.
-function buildHeatmap(commits: RiverCommit[]) {
-  const counts = new Map<string, number>();
-  for (const c of commits) {
-    const k = dayKey(c.date);
-    counts.set(k, (counts.get(k) ?? 0) + 1);
-  }
+// Reads from the pre-aggregated activity_90d map (which sees every commit
+// in the window, not just the 500-entry river).
+function buildHeatmap(activity: Record<string, number>) {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
   // Walk back 89 days. Align grid so today is in the rightmost column.
@@ -238,7 +236,7 @@ function buildHeatmap(commits: RiverCommit[]) {
     const d = new Date(today);
     d.setUTCDate(today.getUTCDate() - i);
     const k = d.toISOString().slice(0, 10);
-    days.push({ date: k, count: counts.get(k) ?? 0, weekday: d.getUTCDay() });
+    days.push({ date: k, count: activity[k] ?? 0, weekday: d.getUTCDay() });
   }
   // Pad the first column so it lines up with the day-of-week of the
   // earliest day (so each column is a complete Sun→Sat week visually).
@@ -261,13 +259,9 @@ function buildHeatmap(commits: RiverCommit[]) {
   return { cols, max };
 }
 
-// 90-day commits-per-day series for the sparkline.
-function buildSparkline(commits: RiverCommit[]) {
-  const counts = new Map<string, number>();
-  for (const c of commits) {
-    const k = dayKey(c.date);
-    counts.set(k, (counts.get(k) ?? 0) + 1);
-  }
+// 90-day commits-per-day series for the sparkline. Reads from the same
+// pre-aggregated activity_90d map as the heatmap.
+function buildSparkline(activity: Record<string, number>) {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
   const points: { x: number; y: number; date: string }[] = [];
@@ -275,7 +269,7 @@ function buildSparkline(commits: RiverCommit[]) {
     const d = new Date(today);
     d.setUTCDate(today.getUTCDate() - i);
     const k = d.toISOString().slice(0, 10);
-    points.push({ x: 89 - i, y: counts.get(k) ?? 0, date: k });
+    points.push({ x: 89 - i, y: activity[k] ?? 0, date: k });
   }
   const max = Math.max(...points.map((p) => p.y), 1);
   return { points, max };
@@ -661,15 +655,21 @@ export default function Projects() {
     };
   }, [index]);
 
-  const heatmap = useMemo(
-    () => (index ? buildHeatmap(index.commits) : null),
-    [index]
-  );
+  // Fall back to the river-derived view for backward compatibility if an
+  // older index.json doesn't carry the aggregate field yet.
+  const activity = useMemo(() => {
+    if (!index) return {} as Record<string, number>;
+    if (index.activity_90d) return index.activity_90d;
+    const m: Record<string, number> = {};
+    for (const c of index.commits) {
+      const k = dayKey(c.date);
+      m[k] = (m[k] ?? 0) + 1;
+    }
+    return m;
+  }, [index]);
 
-  const sparkline = useMemo(
-    () => (index ? buildSparkline(index.commits) : null),
-    [index]
-  );
+  const heatmap = useMemo(() => buildHeatmap(activity), [activity]);
+  const sparkline = useMemo(() => buildSparkline(activity), [activity]);
 
   // Grid: search → sort → group
   const filteredGrid = useMemo(() => {

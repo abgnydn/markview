@@ -637,111 +637,38 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     return () => io.disconnect();
   }, [html]);
 
-  // ── #20 Wikilink hover preview — small floating card with the
-  // linked file's first paragraph. Activates after a 350ms hover so
-  // it doesn't fire on incidental mouse-overs. One shared DOM node
-  // gets repositioned per-link to avoid a node-per-link explosion.
-  useEffect(() => {
-    const root = contentRef.current;
-    if (!root) return;
-    const links = root.querySelectorAll<HTMLAnchorElement>('a.internal-link');
-    if (links.length === 0) return;
-    let card: HTMLDivElement | null = null;
-    let hoverTimer: number | null = null;
-    let hideTimer: number | null = null;
-    const escapeHtml = (s: string) => s
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    const ensureCard = () => {
-      if (card) return card;
-      card = document.createElement('div');
-      card.className = 'wikilink-preview';
-      document.body.appendChild(card);
-      return card;
-    };
-    const show = async (link: HTMLAnchorElement) => {
-      const filename = (link.getAttribute('href') || '').replace(/^[./]+/, '');
-      const c = ensureCard();
-      c.innerHTML = '<span class="wikilink-preview-title">…</span>';
-      const rect = link.getBoundingClientRect();
-      c.style.left = `${Math.min(window.innerWidth - 340, Math.max(20, rect.left))}px`;
-      c.style.top = `${rect.bottom + 8}px`;
-      c.classList.add('wikilink-preview-show');
-      try {
-        const { db } = await import('@/lib/storage/db');
-        const f = await db.files.where('filename').equalsIgnoreCase(filename)
-          .or('filename').equalsIgnoreCase(filename.replace(/\.md$/i, ''))
-          .or('filename').equalsIgnoreCase(`${filename}.md`)
-          .first();
-        if (!f) {
-          c.innerHTML = `<span class="wikilink-preview-title">${escapeHtml(filename)}</span><em>not found in this workspace</em>`;
-          return;
-        }
-        const stripped = f.content
-          .replace(/^---[\s\S]*?---\n+/, '')
-          .replace(/^#.*$/m, '')
-          .trim()
-          .split(/\n\n/)[0]
-          .slice(0, 260);
-        c.innerHTML = `<span class="wikilink-preview-title">${escapeHtml(f.displayName || f.filename)}</span>${escapeHtml(stripped)}`;
-      } catch {
-        c.classList.remove('wikilink-preview-show');
-      }
-    };
-    const hide = () => {
-      if (card) card.classList.remove('wikilink-preview-show');
-    };
-    const onEnter = (e: Event) => {
-      const link = e.currentTarget as HTMLAnchorElement;
-      if (hideTimer !== null) { window.clearTimeout(hideTimer); hideTimer = null; }
-      hoverTimer = window.setTimeout(() => show(link), 350);
-    };
-    const onLeave = () => {
-      if (hoverTimer !== null) { window.clearTimeout(hoverTimer); hoverTimer = null; }
-      hideTimer = window.setTimeout(hide, 120);
-    };
-    links.forEach((l) => {
-      l.addEventListener('mouseenter', onEnter);
-      l.addEventListener('mouseleave', onLeave);
-    });
-    return () => {
-      links.forEach((l) => {
-        l.removeEventListener('mouseenter', onEnter);
-        l.removeEventListener('mouseleave', onLeave);
-      });
-      if (hoverTimer !== null) window.clearTimeout(hoverTimer);
-      if (hideTimer !== null) window.clearTimeout(hideTimer);
-      card?.remove();
-      card = null;
-    };
-  }, [html]);
+  // (Wikilink hover-preview removed in the cleanup pass — the
+  // ⌘-click fly-in pane below provides the same "preview the
+  // linked file" capability with the advantage of being pinnable
+  // and scrollable.)
 
-  // ── N3 Footnote popovers + B1 Margin footnotes — hover a `[1]`
-  // ref to surface the footnote text in the right margin (where the
-  // TOC lives) when the viewport is wide enough (≥ 1180px). On narrow
-  // viewports falls back to a floating popover anchored under the
-  // marker. Click toggles a "pinned" version that stays open.
-  //
-  // Wide viewport gives you the magazine experience: read the body
-  // and the footnote at the same time, no popover, no scroll jump.
+  // ── Footnotes — always render in the right margin alongside the
+  // marker (no popover variant). Hover the [1] ref to surface;
+  // click pins it. Scroll listener re-anchors to the marker as the
+  // page scrolls. On viewports too narrow for a margin (< 1180px)
+  // we skip the interception and let the browser navigate to the
+  // footnote inline (default href behavior).
   useEffect(() => {
     const root = contentRef.current;
     if (!root) return;
+    if (window.innerWidth < 1180) return;
     const refs = root.querySelectorAll<HTMLAnchorElement>('a[href^="#user-content-fn-"], a.footnote-ref');
     if (refs.length === 0) return;
     let pop: HTMLDivElement | null = null;
+    let popScrollCleanup: (() => void) | null = null;
     let pinned = false;
     let hoverTimer: number | null = null;
     let hideTimer: number | null = null;
 
     const closePop = () => {
-      if (pop) pop.classList.remove('mv-fn-popover-show', 'mv-fn-margin-show');
+      if (pop) pop.classList.remove('mv-fn-margin-show');
+      popScrollCleanup?.();
+      popScrollCleanup = null;
       const old = pop;
       pop = null;
       pinned = false;
       window.setTimeout(() => old?.remove(), 220);
     };
-    const useMargin = () => window.innerWidth >= 1180;
 
     const place = (link: HTMLAnchorElement, isPin: boolean) => {
       const href = link.getAttribute('href') || '';
@@ -752,50 +679,37 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
       clone.querySelectorAll('a.data-footnote-backref, a.footnote-back').forEach((b) => b.remove());
       closePop();
       pop = document.createElement('div');
+      pop.className = 'mv-fn-margin';
       pop.innerHTML = clone.innerHTML;
       document.body.appendChild(pop);
       const rect = link.getBoundingClientRect();
-
-      if (useMargin()) {
-        // Margin mode — anchor vertically to the marker, sit in the
-        // right gutter outside the content column.
-        pop.className = 'mv-fn-margin';
-        const main = root.closest('.viewer-main') as HTMLElement | null;
-        const content = root.closest('.viewer-content') as HTMLElement | null;
-        const right = content
-          ? Math.max(20, window.innerWidth - content.getBoundingClientRect().right - 18)
-          : 32;
-        pop.style.right = `${right}px`;
-        pop.style.top = `${rect.top}px`;
-        pop.style.maxWidth = `${Math.min(280, right - 24)}px`;
-        // Discreet number label so the user knows which marker it ties to.
-        const num = link.textContent?.replace(/[^\d]/g, '') || '';
-        if (num) {
-          const tag = document.createElement('span');
-          tag.className = 'mv-fn-margin-num';
-          tag.textContent = num;
-          pop.prepend(tag);
-        }
-        // Track scrolling so the margin note stays glued to its marker.
-        const onScroll = () => {
-          if (!pop || !link.isConnected) return;
-          pop.style.top = `${link.getBoundingClientRect().top}px`;
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        main?.addEventListener('scroll', onScroll, { passive: true });
-        (pop as HTMLDivElement & { _cleanup?: () => void })._cleanup = () => {
-          window.removeEventListener('scroll', onScroll);
-          main?.removeEventListener('scroll', onScroll);
-        };
-        requestAnimationFrame(() => pop?.classList.add('mv-fn-margin-show'));
-      } else {
-        // Popover mode — anchor under the marker.
-        pop.className = 'mv-fn-popover';
-        const left = Math.min(window.innerWidth - 380, Math.max(20, rect.left));
-        pop.style.left = `${left}px`;
-        pop.style.top = `${rect.bottom + 8}px`;
-        requestAnimationFrame(() => pop?.classList.add('mv-fn-popover-show'));
+      const content = root.closest('.viewer-content') as HTMLElement | null;
+      const right = content
+        ? Math.max(20, window.innerWidth - content.getBoundingClientRect().right - 18)
+        : 32;
+      pop.style.right = `${right}px`;
+      pop.style.top = `${rect.top}px`;
+      pop.style.maxWidth = `${Math.min(280, right - 24)}px`;
+      const num = link.textContent?.replace(/[^\d]/g, '') || '';
+      if (num) {
+        const tag = document.createElement('span');
+        tag.className = 'mv-fn-margin-num';
+        tag.textContent = num;
+        pop.prepend(tag);
       }
+      // Track scrolling so the margin note stays glued to its marker.
+      const main = root.closest('.viewer-main') as HTMLElement | null;
+      const onScroll = () => {
+        if (!pop || !link.isConnected) return;
+        pop.style.top = `${link.getBoundingClientRect().top}px`;
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      main?.addEventListener('scroll', onScroll, { passive: true });
+      popScrollCleanup = () => {
+        window.removeEventListener('scroll', onScroll);
+        main?.removeEventListener('scroll', onScroll);
+      };
+      requestAnimationFrame(() => pop?.classList.add('mv-fn-margin-show'));
       pinned = isPin;
     };
 
@@ -808,24 +722,17 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     const onLeave = () => {
       if (hoverTimer !== null) { window.clearTimeout(hoverTimer); hoverTimer = null; }
       if (pinned) return;
-      hideTimer = window.setTimeout(() => {
-        const c = (pop as (HTMLDivElement & { _cleanup?: () => void }) | null)?._cleanup;
-        c?.();
-        closePop();
-      }, 240);
+      hideTimer = window.setTimeout(closePop, 240);
     };
     const onClick = (e: Event) => {
       e.preventDefault();
       const link = e.currentTarget as HTMLAnchorElement;
-      // Click pins the footnote so it stays open across mouse moves.
       place(link, true);
     };
     const onOutside = (e: MouseEvent) => {
       if (!pop) return;
       if (pop.contains(e.target as Node)) return;
       if ((e.target as HTMLElement)?.closest('a[href^="#user-content-fn-"], a.footnote-ref')) return;
-      const c = (pop as (HTMLDivElement & { _cleanup?: () => void }) | null)?._cleanup;
-      c?.();
       closePop();
     };
     refs.forEach((r) => {
@@ -841,8 +748,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         r.removeEventListener('click', onClick);
       });
       document.removeEventListener('mousedown', onOutside);
-      const c = (pop as (HTMLDivElement & { _cleanup?: () => void }) | null)?._cleanup;
-      c?.();
+      popScrollCleanup?.();
       pop?.remove();
       if (hoverTimer !== null) window.clearTimeout(hoverTimer);
       if (hideTimer !== null) window.clearTimeout(hideTimer);

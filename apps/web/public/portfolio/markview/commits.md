@@ -2,8 +2,6 @@
 
 ## 2026-05-28
 
-- `18:00` **fix(atmosphere): attach video to DOM + timeout fallback + SW cache bump** — +35 −8 — [`119a732`](https://github.com/abgnydn/markview/commit/119a732239c4e8f3ab038b0ed344e50e083fac22)
-- `17:51` **feat(atmosphere): ship 14 cinemagraph MP4s — paintings are now alive** — +0 −0 — [`ea9a4b2`](https://github.com/abgnydn/markview/commit/ea9a4b218fde4f4308c55241a03bbcfa429dc247)
 - `17:19` **refactor(atmosphere): one bottom-left strip — drop sidebar atmosphere…** — +159 −266 — [`4e995f7`](https://github.com/abgnydn/markview/commit/4e995f7a33330ba2e5ce4434da1847e2053c78d5)
 - `17:08` **fix(particles): curl-noise wind + z-depth parallax (AAA pattern)** — +66 −41 — [`6d0c3e6`](https://github.com/abgnydn/markview/commit/6d0c3e67290a9896e3f7a028831c6b8963c9f18d)
 - `17:01` **fix(particles): natural shapes + sparser densities — stop looking spr…** — +106 −72 — [`0f0b1c6`](https://github.com/abgnydn/markview/commit/0f0b1c6ff0930bd1da1a61313e2e9b110daf05bb)
@@ -58,3 +56,5 @@
 - `06:48` **feat(share): port CF share + Yjs signaling workers from Tether v2** — +911 −24 — [`67603e8`](https://github.com/abgnydn/markview/commit/67603e828cb7ffd4b1c255c9f29c95e3a56c8e0f)
 - `06:47` **chore(desktop): align Tauri config with Bun + add beforeBuildCommand** — +690 −860 — [`229740b`](https://github.com/abgnydn/markview/commit/229740b5eb1a344f1984dcfcbcff866bf03534d4)
 - `06:44` **feat(editor): swap textarea for CodeMirror 6 with markdown highlighting** — +182 −105 — [`ccf736c`](https://github.com/abgnydn/markview/commit/ccf736c1104071318aa96b2fba3907e8d17ac85e)
+- `06:42` **chore: pre-push hook uses bun typecheck** — +8 −9 — [`da95626`](https://github.com/abgnydn/markview/commit/da956266a2ce4a6cc0589626b5bea7e69482e72a)
+- `06:41` **fix: drop Tailwind @import + fix tsconfig extends path** — +5 −4 — [`c76582c`](https://github.com/abgnydn/markview/commit/c76582c48f75ab307cf2bcf2e4e7064436ff2451)

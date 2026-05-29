@@ -95,24 +95,6 @@ export function CommandPalette() {
         run: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'j', metaKey: true })),
       },
       {
-        id: 'toggle-activity',
-        label: 'Open activity log',
-        hint: '⌘⇧H',
-        run: () => window.dispatchEvent(new CustomEvent('markview:activity-toggle')),
-      },
-      {
-        id: 'toggle-cards',
-        label: 'Toggle cards mode',
-        hint: 'C',
-        run: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'c' })),
-      },
-      {
-        id: 'toggle-spotlight',
-        label: 'Toggle spotlight focus',
-        hint: 'F',
-        run: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'f' })),
-      },
-      {
         id: 'toggle-vertical',
         label: document.documentElement.classList.contains('mv-vertical')
           ? 'Vertical writing · turn off'

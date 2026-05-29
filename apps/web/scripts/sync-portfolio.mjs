@@ -76,7 +76,7 @@ query Project($owner: String!, $name: String!) {
 }
 `;
 
-async function gql(variables) {
+async function gql(variables, query = QUERY) {
   const res = await fetch("https://api.github.com/graphql", {
     method: "POST",
     headers: {
@@ -84,12 +84,49 @@ async function gql(variables) {
       "content-type": "application/json",
       "user-agent": "barisgunaydin-portfolio-sync",
     },
-    body: JSON.stringify({ query: QUERY, variables }),
+    body: JSON.stringify({ query, variables }),
   });
   if (!res.ok) throw new Error(`graphql ${res.status} ${res.statusText}: ${await res.text()}`);
   const json = await res.json();
   if (json.errors) throw new Error(`graphql errors: ${JSON.stringify(json.errors)}`);
   return json.data;
+}
+
+// Date-only paginated history — used to build the 90-day activity histogram
+// without burning commit slots in the 500-entry river. Per-repo, walks
+// every commit since $since (max 10 pages × 100 = 1000 commits/repo).
+const ACTIVITY_QUERY = `
+query Activity($owner: String!, $name: String!, $since: GitTimestamp!, $after: String) {
+  repository(owner: $owner, name: $name) {
+    defaultBranchRef {
+      target {
+        ... on Commit {
+          history(first: 100, since: $since, after: $after) {
+            pageInfo { hasNextPage endCursor }
+            nodes { committedDate }
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
+async function fetchActivity(owner, name, sinceISO) {
+  const dayCounts = new Map();
+  let after = null;
+  for (let page = 0; page < 10; page++) {
+    const data = await gql({ owner, name, since: sinceISO, after }, ACTIVITY_QUERY);
+    const history = data.repository?.defaultBranchRef?.target?.history;
+    if (!history) break;
+    for (const n of history.nodes) {
+      const k = n.committedDate.slice(0, 10);
+      dayCounts.set(k, (dayCounts.get(k) ?? 0) + 1);
+    }
+    if (!history.pageInfo.hasNextPage) break;
+    after = history.pageInfo.endCursor;
+  }
+  return dayCounts;
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────
@@ -242,8 +279,12 @@ async function main() {
   console.log(`syncing ${entries.length} projects...`);
   const t0 = Date.now();
 
+  // 90-day window for the heatmap/sparkline aggregate.
+  const sinceISO = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+
   const summaries = [];
   const allCommits = [];
+  const activity90d = new Map(); // dayKey → count, aggregated across all repos
   const errors = [];
 
   for (const entry of entries) {
@@ -254,8 +295,16 @@ async function main() {
       for (const c of commits) {
         allCommits.push({ slug: summary.slug, name: summary.name, language: summary.language, ...c });
       }
+      // Pull the 90-day per-day activity histogram for this repo.
+      const [owner, name] = entry.repo.split("/");
+      const dayCounts = await fetchActivity(owner, name, sinceISO);
+      let repoTotal = 0;
+      for (const [day, n] of dayCounts) {
+        activity90d.set(day, (activity90d.get(day) ?? 0) + n);
+        repoTotal += n;
+      }
       const tail = summary.last_commit
-        ? `${summary.commits_synced} commits · last ${summary.last_commit.date.slice(0, 10)}`
+        ? `${summary.commits_synced} recent · ${repoTotal} in 90d`
         : "no commits";
       console.log(`✓ ${tail}`);
     } catch (err) {
@@ -277,10 +326,18 @@ async function main() {
     return a.pushed_at < b.pushed_at ? 1 : -1;
   });
 
+  // Convert activity Map → sorted plain object for the JSON.
+  const activity = Object.fromEntries(
+    Array.from(activity90d.entries()).sort((a, b) => (a[0] < b[0] ? -1 : 1))
+  );
+  const activityTotal = Object.values(activity).reduce((a, n) => a + n, 0);
+
   const index = {
     generated_at: new Date().toISOString(),
     project_count: summaries.length,
     river_count: river.length,
+    activity_90d_total: activityTotal,
+    activity_90d: activity,        // { "YYYY-MM-DD": count, ... }
     projects: summaries,
     commits: river,
     errors,

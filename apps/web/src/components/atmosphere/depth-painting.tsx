@@ -83,89 +83,24 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       sun.position.set(-0.7, 0.6, 0.9);
       scene.add(sun);
 
-      // Cinemagraph MP4 path is wired but disabled — SVD-XT's native
-      // 1024×576 output looked soft against the 1920×1314 source JPGs.
-      // Re-enable by flipping CINEMAGRAPH_ENABLED to true once we have
-      // an upscale pass (Real-ESRGAN x2 → 2048×1152) in the Colab
-      // notebook. The still-image branch below preserves all the
-      // "alive" feel via the depth-band motion shader + Lambert lighting
-      // on the depth mesh — clouds drift, water surface ripples, the
-      // subject anchors — at native painting resolution.
-      const CINEMAGRAPH_ENABLED = false;
-      const mp4Url = src.replace(/\.(jpe?g|png|webp|avif)$/i, '.mp4');
-      let videoEl: HTMLVideoElement | null = null;
-      let paintingTex: InstanceType<typeof THREE.Texture> | null = null;
-      let paintImg: { width: number; height: number } = { width: 1, height: 1 };
-
-      const probeRes = CINEMAGRAPH_ENABLED
-        ? await fetch(mp4Url, { method: 'HEAD' }).catch(() => null)
-        : null;
-      const hasMp4 = !!probeRes && probeRes.ok;
-      if (cancelled) { renderer.dispose(); return; }
-
-      if (hasMp4) {
-        videoEl = document.createElement('video');
-        // muted + playsInline + autoplay attribute are required for
-        // browser autoplay; some browsers (Safari) also refuse to
-        // decode video elements that aren't in the DOM, so we attach
-        // it off-screen.
-        videoEl.muted = true;
-        videoEl.loop = true;
-        videoEl.playsInline = true;
-        videoEl.autoplay = true;
-        videoEl.preload = 'auto';
-        videoEl.crossOrigin = 'anonymous';
-        Object.assign(videoEl.style, {
-          position: 'fixed',
-          left: '-9999px',
-          top: '-9999px',
-          width: '2px',
-          height: '2px',
-          opacity: '0',
-          pointerEvents: 'none',
-        });
-        document.body.appendChild(videoEl);
-        videoEl.src = mp4Url;
-        // Wait for the first frame to be available (readyState >= 2 =
-        // HAVE_CURRENT_DATA). 6s ceiling so a hung video doesn't
-        // freeze the atmosphere setup forever.
-        const ready = await Promise.race([
-          new Promise<boolean>((resolve) => {
-            videoEl!.addEventListener('loadeddata', () => resolve(true), { once: true });
-            videoEl!.addEventListener('error', () => resolve(false), { once: true });
-          }),
-          new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 6_000)),
-        ]);
-        if (!ready) {
-          console.warn('[atmosphere] video load failed / timed out for', mp4Url, '— falling back to still image');
-          videoEl.remove();
-          videoEl = null;
-        }
-        if (videoEl && !cancelled) {
-          try { await videoEl.play(); } catch { /* autoplay denied — VideoTexture still updates after user gesture */ }
-          paintingTex = new THREE.VideoTexture(videoEl);
-          paintingTex.colorSpace = THREE.SRGBColorSpace;
-          paintingTex.minFilter = THREE.LinearFilter;
-          paintingTex.magFilter = THREE.LinearFilter;
-          paintImg = { width: videoEl.videoWidth, height: videoEl.videoHeight };
-        }
-      }
-
-      if (!videoEl) {
-        const texLoader = new THREE.TextureLoader();
-        paintingTex = await new Promise<InstanceType<typeof THREE.Texture>>((resolve, reject) => {
-          texLoader.load(src, (t) => {
-            t.colorSpace = THREE.SRGBColorSpace;
-            t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-            t.minFilter = THREE.LinearFilter;
-            t.magFilter = THREE.LinearFilter;
-            resolve(t);
-          }, undefined, reject);
-        });
-        const img = paintingTex.image as HTMLImageElement;
-        paintImg = { width: img.width, height: img.height };
-      }
-      if (cancelled) { paintingTex!.dispose(); renderer.dispose(); return; }
+      // Load the still painting as a Three.js texture. (Previous
+      // cinemagraph / VideoTexture branch was removed in the cleanup
+      // pass — SVD-XT output at 1024×576 looked too soft against the
+      // native 1920×1314 JPGs. The depth mesh + Lambert lighting +
+      // depth-band motion shader below give the "alive" feel at full
+      // source resolution.)
+      const texLoader = new THREE.TextureLoader();
+      const paintingTex = await new Promise<InstanceType<typeof THREE.Texture>>((resolve, reject) => {
+        texLoader.load(src, (t) => {
+          t.colorSpace = THREE.SRGBColorSpace;
+          t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          t.minFilter = THREE.LinearFilter;
+          t.magFilter = THREE.LinearFilter;
+          resolve(t);
+        }, undefined, reject);
+      });
+      if (cancelled) { paintingTex.dispose(); renderer.dispose(); return; }
+      const paintImg = paintingTex.image as HTMLImageElement;
 
       // Depth map as a CanvasTexture (the ImageBitmap from ensureDepth).
       const depthTex = new THREE.CanvasTexture(depthResult.bitmap);
@@ -180,11 +115,9 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       // Compute per-vertex normals AFTER displacement — done in the
       // shader via finite-difference on the depth texture.
 
-      // paintingTex is guaranteed defined past the fallback branch — TS
-      // can't follow the conditional assignment so we re-narrow here.
       const material = new THREE.ShaderMaterial({
         uniforms: {
-          uPaint:      { value: paintingTex! },
+          uPaint:      { value: paintingTex },
           uDepth:      { value: depthTex },
           uDisplace:   { value: 0.22 },        // Z extents — peaks rise this much
           uTime:       { value: 0.0 },
@@ -372,14 +305,9 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('resize', resize);
         if (rafId) cancelAnimationFrame(rafId);
-        if (videoEl) {
-          try { videoEl.pause(); } catch { /* */ }
-          videoEl.src = '';
-          videoEl.remove();
-        }
         geom.dispose();
         material.dispose();
-        paintingTex!.dispose();
+        paintingTex.dispose();
         depthTex.dispose();
         renderer.dispose();
       };

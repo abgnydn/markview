@@ -1,5 +1,5 @@
 {
-  "$schema_note": "Edit this file to add/remove projects from the portfolio hub. Fields: slug (URL slug, also folder name under public/portfolio/<slug>/); repo (owner/name on GitHub); featured (bool — pins to hero row); order (number — featured row ordering, lower = leftmost); url (optional live deployment URL); tagline (optional override of the GitHub description). Everything else — description, language, stars, topics, commits — is pulled live by scripts/sync-portfolio.mjs.",
+  "$schema_note": "Edit this file to add/remove projects from the portfolio hub. Fields: slug (URL slug, also folder name under public/portfolio/<slug>/); repo (owner/name on GitHub); featured (bool \u2014 pins to hero row); order (number \u2014 featured row ordering, lower = leftmost); url (optional live deployment URL); tagline (optional override of the GitHub description). Everything else \u2014 description, language, stars, topics, commits \u2014 is pulled live by scripts/sync-portfolio.mjs.",
   "owner_default": "abgnydn",
   "projects": [
     {
@@ -38,54 +38,74 @@
       "repo": "abgnydn/iz",
       "featured": true,
       "order": 5,
-      "tagline": "TR-MRV-Bench — open emissions benchmark beating EU CBAM by 85.9%."
+      "tagline": "TR-MRV-Bench \u2014 open emissions benchmark beating EU CBAM by 85.9%."
     },
-
-    { "slug": "quill",                  "repo": "abgnydn/quill" },
-    { "slug": "safenpm",                "repo": "abgnydn/safenpm" },
-    { "slug": "panel",                  "repo": "abgnydn/panel" },
-    { "slug": "gpubench",               "repo": "abgnydn/gpubench",        "url": "https://gpubench.dev" },
-    { "slug": "zero-tvm",               "repo": "abgnydn/zero-tvm" },
-    { "slug": "wonderlab",              "repo": "abgnydn/wonderlab" },
-    { "slug": "webgpu-dna",             "repo": "abgnydn/webgpu-dna" },
-    { "slug": "webgpu-p2p-evolution",   "repo": "abgnydn/webgpu-p2p-evolution" },
+    { "slug": "quill", "repo": "abgnydn/quill" },
+    { "slug": "safenpm", "repo": "abgnydn/safenpm" },
+    { "slug": "panel", "repo": "abgnydn/panel" },
+    { "slug": "gpubench", "repo": "abgnydn/gpubench", "url": "https://gpubench.dev" },
+    { "slug": "zero-tvm", "repo": "abgnydn/zero-tvm" },
+    { "slug": "wonderlab", "repo": "abgnydn/wonderlab" },
+    { "slug": "webgpu-dna", "repo": "abgnydn/webgpu-dna" },
+    { "slug": "webgpu-p2p-evolution", "repo": "abgnydn/webgpu-p2p-evolution" },
     { "slug": "webgpu-transformer-fusion", "repo": "abgnydn/webgpu-transformer-fusion" },
-    { "slug": "wgpu-adas-bench",        "repo": "abgnydn/wgpu-adas-bench" },
-    { "slug": "webgpu-fusion-max",      "repo": "abgnydn/webgpu-fusion-max" },
-    { "slug": "wgpu-native-bench",      "repo": "abgnydn/wgpu-native-bench" },
-    { "slug": "webgpu-kernel-fusion",   "repo": "abgnydn/webgpu-kernel-fusion" },
-    { "slug": "zero-burn-lab",          "repo": "abgnydn/zero-burn-lab" },
-
-    { "slug": "fused-lora",             "repo": "abgnydn/fused-lora" },
-    { "slug": "fusedx",                 "repo": "abgnydn/fusedx" },
-    { "slug": "hub",                    "repo": "abgnydn/hub" },
-    { "slug": "vault",                  "repo": "abgnydn/vault" },
-    { "slug": "veil",                   "repo": "abgnydn/veil" },
-    { "slug": "temple",                 "repo": "abgnydn/temple" },
-    { "slug": "context-vault",          "repo": "abgnydn/context-vault" },
-    { "slug": "tether",                 "repo": "abgnydn/tether" },
-    { "slug": "swarm-engine",           "repo": "abgnydn/swarm-engine" },
-    { "slug": "webgpu-fly",             "repo": "abgnydn/webgpu-fly" },
-    { "slug": "webgpu-fusion-sdk",      "repo": "abgnydn/webgpu-fusion-sdk" },
-    { "slug": "butterfly",              "repo": "abgnydn/butterfly" },
-    { "slug": "draw-instant",           "repo": "abgnydn/draw-instant" },
-
-    { "slug": "kernelfusion",           "repo": "abgnydn/kernelfusion" },
-    { "slug": "the-town",               "repo": "abgnydn/the-town" },
-    { "slug": "teklifci",               "repo": "abgnydn/teklifci" },
-    { "slug": "deps0",                  "repo": "abgnydn/deps0" },
-    { "slug": "the-swarm",              "repo": "abgnydn/the-swarm" },
-    { "slug": "swarm-paper-1",          "repo": "abgnydn/swarm-paper-1" },
-    { "slug": "mycosim",                "repo": "abgnydn/mycosim" },
-
-    { "slug": "swarm-bench",            "repo": "abgnydn/swarm-bench" },
-    { "slug": "swarm-bio",              "repo": "abgnydn/swarm-bio" },
-    { "slug": "swarm-ensemble",         "repo": "abgnydn/swarm-ensemble" },
-    { "slug": "swarm-relay",            "repo": "abgnydn/swarm-relay" },
-    { "slug": "swarm-platform",         "repo": "abgnydn/swarm-platform" },
-
-    { "slug": "webgpu-fusion-webllm",   "repo": "abgnydn/webgpu-fusion-webllm" },
-    { "slug": "webgpu-fusion-chat",     "repo": "abgnydn/webgpu-fusion-chat" },
-    { "slug": "webgpu-fusion-v2",       "repo": "abgnydn/webgpu-fusion-v2" }
+    { "slug": "wgpu-adas-bench", "repo": "abgnydn/wgpu-adas-bench" },
+    { "slug": "webgpu-fusion-max", "repo": "abgnydn/webgpu-fusion-max" },
+    { "slug": "wgpu-native-bench", "repo": "abgnydn/wgpu-native-bench" },
+    { "slug": "webgpu-kernel-fusion", "repo": "abgnydn/webgpu-kernel-fusion" },
+    {
+      "slug": "zero-burn-lab",
+      "repo": "abgnydn/zero-burn-lab",
+      "tagline": "Chiang Mai burning-season simulation \u2014 the project that triggered the kernel-fusion line."
+    },
+    { "slug": "fused-lora", "repo": "abgnydn/fused-lora" },
+    { "slug": "fusedx", "repo": "abgnydn/fusedx" },
+    { "slug": "hub", "repo": "abgnydn/hub" },
+    { "slug": "vault", "repo": "abgnydn/vault" },
+    { "slug": "veil", "repo": "abgnydn/veil" },
+    { "slug": "temple", "repo": "abgnydn/temple" },
+    { "slug": "context-vault", "repo": "abgnydn/context-vault" },
+    {
+      "slug": "tether",
+      "repo": "abgnydn/tether",
+      "tagline": "Local-first browser brain \u2014 SolidJS + WebGPU on Cloudflare. Persistent agent in the right rail; privacy layer chooses which model sees what before the message ships."
+    },
+    {
+      "slug": "swarm-engine",
+      "repo": "abgnydn/swarm-engine",
+      "tagline": "Browser-native distributed neuroevolution \u2014 ~360 lines of WGSL matching PyTorch MPS, P2P genome exchange across browser tabs."
+    },
+    { "slug": "webgpu-fly", "repo": "abgnydn/webgpu-fly" },
+    { "slug": "webgpu-fusion-sdk", "repo": "abgnydn/webgpu-fusion-sdk" },
+    { "slug": "butterfly", "repo": "abgnydn/butterfly" },
+    { "slug": "draw-instant", "repo": "abgnydn/draw-instant" },
+    {
+      "slug": "kernelfusion",
+      "repo": "abgnydn/kernelfusion",
+      "tagline": "Research umbrella for GPU kernel fusion \u2014 eliminating per-dispatch overhead across evolutionary computation and transformer inference. Two preprints."
+    },
+    { "slug": "the-town", "repo": "abgnydn/the-town" },
+    { "slug": "teklifci", "repo": "abgnydn/teklifci" },
+    { "slug": "deps0", "repo": "abgnydn/deps0" },
+    {
+      "slug": "the-swarm",
+      "repo": "abgnydn/the-swarm",
+      "tagline": "Privacy-preserving distributed AI via browser-based Evolutionary Strategies \u2014 measured Byzantine tolerance at 50% attacker share."
+    },
+    {
+      "slug": "mycosim",
+      "repo": "abgnydn/mycosim",
+      "tagline": "Directed-evolution engine for dual-function enzymes \u2014 PETase + metallothionein fusion for a Chiang Mai water filter."
+    },
+    {
+      "slug": "swarm-bio",
+      "repo": "abgnydn/swarm-bio",
+      "tagline": "Browser-based protein sequence evolution via WebGPU. Honest about proxy-fitness scope (no wet-lab validation)."
+    },
+    {
+      "slug": "swarm-ensemble",
+      "repo": "abgnydn/swarm-ensemble",
+      "tagline": "Aggregation strategies for distributed evolution \u2014 six political-system metaphors tested on crypto trading."
+    }
   ]
 }
