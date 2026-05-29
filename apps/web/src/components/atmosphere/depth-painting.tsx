@@ -294,8 +294,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
             float shade = uAmbient + (1.0 - uAmbient) * ndotl;
 
             // Subtle aerial perspective — distant zones gain a touch of
-            // warm-paper haze, so the sky recedes spatially.
-            vec3 haze = mix(vec3(0.86, 0.82, 0.74), base, smoothstep(0.0, 0.55, vDepth));
+            // warm-paper haze, so the sky recedes spatially. Halved per
+            // user feedback ("reduce smoke/fog by half") by mixing the
+            // hazed version 50/50 with the un-hazed base — so distant
+            // pixels are still pushed toward warm paper, but less.
+            vec3 hazeFull = mix(vec3(0.86, 0.82, 0.74), base, smoothstep(0.0, 0.55, vDepth));
+            vec3 haze = mix(base, hazeFull, 0.5);
 
             // Mid-band ripple gets a tiny specular kick when it crests,
             // so water actually catches the light.
