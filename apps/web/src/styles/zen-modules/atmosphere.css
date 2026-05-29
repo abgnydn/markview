@@ -175,20 +175,51 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
   position: absolute;
   inset: -2vh -3vw;
   background: var(--zen-bg);
-  opacity: 0.78;
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 55%, transparent 92%);
-          mask-image: radial-gradient(ellipse at center, #000 55%, transparent 92%);
+  /* Bumped 0.78 → 0.92 and pushed the mask edge from 55%/92% out to
+     78%/100% so the column reads as fully scrimmed all the way to its
+     edges instead of fading at the margins. WCAG AA requires ≥ 4.5:1
+     contrast for body text; bright atmospheres (Fields, Snow) were
+     bleeding to ~3:1 at the edges before this. */
+  opacity: 0.92;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 78%, transparent 100%);
+          mask-image: radial-gradient(ellipse at center, #000 78%, transparent 100%);
   /* Slight blur so the painting reads as soft haze around the column. */
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   z-index: -1;
   pointer-events: none;
   border-radius: 8px;
 }
-/* Light theme — the scrim wants higher opacity to keep dark ink crisp. */
+/* Light theme — dark ink on cream needs even stronger scrim under bright
+   paintings to keep contrast in the AA range. */
 :root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
 html:not(.dark):not([data-theme='dark'])[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
-  opacity: 0.86;
+  opacity: 0.94;
+}
+
+/* Defensive text-shadow on body text when an atmosphere is on — even if
+   the painting briefly highlights through the scrim edge, characters
+   still have a 1px halo of the inverse-brightness color guaranteeing
+   readability. Headings get a slightly stronger shadow. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content li,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h3 {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+:root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p,
+:root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content li,
+:root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote {
+  text-shadow: 0 1px 2px rgba(252, 246, 236, 0.7);
+}
+:root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1,
+:root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2,
+:root:not(.dark):not([data-theme='dark']) html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h3 {
+  text-shadow: 0 1px 3px rgba(252, 246, 236, 0.85);
 }
 /* Editor overlay sits on its own backdrop already — but lift its bg
    opacity when an atmosphere is on so the painting doesn't leak through. */
