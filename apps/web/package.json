@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/prerender-projects.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "prerender:projects": "node scripts/prerender-projects.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.2",

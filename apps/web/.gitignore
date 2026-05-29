@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# pre-rendered project page (regenerated at build time from public/portfolio/index.json)
+/public/projects/index.html
+
 # production
 /build
 
