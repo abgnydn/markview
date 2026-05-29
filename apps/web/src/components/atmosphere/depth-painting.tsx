@@ -123,6 +123,16 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           uTime:       { value: 0.0 },
           uLightDir:   { value: new THREE.Vector3(-0.7, 0.6, 0.9).normalize() },
           uAmbient:    { value: 0.78 },
+          // Sun position — drives god-rays direction. Mapped from the
+          // current time-of-day phase (dawn = upper-left, day = top,
+          // dusk = upper-right, night = below horizon → rays off).
+          uSunUv:      { value: new THREE.Vector2(0.5, 0.92) },
+          uSunOn:      { value: 1.0 },
+          // Echo-location pulse — origin (UV) + start time. While
+          // (now - start) is within ~2 s a brightening ring expands
+          // through the scene. Origin (-1,-1) = no pulse.
+          uPulseUv:    { value: new THREE.Vector2(-1, -1) },
+          uPulseTime:  { value: -1000.0 },
         },
         vertexShader: `
           uniform sampler2D uDepth;
@@ -170,11 +180,14 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           uniform vec3 uLightDir;
           uniform float uAmbient;
           uniform float uTime;
+          uniform vec2 uSunUv;
+          uniform float uSunOn;
+          uniform vec2 uPulseUv;
+          uniform float uPulseTime;
           varying vec2 vUv;
           varying float vDepth;
           varying vec3 vNormal;
 
-          // Cheap value-noise for the sky drift.
           float hash21(vec2 p) {
             return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
           }
@@ -188,58 +201,111 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
             vec2 u = f * f * (3.0 - 2.0 * f);
             return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
           }
+          // Sample the depth texture (with the same v-flip as the
+          // vertex shader's sampleDepth).
+          float dSamp(vec2 uv) { return texture2D(uDepth, vec2(uv.x, 1.0 - uv.y)).r; }
+          // Luma for bloom bright-pass.
+          float luma(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
 
           void main() {
-            // Living motion bands by depth — picked from the depth map
-            // so each painting auto-segments:
-            //   far  (depth 0.00–0.35): SKY — slow horizontal drift +
-            //                            very low-frequency vertical wobble
-            //   mid  (depth 0.35–0.65): WATER / MIST — sinusoidal ripple
-            //   near (depth 0.65–1.00): SUBJECT — rock still
+            // Living motion bands by depth.
             float far  = smoothstep(0.40, 0.05, vDepth);
             float mid  = smoothstep(0.30, 0.45, vDepth) *
                          (1.0 - smoothstep(0.60, 0.78, vDepth));
-            // 'near' has no motion; subjects hold.
 
-            // Sky drift — slow horizontal flow + tiny vertical wobble.
-            // Multi-octave so clouds feel like real clouds, not a sine bar.
             float t = uTime * 0.035;
             vec2 skyOff = vec2(
               (vnoise(vec2(vUv.x * 3.0 + t * 2.4, vUv.y * 1.6)) - 0.5) * 0.018
               + sin(uTime * 0.07 + vUv.y * 1.4) * 0.006,
               (vnoise(vec2(vUv.x * 2.2, vUv.y * 2.4 + t * 1.3)) - 0.5) * 0.006
             );
-
-            // Water / mist ripple — small high-frequency sinusoid that
-            // shimmers across the surface.
             vec2 midOff = vec2(
               sin(uTime * 0.55 + vUv.x * 14.0 + vUv.y * 4.0) * 0.0035,
               cos(uTime * 0.42 + vUv.y * 18.0 + vUv.x * 6.0) * 0.0045
             );
-
             vec2 motion = skyOff * far + midOff * mid;
 
-            // Sample the painting through the motion offset.
             vec3 base = texture2D(uPaint, vUv + motion).rgb;
 
-            // Lambert shading from the depth-derived normal.
+            // ── Lambert + ambient ─────────────────────────────────
             float ndotl = max(dot(normalize(vNormal), normalize(uLightDir)), 0.0);
             float shade = uAmbient + (1.0 - uAmbient) * ndotl;
 
-            // Subtle aerial perspective — distant zones gain a touch of
-            // warm-paper haze, so the sky recedes spatially. Halved per
-            // user feedback ("reduce smoke/fog by half") by mixing the
-            // hazed version 50/50 with the un-hazed base — so distant
-            // pixels are still pushed toward warm paper, but less.
+            // ── SSAO (cheap screen-space ambient occlusion) ───────
+            // Sample 4 neighbors at increasing radius; pixels with
+            // significantly DEEPER neighbors are occluded (in a
+            // valley) and darken slightly. Crevices in the painting
+            // (rock cracks, eaves) read as having real shade.
+            float e = 1.0 / 256.0;
+            float dHere = vDepth;
+            float ao = 0.0;
+            for (int k = 0; k < 4; k++) {
+              float ang = float(k) * 1.5708;
+              vec2 off = vec2(cos(ang), sin(ang)) * e * 2.0;
+              float dN = dSamp(vUv + off);
+              ao += max(0.0, dN - dHere);
+            }
+            float aoTerm = 1.0 - clamp(ao * 1.6, 0.0, 0.35);
+
+            // ── Aerial perspective haze (halved) ──────────────────
             vec3 hazeFull = mix(vec3(0.86, 0.82, 0.74), base, smoothstep(0.0, 0.55, vDepth));
             vec3 haze = mix(base, hazeFull, 0.5);
 
-            // Mid-band ripple gets a tiny specular kick when it crests,
-            // so water actually catches the light.
+            // ── Water surface specular kick ───────────────────────
             float ripple = sin(uTime * 0.55 + vUv.x * 14.0 + vUv.y * 4.0);
             float specMid = pow(max(ripple, 0.0), 6.0) * mid * 0.25;
 
-            gl_FragColor = vec4(haze * shade + vec3(specMid), 1.0);
+            vec3 lit = haze * shade * aoTerm + vec3(specMid);
+
+            // ── Bloom (in-shader 6-tap blur on bright pass) ───────
+            // Sample 6 neighbors at offset radii, keep only the
+            // bright-pass portion (luma > 0.65), add as additive
+            // glow. Way cheaper than a real Kawase chain.
+            vec3 bloom = vec3(0.0);
+            for (int b = 0; b < 6; b++) {
+              float ba = float(b) * 1.047197;
+              vec2 boff = vec2(cos(ba), sin(ba)) * 0.0045;
+              vec3 bn = texture2D(uPaint, vUv + boff).rgb;
+              float bl = max(0.0, luma(bn) - 0.65);
+              bloom += bn * bl;
+            }
+            bloom *= 0.32;
+
+            // ── God rays (radial samples toward sun) ──────────────
+            // Sample 12 points along the line from this pixel to
+            // the sun UV; accumulate brightness where depth is low
+            // (sky / cloud holes). Sun off (night) → factor 0.
+            vec3 rays = vec3(0.0);
+            if (uSunOn > 0.0) {
+              vec2 dirS = (uSunUv - vUv) / 12.0;
+              vec2 sUv = vUv;
+              float decay = 1.0;
+              for (int g = 0; g < 12; g++) {
+                sUv += dirS;
+                float dG = dSamp(sUv);
+                float skyContrib = smoothstep(0.45, 0.0, dG);
+                float lumS = luma(texture2D(uPaint, sUv).rgb);
+                rays += vec3(1.0, 0.94, 0.84) * skyContrib * lumS * decay;
+                decay *= 0.86;
+              }
+              rays *= 0.020 * uSunOn;
+            }
+
+            // ── Echo-location pulse ───────────────────────────────
+            // Brightens pixels at radius = (time - pulseTime) * 0.45
+            // from uPulseUv. Decays after 2s.
+            float pulseAge = uTime - uPulseTime;
+            float pulseTerm = 0.0;
+            if (pulseAge > 0.0 && pulseAge < 2.0 && uPulseUv.x >= 0.0) {
+              float ringR = pulseAge * 0.45;
+              float dPulse = distance(vUv, uPulseUv);
+              float ringW = 0.045;
+              float onRing = exp(-pow((dPulse - ringR) / ringW, 2.0));
+              pulseTerm = onRing * (1.0 - pulseAge * 0.5);
+            }
+
+            vec3 finalColor = lit + bloom + rays + vec3(pulseTerm) * vec3(0.7, 0.65, 0.95);
+            gl_FragColor = vec4(finalColor, 1.0);
           }
         `,
       });
@@ -271,10 +337,44 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       };
       window.addEventListener('resize', resize);
 
+      // Sun position by time-of-day — drives the god-rays shader.
+      // Read by reading <html data-time-phase> which time-of-day.ts
+      // sets to dawn / day / dusk / night / off. Re-read every draw
+      // so manual toggles update without remount.
+      const PHASE_SUN: Record<string, { uv: [number, number]; on: number }> = {
+        dawn:  { uv: [0.18, 0.88], on: 0.85 },
+        day:   { uv: [0.50, 0.95], on: 1.00 },
+        dusk:  { uv: [0.82, 0.88], on: 0.95 },
+        night: { uv: [0.50, 0.20], on: 0.0 },
+        off:   { uv: [0.50, 0.95], on: 0.0 },
+      };
+
       const start = performance.now();
+
+      // Echo-location pulse — click anywhere on the painting and a
+      // bright ring expands from the click point over 2 s. Useful as
+      // a meditative interaction; reveals the depth structure of the
+      // painting as the ring travels through it.
+      const onClick = (e: MouseEvent) => {
+        // Ignore clicks on interactive chrome — sidebar buttons,
+        // toolbar, atmosphere dots, palette, links, etc. The pulse
+        // is for the painting space only.
+        const target = e.target as HTMLElement | null;
+        if (target && target.closest('button, a, input, textarea, [role="button"], .mv-atm-dots, .toolbar, .sidebar, .mv-palette, .mv-cards-overlay, .editor-overlay')) return;
+        const u = e.clientX / window.innerWidth;
+        const v = 1.0 - e.clientY / window.innerHeight;
+        (material.uniforms.uPulseUv.value as InstanceType<typeof THREE.Vector2>).set(u, v);
+        (material.uniforms.uPulseTime as { value: number }).value =
+          (performance.now() - start) / 1000;
+      };
+      window.addEventListener('click', onClick);
       let rafId = 0;
       const draw = () => {
         (material.uniforms.uTime as { value: number }).value = (performance.now() - start) / 1000;
+        const phase = document.documentElement.getAttribute('data-time-phase') || 'day';
+        const sun = PHASE_SUN[phase] ?? PHASE_SUN.day;
+        (material.uniforms.uSunUv.value as InstanceType<typeof THREE.Vector2>).set(sun.uv[0], sun.uv[1]);
+        (material.uniforms.uSunOn as { value: number }).value = sun.on;
         renderer.render(scene, camera);
         rafId = requestAnimationFrame(draw);
       };
@@ -282,6 +382,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
 
       cleanup = () => {
         window.removeEventListener('resize', resize);
+        window.removeEventListener('click', onClick);
         if (rafId) cancelAnimationFrame(rafId);
         geom.dispose();
         material.dispose();
