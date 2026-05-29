@@ -13,11 +13,21 @@
 
 ## TL;DR
 
-The EU charges Turkish CBAM-scope exporters (cement, steel, aluminum, fertilizer) a CO₂ tariff based on a default value that overcharges most plants by **2-10×**. iz-1 is a one-line formula — `tCO₂ = capacity × emission-factor × capacity-factor` — that reproduces 21 audit-grade Turkish facility emissions within ±20% on average, using only operator-published numbers. **+85.3% log-MAE reduction vs EU CBAM default**, 95% data-bootstrap CI [+72.0%, +90.6%].
+The EU charges Turkish CBAM-scope exporters (cement, steel, aluminum, fertilizer) a CO₂ tariff based on a default value that overcharges most plants by **2-10×**. **TR-MRV-Bench** is a public 59-facility benchmark of Turkish CBAM-scope industry, with audit-grade Scope 1 labels for 21 of them. The headline deliverable is the **cf-corrected formula** — `tCO₂ = capacity × emission-factor × capacity-factor` — which reproduces those 21 audit-grade facilities within ±20% on average using only operator-published numbers. **+85.3% log-MAE reduction vs EU CBAM default**, 95% data-bootstrap CI [+72.0%, +90.6%]. We also ship **iz-1**, a small 2-layer NN trained against the formula's residuals as a reference implementation; it ties the formula at this data scale (n=21, 40 train).
 
 If every TR operator used this instead of the default, **~€2 billion per year in CBAM payments stays in Turkey** instead of going to the EU treasury. That's the entire point. **Released under Apache-2.0** as open infrastructure for Turkish CBAM compliance — not a SaaS. Use it, cite it, contribute back.
 
 This is a one-person project by [Ahmet Barış Günaydın](https://barisgunaydin.com) (<hi@barisgunaydin.com>).
+
+---
+
+## Özet (Türkçe)
+
+AB, Türkiye'den ihraç edilen CBAM-kapsamlı ürünlere (çimento, çelik, alüminyum, gübre) karbon vergisi uyguluyor — varsayım değeri çoğu Türk tesisinin gerçek emisyonunun **2-10 katı**. **TR-MRV-Bench**, Türkiye CBAM-kapsamlı sanayisinin 59-tesislik kamuya açık veri setidir; 21'i için denetim-düzeyi Kapsam 1 etiketi vardır. Ana çıktı **cf-düzeltilmiş formüldür** — `tCO₂ = kapasite × emisyon-faktörü × kullanım-faktörü` — yalnızca operatörlerin yayımladığı sayıları kullanarak bu 21 denetim-düzeyi tesisi ortalama ±%20 doğrulukla yeniden üretir. **AB CBAM varsayımına karşı +%85.3 log-MAE azaltımı**, %95 veri-bootstrap güven aralığı [+%72.0, +%90.6]. Ayrıca **iz-1** olarak formülün artıklarına karşı eğitilmiş küçük bir 2-katmanlı sinir ağını referans uygulama olarak yayımlıyoruz; bu veri ölçeğinde (n=21, 40 eğitim) formülle istatistiksel olarak eşleşiyor.
+
+Her TR operatörü varsayım yerine bunu kullansa, **yılda ~€2 milyar CBAM ödemesi AB hazinesine gitmek yerine Türkiye'de kalır**. Tüm amaç budur. **Apache-2.0** ile TR CBAM uyumluluğu için açık altyapı olarak yayımlandı — SaaS değil. Kullanın, kaynak gösterin, katkıda bulunun.
+
+Bu, tek kişilik bir projedir: [Ahmet Barış Günaydın](https://barisgunaydin.com) (<hi@barisgunaydin.com>).
 
 ---
 

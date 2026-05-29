@@ -1,7 +1,21 @@
 # Commits — markview
 
+## 2026-05-29
+
+- `14:24` **feat(web): pre-render /projects so the page is visible without JS** — +165 −1 — [`c210b71`](https://github.com/abgnydn/markview/commit/c210b71e1f53d66417f8ca25861113edfaa68d3d)
+- `11:09` **feat(atmosphere): persistent accumulation layer — snow piles, petals …** — +100 −2 — [`1776edc`](https://github.com/abgnydn/markview/commit/1776edcb93ac047311eb6e411ff366d302f60806)
+- `10:55` **feat(atmosphere): shader post-processing pass — bloom, SSAO, god rays…** — +125 −24 — [`6a0f1e6`](https://github.com/abgnydn/markview/commit/6a0f1e63a9ed87b6b9ecaacb498ea813ef359693)
+- `10:23` **fix(atmosphere): drop cursor parallax + 4 particle realism upgrades** — +62 −45 — [`e480938`](https://github.com/abgnydn/markview/commit/e480938d3cbc5e7b87730016b04f959cb5235f1a)
+- `09:07` **chore(cleanup): drop 6 features + consolidate 3 — ~700 lines removed** — +326 −2439 — [`fbeffa3`](https://github.com/abgnydn/markview/commit/fbeffa3c259772fd6f820a2813e0190765084d32)
+- `07:55` **tweak(atmosphere): halve the aerial-perspective haze** — +6 −2 — [`e36c13d`](https://github.com/abgnydn/markview/commit/e36c13dac8cc866bb5b64a6b7ee1bf4488a3d668)
+- `07:44` **fix(atmosphere): WCAG-AA text contrast under bright paintings** — +38 −7 — [`4d19940`](https://github.com/abgnydn/markview/commit/4d1994098b9d7522fd004dc5c3b9032a232f945f)
+- `06:45` **revert(atmosphere): disable cinemagraph path — 1024×576 looked soft** — +12 −7 — [`a0a5ed1`](https://github.com/abgnydn/markview/commit/a0a5ed15317c2915771cb2f970ec93cf2f8f2c8a)
+
 ## 2026-05-28
 
+- `21:58` **chore(portfolio): daily sync 2026-05-28** — +399 −407 — [`024a093`](https://github.com/abgnydn/markview/commit/024a0934d98951df59f40cbc735141e8e21281be)
+- `18:00` **fix(atmosphere): attach video to DOM + timeout fallback + SW cache bump** — +35 −8 — [`119a732`](https://github.com/abgnydn/markview/commit/119a732239c4e8f3ab038b0ed344e50e083fac22)
+- `17:51` **feat(atmosphere): ship 14 cinemagraph MP4s — paintings are now alive** — +0 −0 — [`ea9a4b2`](https://github.com/abgnydn/markview/commit/ea9a4b218fde4f4308c55241a03bbcfa429dc247)
 - `17:19` **refactor(atmosphere): one bottom-left strip — drop sidebar atmosphere…** — +159 −266 — [`4e995f7`](https://github.com/abgnydn/markview/commit/4e995f7a33330ba2e5ce4434da1847e2053c78d5)
 - `17:08` **fix(particles): curl-noise wind + z-depth parallax (AAA pattern)** — +66 −41 — [`6d0c3e6`](https://github.com/abgnydn/markview/commit/6d0c3e67290a9896e3f7a028831c6b8963c9f18d)
 - `17:01` **fix(particles): natural shapes + sparser densities — stop looking spr…** — +106 −72 — [`0f0b1c6`](https://github.com/abgnydn/markview/commit/0f0b1c6ff0930bd1da1a61313e2e9b110daf05bb)
@@ -47,14 +61,3 @@
 - `08:41` **feat(zen): editor as brain space — vanishing chrome, serif body, pape…** — +525 −32 — [`f21471e`](https://github.com/abgnydn/markview/commit/f21471ed7034d729aba7d7ae5146035ecd3fc7d5)
 - `08:06` **feat(share-worker): deploy CF Workers + wire Markview's own Yjs DO** — +11 −5 — [`720aaba`](https://github.com/abgnydn/markview/commit/720aaba4ba42ee6d805afef577e9a3af3d18453e)
 - `08:03` **fix(desktop): gate RunEvent::Opened on macOS only (Linux/Windows lack…** — +33 −23 — [`e2c99d9`](https://github.com/abgnydn/markview/commit/e2c99d9cbf4f6e2f1f995825b5611927b12862af)
-- `07:58` **fix(desktop): drop POSIX-only \`. ~/.cargo/env\` from tauri scripts** — +3 −3 — [`36a145c`](https://github.com/abgnydn/markview/commit/36a145cabe854c456759a5e018164a2f3437f66c)
-- `07:57` **feat(collab): real-time editor sync via y-codemirror.next** — +91 −21 — [`8f114ae`](https://github.com/abgnydn/markview/commit/8f114ae4a83cda427f4d893e78c61b3c57f0bfc2)
-- `07:49` **feat(landing): direct-download CTA detects macOS, links straight to DMG** — +49 −4 — [`be5ff28`](https://github.com/abgnydn/markview/commit/be5ff28897797c7e842b5dbbbc4944fc13107b15)
-- `07:44` **chore(desktop): license Apache-2.0 to match the repo + update descrip…** — +2 −2 — [`f0c36f3`](https://github.com/abgnydn/markview/commit/f0c36f3603120ab489310000268d13996e2aaebc)
-- `07:43` **feat(desktop): cross-platform release pipeline + landing download link** — +97 −43 — [`32dddca`](https://github.com/abgnydn/markview/commit/32dddca2602bfef5ec5abbbb85379810e881a85d)
-- `07:38` **feat(landing): restore dark hero — Home shows LandingEditor when no w…** — +3019 −19 — [`bed6735`](https://github.com/abgnydn/markview/commit/bed6735c04e28b7f1268ba33b1bdc95ff7b99a71)
-- `06:48` **feat(share): port CF share + Yjs signaling workers from Tether v2** — +911 −24 — [`67603e8`](https://github.com/abgnydn/markview/commit/67603e828cb7ffd4b1c255c9f29c95e3a56c8e0f)
-- `06:47` **chore(desktop): align Tauri config with Bun + add beforeBuildCommand** — +690 −860 — [`229740b`](https://github.com/abgnydn/markview/commit/229740b5eb1a344f1984dcfcbcff866bf03534d4)
-- `06:44` **feat(editor): swap textarea for CodeMirror 6 with markdown highlighting** — +182 −105 — [`ccf736c`](https://github.com/abgnydn/markview/commit/ccf736c1104071318aa96b2fba3907e8d17ac85e)
-- `06:42` **chore: pre-push hook uses bun typecheck** — +8 −9 — [`da95626`](https://github.com/abgnydn/markview/commit/da956266a2ce4a6cc0589626b5bea7e69482e72a)
-- `06:41` **fix: drop Tailwind @import + fix tsconfig extends path** — +5 −4 — [`c76582c`](https://github.com/abgnydn/markview/commit/c76582c48f75ab307cf2bcf2e4e7064436ff2451)

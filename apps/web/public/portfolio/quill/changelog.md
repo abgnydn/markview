@@ -16,4 +16,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **feat**: feat(tier-a-backend): personal dictionary + pause + per-app overrides — [`6c07083`](https://github.com/abgnydn/quill/commit/6c07083cd1f4d310a4528fef95e2477fea69cae2)
 - **feat**: feat(overlay): block URL bars by denying AXTextField in browser bundles — [`880fcdb`](https://github.com/abgnydn/quill/commit/880fcdb65b9a12c63e8712680d23116a67e4621f)
 - **feat**: feat(overlay): engagement filter — only engage where Grammarly engages — [`f47bc7c`](https://github.com/abgnydn/quill/commit/f47bc7cc262671d102a45a9eda311b13f426f2fc)
-- **fix**: fix(v0.5): main-window sidebar applies were bypassing the journal — [`9b33bf0`](https://github.com/abgnydn/quill/commit/9b33bf0f7c9add727ac3caddb20b3741365ecc7b)

@@ -1,5 +1,9 @@
 # Commits — fused-lora
 
+## 2026-05-29
+
+- `07:28` **docs(README): rewrite as fused-lora — lead with BitNet+LoRA pivot** — +71 −197 — [`cbfa5d3`](https://github.com/abgnydn/fused-lora/commit/cbfa5d35658684ee772ecd4e05a9f52d085de717)
+
 ## 2026-05-20
 
 - `16:58` **BitNet b1.58 2B4T phase — ternary matmul, .flora LoRA, browser demo** — +8601 −320 — [`f180275`](https://github.com/abgnydn/fused-lora/commit/f180275bda527a00102a6d2027ebd48a7cfb865e)
@@ -72,4 +76,3 @@
 - `09:32` **Add shader analysis notes** — +1 −0 — [`bc3f9c7`](https://github.com/abgnydn/fused-lora/commit/bc3f9c78aecfc0197fb41c33208d6e02704f305b)
 - `09:32` **Engine v3: capture-replay hybrid with zero-TVM decode path** — +308 −0 — [`fc080b5`](https://github.com/abgnydn/fused-lora/commit/fc080b5e94972de3ac4091cfc407326c9efca62e)
 - `09:31` **Compiler-based engine: full from-scratch WebGPU inference** — +3156 −0 — [`01599a6`](https://github.com/abgnydn/fused-lora/commit/01599a636059120eaaadb172f85ad2e672115466)
-- `09:31` **Add TVM shader dump utility and all 85 captured WGSL sources** — +13046 −0 — [`86838bd`](https://github.com/abgnydn/fused-lora/commit/86838bdfadf81a0fd4d8d43f2ff114c5af05ff83)

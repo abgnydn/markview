@@ -1,5 +1,12 @@
 # Commits — iz
 
+## 2026-05-29
+
+- `10:32` **fix(home): hide wrong-lang nav links** — +8 −0 — [`d3f0402`](https://github.com/abgnydn/iz/commit/d3f04022dd6818b35550805b092c38bdfb099a49)
+- `10:18` **v0.2.2: mobile-first responsive CSS across all pages** — +274 −215 — [`2d49823`](https://github.com/abgnydn/iz/commit/2d49823dbe59384264c1e2e6f82b48707e78ded5)
+- `08:48` **v0.2.1: promote bilingual landing to home, archive v0.1 to /v01/** — +1128 −552 — [`2f4f64e`](https://github.com/abgnydn/iz/commit/2f4f64ebd27a8f7475299ebfd28f88f6065af676)
+- `08:35` **v0.2: 5 data fusions + 4 verifiers + bilingual landing + calculator +…** — +18591 −1311 — [`3995249`](https://github.com/abgnydn/iz/commit/39952493957fe08096b59553dfeb3c358df7fbe8)
+
 ## 2026-05-28
 
 - `14:56` **v0.1.2: per-facility pages + audit summaries + claim form + accurate map** — +19967 −863 — [`d4f8ee2`](https://github.com/abgnydn/iz/commit/d4f8ee2dc44d77654b364b199700f98bbc7b8286)
