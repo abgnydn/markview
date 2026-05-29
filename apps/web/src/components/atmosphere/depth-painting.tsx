@@ -247,30 +247,21 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       const mesh = new THREE.Mesh(geom, material);
       scene.add(mesh);
 
-      // Cover-fit the plane to the camera frustum at z=0 (with 10%
-      // buffer for depth displacement + camera orbit). Re-run on every
-      // resize so the painting always fills the viewport.
+      // Cover-fit the plane to the camera frustum at z=0 (5% buffer
+      // for the depth-displaced peaks). The camera is now STATIC —
+      // cursor-driven orbit removed per user feedback ("don't need
+      // the parallax effect"). The painting's life comes from the
+      // depth-band motion shader + Lambert lighting, not from the
+      // camera moving.
       const fitMesh = () => {
         const visibleH = 2 * CAM_DIST * Math.tan(THREE.MathUtils.degToRad(FOV_DEG) / 2);
         const visibleW = visibleH * camera.aspect;
-        // Cover: pick the larger of (match height) or (match width).
         const heightToFit = visibleH;
         const heightFromWidth = visibleW / paintAspect;
-        const scale = Math.max(heightToFit, heightFromWidth) * 1.10;
+        const scale = Math.max(heightToFit, heightFromWidth) * 1.05;
         mesh.scale.set(scale, scale, 1);
       };
       fitMesh();
-
-      // Cursor — drives a soft camera orbit (yaw/pitch ≤ ~5°).
-      let cursorTarget = { x: 0, y: 0 };
-      let cursorCur = { x: 0, y: 0 };
-      const onMove = (e: MouseEvent) => {
-        cursorTarget = {
-          x: (e.clientX / window.innerWidth) * 2 - 1,
-          y: (e.clientY / window.innerHeight) * 2 - 1,
-        };
-      };
-      window.addEventListener('mousemove', onMove);
 
       const resize = () => {
         renderer.setSize(window.innerWidth, window.innerHeight, false);
@@ -283,18 +274,6 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       const start = performance.now();
       let rafId = 0;
       const draw = () => {
-        cursorCur.x += (cursorTarget.x - cursorCur.x) * 0.05;
-        cursorCur.y += (cursorTarget.y - cursorCur.y) * 0.05;
-        // Camera now barely moves — the painting's own depth-band
-        // motion (sky drift, water ripple, subject still) IS the life.
-        // The camera adds a whisper of orbit so the cursor still feels
-        // connected to the scene.
-        const yaw = -cursorCur.x * 0.025;
-        const pitch = cursorCur.y * 0.02;
-        camera.position.x = Math.sin(yaw) * CAM_DIST;
-        camera.position.y = Math.sin(pitch) * CAM_DIST;
-        camera.position.z = Math.cos(yaw) * CAM_DIST;
-        camera.lookAt(0, 0, 0);
         (material.uniforms.uTime as { value: number }).value = (performance.now() - start) / 1000;
         renderer.render(scene, camera);
         rafId = requestAnimationFrame(draw);
@@ -302,7 +281,6 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       rafId = requestAnimationFrame(draw);
 
       cleanup = () => {
-        window.removeEventListener('mousemove', onMove);
         window.removeEventListener('resize', resize);
         if (rafId) cancelAnimationFrame(rafId);
         geom.dispose();

@@ -32,6 +32,8 @@ interface KindConfig {
   // particle physics
   gravity: number;          // px/s² (positive = down)
   drag: number;             // velocity damping per second
+  terminalV: number;        // px/s cap on |velocity| — gravity stops accumulating past this
+  stretch: number;          // motion-blur stretch multiplier — sprite grows along travel when fast (0=off)
   baseSize: number;         // base point size in px
   sizeJitter: number;       // ± px
   lifeMin: number;          // seconds
@@ -140,6 +142,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     sprite: drawPetal,
     gravity: 6,
     drag: 0.04,
+    terminalV: 36,        // cherry blossom petals fall slow — ~36 px/s max
+    stretch: 0.05,        // barely any stretch — petals tumble, don't streak
     baseSize: 10,
     sizeJitter: 18,        // 10–28px — strong size variance
     lifeMin: 18,
@@ -160,6 +164,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     sprite: drawSnow,
     gravity: 14,
     drag: 0.06,
+    terminalV: 80,        // snow falls steady; gusts can push past briefly
+    stretch: 0.20,        // mild streak on fast gusts (real snow blur)
     baseSize: 3,
     sizeJitter: 8,
     lifeMin: 22,
@@ -180,6 +186,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     sprite: drawSpray,
     gravity: 110,
     drag: 0.32,
+    terminalV: 280,       // spray bursts fast — water droplets streak when airborne
+    stretch: 0.45,        // strongest streak — looks like real flying droplets
     baseSize: 3,
     sizeJitter: 7,
     lifeMin: 0.9,
@@ -200,6 +208,8 @@ const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     sprite: drawMote,
     gravity: -5,
     drag: 0.10,
+    terminalV: 24,        // motes drift slow, never streak
+    stretch: 0.0,         // no motion blur on glowing motes
     baseSize: 4,
     sizeJitter: 6,
     lifeMin: 22,
@@ -242,18 +252,28 @@ function makeWindField() {
     return a + (b - a) * fX + (c - a) * fY + (a - b - c + d) * fX * fY;
   }
 
-  return (x: number, y: number, t: number): [number, number] => {
-    const fx = x * 0.0022 + t * 0.05;
-    const fy = y * 0.0022 + t * 0.04;
-    const eps = 0.6;
-    // Curl of the 2D noise scalar: returns ⟂ to ∇noise, which spirals
-    // around peaks instead of flowing past them.
+  // Two-octave curl noise: a slow large-scale eddy (the prevailing
+  // gust direction) summed with a fast small-scale swirl (turbulent
+  // detail). Real wind isn't a single coherent frequency — gusts
+  // happen inside gusts inside gusts. Two octaves is the cheapest
+  // way to get that compound texture without buying simplex noise.
+  function curl(fx: number, fy: number, eps: number): [number, number] {
     const dx = (noise2(fx, fy + eps) - noise2(fx, fy - eps)) / (2 * eps);
     const dy = (noise2(fx + eps, fy) - noise2(fx - eps, fy)) / (2 * eps);
-    const mag = 26;
-    // Slow global drift so the eddies travel across the screen.
+    return [dx, -dy];
+  }
+
+  return (x: number, y: number, t: number): [number, number] => {
+    // Coarse octave: large eddies, slow drift.
+    const [cx, cy] = curl(x * 0.0020 + t * 0.04, y * 0.0020 + t * 0.03, 0.6);
+    // Fine octave: small swirls, faster, half amplitude.
+    const [fxs, fys] = curl(x * 0.0070 + t * 0.18, y * 0.0070 + t * 0.14, 0.5);
+    // Global drift so the whole field travels across the screen.
     const drift = Math.sin(t * 0.07) * 8;
-    return [dx * mag + drift, -dy * mag];
+    return [
+      cx * 26 + fxs * 12 + drift,
+      cy * 26 + fys * 12,
+    ];
   };
 }
 
@@ -311,8 +331,9 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const vy = new Float32Array(count);
       const life = new Float32Array(count);
       const lifeMax = new Float32Array(count);
-      const rotV = new Float32Array(count);    // rotation velocity rad/s
-      const depth = new Float32Array(count);   // 0..1, near = bigger/faster/brighter
+      const rotV = new Float32Array(count);     // rotation velocity rad/s
+      const depth = new Float32Array(count);    // 0..1, near = bigger/faster/brighter
+      const alphaBase = new Float32Array(count); // 0.55–1.0 per-particle alpha jitter (some flakes are translucent, some opaque)
 
       const W = () => window.innerWidth;
       const H = () => window.innerHeight;
@@ -348,6 +369,9 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         sizes[i] = (cfg.baseSize + Math.random() * cfg.sizeJitter) * dScale;
         rotations[i] = Math.random() * Math.PI * 2;
         rotV[i] = cfg.rotates ? (Math.random() - 0.5) * 1.8 : 0;
+        // Per-particle alpha jitter — some flakes/petals are barely
+        // there, others fully opaque. Real snow visibly has both.
+        alphaBase[i] = 0.55 + Math.random() * 0.45;
         const lm = cfg.lifeMin + Math.random() * (cfg.lifeMax - cfg.lifeMin);
         lifeMax[i] = lm;
         life[i] = staggered ? Math.random() * lm : lm;
@@ -470,20 +494,35 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           vx[i] *= dragFactor;
           vy[i] *= dragFactor;
 
+          // Terminal velocity — clamp |v| so gravity doesn't keep
+          // accumulating into a streak. Real particles reach a max
+          // fall speed (air resistance = gravity), then hold.
+          const speed = Math.hypot(vx[i], vy[i]);
+          const vTerm = cfg.terminalV * (0.5 + d * 0.5);
+          if (speed > vTerm) {
+            const s = vTerm / speed;
+            vx[i] *= s;
+            vy[i] *= s;
+          }
+
           // Integrate.
           positions[ix] = px + vx[i] * dt;
           positions[ix + 1] = py + vy[i] * dt;
           rotations[i] += rotV[i] * dt;
 
-          // Life + alpha + depth-driven dim. Far particles top out at
-          // ~0.55 alpha — they read as atmosphere haze rather than
-          // crisp foreground.
+          // Velocity-stretch (motion-blur cue) — particles moving fast
+          // grow longer along their travel direction. Scaled per-kind
+          // via cfg.stretch.
+          const stretch = Math.min(1.6, 1 + (speed / vTerm) * cfg.stretch);
+          sizes[i] = (cfg.baseSize + (depth[i] * cfg.sizeJitter)) * (0.35 + depth[i] * 0.65) * stretch;
+
+          // Life + alpha + per-particle alpha jitter + depth dim.
           life[i] -= dt;
           const lm = lifeMax[i];
-          const u = life[i] / lm;             // 1 → 0
+          const u = life[i] / lm;
           const fade = u < 0.85 ? Math.min(1, u / 0.2) : (1 - u) / 0.15;
           const depthAlpha = 0.45 + d * 0.55;
-          alphas[i] = Math.max(0, Math.min(1, fade * depthAlpha));
+          alphas[i] = Math.max(0, Math.min(1, fade * depthAlpha * alphaBase[i]));
 
           // Respawn if life expired OR if it's far offscreen.
           const offX = positions[ix] < -W() * 0.6 || positions[ix] > W() * 0.6;
