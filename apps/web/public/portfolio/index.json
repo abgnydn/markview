@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-29T21:54:43.203Z",
+  "generated_at": "2026-05-30T21:03:16.103Z",
   "project_count": 40,
   "river_count": 500,
-  "activity_90d_total": 1507,
+  "activity_90d_total": 1510,
   "activity_90d": {
     "2026-03-14": 4,
     "2026-03-15": 23,
@@ -59,7 +59,8 @@
     "2026-05-26": 30,
     "2026-05-27": 77,
     "2026-05-28": 96,
-    "2026-05-29": 37
+    "2026-05-29": 38,
+    "2026-05-30": 2
   },
   "projects": [
     {
@@ -163,20 +164,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-05-29T14:24:27Z",
+      "pushed_at": "2026-05-30T10:37:07Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "c210b71e1f53d66417f8ca25861113edfaa68d3d",
-        "short_sha": "c210b71",
-        "message": "feat(web): pre-render /projects so the page is visible without JS",
-        "type": "feat",
-        "date": "2026-05-29T14:24:13Z",
-        "url": "https://github.com/abgnydn/markview/commit/c210b71e1f53d66417f8ca25861113edfaa68d3d",
-        "additions": 165,
-        "deletions": 1
+        "sha": "24c53146be04311d655dae29dac4cd1619c4b284",
+        "short_sha": "24c5314",
+        "message": "fix(atmosphere): accumulation now actually piles up",
+        "type": "fix",
+        "date": "2026-05-30T10:37:01Z",
+        "url": "https://github.com/abgnydn/markview/commit/24c53146be04311d655dae29dac4cd1619c4b284",
+        "additions": 22,
+        "deletions": 9
       }
     },
     {
@@ -1379,6 +1380,45 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "24c53146be04311d655dae29dac4cd1619c4b284",
+      "short_sha": "24c5314",
+      "message": "fix(atmosphere): accumulation now actually piles up",
+      "type": "fix",
+      "date": "2026-05-30T10:37:01Z",
+      "url": "https://github.com/abgnydn/markview/commit/24c53146be04311d655dae29dac4cd1619c4b284",
+      "additions": 22,
+      "deletions": 9
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "71c9265a20b7c36bcdd9051dd9eecad47af75a5a",
+      "short_sha": "71c9265",
+      "message": "ci: deploy workflow for Cloudflare Pages",
+      "type": "ci",
+      "date": "2026-05-30T10:34:55Z",
+      "url": "https://github.com/abgnydn/markview/commit/71c9265a20b7c36bcdd9051dd9eecad47af75a5a",
+      "additions": 56,
+      "deletions": 0
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "0b9726a2cf6be67e5ecbc61d2ca649615b80f10c",
+      "short_sha": "0b9726a",
+      "message": "chore(portfolio): daily sync 2026-05-29",
+      "type": "chore",
+      "date": "2026-05-29T21:54:43Z",
+      "url": "https://github.com/abgnydn/markview/commit/0b9726a2cf6be67e5ecbc61d2ca649615b80f10c",
+      "additions": 871,
+      "deletions": 874
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4279,19 +4319,6 @@
       "deletions": 307
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "f21471ed7034d729aba7d7ae5146035ecd3fc7d5",
-      "short_sha": "f21471e",
-      "message": "feat(zen): editor as brain space — vanishing chrome, serif body, pape…",
-      "type": "feat",
-      "date": "2026-05-22T08:41:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/f21471ed7034d729aba7d7ae5146035ecd3fc7d5",
-      "additions": 525,
-      "deletions": 32
-    },
-    {
       "slug": "safenpm",
       "name": "safenpm",
       "language": "TypeScript",
@@ -4344,19 +4371,6 @@
       "deletions": 1
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "720aaba4ba42ee6d805afef577e9a3af3d18453e",
-      "short_sha": "720aaba",
-      "message": "feat(share-worker): deploy CF Workers + wire Markview's own Yjs DO",
-      "type": "feat",
-      "date": "2026-05-22T08:06:11Z",
-      "url": "https://github.com/abgnydn/markview/commit/720aaba4ba42ee6d805afef577e9a3af3d18453e",
-      "additions": 11,
-      "deletions": 5
-    },
-    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -4368,19 +4382,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/ff670ea44931a7352a893a74b4f5975a1b6c9a7c",
       "additions": 81,
       "deletions": 3
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "e2c99d9cbf4f6e2f1f995825b5611927b12862af",
-      "short_sha": "e2c99d9",
-      "message": "fix(desktop): gate RunEvent::Opened on macOS only (Linux/Windows lack…",
-      "type": "fix",
-      "date": "2026-05-22T08:03:20Z",
-      "url": "https://github.com/abgnydn/markview/commit/e2c99d9cbf4f6e2f1f995825b5611927b12862af",
-      "additions": 33,
-      "deletions": 23
     },
     {
       "slug": "safenpm",

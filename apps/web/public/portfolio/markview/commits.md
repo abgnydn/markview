@@ -1,7 +1,13 @@
 # Commits — markview
 
+## 2026-05-30
+
+- `10:37` **fix(atmosphere): accumulation now actually piles up** — +22 −9 — [`24c5314`](https://github.com/abgnydn/markview/commit/24c53146be04311d655dae29dac4cd1619c4b284)
+- `10:34` **ci: deploy workflow for Cloudflare Pages** — +56 −0 — [`71c9265`](https://github.com/abgnydn/markview/commit/71c9265a20b7c36bcdd9051dd9eecad47af75a5a)
+
 ## 2026-05-29
 
+- `21:54` **chore(portfolio): daily sync 2026-05-29** — +871 −874 — [`0b9726a`](https://github.com/abgnydn/markview/commit/0b9726a2cf6be67e5ecbc61d2ca649615b80f10c)
 - `14:24` **feat(web): pre-render /projects so the page is visible without JS** — +165 −1 — [`c210b71`](https://github.com/abgnydn/markview/commit/c210b71e1f53d66417f8ca25861113edfaa68d3d)
 - `11:09` **feat(atmosphere): persistent accumulation layer — snow piles, petals …** — +100 −2 — [`1776edc`](https://github.com/abgnydn/markview/commit/1776edcb93ac047311eb6e411ff366d302f60806)
 - `10:55` **feat(atmosphere): shader post-processing pass — bloom, SSAO, god rays…** — +125 −24 — [`6a0f1e6`](https://github.com/abgnydn/markview/commit/6a0f1e63a9ed87b6b9ecaacb498ea813ef359693)
@@ -58,6 +64,3 @@
 - `09:11` **fix(zen): real edge-hover zones + kill chrome that was leaking through** — +379 −164 — [`35d7a64`](https://github.com/abgnydn/markview/commit/35d7a649a95ff62b7e63316417cd61b52d189cd0)
 - `08:56` **feat(landing): platform-aware Download CTA — all four targets now linked** — +38 −35 — [`f407a6e`](https://github.com/abgnydn/markview/commit/f407a6ece3caa9f5455bc3ab2579fe7332f696d4)
 - `08:45` **chore(ci): cross-compile macOS x64 from arm64 + drop dead v1 workflows** — +6 −307 — [`bf0146f`](https://github.com/abgnydn/markview/commit/bf0146f8266bef3a531446483fe091311905ecae)
-- `08:41` **feat(zen): editor as brain space — vanishing chrome, serif body, pape…** — +525 −32 — [`f21471e`](https://github.com/abgnydn/markview/commit/f21471ed7034d729aba7d7ae5146035ecd3fc7d5)
-- `08:06` **feat(share-worker): deploy CF Workers + wire Markview's own Yjs DO** — +11 −5 — [`720aaba`](https://github.com/abgnydn/markview/commit/720aaba4ba42ee6d805afef577e9a3af3d18453e)
-- `08:03` **fix(desktop): gate RunEvent::Opened on macOS only (Linux/Windows lack…** — +33 −23 — [`e2c99d9`](https://github.com/abgnydn/markview/commit/e2c99d9cbf4f6e2f1f995825b5611927b12862af)
