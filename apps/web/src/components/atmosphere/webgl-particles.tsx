@@ -578,20 +578,33 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           const depthAlpha = 0.45 + d * 0.55;
           alphas[i] = Math.max(0, Math.min(1, fade * depthAlpha * alphaBase[i]));
 
-          // Settling — when a particle is in the lower band AND
-          // moving slowly AND the kind accumulates, write a soft
-          // splat into the accumulation canvas and respawn.
-          // The lower-band check is a proxy for "landed on the
-          // foreground" (we don't have access to the painting depth
-          // map here; the lower half of the screen is generally
-          // the foreground zone in our paintings).
+          // Settling — when a particle reaches the lower viewport
+          // and the kind accumulates, write a soft splat and respawn.
+          // Earlier we also required `speed < terminalV * 0.25`, but
+          // gravity-bound particles cruise at terminal speed all the
+          // way down so they never qualified and nothing ever piled
+          // up. Now ANY particle that reaches the lower 25% of the
+          // viewport settles — matches what your eye expects from
+          // snow hitting the ground.
           let settled = false;
-          if (accumOn && speed < cfg.terminalV * 0.25 && positions[ix + 1] < -H() * 0.18) {
+          // Settle band: from -H/2 * 0.50 down to -H/2 (the floor).
+          // Slight randomization on the exact splat-y position so the
+          // accumulation reads as a soft pile rather than a hard line.
+          const settleBandTop = -H() / 2 * 0.50;
+          if (accumOn && positions[ix + 1] < settleBandTop) {
+            // Splat near the bottom band (with a 0..30px jitter above
+            // the floor) so accumulation looks like a soft drift, not
+            // a stripe at the screen edge.
+            positions[ix + 1] = -H() / 2 + Math.random() * 30;
             // Translate centered coords → top-left pixel coords for
             // the accumulation canvas. DPR-scaled.
             const sx = (positions[ix] + W() / 2) * accumDpr;
             const sy = (H() / 2 - positions[ix + 1]) * accumDpr;
-            const sR = (sizes[i] * 0.42) * accumDpr;
+            // Splat radius is generous so each one is visible — the
+            // old 0.42× sprite-size was 4-5 actual pixels and read as
+            // noise. ~22-50 px in screen space accumulates into a
+            // proper drift.
+            const sR = (10 + sizes[i] * 1.4) * accumDpr;
             // Soft radial splat in the kind's signature color via
             // additive blend. Subtle per particle; accumulates over
             // many settled particles.
