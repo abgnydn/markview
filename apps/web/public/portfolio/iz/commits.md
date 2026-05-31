@@ -1,5 +1,9 @@
 # Commits — iz
 
+## 2026-05-31
+
+- `06:03` **B6: EUTL EU cement external validation (n=372 plants × ~20 yrs)** — +1505 −10 — [`392deb8`](https://github.com/abgnydn/iz/commit/392deb8eca60258aefb10acddf52faeafa81dfa0)
+
 ## 2026-05-29
 
 - `10:32` **fix(home): hide wrong-lang nav links** — +8 −0 — [`d3f0402`](https://github.com/abgnydn/iz/commit/d3f04022dd6818b35550805b092c38bdfb099a49)

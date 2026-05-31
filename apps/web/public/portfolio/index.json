@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-30T21:03:16.103Z",
+  "generated_at": "2026-05-31T21:03:46.625Z",
   "project_count": 40,
   "river_count": 500,
-  "activity_90d_total": 1510,
+  "activity_90d_total": 1512,
   "activity_90d": {
     "2026-03-14": 4,
     "2026-03-15": 23,
@@ -60,7 +60,8 @@
     "2026-05-27": 77,
     "2026-05-28": 96,
     "2026-05-29": 38,
-    "2026-05-30": 2
+    "2026-05-30": 3,
+    "2026-05-31": 1
   },
   "projects": [
     {
@@ -164,20 +165,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-05-30T10:37:07Z",
+      "pushed_at": "2026-05-30T21:03:17Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "24c53146be04311d655dae29dac4cd1619c4b284",
-        "short_sha": "24c5314",
-        "message": "fix(atmosphere): accumulation now actually piles up",
-        "type": "fix",
-        "date": "2026-05-30T10:37:01Z",
-        "url": "https://github.com/abgnydn/markview/commit/24c53146be04311d655dae29dac4cd1619c4b284",
-        "additions": 22,
-        "deletions": 9
+        "sha": "af8f75bf4af13380248a383a9cc9fd9219f020d2",
+        "short_sha": "af8f75b",
+        "message": "chore(portfolio): daily sync 2026-05-30",
+        "type": "chore",
+        "date": "2026-05-30T21:03:16Z",
+        "url": "https://github.com/abgnydn/markview/commit/af8f75bf4af13380248a383a9cc9fd9219f020d2",
+        "additions": 59,
+        "deletions": 55
       }
     },
     {
@@ -226,20 +227,20 @@
       "language_color": "#e34c26",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-05-29T10:32:29Z",
+      "pushed_at": "2026-05-31T06:04:00Z",
       "default_branch": "master",
       "latest_tag": "v0.1.2",
-      "commits_30d": 38,
-      "commits_synced": 38,
+      "commits_30d": 39,
+      "commits_synced": 39,
       "last_commit": {
-        "sha": "d3f04022dd6818b35550805b092c38bdfb099a49",
-        "short_sha": "d3f0402",
-        "message": "fix(home): hide wrong-lang nav links",
-        "type": "fix",
-        "date": "2026-05-29T10:32:27Z",
-        "url": "https://github.com/abgnydn/iz/commit/d3f04022dd6818b35550805b092c38bdfb099a49",
-        "additions": 8,
-        "deletions": 0
+        "sha": "392deb8eca60258aefb10acddf52faeafa81dfa0",
+        "short_sha": "392deb8",
+        "message": "B6: EUTL EU cement external validation (n=372 plants × ~20 yrs)",
+        "type": "other",
+        "date": "2026-05-31T06:03:58Z",
+        "url": "https://github.com/abgnydn/iz/commit/392deb8eca60258aefb10acddf52faeafa81dfa0",
+        "additions": 1505,
+        "deletions": 10
       }
     },
     {
@@ -878,7 +879,7 @@
       "pushed_at": "2026-05-05T12:14:49Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 50,
+      "commits_30d": 25,
       "commits_synced": 50,
       "last_commit": {
         "sha": "04118c151ea6e016e6708de6c9bde9ee30649609",
@@ -1380,6 +1381,32 @@
     }
   ],
   "commits": [
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "392deb8eca60258aefb10acddf52faeafa81dfa0",
+      "short_sha": "392deb8",
+      "message": "B6: EUTL EU cement external validation (n=372 plants × ~20 yrs)",
+      "type": "other",
+      "date": "2026-05-31T06:03:58Z",
+      "url": "https://github.com/abgnydn/iz/commit/392deb8eca60258aefb10acddf52faeafa81dfa0",
+      "additions": 1505,
+      "deletions": 10
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "af8f75bf4af13380248a383a9cc9fd9219f020d2",
+      "short_sha": "af8f75b",
+      "message": "chore(portfolio): daily sync 2026-05-30",
+      "type": "chore",
+      "date": "2026-05-30T21:03:16Z",
+      "url": "https://github.com/abgnydn/markview/commit/af8f75bf4af13380248a383a9cc9fd9219f020d2",
+      "additions": 59,
+      "deletions": 55
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4304,19 +4331,6 @@
       "url": "https://github.com/abgnydn/markview/commit/f407a6ece3caa9f5455bc3ab2579fe7332f696d4",
       "additions": 38,
       "deletions": 35
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "bf0146f8266bef3a531446483fe091311905ecae",
-      "short_sha": "bf0146f",
-      "message": "chore(ci): cross-compile macOS x64 from arm64 + drop dead v1 workflows",
-      "type": "chore",
-      "date": "2026-05-22T08:45:45Z",
-      "url": "https://github.com/abgnydn/markview/commit/bf0146f8266bef3a531446483fe091311905ecae",
-      "additions": 6,
-      "deletions": 307
     },
     {
       "slug": "safenpm",
@@ -7865,19 +7879,6 @@
       "date": "2026-05-04T12:19:58Z",
       "url": "https://github.com/abgnydn/wonderlab/commit/5fea060338a125a73aab9ad22d4bf96a4170a0fb",
       "additions": 155,
-      "deletions": 2
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "249fa7f158832be4a3b7c7f9f02c90ad5733fb3c",
-      "short_sha": "249fa7f",
-      "message": "LM Studio: surface the actual fixes for the https→localhost block",
-      "type": "other",
-      "date": "2026-05-04T12:14:31Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/249fa7f158832be4a3b7c7f9f02c90ad5733fb3c",
-      "additions": 139,
       "deletions": 2
     }
   ],

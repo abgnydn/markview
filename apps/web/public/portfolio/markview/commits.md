@@ -2,6 +2,7 @@
 
 ## 2026-05-30
 
+- `21:03` **chore(portfolio): daily sync 2026-05-30** — +59 −55 — [`af8f75b`](https://github.com/abgnydn/markview/commit/af8f75bf4af13380248a383a9cc9fd9219f020d2)
 - `10:37` **fix(atmosphere): accumulation now actually piles up** — +22 −9 — [`24c5314`](https://github.com/abgnydn/markview/commit/24c53146be04311d655dae29dac4cd1619c4b284)
 - `10:34` **ci: deploy workflow for Cloudflare Pages** — +56 −0 — [`71c9265`](https://github.com/abgnydn/markview/commit/71c9265a20b7c36bcdd9051dd9eecad47af75a5a)
 
@@ -63,4 +64,3 @@
 - `09:20` **fix(zen): three real bugs the user caught** — +46 −17 — [`9fa4624`](https://github.com/abgnydn/markview/commit/9fa462401a0313628129bf56509240babf0f8708)
 - `09:11` **fix(zen): real edge-hover zones + kill chrome that was leaking through** — +379 −164 — [`35d7a64`](https://github.com/abgnydn/markview/commit/35d7a649a95ff62b7e63316417cd61b52d189cd0)
 - `08:56` **feat(landing): platform-aware Download CTA — all four targets now linked** — +38 −35 — [`f407a6e`](https://github.com/abgnydn/markview/commit/f407a6ece3caa9f5455bc3ab2579fe7332f696d4)
-- `08:45` **chore(ci): cross-compile macOS x64 from arm64 + drop dead v1 workflows** — +6 −307 — [`bf0146f`](https://github.com/abgnydn/markview/commit/bf0146f8266bef3a531446483fe091311905ecae)
