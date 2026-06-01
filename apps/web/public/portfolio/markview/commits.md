@@ -1,5 +1,23 @@
 # Commits — markview
 
+## 2026-06-01
+
+- `17:40` **feat(atmosphere): DOF + anaglyph + living light + dissolve-in (flat b…** — +97 −6 — [`47146bf`](https://github.com/abgnydn/markview/commit/47146bf7176586a8faf67425e7c3f9be6633472b)
+- `17:21` **fix(atmosphere): surface the whole pack — 31 paintings stopped feelin…** — +72 −14 — [`996a40b`](https://github.com/abgnydn/markview/commit/996a40bdeb41f77bbac705e4bbde326e84c3609f)
+- `16:50` **feat(atmosphere): 16 more CC0 paintings — packs now 8/7/9/6** — +112 −0 — [`52f4509`](https://github.com/abgnydn/markview/commit/52f4509091852d5795fa6562b3fb2ba4072bed54)
+- `12:13` **refactor: extract DOM enhancers + raf-loop helper** — +552 −521 — [`bf91da4`](https://github.com/abgnydn/markview/commit/bf91da48ee8fa85a0c53cb2193a42597a460c0f9)
+- `11:28` **chore: drop 3 dead files + 4 unused runtime deps** — +1 −453 — [`c9eb02c`](https://github.com/abgnydn/markview/commit/c9eb02c4ed366a1de004ad01c59533b82885760e)
+- `11:23` **perf(atmosphere): pause all render loops when the tab is hidden** — +50 −0 — [`c71aaa9`](https://github.com/abgnydn/markview/commit/c71aaa939fa02cbef246d2d816612deb377e0a2e)
+- `09:48` **fix(world): fly actually flies + WASD no longer switches files behind it** — +33 −15 — [`72ed3d5`](https://github.com/abgnydn/markview/commit/72ed3d529facafad42be2d6e0453117f04401ba4)
+- `09:20` **feat(world): readable pages, trails, sky dome, fly, water, wind, wild…** — +332 −99 — [`ba51ced`](https://github.com/abgnydn/markview/commit/ba51ced2d4ff0e2c5108edf5c5fea832a7472392)
+- `09:05` **feat(atmosphere): walkable painting world — "go inside" the painting** — +444 −1 — [`162cd81`](https://github.com/abgnydn/markview/commit/162cd81c6a195c8585b2c44e60094478ddf89545)
+- `08:30` **feat: AI co-author (Tab-to-ghost) + ink-dropper cursor** — +400 −0 — [`178c71b`](https://github.com/abgnydn/markview/commit/178c71b849cd694190c5a91b368b95b649b79491)
+- `08:30` **feat(projects): chronicle chat + manifest cleanup + prerender fix** — +947 −270 — [`078338c`](https://github.com/abgnydn/markview/commit/078338c90bc9e3097d7dc11d8c9eabbda70ed27f)
+
+## 2026-05-31
+
+- `21:03` **chore(portfolio): daily sync 2026-05-31** — +56 −51 — [`388dbe8`](https://github.com/abgnydn/markview/commit/388dbe88a091b7a53a6c8cddafb2763915659ce7)
+
 ## 2026-05-30
 
 - `21:03` **chore(portfolio): daily sync 2026-05-30** — +59 −55 — [`af8f75b`](https://github.com/abgnydn/markview/commit/af8f75bf4af13380248a383a9cc9fd9219f020d2)
@@ -49,18 +67,3 @@
 
 - `11:42` **fix(ui): un-hide paragraphs + TOC scroll-spy + slower motion + 14 new…** — +1124 −110 — [`ccef112`](https://github.com/abgnydn/markview/commit/ccef112cd5d6a55c1278261c92fae1a709e2daaa)
 - `11:25` **feat(ui): 19 polish items — lighter, smoother, more alive** — +665 −8 — [`966d63e`](https://github.com/abgnydn/markview/commit/966d63e021856f0c36bbf5cfe7d75ae61fd9b7df)
-- `10:56` **fix(zen): hoist zen-module @imports to top of zen.css** — +10 −9 — [`99d8601`](https://github.com/abgnydn/markview/commit/99d86018b321dec98720e7d2e2ea56ff3f37e22a)
-- `10:39` **chore(brand): refreshed icon set across desktop + web** — +23 −0 — [`512b8be`](https://github.com/abgnydn/markview/commit/512b8be2bffd63c8910bcdddaa970594a8d3f2be)
-- `10:39` **perf+chore: SW cache bump + dead-component cleanup** — +1 −1048 — [`571b75e`](https://github.com/abgnydn/markview/commit/571b75ec7024dab97e8d7217c463871a8576e18c)
-- `10:38` **chore: cross-platform copy + globals.css dead-code trim** — +627 −606 — [`5759178`](https://github.com/abgnydn/markview/commit/5759178537d841d2a5c4882b750c406c94a3ccfe)
-- `10:38` **fix(collab): share-as-URL recipient + signaling worker root path** — +467 −99 — [`499112e`](https://github.com/abgnydn/markview/commit/499112ee08cf335c7b33165fb007c11beb148025)
-- `10:37` **feat(viewer): force-graph + file browser + version snapshots** — +2812 −102 — [`06e4d72`](https://github.com/abgnydn/markview/commit/06e4d72fab14488f11b7007512967305a0562e23)
-- `10:37` **feat(ai): in-browser embeddings + grounded chat + related notes** — +1155 −54 — [`3abc4ee`](https://github.com/abgnydn/markview/commit/3abc4eef696bca854f15bd60a11ad10238c793fb)
-- `10:37` **feat(zen): paper-grain editor surface + 4-atmosphere ambient system** — +4206 −122 — [`054e2b2`](https://github.com/abgnydn/markview/commit/054e2b2789f1020e7526a78c09fa1946d1950df3)
-
-## 2026-05-22
-
-- `09:31` **chore: cut Vercel auto-deploy + rewrite web README** — +24 −24 — [`83195d5`](https://github.com/abgnydn/markview/commit/83195d56c2e9d62159132142bb2113da81c67b16)
-- `09:20` **fix(zen): three real bugs the user caught** — +46 −17 — [`9fa4624`](https://github.com/abgnydn/markview/commit/9fa462401a0313628129bf56509240babf0f8708)
-- `09:11` **fix(zen): real edge-hover zones + kill chrome that was leaking through** — +379 −164 — [`35d7a64`](https://github.com/abgnydn/markview/commit/35d7a649a95ff62b7e63316417cd61b52d189cd0)
-- `08:56` **feat(landing): platform-aware Download CTA — all four targets now linked** — +38 −35 — [`f407a6e`](https://github.com/abgnydn/markview/commit/f407a6ece3caa9f5455bc3ab2579fe7332f696d4)

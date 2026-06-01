@@ -1,5 +1,26 @@
 # Commits — iz
 
+## 2026-06-01
+
+- `17:47` **Wire Zenodo DOI 10.5281/zenodo.20496086 into all surfaces** — +10 −5 — [`9f121f9`](https://github.com/abgnydn/iz/commit/9f121f96b91061505e1e1d2d40a1fb4aa08ed131)
+- `17:40` **fix(zenodo): match webgpu-q's working schema exactly** — +9 −47 — [`7895dce`](https://github.com/abgnydn/iz/commit/7895dce6340377a66027db0f0b40b3fc40eecfb7)
+- `17:24` **fix(zenodo): simplify metadata to minimal known-good schema** — +2 −25 — [`2474344`](https://github.com/abgnydn/iz/commit/24743441d1e541f843fd4ed6640fd1a2030a0c95)
+- `17:03` **Zenodo-ready metadata for v0.3 release** — +226 −16 — [`8c3a4f5`](https://github.com/abgnydn/iz/commit/8c3a4f578883e3525a1b0643f42f8121a77af89e)
+- `16:21` **fix(policy): align th.num headers with td.num cells (right-align)** — +1 −1 — [`a86beac`](https://github.com/abgnydn/iz/commit/a86beacc2b4aac77e72946a2ef932df28d1fba48)
+- `16:12` **audit pass 10: README TL;DR per-plant accuracy + €2B framing** — +2 −2 — [`05d090f`](https://github.com/abgnydn/iz/commit/05d090f8af308dd8a9e4215e6f0e77871aa6eb50)
+- `16:09` **audit pass 9: CLAUDE.md Resume block + Schelklingen capacity spot-check** — +1 −1 — [`3539f45`](https://github.com/abgnydn/iz/commit/3539f459818075abb9dbfb2a5d1cf4d29bccc119)
+- `12:38` **audit pass 8: Cembureau EF refinement + IR 2025/2620 citation + Yara …** — +3 −2 — [`1c1d610`](https://github.com/abgnydn/iz/commit/1c1d610a563a75e197bbcbbc3f2788325f0c659e)
+- `11:29` **audit pass 7: paper preview ridge regression internal inconsistency** — +2 −2 — [`2b893ee`](https://github.com/abgnydn/iz/commit/2b893eec68019e1313adb9f212bac942e10584b2)
+- `11:24` **audit pass 6: §4 coverage claim, paper preview TSRS dating** — +5 −5 — [`c47312b`](https://github.com/abgnydn/iz/commit/c47312b8bc53e0bbf5f57f24167773d602181a9e)
+- `11:20` **audit pass 5: TSRS dating, TÜRKÇİMENTO denominator, Cemex still owns …** — +5 −5 — [`48d0d45`](https://github.com/abgnydn/iz/commit/48d0d454e895fcb11792b8d1fd1196859d8a84a0)
+- `11:00` **audit pass 4: TR Climate Law number, lingering CN/value errors** — +6 −6 — [`4bed572`](https://github.com/abgnydn/iz/commit/4bed572bc953b6473b90e93d45c4c0ad8b7f8a22)
+- `09:50` **audit pass 3: CN codes, facility breakdown, EAF count** — +4 −4 — [`da3beac`](https://github.com/abgnydn/iz/commit/da3beac470d4bff024d701a5187fdf4d68541520)
+- `09:25` **audit pass 2: tighten per-plant accuracy claims** — +11 −11 — [`ddd43a8`](https://github.com/abgnydn/iz/commit/ddd43a863d9444083f030c32ef6703d45fcf01b9)
+- `08:57` **audit: tighten policy submission, fix plant-year counts** — +29 −28 — [`7f0d12e`](https://github.com/abgnydn/iz/commit/7f0d12ed032fe8251c325f584be52148af7c4f9e)
+- `08:37` **EU CBAM 2026 counter-default policy submission** — +211 −0 — [`ffc7e8c`](https://github.com/abgnydn/iz/commit/ffc7e8cefc8276aac44de9629b3da7a58b57c71e)
+- `08:22` **B7: PySR symbolic regression independently rediscovers cap × ef × cf** — +976 −6 — [`9242093`](https://github.com/abgnydn/iz/commit/92420933430c020198e1958460df1a50df3a9665)
+- `08:07` **B6: extend EUTL validation to steel + aluminum + fertilizer (n=789 EU…** — +3163 −10 — [`948102c`](https://github.com/abgnydn/iz/commit/948102cee7b5342931f09fadfb4a5d2f026c3e4d)
+
 ## 2026-05-31
 
 - `06:03` **B6: EUTL EU cement external validation (n=372 plants × ~20 yrs)** — +1505 −10 — [`392deb8`](https://github.com/abgnydn/iz/commit/392deb8eca60258aefb10acddf52faeafa81dfa0)
@@ -52,13 +73,3 @@
 ## 2026-05-20
 
 - `06:18` **marketing: update report contact to Ahmet Baris Gunaydin · hi@barisgu…** — +3 −3 — [`f641f50`](https://github.com/abgnydn/iz/commit/f641f5031b3dc539a2ff8ec4d2e7682f4d3e9993)
-- `06:18` **marketing: tighten flyer to fit A4 + correct contact info** — +86 −88 — [`4d8c9a2`](https://github.com/abgnydn/iz/commit/4d8c9a246be33d6c81d4868bc9f0fe4e634dce76)
-- `06:02` **marketing: inline satellite chart as base64 in Akçansa report** — +1 −1 — [`9da0972`](https://github.com/abgnydn/iz/commit/9da0972d93c58e99f2864863f6c55e3fbc04a0f3)
-- `06:00` **marketing: Akçansa report + iz flyer (HTML, print-to-PDF in browser)** — +1130 −4 — [`d505168`](https://github.com/abgnydn/iz/commit/d5051683c7d3e432f991b8ab40d453bde74a76a1)
-- `05:48` **Steps 3+4: CBAM XML template + demo, validates against EU XSD v23.00** — +637 −3 — [`65250ad`](https://github.com/abgnydn/iz/commit/65250adf3a4746238b1fab9bf263d511200a933e)
-
-## 2026-05-19
-
-- `13:56` **claude.md: advance Resume block — Steps 1/2/5 done, next is CBAM XML …** — +15 −13 — [`bc121ad`](https://github.com/abgnydn/iz/commit/bc121adc64922063b2f552a79347f30a0c225cb8)
-- `13:55` **v0: S5P NO₂ spike over Akçansa — plant signal 1.9–18.7× rural background** — +1542 −6 — [`ae2e595`](https://github.com/abgnydn/iz/commit/ae2e595f2b515ce0cc0593d2ad9f357b6eda75dc)
-- `13:31` **init: iz — CBAM MRV for Turkish exporters (scope + sales targets, no …** — +191 −0 — [`1b3b7ad`](https://github.com/abgnydn/iz/commit/1b3b7ad844acaaeaf887d52cf1e264e86a64f69b)

@@ -1,5 +1,11 @@
 # Commits — webgpu-dna
 
+## 2026-06-01
+
+- `17:09` **release: v0.4.0 — audit closure + structural pivots** — +71 −13 — [`1704df6`](https://github.com/abgnydn/webgpu-dna/commit/1704df6d721bf09161a6912004915a5a2c10ce7f)
+- `16:21` **docs: catalogue deliberate divergences from Geant4-DNA DNA_Opt2** — +79 −0 — [`e40a6d7`](https://github.com/abgnydn/webgpu-dna/commit/e40a6d7f6e72f27fb3e3a4f239dd5de971d968e5)
+- `16:21` **GPU-SBS inter-track chemistry: browser-native path closed — needs nat…** — +2510 −26 — [`4f2abcb`](https://github.com/abgnydn/webgpu-dna/commit/4f2abcb302b51337edf2e319c256970299652d01)
+
 ## 2026-05-14
 
 - `13:50` **docs(readme): link RESEARCH_STANDARDS.md (shared canonical discipline…** — +1 −1 — [`acea15c`](https://github.com/abgnydn/webgpu-dna/commit/acea15c4f8c9398cd73b87b898fce012619a53ae)
@@ -58,6 +64,3 @@
 - `11:09` **L1 stage 9: E1c shell-fraction closure — Σ XSF_i = 1.0 across all bins** — +388 −9 — [`3dc36a7`](https://github.com/abgnydn/webgpu-dna/commit/3dc36a79f9d1d68b81894f1c2a694c64c1a97fc6)
 - `11:04` **L1 stage 8: E2b per-level Emfietzoglou σ_exc bit-match (all 5 levels …** — +300 −7 — [`f8384a6`](https://github.com/abgnydn/webgpu-dna/commit/f8384a6384c14b90dfdeda86bec89b280e55f60c)
 - `11:00` **L1 stage 7: E1b per-shell Born σ_ion bit-match (all 5 shells pass)** — +315 −4 — [`86828f2`](https://github.com/abgnydn/webgpu-dna/commit/86828f2f3be8f944e56e59ed6cfc48a93fc71432)
-- `10:56` **L4 stage 4: E10d chem6 multi-energy — V-shape independently confirmed** — +677 −3 — [`2420632`](https://github.com/abgnydn/webgpu-dna/commit/2420632a1f389f0cd9ba02a2e4e09e7e641310cc)
-- `10:48` **L6 stage 4: E15c WGSL vs Geant4 MT-8 — production-realistic baseline** — +319 −5 — [`d42efb0`](https://github.com/abgnydn/webgpu-dna/commit/d42efb044e51b050451b1370707bad0753f8bc18)
-- `10:36` **L5 stage 2: E13 indirect/direct SSB ratio — three-cause diagnosis** — +304 −12 — [`865026d`](https://github.com/abgnydn/webgpu-dna/commit/865026dabeebf665ff4c82b540d6f261d1634c0e)

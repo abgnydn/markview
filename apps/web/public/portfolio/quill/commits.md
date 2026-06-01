@@ -1,7 +1,16 @@
 # Commits — quill
 
+## 2026-06-01
+
+- `17:17` **90-case held-out + no-filter ablation dataset** — +3964 −1 — [`4e5d72c`](https://github.com/abgnydn/quill/commit/4e5d72c7a423c3a497510451db593dc9a43484f9)
+- `12:12` **v2.3 dataset: 780 samples — pure self-bootstrap, no new targeted seeds** — +1560 −0 — [`27c25c6`](https://github.com/abgnydn/quill/commit/27c25c6214652743113e2f90a9c3a38c83af0d0c)
+- `12:02` **writeup: $0 self-improving RSFT loop on Qwen 2.5-1.5B** — +217 −0 — [`0686ebd`](https://github.com/abgnydn/quill/commit/0686ebd1b04a53f8609ff7beb6f18bd370036f81)
+- `11:22` **v2.2 verified: 93.3% on 60-case held-out, +5pp over v2.1, strict domi…** — +1145 −0 — [`35805c4`](https://github.com/abgnydn/quill/commit/35805c4b13d93b4e31c3a385242712bbf1ac4843)
+
 ## 2026-05-29
 
+- `08:00` **v2.2 dataset: 827 samples — self-bootstrap from v2.1 + targeted hard-…** — +1664 −0 — [`4a8ae78`](https://github.com/abgnydn/quill/commit/4a8ae7879caa9af362cf094007febe8cda65d225)
+- `07:53` **held-out benchmark + harness v2 + bootstrap plumbing** — +3973 −4 — [`7bfea6d`](https://github.com/abgnydn/quill/commit/7bfea6d3e885f43b03a0d1caf1471b33d6662f18)
 - `07:35` **v2.1 eval result: Qwen + 551-sample LoRA = 48/50 (96%)** — +521 −0 — [`7498407`](https://github.com/abgnydn/quill/commit/74984079641868844ba62617fcbd93431c424469)
 - `06:42` **adapter-only architecture + 4× RSFT dataset + Colab one-click flow** — +1659 −71 — [`b93a91e`](https://github.com/abgnydn/quill/commit/b93a91ebe79347ebcf8784c32358eabb4a6bcbc6)
 
@@ -61,9 +70,3 @@
 - `12:44` **v0.7 (C+E): menubar mode + background auto-retrain** — +658 −5 — [`500ced3`](https://github.com/abgnydn/quill/commit/500ced33bc62ab1973ea4ad414ae599198d124ad)
 - `12:25` **v0.6: add inline diff helpers (tokenizeWords/diffWords/renderDiffHtml)** — +41 −0 — [`4614049`](https://github.com/abgnydn/quill/commit/46140494e2858d44c04469206a91214713894dc0)
 - `12:22` **v0.6: streaming rewrites + ⌘⇧R global hotkey + inline diff** — +527 −45 — [`d129372`](https://github.com/abgnydn/quill/commit/d1293723583ade2508f72fa96da5f0c40c036595)
-- `09:31` **v0.5 phase 3: in-app training trigger via Modal subprocess** — +607 −0 — [`4a875de`](https://github.com/abgnydn/quill/commit/4a875de26f691ea6cee4d98765c33ef5ca5441f8)
-- `08:04` **apply: clipboard fallback recovers click-to-fix in Safari/Chrome/Elec…** — +228 −33 — [`b8c82d9`](https://github.com/abgnydn/quill/commit/b8c82d9a61b573718743da766bacacee71e16413)
-- `07:51` **tests: expand to 17 + 1 gated, plus scripts/test.sh full-suite runner** — +281 −0 — [`96a49ff`](https://github.com/abgnydn/quill/commit/96a49ffaeaf28121091f43198e776e980faf7532)
-- `07:41` **v0.5 phase 2: personal LoRA pipeline end-to-end** — +419 −13 — [`239a918`](https://github.com/abgnydn/quill/commit/239a918ecbcd3d38031781d6591f83bf46b5e8e1)
-- `07:15` **fix(v0.5): main-window sidebar applies were bypassing the journal** — +150 −3 — [`9b33bf0`](https://github.com/abgnydn/quill/commit/9b33bf0f7c9add727ac3caddb20b3741365ecc7b)
-- `07:01` **v0.5 phase 1: personalization journal + main-window panel** — +611 −8 — [`4c7f6d4`](https://github.com/abgnydn/quill/commit/4c7f6d444592123da328611bd6778cb22d411fb1)

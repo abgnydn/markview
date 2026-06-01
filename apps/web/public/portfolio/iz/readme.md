@@ -1,5 +1,9 @@
 # TR-MRV-Bench / iz-1
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20496086.svg)](https://doi.org/10.5281/zenodo.20496086)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](https://github.com/abgnydn/iz/blob/master/LICENSE)
+[![Live site](https://img.shields.io/badge/live-iz--b0n.pages.dev-2d5a4c.svg)](https://iz-b0n.pages.dev)
+
 **A public per-facility emissions benchmark for Turkish CBAM-scope industry, plus a closed-form physics baseline that beats the EU CBAM default by 85%.**
 
 > 🌐 **Live site:** [iz-b0n.pages.dev](https://iz-b0n.pages.dev)
@@ -7,15 +11,15 @@
 > 🏭 **Per-facility pages** (e.g. [Büyükçekmece Cement](https://iz-b0n.pages.dev/bench/akcansa-buyukcekmece/)): one URL per plant with audit-grade Scope 1, conformal CI, source PDFs, EnMAP scene index, Beirle NOx cross-check — and a printable [audit summary](https://iz-b0n.pages.dev/bench/akcansa-buyukcekmece/audit-summary/) you can hand to your verifier.
 > 🧪 **Verify in your browser (3 sec WebGPU train):** [iz-b0n.pages.dev/verify/](https://iz-b0n.pages.dev/verify/)
 > 📖 **How to use this:** [iz-b0n.pages.dev/use/](https://iz-b0n.pages.dev/use/)
-> 📝 **arXiv preprint draft:** [paper/iz_v0.md](paper/iz_v0.md)
+> 📝 **Cite this:** [Zenodo DOI 10.5281/zenodo.20496086](https://doi.org/10.5281/zenodo.20496086)
 
 ---
 
 ## TL;DR
 
-The EU charges Turkish CBAM-scope exporters (cement, steel, aluminum, fertilizer) a CO₂ tariff based on a default value that overcharges most plants by **2-10×**. **TR-MRV-Bench** is a public 59-facility benchmark of Turkish CBAM-scope industry, with audit-grade Scope 1 labels for 21 of them. The headline deliverable is the **cf-corrected formula** — `tCO₂ = capacity × emission-factor × capacity-factor` — which reproduces those 21 audit-grade facilities within ±20% on average using only operator-published numbers. **+85.3% log-MAE reduction vs EU CBAM default**, 95% data-bootstrap CI [+72.0%, +90.6%]. We also ship **iz-1**, a small 2-layer NN trained against the formula's residuals as a reference implementation; it ties the formula at this data scale (n=21, 40 train).
+The EU charges Turkish CBAM-scope exporters (cement, steel, aluminum, fertilizer) a CO₂ tariff based on a default value that overcharges most plants by **2-10×**. **TR-MRV-Bench** is a public 59-facility benchmark of Turkish CBAM-scope industry, with audit-grade Scope 1 labels for 21 of them. The headline deliverable is the **cf-corrected formula** — `tCO₂ = capacity × emission-factor × capacity-factor` — which reproduces those 21 audit-grade facilities with median ratio 1.00 and two-thirds within ±20% using only operator-published numbers. **+85.3% pooled log-MAE reduction vs EU CBAM default**, 95% data-bootstrap CI [+72.0%, +90.6%]. External validity confirmed by Verifier B6 (789 EU-EUTL-verified plants × 10,691 audit-grade plant-years) and independent algorithmic rediscovery by Verifier B7 (PySR symbolic regression converges to `log(cap × ef × cf)` at complexity 5 with bit-identical MSE). We also ship **iz-1**, a small 2-layer NN trained against the formula's residuals as a reference implementation; it ties the formula at this data scale (n=21, 40 train).
 
-If every TR operator used this instead of the default, **~€2 billion per year in CBAM payments stays in Turkey** instead of going to the EU treasury. That's the entire point. **Released under Apache-2.0** as open infrastructure for Turkish CBAM compliance — not a SaaS. Use it, cite it, contribute back.
+If every TR operator used MRV-verified actuals instead of the EU default, **~€732M per year** stays in Turkey across the 21 audit-grade facilities (extrapolated to all 59 CBAM-scope plants the figure scales to ~€1.5–2 bn/yr depending on coverage assumptions). That's the entire point. That's the entire point. **Released under Apache-2.0** as open infrastructure for Turkish CBAM compliance — not a SaaS. Use it, cite it, contribute back.
 
 This is a one-person project by [Ahmet Barış Günaydın](https://barisgunaydin.com) (<hi@barisgunaydin.com>).
 
