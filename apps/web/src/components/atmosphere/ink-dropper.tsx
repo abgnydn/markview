@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef } from 'react';
+import { startRafLoop } from '@/lib/raf-loop';
 
 /**
  * InkDropper (#11) — click anywhere on the painting and a drop of sumi
@@ -103,12 +104,7 @@ export function InkDropper({ enabled }: InkDropperProps) {
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
 
-    let last = performance.now();
-    let raf = 0;
-    const tick = () => {
-      const now = performance.now();
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
+    const loop = startRafLoop((dt, now) => {
       const t = now / 1000;
 
       // Fade the whole ink layer slowly (~30s to clear a fresh splat).
@@ -143,29 +139,14 @@ export function InkDropper({ enabled }: InkDropperProps) {
         ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
         ctx.fill();
       }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-
-    // Pause when the tab is hidden — ink just sits frozen, resumes on
-    // return (last reset so the fade doesn't lurch).
-    const onVis = () => {
-      if (document.hidden) {
-        if (raf) { cancelAnimationFrame(raf); raf = 0; }
-      } else if (!raf) {
-        last = performance.now();
-        raf = requestAnimationFrame(tick);
-      }
-    };
-    document.addEventListener('visibilitychange', onVis);
+    });
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousedown', onDown);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
-      document.removeEventListener('visibilitychange', onVis);
-      if (raf) cancelAnimationFrame(raf);
+      loop.stop();
     };
   }, []);
 

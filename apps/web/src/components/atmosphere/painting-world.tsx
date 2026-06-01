@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ensureDepth } from '@/lib/atmosphere/depth';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { db } from '@/lib/storage/db';
+import { startRafLoop } from '@/lib/raf-loop';
 
 interface PaintingWorldProps {
   /** Painting image URL to enter. */
@@ -410,13 +411,8 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
       // Wind sway (#17) — cheap value noise.
       const swayNoise = (t: number) => Math.sin(t * 0.7) * 0.5 + Math.sin(t * 1.9 + 1.3) * 0.3;
 
-      let last = performance.now();
-      const startMs = last;
-      let raf = 0;
-      const draw = () => {
-        const now = performance.now();
-        const dt = Math.min(0.05, (now - last) / 1000);
-        last = now;
+      const startMs = performance.now();
+      const draw = (dt: number, now: number) => {
         const tSec = (now - startMs) / 1000;
 
         const dir = new THREE.Vector3(
@@ -539,20 +535,9 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
         if (newNear !== nearFileRef.current) setNearFile(newNear);
 
         renderer.render(scene, camera);
-        raf = requestAnimationFrame(draw);
       };
-      raf = requestAnimationFrame(draw);
+      const loop = startRafLoop(draw);
       setStatus('ready');
-
-      const onVis = () => {
-        if (document.hidden) {
-          if (raf) { cancelAnimationFrame(raf); raf = 0; }
-        } else if (!raf) {
-          last = performance.now();
-          raf = requestAnimationFrame(draw);
-        }
-      };
-      document.addEventListener('visibilitychange', onVis);
 
       cleanup = () => {
         window.removeEventListener('keydown', onKeyDown, { capture: true });
@@ -562,8 +547,7 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
         window.removeEventListener('mousemove', onMouseMove);
         canvas.removeEventListener('click', onClick);
         window.removeEventListener('resize', resize);
-        document.removeEventListener('visibilitychange', onVis);
-        if (raf) cancelAnimationFrame(raf);
+        loop.stop();
         geom.dispose(); mat.dispose(); paintTex.dispose(); depthTex?.dispose();
         skyGeo.dispose(); skyMat.dispose();
         waterMat?.dispose();
