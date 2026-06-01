@@ -2733,6 +2733,35 @@ body.mv-keyhint-show [data-keyhint]::after {
   padding-top: 2px;
 }
 
+/* AI co-author ghost — dimmed inline continuation that the model
+   streams in after the cursor. Not yet in the document; ⌘↵ accepts,
+   Esc rejects. Italic + accent-tinted so it reads as "suggested, not
+   yours." */
+.mv-coauthor-ghost {
+  color: var(--zen-accent, #b9a4ff);
+  opacity: 0.6;
+  font-style: italic;
+  white-space: pre-wrap;
+  pointer-events: none;
+}
+.mv-coauthor-ghost.mv-coauthor-pending {
+  opacity: 0.42;
+}
+/* Blinking caret-dot while the model streams. */
+.mv-coauthor-pending::after {
+  content: '▍';
+  animation: mv-coauthor-blink 0.9s steps(1) infinite;
+}
+@keyframes mv-coauthor-blink { 50% { opacity: 0; } }
+.mv-coauthor-hint {
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-style: normal;
+  font-size: 0.7em;
+  letter-spacing: 0.1em;
+  opacity: 0.55;
+  text-transform: uppercase;
+}
+
 /* ────────────────────────────────────────────────────────────────────────
  * Cards mode (B3) — H2 sections become full-viewport cards. Atmosphere
  * stays untouched behind (no own backdrop); we just dim the chrome and

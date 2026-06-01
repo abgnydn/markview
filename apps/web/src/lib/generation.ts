@@ -265,6 +265,44 @@ export async function generateChat(options: GenerateOptions): Promise<string> {
  */
 export type ChatMode = 'local' | 'cloud';
 
+/**
+ * Continue the user's writing in their own voice. Given the text
+ * BEFORE the cursor, generate a single ~2-4 sentence continuation
+ * paragraph that picks up where they left off — no preamble, no
+ * "here's a continuation", just the prose. Used by the editor's
+ * Tab-to-ghost co-author (see editor-coauthor.ts).
+ *
+ * Cloud-only (Llama-3.3-70B) — a 360M local model can't hold a
+ * voice well enough for this to feel like the user wrote it.
+ * Returns '' on any failure so the editor silently no-ops.
+ */
+export async function continueWriting(
+  before: string,
+  options: { signal?: AbortSignal; onToken?: (chunk: string, full: string) => void } = {},
+): Promise<string> {
+  // Trim to the last ~1500 chars — enough voice + topic context
+  // without paying for the whole doc on every Tab.
+  const ctx = before.slice(-1500).trimEnd();
+  if (ctx.length < 12) return '';
+  const system = `You are a writing continuation engine. The user is mid-document. Continue their text in EXACTLY their voice, tone, and format (if they write markdown, continue markdown). Output ONLY the continuation — no preamble, no quotes, no "here is", no meta. Write 2-4 sentences that flow naturally from where they stopped. Match their register precisely: terse stays terse, lyrical stays lyrical.`;
+  try {
+    const out = await generateChatCloud({
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: ctx },
+      ],
+      maxNewTokens: 160,
+      temperature: 0.7,
+      onToken: options.onToken,
+      signal: options.signal,
+    });
+    // Strip a leading space/newline the model sometimes prepends.
+    return out.replace(/^[\s]+/, '');
+  } catch {
+    return '';
+  }
+}
+
 export async function answerQuestionInWorkspace(
   workspaceId: string,
   question: string,

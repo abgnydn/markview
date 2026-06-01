@@ -23,6 +23,7 @@ import { autocompletion, CompletionContext, closeBrackets } from '@codemirror/au
 import type * as Y from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 import { MarkdownRenderer } from './markdown-renderer';
+import { coAuthor } from './editor-coauthor';
 import { markviewCompletions, invalidateCompletionCache } from './editor-completions';
 
 interface MarkdownEditorProps {
@@ -322,6 +323,11 @@ function buildExtensions(
         return true;
       },
     }),
+    // AI co-author — Tab at line-end spawns a ghost continuation in
+    // the user's voice (cloud Llama-3.3). Bound BEFORE indentWithTab so
+    // it gets first crack at Tab; it returns false mid-line / without
+    // context, falling through to normal indentation.
+    coAuthor(),
     keymap.of([
       ...defaultKeymap,
       ...historyKeymap,

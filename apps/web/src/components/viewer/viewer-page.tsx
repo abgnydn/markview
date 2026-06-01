@@ -36,6 +36,7 @@ import { PresenceAvatars } from '@/components/collab/presence-avatars';
 import { RelatedNotes } from '@/components/viewer/related-notes';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
 import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
+import { InkDropper } from '@/components/atmosphere/ink-dropper';
 import { useAtmosphereRotation } from '@/hooks/use-atmosphere-rotation';
 import { useEmbeddingsBackfill } from '@/hooks/use-embeddings-backfill';
 import { useViewerOverlays } from '@/hooks/use-viewer-overlays';
@@ -241,6 +242,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       {atmosphere !== 'none' && (
         <PaintingAtmosphere atmosphere={atmosphere} paintingNonce={paintingNonce} />
       )}
+      <InkDropper enabled={atmosphere !== 'none'} />
       <ShareStatus />
       <PresenceAvatars />
       <AnnotationsLayer fileId={activeFileId} refreshKey={activeFileId ?? ''} />
