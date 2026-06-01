@@ -651,9 +651,23 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       };
       raf = requestAnimationFrame(tick);
 
+      // Pause the simulation when the tab is hidden. `last` is reset on
+      // resume so the first dt after returning isn't a multi-second
+      // jump (it's also clamped to 0.05 in tick, belt + suspenders).
+      const onVis = () => {
+        if (document.hidden) {
+          if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        } else if (!raf) {
+          last = performance.now();
+          raf = requestAnimationFrame(tick);
+        }
+      };
+      document.addEventListener('visibilitychange', onVis);
+
       cleanup = () => {
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('resize', onResize);
+        document.removeEventListener('visibilitychange', onVis);
         if (raf) cancelAnimationFrame(raf);
         accumCanvas.remove();
         geom.dispose();

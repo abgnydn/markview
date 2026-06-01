@@ -544,6 +544,16 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
       raf = requestAnimationFrame(draw);
       setStatus('ready');
 
+      const onVis = () => {
+        if (document.hidden) {
+          if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        } else if (!raf) {
+          last = performance.now();
+          raf = requestAnimationFrame(draw);
+        }
+      };
+      document.addEventListener('visibilitychange', onVis);
+
       cleanup = () => {
         window.removeEventListener('keydown', onKeyDown, { capture: true });
         window.removeEventListener('keyup', onKeyUp, { capture: true });
@@ -552,6 +562,7 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
         window.removeEventListener('mousemove', onMouseMove);
         canvas.removeEventListener('click', onClick);
         window.removeEventListener('resize', resize);
+        document.removeEventListener('visibilitychange', onVis);
         if (raf) cancelAnimationFrame(raf);
         geom.dispose(); mat.dispose(); paintTex.dispose(); depthTex?.dispose();
         skyGeo.dispose(); skyMat.dispose();

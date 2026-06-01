@@ -380,9 +380,21 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       };
       rafId = requestAnimationFrame(draw);
 
+      // Pause the render loop when the tab is hidden — no point burning
+      // GPU on an off-screen atmosphere. Resume on return.
+      const onVis = () => {
+        if (document.hidden) {
+          if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+        } else if (!rafId) {
+          rafId = requestAnimationFrame(draw);
+        }
+      };
+      document.addEventListener('visibilitychange', onVis);
+
       cleanup = () => {
         window.removeEventListener('resize', resize);
         window.removeEventListener('click', onClick);
+        document.removeEventListener('visibilitychange', onVis);
         if (rafId) cancelAnimationFrame(rafId);
         geom.dispose();
         material.dispose();

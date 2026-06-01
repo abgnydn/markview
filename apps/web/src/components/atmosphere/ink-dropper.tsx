@@ -147,11 +147,24 @@ export function InkDropper({ enabled }: InkDropperProps) {
     };
     raf = requestAnimationFrame(tick);
 
+    // Pause when the tab is hidden — ink just sits frozen, resumes on
+    // return (last reset so the fade doesn't lurch).
+    const onVis = () => {
+      if (document.hidden) {
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      } else if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    document.addEventListener('visibilitychange', onVis);
+
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousedown', onDown);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
+      document.removeEventListener('visibilitychange', onVis);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
