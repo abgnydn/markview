@@ -318,7 +318,10 @@ export function getRotationTempo(): RotationTempo {
       return v;
     }
   } catch { /* ignore */ }
-  return 'daily';
+  // Default: a fresh painting each visit (and a different one per
+  // atmosphere). 'daily' froze everyone on one painting per day, which
+  // made the deep pack feel tiny.
+  return 'session';
 }
 
 export function setRotationTempo(t: RotationTempo): void {
@@ -329,16 +332,27 @@ export function setRotationTempo(t: RotationTempo): void {
 // the same "slot" within a session but a different one per session.
 const SESSION_SEED = Math.floor(Math.random() * 1e9);
 
-/** Compute the rotation slot index for the active tempo. */
-function rotationIndex(tempo: RotationTempo, total: number): number {
+// Small string hash so each atmosphere gets a distinct rotation offset
+// — otherwise all four sit on the same slot within a session / day.
+function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+/** Compute the rotation slot index for the active tempo. `id` offsets
+ *  the slot per-atmosphere so Fuji / Wave / Snow / Fields don't all
+ *  land on the same index. */
+function rotationIndex(tempo: RotationTempo, total: number, id = ''): number {
+  const off = hashStr(id);
   switch (tempo) {
     case 'manual':     return 0;
-    case 'session':    return SESSION_SEED % total;
-    case 'hourly':     return Math.floor(Date.now() / 3_600_000) % total;
-    case 'minutes-5':  return Math.floor(Date.now() / 300_000) % total;
-    case 'minutes-15': return Math.floor(Date.now() / 900_000) % total;
+    case 'session':    return (SESSION_SEED + off) % total;
+    case 'hourly':     return (Math.floor(Date.now() / 3_600_000) + off) % total;
+    case 'minutes-5':  return (Math.floor(Date.now() / 300_000) + off) % total;
+    case 'minutes-15': return (Math.floor(Date.now() / 900_000) + off) % total;
     case 'daily':
-    default:           return dayOfYear(new Date()) % total;
+    default:           return (dayOfYear(new Date()) + off) % total;
   }
 }
 
@@ -356,14 +370,14 @@ export function pickPaintingFor(id: Exclude<Atmosphere, 'none'>): Painting {
   if (pinned !== null && pinned >= 0 && pinned < n) {
     return cfg.paintings[pinned];
   }
-  return cfg.paintings[rotationIndex(tempo, n)];
+  return cfg.paintings[rotationIndex(tempo, n, id)];
 }
 
 export function nextPaintingFor(id: Exclude<Atmosphere, 'none'>): number {
   const cfg = ATMOSPHERES[id];
   const n = cfg.paintings.length;
   const tempo = getRotationTempo();
-  const current = readPinnedIndex(id) ?? rotationIndex(tempo, n);
+  const current = readPinnedIndex(id) ?? rotationIndex(tempo, n, id);
   const next = (current + 1) % n;
   writePinnedIndex(id, next);
   return next;
@@ -380,7 +394,19 @@ export function shufflePaintingFor(id: Exclude<Atmosphere, 'none'>): number {
 }
 
 export function resetPaintingFor(id: Exclude<Atmosphere, 'none'>): void {
-  try { localStorage.removeItem(`markview-painting-${id}`); } catch { /* ignore */ }
+  try { sessionStorage.removeItem(`markview-painting-${id}`); } catch { /* ignore */ }
+}
+
+/** Current painting index (pin if set, else the tempo slot) + pack size,
+ *  for the "k / n" counter in the atmosphere strip. */
+export function paintingPositionFor(id: Exclude<Atmosphere, 'none'>): { index: number; total: number } {
+  const cfg = ATMOSPHERES[id];
+  const n = cfg.paintings.length;
+  const pinned = readPinnedIndex(id);
+  const idx = pinned !== null && pinned >= 0 && pinned < n
+    ? pinned
+    : rotationIndex(getRotationTempo(), n, id);
+  return { index: idx, total: n };
 }
 
 /** Milliseconds until the *next* rotation tick for the given tempo. Used
@@ -396,9 +422,14 @@ export function nextRotationAtMs(tempo: RotationTempo): number {
   }
 }
 
+// Pins live in sessionStorage, NOT localStorage — clicking next/shuffle
+// pins for the current session only. A reload returns to tempo-driven
+// rotation, so every fresh visit surfaces a different painting from the
+// pack instead of freezing forever on the last one you clicked. (This
+// was the main reason a 31-painting collection "felt like 3".)
 function readPinnedIndex(id: string): number | null {
   try {
-    const raw = localStorage.getItem(`markview-painting-${id}`);
+    const raw = sessionStorage.getItem(`markview-painting-${id}`);
     if (raw === null) return null;
     const n = parseInt(raw, 10);
     return Number.isFinite(n) ? n : null;
@@ -407,7 +438,7 @@ function readPinnedIndex(id: string): number | null {
   }
 }
 function writePinnedIndex(id: string, idx: number): void {
-  try { localStorage.setItem(`markview-painting-${id}`, String(idx)); } catch { /* ignore */ }
+  try { sessionStorage.setItem(`markview-painting-${id}`, String(idx)); } catch { /* ignore */ }
 }
 
 function dayOfYear(d: Date): number {

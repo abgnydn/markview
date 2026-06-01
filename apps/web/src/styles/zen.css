@@ -3969,6 +3969,16 @@ body:hover .mv-atm-dots,
 .mv-atm-icon.is-on {
   color: var(--zen-accent, #b9a4ff);
 }
+/* "k / n" gallery-position counter in the atmosphere strip. */
+.mv-atm-count {
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.45));
+  padding: 0 2px;
+  user-select: none;
+}
+.mv-atm-count-sep { opacity: 0.5; margin: 0 1px; }
 :root:not(.dark):not([data-theme='dark']) .mv-atm-icon:hover {
   background: rgba(40, 30, 20, 0.06);
 }

@@ -7,7 +7,7 @@ import {
   isAtmosphereMuted, setAtmosphereMuted,
   setAtmosphereAudio, unlockAtmosphereAudio,
 } from '@/lib/atmosphere/audio';
-import { nextPaintingFor, shufflePaintingFor } from '@/components/atmosphere/atmospheres';
+import { nextPaintingFor, shufflePaintingFor, paintingPositionFor } from '@/components/atmosphere/atmospheres';
 import { getTimeTintMode, setTimeTintMode } from '@/lib/atmosphere/time-of-day';
 
 const OPTIONS: Array<{ id: Atmosphere; label: string }> = [
@@ -38,6 +38,18 @@ export function AtmosphereDots() {
 
   const [muted, setMuted] = useState(() => isAtmosphereMuted());
   const [tintOn, setTintOn] = useState(() => getTimeTintMode() !== 'off');
+
+  // "k / n" gallery position — shows how deep the current pack is and
+  // which painting you're on. Refreshes on cycle events + atmosphere
+  // change so next/shuffle visibly advance the counter.
+  const [pos, setPos] = useState<{ index: number; total: number } | null>(null);
+  useEffect(() => {
+    if (!isLive) { setPos(null); return; }
+    const refresh = () => setPos(paintingPositionFor(atmosphere as Exclude<Atmosphere, 'none'>));
+    refresh();
+    window.addEventListener('markview:cycle-painting', refresh);
+    return () => window.removeEventListener('markview:cycle-painting', refresh);
+  }, [atmosphere, isLive]);
 
   // Keep local state in sync if some other surface changes the audio
   // mute (e.g., a future settings panel).
@@ -126,6 +138,11 @@ export function AtmosphereDots() {
           >
             <Shuffle size={12} />
           </button>
+          {pos && (
+            <span className="mv-atm-count" title={`Painting ${pos.index + 1} of ${pos.total} in this pack`}>
+              {pos.index + 1}<span className="mv-atm-count-sep">/</span>{pos.total}
+            </span>
+          )}
           <button
             type="button"
             className="mv-atm-enter"
