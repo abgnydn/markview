@@ -133,6 +133,17 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           // through the scene. Origin (-1,-1) = no pulse.
           uPulseUv:    { value: new THREE.Vector2(-1, -1) },
           uPulseTime:  { value: -1000.0 },
+          // Depth-of-field — focal plane (0..1 depth) follows scroll;
+          // pixels far from it blur. uDofAmount scales the effect.
+          uFocal:      { value: 0.62 },
+          uDofAmount:  { value: 1.0 },
+          // Dissolve-in — 0 = nothing, 1 = fully assembled. Animated
+          // 0→1 on mount so the painting "burns in" from noise.
+          uReveal:     { value: 0.0 },
+          // Anaglyph 3D — 0 = off, 1 = red/cyan stereo from the depth
+          // map. Toggle with the `g` key.
+          uAnaglyph:   { value: 0.0 },
+          uAspect:     { value: 1.0 },
         },
         vertexShader: `
           uniform sampler2D uDepth;
@@ -173,6 +184,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
             gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
           }
         `,
+        transparent: true,
         fragmentShader: `
           precision highp float;
           uniform sampler2D uPaint;
@@ -184,6 +196,11 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           uniform float uSunOn;
           uniform vec2 uPulseUv;
           uniform float uPulseTime;
+          uniform float uFocal;
+          uniform float uDofAmount;
+          uniform float uReveal;
+          uniform float uAnaglyph;
+          uniform float uAspect;
           varying vec2 vUv;
           varying float vDepth;
           varying vec3 vNormal;
@@ -201,11 +218,20 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
             vec2 u = f * f * (3.0 - 2.0 * f);
             return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
           }
-          // Sample the depth texture (with the same v-flip as the
-          // vertex shader's sampleDepth).
           float dSamp(vec2 uv) { return texture2D(uDepth, vec2(uv.x, 1.0 - uv.y)).r; }
-          // Luma for bloom bright-pass.
           float luma(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
+
+          // Depth-of-field sampler — 7-tap rosette blur whose radius is
+          // the circle-of-confusion (distance from the focal plane).
+          vec3 sampleDof(vec2 uv, float blurR) {
+            if (blurR < 0.0008) return texture2D(uPaint, uv).rgb;
+            vec3 acc = texture2D(uPaint, uv).rgb;
+            for (int i = 0; i < 6; i++) {
+              float a = float(i) * 1.0472;
+              acc += texture2D(uPaint, uv + vec2(cos(a), sin(a)) * blurR).rgb;
+            }
+            return acc / 7.0;
+          }
 
           void main() {
             // Living motion bands by depth.
@@ -225,7 +251,22 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
             );
             vec2 motion = skyOff * far + midOff * mid;
 
-            vec3 base = texture2D(uPaint, vUv + motion).rgb;
+            // ── Depth-of-field circle-of-confusion ────────────────
+            float coc = clamp(abs(vDepth - uFocal) * 2.4, 0.0, 1.0) * uDofAmount;
+            float blurR = coc * 0.014;
+
+            // ── Sample painting (anaglyph splits the channels by a
+            //    depth-driven horizontal parallax for red/cyan 3D) ──
+            vec3 base;
+            if (uAnaglyph > 0.5) {
+              float sep = (vDepth - 0.5) * 0.018;
+              vec2 ax = vec2(sep / uAspect, 0.0);
+              vec3 cl = sampleDof(vUv + motion + ax, blurR);
+              vec3 cr = sampleDof(vUv + motion - ax, blurR);
+              base = vec3(cl.r, cr.g, cr.b);
+            } else {
+              base = sampleDof(vUv + motion, blurR);
+            }
 
             // ── Lambert + ambient ─────────────────────────────────
             float ndotl = max(dot(normalize(vNormal), normalize(uLightDir)), 0.0);
@@ -305,7 +346,19 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
             }
 
             vec3 finalColor = lit + bloom + rays + vec3(pulseTerm) * vec3(0.7, 0.65, 0.95);
-            gl_FragColor = vec4(finalColor, 1.0);
+
+            // ── Dissolve-in reveal ────────────────────────────────
+            // On mount uReveal animates 0→1. Each pixel "turns on"
+            // when uReveal passes its noise value, so the painting
+            // assembles out of scattered grain. A bright violet edge
+            // rides the reveal front for a particle-shimmer feel.
+            float grain = vnoise(vUv * 90.0);
+            float rev = smoothstep(grain - 0.10, grain + 0.02, uReveal);
+            float edge = (1.0 - abs(rev - 0.5) * 2.0);
+            if (uReveal < 0.999) {
+              finalColor += vec3(0.55, 0.50, 0.85) * edge * 0.6;
+            }
+            gl_FragColor = vec4(finalColor, rev);
           }
         `,
       });
@@ -333,9 +386,21 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         renderer.setSize(window.innerWidth, window.innerHeight, false);
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
+        (material.uniforms.uAspect as { value: number }).value = window.innerWidth / window.innerHeight;
         fitMesh();
       };
+      (material.uniforms.uAspect as { value: number }).value = window.innerWidth / window.innerHeight;
       window.addEventListener('resize', resize);
+
+      // Anaglyph 3D toggle (key `g`, non-typing) — flips red/cyan stereo.
+      const onAnaglyphKey = (e: KeyboardEvent) => {
+        const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
+        if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.key !== 'g' && e.key !== 'G') return;
+        const u = material.uniforms.uAnaglyph as { value: number };
+        u.value = u.value > 0.5 ? 0.0 : 1.0;
+      };
+      window.addEventListener('keydown', onAnaglyphKey);
 
       // Sun position by time-of-day — drives the god-rays shader.
       // Read by reading <html data-time-phase> which time-of-day.ts
@@ -368,9 +433,34 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           (performance.now() - start) / 1000;
       };
       window.addEventListener('click', onClick);
+      // Focal plane follows scroll — top of the doc focuses the far
+      // (sky) zone, bottom focuses the near (foreground), so the
+      // tilt-shift sweet spot drifts as you read. Eased toward target.
+      let focalCur = 0.62;
       let rafId = 0;
       const draw = () => {
-        (material.uniforms.uTime as { value: number }).value = (performance.now() - start) / 1000;
+        const tNow = (performance.now() - start) / 1000;
+        (material.uniforms.uTime as { value: number }).value = tNow;
+
+        // Living relief — the key light slowly orbits in azimuth so
+        // the bas-relief shadows shift over ~40s, making brushstrokes
+        // and ridges feel sculpted rather than painted-flat.
+        const az = tNow * 0.16;
+        (material.uniforms.uLightDir.value as InstanceType<typeof THREE.Vector3>)
+          .set(Math.cos(az) * 0.7, 0.55, Math.sin(az) * 0.5 + 0.6).normalize();
+
+        // Dissolve-in over 1.3s on mount.
+        const u = material.uniforms.uReveal as { value: number };
+        if (u.value < 1) u.value = Math.min(1, tNow / 1.3);
+
+        // Focal plane from scroll position (0 at top → far/sky in
+        // focus, 1 at bottom → near/foreground in focus).
+        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const sp = Math.min(1, Math.max(0, window.scrollY / max));
+        const focalTarget = 0.30 + sp * 0.55; // 0.30 (far) → 0.85 (near)
+        focalCur += (focalTarget - focalCur) * Math.min(1, 0.05);
+        (material.uniforms.uFocal as { value: number }).value = focalCur;
+
         const phase = document.documentElement.getAttribute('data-time-phase') || 'day';
         const sun = PHASE_SUN[phase] ?? PHASE_SUN.day;
         (material.uniforms.uSunUv.value as InstanceType<typeof THREE.Vector2>).set(sun.uv[0], sun.uv[1]);
@@ -394,6 +484,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       cleanup = () => {
         window.removeEventListener('resize', resize);
         window.removeEventListener('click', onClick);
+        window.removeEventListener('keydown', onAnaglyphKey);
         document.removeEventListener('visibilitychange', onVis);
         if (rafId) cancelAnimationFrame(rafId);
         geom.dispose();
