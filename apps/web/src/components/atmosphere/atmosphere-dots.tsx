@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { Volume2, VolumeX, RefreshCw, Shuffle, Sun } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw, Shuffle, Sun, Footprints } from 'lucide-react';
 import { useThemeStore, type Atmosphere } from '@/stores/theme-store';
 import {
   isAtmosphereMuted, setAtmosphereMuted,
@@ -125,6 +125,15 @@ export function AtmosphereDots() {
             aria-label="Shuffle painting"
           >
             <Shuffle size={12} />
+          </button>
+          <button
+            type="button"
+            className="mv-atm-enter"
+            onClick={() => window.dispatchEvent(new CustomEvent('markview:enter-painting'))}
+            title="Go inside the painting — walk through it (WASD)"
+            aria-label="Go inside the painting"
+          >
+            <Footprints size={13} />
           </button>
         </>
       )}

@@ -2762,6 +2762,81 @@ body.mv-keyhint-show [data-keyhint]::after {
   text-transform: uppercase;
 }
 
+/* Walkable painting world — fullscreen "go inside" mode. */
+.mv-world-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #06050a;
+  animation: mv-fade-in 400ms ease both;
+}
+.mv-world-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+.mv-world-canvas:active { cursor: grabbing; }
+.mv-world-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--zen-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(236, 232, 224, 0.7);
+  pointer-events: none;
+}
+.mv-world-hud {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: rgba(11, 10, 13, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(236, 232, 224, 0.55);
+  pointer-events: none;
+}
+.mv-world-hud kbd {
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-right: 4px;
+  color: rgba(236, 232, 224, 0.85);
+}
+.mv-world-near { color: var(--zen-accent, #b9a4ff); }
+
+/* "Go inside" button in the atmosphere strip. */
+.mv-atm-enter {
+  background: transparent;
+  border: none;
+  color: var(--zen-muted, rgba(255, 255, 255, 0.45));
+  cursor: pointer;
+  padding: 3px 4px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 180ms ease, background 180ms ease;
+}
+.mv-atm-enter:hover {
+  color: var(--zen-accent, #b9a4ff);
+  background: rgba(185, 164, 255, 0.12);
+}
+
 /* ────────────────────────────────────────────────────────────────────────
  * Cards mode (B3) — H2 sections become full-viewport cards. Atmosphere
  * stays untouched behind (no own backdrop); we just dim the chrome and

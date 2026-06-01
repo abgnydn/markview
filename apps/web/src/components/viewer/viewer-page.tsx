@@ -37,6 +37,7 @@ import { RelatedNotes } from '@/components/viewer/related-notes';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
 import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
 import { InkDropper } from '@/components/atmosphere/ink-dropper';
+const PaintingWorld = lazy(() => import('@/components/atmosphere/painting-world').then((m) => ({ default: m.PaintingWorld })));
 import { useAtmosphereRotation } from '@/hooks/use-atmosphere-rotation';
 import { useEmbeddingsBackfill } from '@/hooks/use-embeddings-backfill';
 import { useViewerOverlays } from '@/hooks/use-viewer-overlays';
@@ -101,6 +102,22 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // Bumps when the atmosphere painting should re-pick — handles both
   // the sidebar cycle/shuffle buttons AND timed rotation (hourly, 5m).
   const paintingNonce = useAtmosphereRotation(atmosphere);
+
+  // "Go inside the painting" — the AtmosphereDots Footprints button
+  // dispatches markview:enter-painting; we resolve the current
+  // painting's image URL and mount the walkable PaintingWorld.
+  const [worldSrc, setWorldSrc] = useState<string | null>(null);
+  React.useEffect(() => {
+    const onEnter = () => {
+      if (atmosphere === 'none') return;
+      void import('@/components/atmosphere/atmospheres').then(({ pickPaintingFor }) => {
+        const p = pickPaintingFor(atmosphere as Exclude<typeof atmosphere, 'none'>);
+        setWorldSrc(p.imageSrc);
+      });
+    };
+    window.addEventListener('markview:enter-painting', onEnter);
+    return () => window.removeEventListener('markview:enter-painting', onEnter);
+  }, [atmosphere]);
 
   // Lazy-embed every file that doesn't have vectors yet (powers
   // semantic search + related-notes + AI chat). Triggers the one-time
@@ -243,6 +260,11 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         <PaintingAtmosphere atmosphere={atmosphere} paintingNonce={paintingNonce} />
       )}
       <InkDropper enabled={atmosphere !== 'none'} />
+      {worldSrc && (
+        <Suspense fallback={null}>
+          <PaintingWorld src={worldSrc} onClose={() => setWorldSrc(null)} />
+        </Suspense>
+      )}
       <ShareStatus />
       <PresenceAvatars />
       <AnnotationsLayer fileId={activeFileId} refreshKey={activeFileId ?? ''} />
