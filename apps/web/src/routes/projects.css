@@ -882,3 +882,86 @@ body.proj-route-mounted::after {
   }
   .proj-grid-hover { display: none; }
 }
+
+/* ── chronicle chat — CTA + loading prep banner ──────────────────── */
+.proj-chat-cta {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  font-family: var(--proj-mono);
+  font-size: 11px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--proj-fg);
+  background: linear-gradient(135deg, rgba(155, 125, 255, 0.92), rgba(155, 125, 255, 0.65));
+  border: 1px solid rgba(155, 125, 255, 0.55);
+  border-radius: 999px;
+  cursor: pointer;
+  z-index: 80;
+  box-shadow: 0 16px 40px -12px rgba(155, 125, 255, 0.45),
+              0 0 0 1px rgba(0, 0, 0, 0.25) inset;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+.proj-chat-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 48px -12px rgba(155, 125, 255, 0.6),
+              0 0 0 1px rgba(0, 0, 0, 0.25) inset;
+}
+.proj-chat-cta.is-open {
+  background: rgba(11, 10, 13, 0.85);
+  border-color: var(--proj-fg-faint);
+  color: var(--proj-fg-soft);
+  box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.6);
+}
+
+.proj-chat-prep {
+  position: fixed;
+  right: 24px;
+  bottom: 80px;
+  z-index: 79;
+  pointer-events: none;
+}
+.proj-chat-prep-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--proj-bg-deep);
+  border: 1px solid var(--proj-accent-soft);
+  border-radius: 8px;
+  font-family: var(--proj-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--proj-fg-soft);
+  box-shadow: 0 18px 48px -16px rgba(0, 0, 0, 0.7);
+  max-width: min(420px, 80vw);
+}
+.proj-chat-prep-count {
+  color: var(--proj-fg-faint);
+  font-variant-numeric: tabular-nums;
+}
+.proj-chat-prep-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--proj-fg-ghost);
+  border-radius: 2px;
+  overflow: hidden;
+  min-width: 80px;
+}
+.proj-chat-prep-bar-fill {
+  height: 100%;
+  background: var(--proj-accent);
+  transition: width 180ms ease;
+}
+
+@media (max-width: 720px) {
+  .proj-chat-cta { right: 16px; bottom: 16px; padding: 10px 14px; font-size: 10.5px; }
+  .proj-chat-prep { right: 16px; bottom: 70px; left: 16px; }
+}

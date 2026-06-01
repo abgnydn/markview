@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef, useState } from 'react';
-import { X, Send, Sparkles, Square, FileText, Cpu } from 'lucide-react';
+import { X, Send, Sparkles, Square, FileText, Cpu, Cloud } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import {
   answerQuestionInWorkspace,
@@ -10,7 +10,16 @@ import {
   isGenerativeOptedIn,
   setGenerativeOptedIn,
   type GenStatus,
+  type ChatMode,
 } from '@/lib/generation';
+
+const MODE_KEY = 'markview-ai-chat-mode';
+function readMode(): ChatMode {
+  try {
+    const v = localStorage.getItem(MODE_KEY);
+    return v === 'local' ? 'local' : 'cloud';
+  } catch { return 'cloud'; }
+}
 
 interface AiChatProps {
   onClose: () => void;
@@ -73,6 +82,12 @@ export function AiChat({ onClose }: AiChatProps) {
     try { localStorage.setItem(memoryKey, JSON.stringify(finished)); } catch { /* quota */ }
   }, [turns, memoryKey]);
   const [input, setInput] = useState('');
+  const [mode, setModeState] = useState<ChatMode>(() => readMode());
+  const setMode = (m: ChatMode) => {
+    setModeState(m);
+    try { localStorage.setItem(MODE_KEY, m); } catch { /* quota */ }
+    if (m === 'local' && isGenerativeOptedIn()) void warmGenerative();
+  };
   const [optedIn, setOptedIn] = useState<boolean>(() => isGenerativeOptedIn());
   const [status, setStatus] = useState<GenStatus>({ state: 'idle' });
   const abortRef = useRef<AbortController | null>(null);
@@ -82,9 +97,9 @@ export function AiChat({ onClose }: AiChatProps) {
   useEffect(() => onGenStatus(setStatus), []);
 
   useEffect(() => {
-    // If user has previously opted in, warm-load on mount.
-    if (optedIn) void warmGenerative();
-  }, [optedIn]);
+    // Warm SmolLM2 only if the user is in local mode AND opted in.
+    if (mode === 'local' && optedIn) void warmGenerative();
+  }, [optedIn, mode]);
 
   useEffect(() => {
     // Esc to close.
@@ -120,7 +135,8 @@ export function AiChat({ onClose }: AiChatProps) {
 
     try {
       const result = await answerQuestionInWorkspace(activeWorkspaceId, question, {
-        topK: 4,
+        topK: mode === 'cloud' ? 8 : 4,
+        mode,
         signal: ac.signal,
         onToken: (_chunk, full) => {
           setTurns((all) => all.map((t) => (t.id === id ? { ...t, answer: full } : t)));
@@ -160,12 +176,30 @@ export function AiChat({ onClose }: AiChatProps) {
         <div className="ai-chat-header">
           <Sparkles size={13} className="ai-chat-header-icon" />
           <span className="ai-chat-title">Chat with this workspace</span>
+          <div className="ai-chat-mode-toggle" role="group" aria-label="engine">
+            <button
+              type="button"
+              className={`ai-chat-mode-btn${mode === 'cloud' ? ' is-active' : ''}`}
+              onClick={() => setMode('cloud')}
+              title="Cloudflare Workers AI · Llama-3.3-70B · free, fast, in the cloud"
+            >
+              <Cloud size={11} /> cloud
+            </button>
+            <button
+              type="button"
+              className={`ai-chat-mode-btn${mode === 'local' ? ' is-active' : ''}`}
+              onClick={() => setMode('local')}
+              title="SmolLM2-360M · in your browser tab · private, offline, lower quality"
+            >
+              <Cpu size={11} /> local
+            </button>
+          </div>
           <button className="ai-chat-close" onClick={onClose} title="Close (Esc)">
             <X size={16} />
           </button>
         </div>
 
-        {!optedIn ? (
+        {mode === 'local' && !optedIn ? (
           <div className="ai-chat-opt-in">
             <div className="ai-chat-opt-in-icon"><Cpu size={20} /></div>
             <h3 className="ai-chat-opt-in-title">Local AI, your machine</h3>
@@ -182,7 +216,7 @@ export function AiChat({ onClose }: AiChatProps) {
               Download &amp; enable
             </button>
           </div>
-        ) : status.state === 'loading' ? (
+        ) : mode === 'local' && status.state === 'loading' ? (
           <div className="ai-chat-loading">
             <Cpu size={18} />
             <span>Loading SmolLM2…</span>
@@ -194,12 +228,19 @@ export function AiChat({ onClose }: AiChatProps) {
             )}
             <span className="ai-chat-loading-hint">One-time download. Cached after.</span>
           </div>
-        ) : status.state === 'failed' ? (
+        ) : mode === 'local' && status.state === 'failed' ? (
           <div className="ai-chat-error">
             <strong>Could not load the local model.</strong>
             <p>{status.error}</p>
-            <button className="ai-chat-opt-in-btn" onClick={() => { setOptedIn(false); setGenerativeOptedIn(false); }}>
-              Reset
+            <button
+              className="ai-chat-opt-in-btn"
+              onClick={() => {
+                setOptedIn(false);
+                setGenerativeOptedIn(false);
+                setMode('cloud');
+              }}
+            >
+              Switch to cloud
             </button>
           </div>
         ) : (

@@ -2,11 +2,6 @@
 
 ## 2026-05-29
 
-- `08:58` **phase 40 next-6e sweep: kaggle cell 1 — surface real errors** — +17 −18 — [`c22d6b8`](https://github.com/abgnydn/postnet-cf/commit/c22d6b80af4b22f595f5c5b9048d9a61ce2c1d35)
-- `08:30` **phase 40 next-6e sweep: kaggle notebook (free T4 ~30 hr/week)** — +305 −0 — [`4da3795`](https://github.com/abgnydn/postnet-cf/commit/4da3795d18f02c52cc75c2437e148d5aed91ae1f)
-- `07:45` **phase 40 next-6e sweep: notebook attacker also UA-spoofs cloudflare** — +1 −50 — [`93d76e5`](https://github.com/abgnydn/postnet-cf/commit/93d76e5d127a7031edca1679f87a1d7d35ae183e)
-- `07:44` **phase 40 next-6e: verifier sends a real browser User-Agent** — +13 −3 — [`50f7f31`](https://github.com/abgnydn/postnet-cf/commit/50f7f31929589326f6e2004a55bb55569e4103fb)
-- `07:43` **phase 40 next-6e sweep: notebook cell 6 None-safe + flag dead seeds** — +14 −33 — [`b89e4ca`](https://github.com/abgnydn/postnet-cf/commit/b89e4caa2d789b7128de39b4a0bece9ea12b83f5)
 - `07:00` **phase 40 next-6e sweep: colab notebook + verifier --seed flag** — +342 −0 — [`ef34644`](https://github.com/abgnydn/postnet-cf/commit/ef3464493293540e92b386fc20541c9026177e93)
 
 ## 2026-05-28
@@ -64,3 +59,8 @@
 - `08:16` **phase 12: empirical study script + multi-seed results** — +300 −0 — [`9cf96fa`](https://github.com/abgnydn/postnet-cf/commit/9cf96fabd5400e65bc533ead59a0a52cff56e79c)
 - `08:10` **phase 11: unified dashboard at /dashboard.html** — +231 −1 — [`ea54e55`](https://github.com/abgnydn/postnet-cf/commit/ea54e556266b1cafc5d43183ddd34ffa5199df36)
 - `08:03` **phase 10: WebSocket push for low-latency updates** — +81 −3 — [`ff670ea`](https://github.com/abgnydn/postnet-cf/commit/ff670ea44931a7352a893a74b4f5975a1b6c9a7c)
+- `08:01` **phase 9: byzantine fraud detection + defense** — +105 −23 — [`804517e`](https://github.com/abgnydn/postnet-cf/commit/804517e698574cad0d007300972eee10f209b477)
+- `07:50` **phase 8: context-2 MLP — escape the bigram mode collapse** — +155 −78 — [`8c33df5`](https://github.com/abgnydn/postnet-cf/commit/8c33df560c1b27f6e1a372be97ddd9f406539d0d)
+- `07:46` **phase 7: federated data shards — true FL semantics** — +70 −14 — [`6134a2d`](https://github.com/abgnydn/postnet-cf/commit/6134a2d41e06dc80889f8cea33a4ead65376e5e0)
+- `07:43` **phase 6: sharded snapshots — parallel bootstrap** — +144 −39 — [`bf2112c`](https://github.com/abgnydn/postnet-cf/commit/bf2112cfccb3ea96e401f82480884479c455869d)
+- `07:39` **phase 5: char-LM tournament — real ML loss** — +1013 −3 — [`60fc2bc`](https://github.com/abgnydn/postnet-cf/commit/60fc2bc2aa0e0f17f8e2f9eb405ba629e37d1074)

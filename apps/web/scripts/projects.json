@@ -15,6 +15,7 @@
       "repo": "abgnydn/webgpu-q",
       "featured": true,
       "order": 2,
+      "url": "https://webgpu-q.vercel.app",
       "tagline": "WebGPU quantum many-body + chemistry simulator. 401 tests, FCI-validated."
     },
     {
@@ -38,27 +39,36 @@
       "repo": "abgnydn/iz",
       "featured": true,
       "order": 5,
+      "url": "https://iz-b0n.pages.dev",
       "tagline": "TR-MRV-Bench \u2014 open emissions benchmark beating EU CBAM by 85.9%."
     },
     { "slug": "quill", "repo": "abgnydn/quill" },
-    { "slug": "safenpm", "repo": "abgnydn/safenpm" },
-    { "slug": "panel", "repo": "abgnydn/panel" },
+    { "slug": "safenpm", "repo": "abgnydn/safenpm", "url": "https://safenpm.dev" },
+    { "slug": "panel", "repo": "abgnydn/panel", "url": "https://panel-7474659131504222.aws.databricksapps.com" },
     { "slug": "gpubench", "repo": "abgnydn/gpubench", "url": "https://gpubench.dev" },
-    { "slug": "zero-tvm", "repo": "abgnydn/zero-tvm" },
-    { "slug": "wonderlab", "repo": "abgnydn/wonderlab" },
-    { "slug": "webgpu-dna", "repo": "abgnydn/webgpu-dna" },
+    { "slug": "zero-tvm", "repo": "abgnydn/zero-tvm", "url": "https://zerotvm.com" },
+    { "slug": "wonderlab", "repo": "abgnydn/wonderlab", "url": "https://the-wonderlab.pages.dev" },
+    { "slug": "webgpu-dna", "repo": "abgnydn/webgpu-dna", "url": "https://webgpudna.com" },
     { "slug": "webgpu-p2p-evolution", "repo": "abgnydn/webgpu-p2p-evolution" },
-    { "slug": "webgpu-transformer-fusion", "repo": "abgnydn/webgpu-transformer-fusion" },
+    {
+      "slug": "webgpu-transformer-fusion",
+      "repo": "abgnydn/webgpu-transformer-fusion",
+      "url": "https://doi.org/10.5281/zenodo.19344277"
+    },
     { "slug": "wgpu-adas-bench", "repo": "abgnydn/wgpu-adas-bench" },
     { "slug": "webgpu-fusion-max", "repo": "abgnydn/webgpu-fusion-max" },
     { "slug": "wgpu-native-bench", "repo": "abgnydn/wgpu-native-bench" },
-    { "slug": "webgpu-kernel-fusion", "repo": "abgnydn/webgpu-kernel-fusion" },
+    {
+      "slug": "webgpu-kernel-fusion",
+      "repo": "abgnydn/webgpu-kernel-fusion",
+      "url": "https://doi.org/10.5281/zenodo.19343570"
+    },
     {
       "slug": "zero-burn-lab",
       "repo": "abgnydn/zero-burn-lab",
       "tagline": "Chiang Mai burning-season simulation \u2014 the project that triggered the kernel-fusion line."
     },
-    { "slug": "fused-lora", "repo": "abgnydn/fused-lora" },
+    { "slug": "fused-lora", "repo": "abgnydn/fused-lora", "url": "https://fused-lora.pages.dev" },
     { "slug": "fusedx", "repo": "abgnydn/fusedx" },
     { "slug": "hub", "repo": "abgnydn/hub" },
     { "slug": "vault", "repo": "abgnydn/vault" },
@@ -68,24 +78,21 @@
     {
       "slug": "tether",
       "repo": "abgnydn/tether",
+      "url": "https://tether-app.pages.dev",
       "tagline": "Local-first browser brain \u2014 SolidJS + WebGPU on Cloudflare. Persistent agent in the right rail; privacy layer chooses which model sees what before the message ships."
     },
-    {
-      "slug": "swarm-engine",
-      "repo": "abgnydn/swarm-engine",
-      "tagline": "Browser-native distributed neuroevolution \u2014 ~360 lines of WGSL matching PyTorch MPS, P2P genome exchange across browser tabs."
-    },
-    { "slug": "webgpu-fly", "repo": "abgnydn/webgpu-fly" },
+    { "slug": "webgpu-fly", "repo": "abgnydn/webgpu-fly", "url": "https://webgpu-fly.pages.dev" },
     { "slug": "webgpu-fusion-sdk", "repo": "abgnydn/webgpu-fusion-sdk" },
     { "slug": "butterfly", "repo": "abgnydn/butterfly" },
     { "slug": "draw-instant", "repo": "abgnydn/draw-instant" },
     {
       "slug": "kernelfusion",
       "repo": "abgnydn/kernelfusion",
+      "url": "https://kernelfusion.dev",
       "tagline": "Research umbrella for GPU kernel fusion \u2014 eliminating per-dispatch overhead across evolutionary computation and transformer inference. Two preprints."
     },
     { "slug": "the-town", "repo": "abgnydn/the-town" },
-    { "slug": "teklifci", "repo": "abgnydn/teklifci" },
+    { "slug": "teklifci", "repo": "abgnydn/teklifci", "url": "https://teklifci.pages.dev" },
     { "slug": "deps0", "repo": "abgnydn/deps0" },
     {
       "slug": "the-swarm",
@@ -106,6 +113,18 @@
       "slug": "swarm-ensemble",
       "repo": "abgnydn/swarm-ensemble",
       "tagline": "Aggregation strategies for distributed evolution \u2014 six political-system metaphors tested on crypto trading."
+    },
+    {
+      "slug": "founder-lab",
+      "repo": "abgnydn/founder-lab",
+      "url": "https://founder-lab.pages.dev",
+      "tagline": "Multi-agent advisory panel for early-stage founders \u2014 four AI agents discuss your idea in a 3D meeting room. Local LLM, no cloud, no telemetry."
+    },
+    {
+      "slug": "davakasasi",
+      "repo": "abgnydn/davakasasi",
+      "url": "https://davakasasi.pages.dev",
+      "tagline": "Local-first AI vault for Turkish attorneys \u2014 KVKK-compliant: m\u00fcvekkil dosyalar\u0131 cihazdan \u00e7\u0131kmaz. Derivative of markview targeting Turkish solo/small-firm lawyers."
     }
   ]
 }

@@ -1,21 +1,18 @@
 #!/usr/bin/env node
-// Generates apps/web/public/projects/index.html with all project tiles
-// pre-rendered as static HTML. Solves the "JS-rendered page is invisible
-// to recruiters / crawlers / AI hiring agents" problem documented at
-// length in the global CLAUDE.md.
+// Generates apps/web/out/projects/index.html — a fully static snapshot of
+// the /projects page for crawlers / AI agents / no-JS readers / Slack
+// unfurls. Real visitors with JS still get the interactive zen-magazine
+// React component; the snapshot is the initial paint that React replaces
+// on hydration.
 //
-// How it works:
-//   1. Reads public/portfolio/index.json (synced daily by sync-portfolio.mjs)
-//   2. Renders project tiles + masthead as plain HTML
-//   3. Uses index.html as the head/body template, injects rendered content
-//      inside #root as initial paint
-//   4. When the SPA's main.tsx mounts via React.createRoot, it replaces
-//      #root with the interactive React Projects component — initial
-//      static content gets thrown away naturally
-//   5. Crawlers + AI agents + curl + no-JS users see the FULL static page
+// Runs as POSTBUILD (not prebuild). That matters: we read the already-
+// built apps/web/out/index.html so the `<script src="/assets/index-<HASH>.js">`
+// tags Vite produced (with content hashes) survive into the snapshot —
+// the previous prebuild version embedded the dev URL `/src/main.tsx`,
+// which 404s in prod and prevented React from ever mounting.
 //
-// Build wiring: package.json's "prebuild" runs this so the file lands
-// in public/ before vite copies public/ → out/.
+// Wiring (package.json):
+//   "build": "vite build && node scripts/prerender-projects.mjs"
 
 import fs from "node:fs";
 import path from "node:path";
@@ -23,46 +20,50 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.resolve(__dirname, "..");
-const portfolioJsonPath = path.resolve(webRoot, "public/portfolio/index.json");
-const indexHtmlPath = path.resolve(webRoot, "index.html");
-const outDir = path.resolve(webRoot, "public/projects");
+const portfolioJsonPath = path.resolve(webRoot, "out/portfolio/index.json");
+const builtIndexPath = path.resolve(webRoot, "out/index.html");
+const outDir = path.resolve(webRoot, "out/projects");
 const outPath = path.resolve(outDir, "index.html");
 
+if (!fs.existsSync(builtIndexPath)) {
+  console.error(`✗ built index missing at ${builtIndexPath}; run 'vite build' first`);
+  process.exit(1);
+}
 if (!fs.existsSync(portfolioJsonPath)) {
   console.error(`✗ portfolio JSON missing at ${portfolioJsonPath}; run sync-portfolio.mjs first`);
   process.exit(1);
 }
 
 const data = JSON.parse(fs.readFileSync(portfolioJsonPath, "utf-8"));
-const indexHtml = fs.readFileSync(indexHtmlPath, "utf-8");
+const indexHtml = fs.readFileSync(builtIndexPath, "utf-8");
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-// Sort projects: featured first, then by recent push date.
+// Sort projects: featured first (in declared `order`), then by recent push.
 const sorted = [...data.projects].sort((a, b) => {
   if (a.featured && !b.featured) return -1;
   if (!a.featured && b.featured) return 1;
+  if (a.featured && b.featured) return (a.order ?? 99) - (b.order ?? 99);
   return (b.pushed_at || "").localeCompare(a.pushed_at || "");
 });
 
 const projectTiles = sorted.map((p) => {
-  const live = p.live_url ? `<a href="${esc(p.live_url)}" rel="noopener nofollow">live →</a>` : "";
-  const stars = p.stars > 0 ? `<span class="meta-item">★ ${p.stars}</span>` : "";
-  const commits = p.commits_30d > 0 ? `<span class="meta-item">${p.commits_30d} commits/30d</span>` : "";
-  const lang = p.language ? `<span class="meta-item lang">${esc(p.language)}</span>` : "";
-  const topics = (p.topics || []).slice(0, 4).map((t) => `<span class="topic">${esc(t)}</span>`).join("");
+  const live = p.live_url ? `<a href="${esc(p.live_url)}" class="prerendered-link prerendered-link-live" rel="noopener nofollow">live ↗</a>` : "";
+  const stars = p.stars > 0 ? `<span class="prerendered-meta-item">★ ${p.stars}</span>` : "";
+  const commits = p.commits_30d > 0 ? `<span class="prerendered-meta-item">${p.commits_30d} commits/30d</span>` : "";
+  const lang = p.language ? `<span class="prerendered-meta-item prerendered-meta-lang">${esc(p.language)}</span>` : "";
+  const topics = (p.topics || []).slice(0, 4).map((t) => `<span class="prerendered-topic">${esc(t)}</span>`).join("");
+  const featured = p.featured ? ' data-featured="true"' : '';
   return `
-  <article class="project-tile">
+  <article class="prerendered-tile"${featured}>
     <h2><a href="/p/${esc(p.slug)}">${esc(p.name)}</a></h2>
-    <p class="tagline">${esc(p.tagline)}</p>
-    <div class="meta">
-      ${lang}
-      ${stars}
-      ${commits}
+    <p class="prerendered-tag">${esc(p.tagline)}</p>
+    <div class="prerendered-meta">
+      ${lang}${stars}${commits}
     </div>
-    ${topics ? `<div class="topics">${topics}</div>` : ""}
-    <div class="links">
-      <a href="${esc(p.repo_url)}" rel="noopener nofollow">github →</a>
+    ${topics ? `<div class="prerendered-topics">${topics}</div>` : ""}
+    <div class="prerendered-links">
+      <a href="${esc(p.repo_url)}" class="prerendered-link" rel="noopener nofollow">github →</a>
       ${live}
     </div>
   </article>`;
@@ -74,58 +75,203 @@ const languages = [...new Set(data.projects.map((p) => p.language).filter(Boolea
 const synced = new Date(data.generated_at);
 
 const ogTitle = "Projects — Ahmet Barış Günaydın";
-const ogDesc = `${data.project_count} open-source repos · ${totalCommits} commits in last 90 days · WebGPU kernels, browser-native quantum chemistry, local-first AI infrastructure. Independent research.`;
+const ogDesc = `${data.project_count} open-source repos · ${totalCommits.toLocaleString()} commits in last 90 days · WebGPU kernels, browser-native quantum chemistry, local-first AI infrastructure. Independent research.`;
 
 const projectListHTML = `
-<main class="prerendered-projects">
-  <header class="masthead">
+<main class="prerendered-shell">
+  <header class="prerendered-masthead">
+    <p class="prerendered-eyebrow">portfolio · barisgunaydin.com</p>
     <h1>Projects</h1>
-    <p class="lede">${esc(ogDesc)}</p>
-    <dl class="stats">
-      <div><dt>Repos</dt><dd>${data.project_count}</dd></div>
-      <div><dt>Commits (90d)</dt><dd>${totalCommits.toLocaleString()}</dd></div>
-      <div><dt>★ Stars</dt><dd>${totalStars}</dd></div>
-      <div><dt>Languages</dt><dd>${languages.length}</dd></div>
+    <p class="prerendered-lede">${esc(ogDesc)}</p>
+    <dl class="prerendered-stats">
+      <div><dt>projects</dt><dd>${data.project_count}</dd></div>
+      <div><dt>commits · 90d</dt><dd>${totalCommits.toLocaleString()}</dd></div>
+      <div><dt>★ stars</dt><dd>${totalStars}</dd></div>
+      <div><dt>languages</dt><dd>${languages.length}</dd></div>
     </dl>
-    <p class="generated">synced ${synced.toISOString().slice(0, 10)} · interactive view loads here in &lt;1 s with JS enabled</p>
+    <p class="prerendered-generated">synced ${synced.toISOString().slice(0, 10)} · interactive view loads in &lt;1 s with JS</p>
   </header>
-  <section class="project-grid" aria-label="Projects">
+  <section class="prerendered-grid" aria-label="Projects">
     ${projectTiles}
   </section>
   <footer class="prerendered-footer">
-    <p>This is a pre-rendered static snapshot for crawlers + AI agents + no-JS browsers. With JS enabled you'll see the interactive grid with search, filters, an aggregated commit river, and a project chat. Source: <a href="https://github.com/abgnydn/markview" rel="noopener">github.com/abgnydn/markview</a>.</p>
+    <p>Pre-rendered snapshot for crawlers + AI agents + no-JS readers. With JS enabled you get the interactive grid — heatmap, sparkline, commit river, search, filters, and an in-browser chat that knows every project. Source: <a href="https://github.com/abgnydn/markview" rel="noopener">github.com/abgnydn/markview</a>.</p>
   </footer>
 </main>
 `;
 
+// Zen-paper aesthetic on the snapshot so the flash matches the React UI:
+// warm dark by default, light fallback when html lacks the .dark class.
+// Full-bleed background painted on :root + body — no white box centered
+// on a dark page. The container has its own max-width for readability.
 const inlineStyles = `
   <style>
-    .prerendered-projects { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 1200px; margin: 0 auto; padding: 2rem 1.25rem; color: #2a2a2e; background: #fbf8f3; min-height: 100vh; }
-    @media (prefers-color-scheme: dark) { .prerendered-projects { color: #e6e3dd; background: #0b0a0d; } }
-    .prerendered-projects .masthead { margin-bottom: 2.5rem; }
-    .prerendered-projects .masthead h1 { font-size: 2.5rem; line-height: 1.1; margin: 0 0 0.5rem; font-weight: 700; letter-spacing: -0.02em; }
-    .prerendered-projects .lede { font-size: 1.05rem; line-height: 1.5; margin: 0 0 1.5rem; opacity: 0.85; max-width: 70ch; }
-    .prerendered-projects .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin: 0 0 1rem; }
-    .prerendered-projects .stats > div { padding: 0.75rem 1rem; border: 1px solid rgba(127,127,127,0.2); border-radius: 8px; }
-    .prerendered-projects .stats dt { font-size: 0.75rem; font-weight: 600; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em; margin: 0; }
-    .prerendered-projects .stats dd { font-size: 1.5rem; font-weight: 600; margin: 0.25rem 0 0; line-height: 1; }
-    .prerendered-projects .generated { font-size: 0.8rem; opacity: 0.55; margin: 0 0 0; }
-    .prerendered-projects .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
-    .prerendered-projects .project-tile { display: block; padding: 1.25rem; border: 1px solid rgba(127,127,127,0.2); border-radius: 8px; background: rgba(255,255,255,0.4); }
-    @media (prefers-color-scheme: dark) { .prerendered-projects .project-tile { background: rgba(255,255,255,0.02); } }
-    .prerendered-projects .project-tile h2 { font-size: 1.05rem; margin: 0 0 0.4rem; font-weight: 600; line-height: 1.3; }
-    .prerendered-projects .project-tile h2 a { color: inherit; text-decoration: none; }
-    .prerendered-projects .project-tile h2 a:hover { text-decoration: underline; }
-    .prerendered-projects .tagline { margin: 0 0 0.75rem; font-size: 0.9rem; line-height: 1.45; opacity: 0.85; }
-    .prerendered-projects .meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.75rem; opacity: 0.65; margin-bottom: 0.5rem; }
-    .prerendered-projects .meta-item.lang { font-weight: 600; }
-    .prerendered-projects .topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem; }
-    .prerendered-projects .topic { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 12px; background: rgba(127,127,127,0.15); }
-    .prerendered-projects .links { display: flex; gap: 1rem; font-size: 0.85rem; }
-    .prerendered-projects .links a { color: inherit; text-decoration: none; opacity: 0.85; }
-    .prerendered-projects .links a:hover { opacity: 1; text-decoration: underline; }
-    .prerendered-projects .prerendered-footer { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(127,127,127,0.15); font-size: 0.85rem; opacity: 0.7; line-height: 1.5; }
-    .prerendered-projects .prerendered-footer a { color: inherit; }
+    :root { color-scheme: dark light; }
+    html, body { background: #0b0a0d; color: #ece8e0; }
+    html:not(.dark):not([data-theme="dark"]) body { background: #fbf8f3; color: #1c1816; }
+
+    .prerendered-shell {
+      font-family: "Iowan Old Style", Charter, Iowan, "Source Serif Pro", "New York", Georgia, serif;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14vh 32px 8vh;
+      min-height: 100vh;
+      box-sizing: border-box;
+      background: transparent;
+    }
+    .prerendered-masthead { padding-bottom: 5vh; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 6vh; }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-masthead { border-bottom-color: rgba(28,24,22,0.09); }
+    .prerendered-eyebrow {
+      font-family: "Berkeley Mono", "JetBrains Mono", ui-monospace, monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(236,232,224,0.46);
+      margin: 0 0 18px;
+    }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-eyebrow { color: rgba(28,24,22,0.46); }
+    .prerendered-masthead h1 {
+      font-size: clamp(56px, 9vw, 124px);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 0.96;
+      margin: 0 0 22px;
+      text-indent: -0.04em;
+    }
+    .prerendered-lede {
+      font-family: "Iowan Old Style", Charter, Georgia, serif;
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 0 0 36px;
+      max-width: 72ch;
+      opacity: 0.82;
+    }
+    .prerendered-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 24px 32px;
+      margin: 0 0 18px;
+    }
+    .prerendered-stats > div { min-width: 0; }
+    .prerendered-stats dt {
+      font-family: "Berkeley Mono", ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(236,232,224,0.46);
+      margin: 0 0 6px;
+    }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-stats dt { color: rgba(28,24,22,0.46); }
+    .prerendered-stats dd {
+      font-family: inherit;
+      font-size: clamp(28px, 3.6vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1;
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .prerendered-generated {
+      font-family: "Berkeley Mono", ui-monospace, monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(236,232,224,0.46);
+      margin: 18px 0 0;
+    }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-generated { color: rgba(28,24,22,0.46); }
+
+    .prerendered-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-grid {
+      background: rgba(28,24,22,0.09);
+      border-color: rgba(28,24,22,0.09);
+    }
+    .prerendered-tile {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 18px 20px;
+      background: #0b0a0d;
+      min-height: 150px;
+    }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-tile { background: #fbf8f3; }
+    .prerendered-tile[data-featured="true"] { background: rgba(255,255,255,0.025); }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-tile[data-featured="true"] { background: rgba(28,24,22,0.025); }
+    .prerendered-tile h2 {
+      font-family: "Berkeley Mono", ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin: 0;
+    }
+    .prerendered-tile h2 a { color: inherit; text-decoration: none; }
+    .prerendered-tile h2 a:hover { color: #9b7dff; }
+    .prerendered-tag {
+      font-family: "Iowan Old Style", Charter, Georgia, serif;
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0;
+      opacity: 0.82;
+      flex: 1;
+    }
+    .prerendered-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: "Berkeley Mono", ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+    .prerendered-meta-lang { color: #e0bd7a; }
+    .prerendered-topics { display: flex; flex-wrap: wrap; gap: 4px; }
+    .prerendered-topic {
+      font-family: "Berkeley Mono", ui-monospace, monospace;
+      font-size: 9.5px;
+      letter-spacing: 0.10em;
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 9999px;
+      opacity: 0.8;
+    }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-topic { background: rgba(28,24,22,0.05); }
+    .prerendered-links {
+      display: flex;
+      gap: 16px;
+      font-family: "Berkeley Mono", ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .prerendered-link { color: inherit; text-decoration: none; opacity: 0.7; transition: color 180ms; }
+    .prerendered-link:hover { color: #9b7dff; opacity: 1; }
+    .prerendered-link-live { color: #9b7dff; opacity: 0.95; }
+    .prerendered-footer {
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-family: "Iowan Old Style", Charter, Georgia, serif;
+      font-size: 14px;
+      line-height: 1.6;
+      opacity: 0.6;
+    }
+    html:not(.dark):not([data-theme="dark"]) .prerendered-footer { border-top-color: rgba(28,24,22,0.09); }
+    .prerendered-footer a { color: inherit; }
+
+    @media (max-width: 720px) {
+      .prerendered-shell { padding: 8vh 16px 6vh; }
+      .prerendered-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
   </style>`;
 
 const ogMetaTags = `
@@ -143,14 +289,9 @@ const ogMetaTags = `
     <meta name="robots" content="index, follow" />`;
 
 let newHtml = indexHtml
-  // Update title
   .replace(/<title>.*?<\/title>/, `<title>${esc(ogTitle)}</title>`)
-  // Replace description with project-focused one
   .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${esc(ogDesc)}" />`)
-  // Inject OG tags + inline styles right before </head>
   .replace("</head>", `${ogMetaTags}${inlineStyles}\n  </head>`)
-  // Replace empty #root div with pre-rendered content as the initial paint;
-  // React.createRoot in main.tsx will replace this when the SPA mounts
   .replace('<div id="root"></div>', `<div id="root">${projectListHTML}</div>`);
 
 fs.mkdirSync(outDir, { recursive: true });

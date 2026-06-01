@@ -140,6 +140,66 @@ interface PipelineCall {
  *
  * Returns the final string. Honors `signal.abort()` for a stop button.
  */
+/**
+ * Cloud generation via the Cloudflare Pages Function at /api/chat.
+ * Uses Workers AI (Llama-3.3-70B by default) on the free CF tier.
+ * Same streaming + abort contract as generateChat() — caller doesn't
+ * need to know which backend ran.
+ */
+export async function generateChatCloud(options: GenerateOptions & { model?: string }): Promise<string> {
+  const { messages, maxNewTokens = 512, temperature = 0.5, onToken, signal, model } = options;
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      messages,
+      stream: true,
+      max_tokens: maxNewTokens,
+      temperature,
+      ...(model ? { model } : {}),
+    }),
+    signal,
+  });
+  if (!res.ok) {
+    let detail = '';
+    try { detail = (await res.json() as { detail?: string }).detail ?? ''; } catch { /* ignore */ }
+    throw new Error(`cloud chat ${res.status}${detail ? ': ' + detail : ''}`);
+  }
+  if (!res.body) throw new Error('cloud chat returned no body');
+
+  let accumulated = '';
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  try {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let nl: number;
+      while ((nl = buffer.indexOf('\n\n')) !== -1) {
+        const frame = buffer.slice(0, nl).trim();
+        buffer = buffer.slice(nl + 2);
+        if (!frame.startsWith('data:')) continue;
+        const payload = frame.slice(5).trim();
+        if (payload === '[DONE]') return accumulated.trim();
+        try {
+          const parsed = JSON.parse(payload) as { response?: string };
+          const chunk = parsed.response ?? '';
+          if (chunk) {
+            accumulated += chunk;
+            onToken?.(chunk, accumulated);
+          }
+        } catch { /* skip malformed frame */ }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return accumulated.trim();
+}
+
 export async function generateChat(options: GenerateOptions): Promise<string> {
   const pipe = (await getPipeline()) as PipelineCall;
   const { messages, maxNewTokens = 256, temperature = 0.7, topP = 0.9, onToken, signal } = options;
@@ -203,11 +263,14 @@ export async function generateChat(options: GenerateOptions): Promise<string> {
  * also retrieve fuller paragraphs (not the 140-char preview) so the
  * model has enough to ground on.
  */
+export type ChatMode = 'local' | 'cloud';
+
 export async function answerQuestionInWorkspace(
   workspaceId: string,
   question: string,
   options: {
     topK?: number;
+    mode?: ChatMode;
     onToken?: (chunk: string, full: string) => void;
     signal?: AbortSignal;
   } = {},
@@ -234,13 +297,15 @@ export async function answerQuestionInWorkspace(
 NOTES:
 ${contextBlock || '(no notes found)'}`;
 
-  const answer = await generateChat({
+  const mode: ChatMode = options.mode ?? 'cloud';
+  const generator = mode === 'cloud' ? generateChatCloud : generateChat;
+  const answer = await generator({
     messages: [
       { role: 'system', content: system },
       { role: 'user', content: question },
     ],
-    maxNewTokens: 220,
-    temperature: 0.3,            // low temp = stays close to the context
+    maxNewTokens: mode === 'cloud' ? 480 : 220,
+    temperature: 0.3,
     topP: 0.85,
     onToken: options.onToken,
     signal: options.signal,

@@ -8,9 +8,17 @@
 // burst grouping, and (6) a searchable + sortable + groupable project
 // grid. Per-project deep view lives at /p/:slug.
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Sparkles } from "lucide-react";
+import { useChronicleWorkspace } from "@/hooks/use-chronicle-workspace";
 import "./projects.css";
+
+// Lazy-load the chat — it pulls transformers.js (huge), don't drag it
+// onto the cold path of "just opened /projects to scroll the grid."
+const AiChat = lazy(() =>
+  import("@/components/viewer/ai-chat").then((m) => ({ default: m.AiChat }))
+);
 
 interface LastCommit {
   sha: string;
@@ -571,6 +579,14 @@ export default function Projects() {
   const [gridSort, setGridSort] = useState<GridSort>("recent");
   const [gridGroup, setGridGroup] = useState<GridGroup>("none");
 
+  // Chronicle chat — RAG over every project bundle, in-browser.
+  const [chatOpen, setChatOpen] = useState(false);
+  const chronicleSlugs = useMemo(
+    () => (index?.projects ?? []).map((p) => p.slug),
+    [index]
+  );
+  const chronicle = useChronicleWorkspace(chatOpen, chronicleSlugs);
+
   // /projects is a single-column reading surface — undo the editor's
   // body-locked overflow while this route is mounted.
   useEffect(() => {
@@ -1018,6 +1034,53 @@ export default function Projects() {
         <span>·</span>
         <a href="https://barisgunaydin.com">barisgunaydin.com</a>
       </footer>
+
+      {/* Floating CTA — open the chronicle chat. */}
+      <button
+        type="button"
+        className={`proj-chat-cta ${chatOpen ? "is-open" : ""}`}
+        onClick={() => setChatOpen((v) => !v)}
+        aria-label={chatOpen ? "close chronicle chat" : "open chronicle chat"}
+      >
+        <Sparkles size={14} />
+        <span>{chatOpen ? "close" : "ask the chronicle"}</span>
+      </button>
+
+      {chatOpen && (
+        <>
+          {chronicle.status !== "ready" ? (
+            <div className="proj-chat-prep" role="status">
+              <div className="proj-chat-prep-inner">
+                <Sparkles size={14} />
+                {chronicle.status === "error" ? (
+                  <span>
+                    chronicle load failed · {chronicle.error}
+                  </span>
+                ) : (
+                  <>
+                    <span>loading the chronicle</span>
+                    <span className="proj-chat-prep-count">
+                      {chronicle.loaded}/{chronicle.total} files
+                    </span>
+                    <div className="proj-chat-prep-bar">
+                      <div
+                        className="proj-chat-prep-bar-fill"
+                        style={{
+                          width: `${chronicle.total ? (chronicle.loaded / chronicle.total) * 100 : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <Suspense fallback={null}>
+              <AiChat onClose={() => setChatOpen(false)} />
+            </Suspense>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -1,0 +1,8 @@
+name = "markview"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "./out"
+
+# Cloudflare Workers AI binding — exposed inside functions/ as `env.AI`.
+# Free-tier inference. No API key, no separate billing surface.
+[ai]
+binding = "AI"

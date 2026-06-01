@@ -2,18 +2,6 @@
 
 ## 2026-05-29
 
-- `11:00` **docs: add NOTICE file for Apache 2.0 §4(d) compliance** — +49 −0 — [`00e1a7c`](https://github.com/abgnydn/webgpu-q/commit/00e1a7c76630604b69871c95c898fb05ccd85760)
-- `10:51` **docs: design for per-tab independent B-tensor build** — +194 −0 — [`9535a0c`](https://github.com/abgnydn/webgpu-q/commit/9535a0ce4505ead050c3d2d44ac877b1b684f217)
-- `10:49` **feat(swarm): octacene C₃₄H₂₀ STO-3G — 8-ring acene, 190 basis** — +281 −1 — [`40188d7`](https://github.com/abgnydn/webgpu-q/commit/40188d7540748dbf8b354b54c54a3406ccddfbcb)
-- `10:30` **feat(swarm): heptacene C₃₀H₁₈ STO-3G — 7-ring acene with delayed-DIIS** — +253 −1 — [`80fb9e4`](https://github.com/abgnydn/webgpu-q/commit/80fb9e49dc08922c5f5689b411a1a163a25c06b5)
-- `10:26` **feat(swarm): hexacene C₂₆H₁₆ HF SCF — 6 fused rings, 146 basis** — +265 −1 — [`c2df6a9`](https://github.com/abgnydn/webgpu-q/commit/c2df6a9ae77975ddd8b2fb608ebd3e73c6ee58eb)
-- `10:19` **docs(ci): document C₆₀ Ubuntu failure root cause in swarm-benches.yml** — +12 −0 — [`039bfa1`](https://github.com/abgnydn/webgpu-q/commit/039bfa1638ef01213bde30ec8ac139a6b89ac304)
-- `10:16` **fix(swarm): relax anthracene cc-pVDZ energy bounds — converges to a** — +31 −9 — [`b01003b`](https://github.com/abgnydn/webgpu-q/commit/b01003b2e479af893f8e49e87b4a289aae219389)
-- `10:14` **docs+ci: v0.9 changelog draft + vitest IPC timeout fix** — +94 −0 — [`af72b37`](https://github.com/abgnydn/webgpu-q/commit/af72b37982fc1d80117b25ebce2b7068cef7b496)
-- `09:55` **fix(swarm): move test.use({ trace }) to top level — Playwright doesn'…** — +2 −1 — [`bce8266`](https://github.com/abgnydn/webgpu-q/commit/bce8266c413cc32e151cb3bea311c7803a787c01)
-- `08:47` **test(swarm): anthracene cc-pVDZ with delayed-DIIS recipe** — +272 −9 — [`213f75d`](https://github.com/abgnydn/webgpu-q/commit/213f75d89f90746e18d4fc4bd0303e2fb563788e)
-- `08:37` **fix(numbers): rebase two drifted claims to current empirical values** — +8 −2 — [`41f9ea3`](https://github.com/abgnydn/webgpu-q/commit/41f9ea31963b41dd31ab744829e46e7dce4bd3e7)
-- `08:29` **feat(hf): diisStartIter option for delayed DIIS activation** — +45 −10 — [`b450896`](https://github.com/abgnydn/webgpu-q/commit/b450896dfe85235d0dfba0779797d81955ada6da)
 - `06:59` **ci(swarm): offload swarm benches to GitHub Actions runners** — +142 −0 — [`ecec5e5`](https://github.com/abgnydn/webgpu-q/commit/ecec5e528d35bd08bdef99101a45c85c333d53c5)
 - `06:43` **feat(swarm): C₆₀ buckminsterfullerene HF SCF in browser tabs —** — +268 −0 — [`9298d0e`](https://github.com/abgnydn/webgpu-q/commit/9298d0e8ed3b21f61d2b114c9a6dd29d00311ae2)
 
@@ -55,3 +43,18 @@
 - `08:41` **feat(integrals): skipOAO option — eri_OAO is unused by HF/MP2/CCSD/EO…** — +12 −1 — [`bef3a8a`](https://github.com/abgnydn/webgpu-q/commit/bef3a8aa92602205772cf8d9c4f902873d67ab88)
 - `08:37` **feat(integrals): skipERI option + honest negative on benzene aux-DF e…** — +135 −2 — [`fdf4bee`](https://github.com/abgnydn/webgpu-q/commit/fdf4beea8e7120a5bebe1c8868a06ca9aa2b28e8)
 - `08:13` **bench(df-aux): WASM matmul cracked the aux-DF speed win on benzene** — +18 −10 — [`8a4d3e8`](https://github.com/abgnydn/webgpu-q/commit/8a4d3e820bcc2fe19b7b6d8f6136bc4891119068)
+- `08:10` **perf(df-aux): port B-tensor matmul to Rust+WASM with f64x2 SIMD** — +183 −67 — [`3393729`](https://github.com/abgnydn/webgpu-q/commit/33937299984d362d863b55ba418b27a94b88f831)
+- `08:04` **bench(df-aux): benzene parallel aux-DF 35s → 21s (1.85×) from matmul …** — +32 −12 — [`e8fc1df`](https://github.com/abgnydn/webgpu-q/commit/e8fc1dfad8865086fe2634e7c73bac7751a9cd2e)
+- `08:01` **perf(df-aux): reorder B-tensor matmul loops for cache locality** — +24 −9 — [`938d4ca`](https://github.com/abgnydn/webgpu-q/commit/938d4ca7d9912c38a315655193af9be5251773eb)
+- `07:59` **bench(df-aux): benzene parallel V build only 1.07× — B-tensor matmul …** — +17 −0 — [`9708c7b`](https://github.com/abgnydn/webgpu-q/commit/9708c7b9429939901851b9e3d79fd7a295e128c9)
+- `07:55` **feat(df-aux): parallel 3-index ERI build — buildAuxBasisDFParallel** — +471 −3 — [`9f0dd46`](https://github.com/abgnydn/webgpu-q/commit/9f0dd465ce860aca66f1c16d38bf8da846995766)
+- `07:49` **test(df-aux): kernels validated at L=1..4, extraL=2 is linear-depende…** — +157 −2 — [`b36de0f`](https://github.com/abgnydn/webgpu-q/commit/b36de0fe83780fb4d56b0ba0e80c117d9e41e701)
+- `07:35` **docs(limitations): honest framing of auto-aux DF wins (memory + futur…** — +24 −0 — [`8704785`](https://github.com/abgnydn/webgpu-q/commit/8704785eacdee5376bc7905c58871defbd062064)
+- `07:32` **bench(df-aux): 3.94× speedup on ethane cc-pVDZ at sub-mHa accuracy** — +89 −0 — [`661e19c`](https://github.com/abgnydn/webgpu-q/commit/661e19cea63db2bbeb4827d080bd71a51f140481)
+- `07:30` **feat(df-aux): generateAutoAux gives chemical accuracy at extraL=1** — +164 −2 — [`eee7015`](https://github.com/abgnydn/webgpu-q/commit/eee7015fc44fe82f9888f1373345dfc1165f62db)
+- `07:27` **test(df-aux): cross-check 2-idx + 3-idx kernels — bit-perfect, no bugs** — +206 −11 — [`266c760`](https://github.com/abgnydn/webgpu-q/commit/266c760c4f3e3f50e7323e47dd836daa854d57b2)
+
+## 2026-05-27
+
+- `11:37` **test(df-aux): HF energy benchmarks expose Phase-1 quality issue** — +246 −0 — [`56144c8`](https://github.com/abgnydn/webgpu-q/commit/56144c808312bac1372120b0c7e35ee7e75bf091)
+- `11:31` **feat(df-aux): Phase 1 — 3-index + 2-index ERI kernels for aux-basis DF** — +987 −0 — [`f1cee55`](https://github.com/abgnydn/webgpu-q/commit/f1cee559ca1336c050af59c6f2faf76c8dbff70d)
