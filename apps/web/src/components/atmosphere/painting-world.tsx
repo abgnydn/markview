@@ -355,18 +355,31 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
       let lastX = 0, lastY = 0;
       let fly = false;
 
+      // Keys the world owns. While inside, these must NOT also reach
+      // the underlying viewer's keyboard-nav (which would switch the
+      // active file behind the world — the "respawn" the user saw).
+      // We register in the CAPTURE phase and stopImmediatePropagation
+      // so window-level bubble listeners (useKeyboardNav etc.) never
+      // fire for our movement keys.
+      const OWNED = new Set([' ', 'w', 'a', 's', 'd', 'f', 'e',
+        'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'escape']);
       const onKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') { onClose(); return; }
-        if (e.key === 'e' || e.key === 'E') {
+        const k = e.key.toLowerCase();
+        if (OWNED.has(k)) { e.preventDefault(); e.stopImmediatePropagation(); }
+        if (k === 'escape') { onClose(); return; }
+        if (k === 'e') {
           const near = nearFileRef.current;
           if (near) { void setActiveFile(near); onClose(); }
           return;
         }
-        if (e.key === 'f' || e.key === 'F') { fly = !fly; setFlying(fly); return; }
-        keysDown.add(e.key.toLowerCase());
-        if (e.key === ' ') e.preventDefault(); // don't scroll
+        if (k === 'f') { fly = !fly; setFlying(fly); return; }
+        keysDown.add(k);
       };
-      const onKeyUp = (e: KeyboardEvent) => keysDown.delete(e.key.toLowerCase());
+      const onKeyUp = (e: KeyboardEvent) => {
+        const k = e.key.toLowerCase();
+        if (OWNED.has(k)) e.stopImmediatePropagation();
+        keysDown.delete(k);
+      };
       const onMouseDown = (e: MouseEvent) => { dragging = true; lastX = e.clientX; lastY = e.clientY; };
       const onMouseUp = () => { dragging = false; };
       const onMouseMove = (e: MouseEvent) => {
@@ -380,8 +393,8 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
         const near = nearFileRef.current;
         if (near) { void setActiveFile(near); onClose(); }
       };
-      window.addEventListener('keydown', onKeyDown);
-      window.addEventListener('keyup', onKeyUp);
+      window.addEventListener('keydown', onKeyDown, { capture: true });
+      window.addEventListener('keyup', onKeyUp, { capture: true });
       canvas.addEventListener('mousedown', onMouseDown);
       window.addEventListener('mouseup', onMouseUp);
       window.addEventListener('mousemove', onMouseMove);
@@ -411,11 +424,16 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
           Math.sin(pitch),
           Math.cos(yaw) * Math.cos(pitch),
         );
-        const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).normalize();
-        const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
-        const speed = (fly ? 10 : 6) * dt;
-        if (keysDown.has('w') || keysDown.has('arrowup'))    camera.position.addScaledVector(fwd, speed);
-        if (keysDown.has('s') || keysDown.has('arrowdown'))  camera.position.addScaledVector(fwd, -speed);
+        const fwdFlat = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).normalize();
+        const right = new THREE.Vector3(fwdFlat.z, 0, -fwdFlat.x);
+        // Walking: forward stays horizontal (you don't tunnel into the
+        // ground when looking down). Flying: forward follows the full
+        // look direction, so W while looking up climbs — that's what
+        // reads as actual flight.
+        const moveFwd = fly ? dir : fwdFlat;
+        const speed = (fly ? 12 : 6) * dt;
+        if (keysDown.has('w') || keysDown.has('arrowup'))    camera.position.addScaledVector(moveFwd, speed);
+        if (keysDown.has('s') || keysDown.has('arrowdown'))  camera.position.addScaledVector(moveFwd, -speed);
         if (keysDown.has('a') || keysDown.has('arrowleft'))  camera.position.addScaledVector(right, speed);
         if (keysDown.has('d') || keysDown.has('arrowright')) camera.position.addScaledVector(right, -speed);
         if (fly) {
@@ -527,8 +545,8 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
       setStatus('ready');
 
       cleanup = () => {
-        window.removeEventListener('keydown', onKeyDown);
-        window.removeEventListener('keyup', onKeyUp);
+        window.removeEventListener('keydown', onKeyDown, { capture: true });
+        window.removeEventListener('keyup', onKeyUp, { capture: true });
         canvas.removeEventListener('mousedown', onMouseDown);
         window.removeEventListener('mouseup', onMouseUp);
         window.removeEventListener('mousemove', onMouseMove);
