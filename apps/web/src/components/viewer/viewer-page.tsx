@@ -262,7 +262,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       <InkDropper enabled={atmosphere !== 'none'} />
       {worldSrc && (
         <Suspense fallback={null}>
-          <PaintingWorld src={worldSrc} onClose={() => setWorldSrc(null)} />
+          <PaintingWorld src={worldSrc} kind={atmosphere} onClose={() => setWorldSrc(null)} />
         </Suspense>
       )}
       <ShareStatus />

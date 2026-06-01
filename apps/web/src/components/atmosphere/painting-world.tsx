@@ -3,30 +3,38 @@
 import { useEffect, useRef, useState } from 'react';
 import { ensureDepth } from '@/lib/atmosphere/depth';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { db } from '@/lib/storage/db';
 
 interface PaintingWorldProps {
   /** Painting image URL to enter. */
   src: string;
+  /** Atmosphere id — drives wildlife + water + sky tint. */
+  kind?: string;
   onClose: () => void;
 }
 
 /**
- * PaintingWorld — "go inside" the painting. The depth map drives a
- * heavily Z-displaced relief landscape (the painting becomes terrain);
- * a first-person camera walks through it with WASD + drag-to-look.
- * Each file in the workspace is anchored as a glowing waypoint card
- * floating above the terrain — walk up to one and the card enlarges;
- * click (or press E) to open that file and exit the world.
+ * PaintingWorld — "go inside" the painting as a walkable 3D landscape.
+ *
+ * The depth map becomes terrain; a first-person camera walks it with
+ * WASD + drag-look. On top of the base relief:
+ *   - readable file pages anchored in the terrain (walk up to read)
+ *   - footprint / ripple trail left as you move (per-atmosphere)
+ *   - gradient sky dome tinted by time-of-day
+ *   - fly mode (F to toggle; Space up / Shift down)
+ *   - shimmering water plane for the Wave atmosphere
+ *   - wind-driven camera sway
+ *   - ambient wildlife (birds / fish / fireflies) by atmosphere
  *
  * Pure Three.js (already a dep). Fullscreen overlay; Esc exits.
  */
-export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
+export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const files = useWorkspaceStore((s) => s.files);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [nearFile, setNearFile] = useState<string | null>(null);
-  // Refs so the rAF loop sees current values without re-running the effect.
+  const [flying, setFlying] = useState(false);
   const nearFileRef = useRef<string | null>(null);
   nearFileRef.current = nearFile;
   const filesRef = useRef(files);
@@ -43,19 +51,67 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
       const THREE = await import('three');
       if (cancelled) return;
 
+      // Pre-load each file's first paragraph for the readable pages.
+      const excerpts = new Map<string, string>();
+      await Promise.all(filesRef.current.slice(0, 24).map(async (f) => {
+        try {
+          const dbFile = await db.files.get(f.id);
+          const body = (dbFile?.content ?? '')
+            .replace(/^---[\s\S]*?---\n+/, '')
+            .replace(/^#.*$/m, '')
+            .trim()
+            .slice(0, 320);
+          excerpts.set(f.id, body);
+        } catch { /* leave blank */ }
+      }));
+      if (cancelled) return;
+
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.setSize(window.innerWidth, window.innerHeight, false);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x0a0910, 0.045);
 
-      const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 100);
-      // Start at the near edge of the terrain, slightly elevated, looking in.
+      // ── Sky dome + fog, tinted by time-of-day ─────────────────────
+      const phase = document.documentElement.getAttribute('data-time-phase') || 'day';
+      const SKY: Record<string, { top: number; bot: number; fog: number }> = {
+        dawn:  { top: 0x2a3a6a, bot: 0xf6b9a0, fog: 0x6a5a6a },
+        day:   { top: 0x4a78b8, bot: 0xcfe0ee, fog: 0x9fb4c8 },
+        dusk:  { top: 0x3a2a5a, bot: 0xe0885a, fog: 0x5a4358 },
+        night: { top: 0x070912, bot: 0x1a2240, fog: 0x0a0c1a },
+        off:   { top: 0x4a78b8, bot: 0xcfe0ee, fog: 0x9fb4c8 },
+      };
+      const sky = SKY[phase] ?? SKY.day;
+      scene.fog = new THREE.FogExp2(sky.fog, 0.030);
+
+      const skyGeo = new THREE.SphereGeometry(60, 32, 16);
+      const skyMat = new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        depthWrite: false,
+        uniforms: {
+          uTop: { value: new THREE.Color(sky.top) },
+          uBot: { value: new THREE.Color(sky.bot) },
+        },
+        vertexShader: `
+          varying vec3 vP;
+          void main() { vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+        `,
+        fragmentShader: `
+          varying vec3 vP;
+          uniform vec3 uTop;
+          uniform vec3 uBot;
+          void main() {
+            float h = clamp(vP.y / 60.0 * 0.5 + 0.5, 0.0, 1.0);
+            gl_FragColor = vec4(mix(uBot, uTop, pow(h, 0.8)), 1.0);
+          }
+        `,
+      });
+      scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+      const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 200);
       camera.position.set(0, 1.4, 8);
 
-      // Lights — warm key + cool fill so the relief reads dimensionally.
       scene.add(new THREE.AmbientLight(0xffffff, 0.55));
       const key = new THREE.DirectionalLight(0xfff0d8, 1.2);
       key.position.set(-4, 8, 6);
@@ -64,7 +120,7 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
       fill.position.set(5, 3, -4);
       scene.add(fill);
 
-      // ── Terrain mesh from the painting ────────────────────────────
+      // ── Terrain from the painting depth ───────────────────────────
       const texLoader = new THREE.TextureLoader();
       const paintTex = await new Promise<InstanceType<typeof THREE.Texture>>((res, rej) => {
         texLoader.load(src, (t) => { t.colorSpace = THREE.SRGBColorSpace; res(t); }, undefined, rej);
@@ -72,64 +128,44 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
       if (cancelled) { paintTex.dispose(); renderer.dispose(); return; }
       const depthTex = depthResult ? new THREE.CanvasTexture(depthResult.bitmap) : null;
 
-      // A large ground plane laid flat (rotateX -90°) with the painting
-      // as its albedo and the depth map driving vertex height. 200×200
-      // segments = smooth terrain. World extent 30×30 units.
       const SIZE = 30;
       const SEG = 200;
-      const HEIGHT = 7.5; // max relief height in world units
+      const HEIGHT = 7.5;
       const geom = new THREE.PlaneGeometry(SIZE, SIZE, SEG, SEG);
-
       const mat = new THREE.ShaderMaterial({
         uniforms: {
-          uPaint:  { value: paintTex },
-          uDepth:  { value: depthTex },
+          uPaint: { value: paintTex },
+          uDepth: { value: depthTex },
           uHeight: { value: depthTex ? HEIGHT : 0 },
         },
         vertexShader: `
           uniform sampler2D uDepth;
           uniform float uHeight;
-          varying vec2 vUv;
-          varying float vH;
+          varying vec2 vUv; varying float vH;
           void main() {
             vUv = uv;
             float d = uHeight > 0.0 ? texture2D(uDepth, vec2(uv.x, 1.0 - uv.y)).r : 0.0;
             vH = d;
-            vec3 p = position;
-            p.z += d * uHeight;     // plane is in XY, extruded along Z; rotated flat by the mesh
+            vec3 p = position; p.z += d * uHeight;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
           }
         `,
         fragmentShader: `
           precision highp float;
           uniform sampler2D uPaint;
-          varying vec2 vUv;
-          varying float vH;
+          varying vec2 vUv; varying float vH;
           void main() {
             vec3 c = texture2D(uPaint, vUv).rgb;
-            // Slight height-based brightening so peaks catch more light.
             c *= 0.7 + vH * 0.5;
             gl_FragColor = vec4(c, 1.0);
           }
         `,
       });
       const terrain = new THREE.Mesh(geom, mat);
-      terrain.rotation.x = -Math.PI / 2; // lay flat
+      terrain.rotation.x = -Math.PI / 2;
       scene.add(terrain);
 
-      // Sample terrain height at a world (x,z) — mirrors the vertex
-      // displacement so the camera can walk ON the surface.
-      const heightAt = (wx: number, wz: number): number => {
-        if (!depthResult) return 0;
-        // World (x,z) → plane uv. Plane spans [-SIZE/2, SIZE/2].
-        const u = (wx / SIZE) + 0.5;
-        const v = 1.0 - ((wz / SIZE) + 0.5);
-        if (u < 0 || u > 1 || v < 0 || v > 1) return 0;
-        // Read the depth bitmap via a scratch canvas (one-time).
-        return sampleDepthBitmap(u, v) * HEIGHT;
-      };
-
-      // One-time: rasterize the depth bitmap to a tiny canvas for CPU reads.
+      // CPU depth read for walking on the surface.
       let depthData: Uint8ClampedArray | null = null;
       let depthW = 0, depthH = 0;
       if (depthResult) {
@@ -140,36 +176,56 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
         depthData = dctx.getImageData(0, 0, dc.width, dc.height).data;
         depthW = dc.width; depthH = dc.height;
       }
-      function sampleDepthBitmap(u: number, v: number): number {
+      const sampleDepthBitmap = (u: number, v: number): number => {
         if (!depthData) return 0;
         const px = Math.min(depthW - 1, Math.max(0, Math.floor(u * depthW)));
         const py = Math.min(depthH - 1, Math.max(0, Math.floor((1 - v) * depthH)));
         return depthData[(py * depthW + px) * 4] / 255;
+      };
+      const heightAt = (wx: number, wz: number): number => {
+        if (!depthResult) return 0;
+        const u = (wx / SIZE) + 0.5;
+        const v = 1.0 - ((wz / SIZE) + 0.5);
+        if (u < 0 || u > 1 || v < 0 || v > 1) return 0;
+        return sampleDepthBitmap(u, v) * HEIGHT;
+      };
+
+      // ── #13 Water shimmer plane (Wave atmosphere) ─────────────────
+      let water: InstanceType<typeof THREE.Mesh> | null = null;
+      let waterMat: InstanceType<typeof THREE.ShaderMaterial> | null = null;
+      if (kind === 'wave') {
+        waterMat = new THREE.ShaderMaterial({
+          transparent: true,
+          uniforms: {
+            uTime: { value: 0 },
+            uSky:  { value: new THREE.Color(sky.bot) },
+          },
+          vertexShader: `
+            varying vec2 vUv;
+            void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+          `,
+          fragmentShader: `
+            precision highp float;
+            uniform float uTime; uniform vec3 uSky;
+            varying vec2 vUv;
+            void main() {
+              // Layered sine "wavelets" + a fresnel-ish vertical fade
+              // give a reflective shimmer without a second render pass.
+              float w = sin((vUv.x * 40.0) + uTime * 1.2) * 0.5 + 0.5;
+              w *= sin((vUv.y * 30.0) - uTime * 0.9) * 0.5 + 0.5;
+              vec3 col = mix(vec3(0.05, 0.12, 0.22), uSky, 0.35 + w * 0.4);
+              gl_FragColor = vec4(col, 0.78);
+            }
+          `,
+        });
+        water = new THREE.Mesh(new THREE.PlaneGeometry(SIZE, SIZE), waterMat);
+        water.rotation.x = -Math.PI / 2;
+        water.position.y = HEIGHT * 0.18; // sits in the low (water) zones
+        scene.add(water);
       }
 
-      // ── File waypoints ────────────────────────────────────────────
-      // Each file is a glowing billboard placed on the terrain in a
-      // loose spiral, lifted to sit just above the surface.
-      const waypoints: Array<{ id: string; group: InstanceType<typeof THREE.Group>; label: string }> = [];
-      const makeLabelTexture = (text: string) => {
-        const c = document.createElement('canvas');
-        c.width = 512; c.height = 128;
-        const cx = c.getContext('2d')!;
-        cx.clearRect(0, 0, c.width, c.height);
-        cx.fillStyle = 'rgba(11,10,13,0.82)';
-        roundRect(cx, 8, 30, 496, 68, 14); cx.fill();
-        cx.strokeStyle = 'rgba(185,164,255,0.7)'; cx.lineWidth = 2;
-        roundRect(cx, 8, 30, 496, 68, 14); cx.stroke();
-        cx.fillStyle = '#ece8e0';
-        cx.font = '500 34px Georgia, serif';
-        cx.textBaseline = 'middle';
-        const t = text.length > 26 ? text.slice(0, 25) + '…' : text;
-        cx.fillText(t, 28, 66);
-        const tex = new THREE.CanvasTexture(c);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        return tex;
-      };
-      function roundRect(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+      // ── #1 Readable file pages ────────────────────────────────────
+      const roundRect = (c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) => {
         c.beginPath();
         c.moveTo(x + r, y);
         c.arcTo(x + w, y, x + w, y + h, r);
@@ -177,39 +233,127 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
         c.arcTo(x, y + h, x, y, r);
         c.arcTo(x, y, x + w, y, r);
         c.closePath();
-      }
+      };
+      const makePageTexture = (title: string, body: string) => {
+        const c = document.createElement('canvas');
+        c.width = 512; c.height = 384;
+        const cx = c.getContext('2d')!;
+        cx.clearRect(0, 0, c.width, c.height);
+        // Paper card.
+        cx.fillStyle = 'rgba(248, 244, 236, 0.96)';
+        roundRect(cx, 12, 12, 488, 360, 18); cx.fill();
+        cx.strokeStyle = 'rgba(185,164,255,0.8)'; cx.lineWidth = 3;
+        roundRect(cx, 12, 12, 488, 360, 18); cx.stroke();
+        // Title.
+        cx.fillStyle = '#1c1816';
+        cx.font = '600 30px Georgia, serif';
+        cx.textBaseline = 'top';
+        const tt = title.length > 28 ? title.slice(0, 27) + '…' : title;
+        cx.fillText(tt, 36, 40);
+        // Body — word-wrapped excerpt.
+        cx.fillStyle = 'rgba(28,24,22,0.72)';
+        cx.font = '20px Georgia, serif';
+        const words = (body || '(empty)').split(/\s+/);
+        let line = ''; let yy = 96; const maxW = 440;
+        for (const word of words) {
+          const test = line ? line + ' ' + word : word;
+          if (cx.measureText(test).width > maxW) {
+            cx.fillText(line, 36, yy); yy += 28; line = word;
+            if (yy > 330) { cx.fillText(line + '…', 36, yy); line = ''; break; }
+          } else line = test;
+        }
+        if (line && yy <= 330) cx.fillText(line, 36, yy);
+        const tex = new THREE.CanvasTexture(c);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+      };
 
-      filesRef.current.forEach((f, i) => {
-        // Loose spiral placement within the central 70% of the terrain.
-        const ang = i * 2.399963; // golden angle
+      const waypoints: Array<{ id: string; group: InstanceType<typeof THREE.Group> }> = [];
+      filesRef.current.slice(0, 24).forEach((f, i) => {
+        const ang = i * 2.399963;
         const rad = 2 + Math.sqrt(i) * 2.2;
         const wx = Math.cos(ang) * rad;
         const wz = Math.sin(ang) * rad - 2;
-        const wy = heightAt(wx, wz) + 1.6;
+        const wy = heightAt(wx, wz) + 1.9;
         const group = new THREE.Group();
         group.position.set(wx, wy, wz);
-        // Glow orb.
+        // Readable page billboard.
+        const pageTex = makePageTexture(f.displayName || f.filename, excerpts.get(f.id) ?? '');
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: pageTex, transparent: true }));
+        sprite.scale.set(2.6, 1.95, 1);
+        group.add(sprite);
+        // Glow orb anchor at the base.
         const orb = new THREE.Mesh(
-          new THREE.SphereGeometry(0.18, 16, 16),
+          new THREE.SphereGeometry(0.13, 12, 12),
           new THREE.MeshBasicMaterial({ color: 0xb9a4ff }),
         );
+        orb.position.y = -1.2;
         group.add(orb);
-        // Label billboard.
-        const labelTex = makeLabelTexture(f.displayName || f.filename);
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTex, transparent: true }));
-        sprite.scale.set(3.2, 0.8, 1);
-        sprite.position.y = 0.7;
-        group.add(sprite);
         scene.add(group);
-        waypoints.push({ id: f.id, group, label: f.displayName || f.filename });
+        waypoints.push({ id: f.id, group });
       });
 
-      // ── Controls — WASD + drag-look ───────────────────────────────
+      // ── #2 Footprint / trail decals ───────────────────────────────
+      const TRAIL_MAX = 80;
+      const trailDecals: Array<{ mesh: InstanceType<typeof THREE.Mesh>; born: number }> = [];
+      const trailColor = kind === 'snow' ? 0xdfe8f4
+        : kind === 'fields' ? 0x4a5a2a
+        : kind === 'wave' ? 0x9fc4e0
+        : 0xb9a4ff;
+      const trailGeo = new THREE.CircleGeometry(0.35, 12);
+      let lastTrailPos = new THREE.Vector3(0, 0, 0);
+
+      // ── #18 Ambient wildlife ──────────────────────────────────────
+      type Creature = { mesh: InstanceType<typeof THREE.Object3D>; phase: number; kind: string };
+      const creatures: Creature[] = [];
+      const spawnCreatures = () => {
+        if (kind === 'fuji') {
+          // Birds — small dark V's gliding in wide arcs up high.
+          for (let i = 0; i < 6; i++) {
+            const g = new THREE.Group();
+            const wingMat = new THREE.MeshBasicMaterial({ color: 0x2a2a32, side: THREE.DoubleSide });
+            const w1 = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.12), wingMat);
+            const w2 = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.12), wingMat);
+            w1.rotation.z = 0.4; w2.rotation.z = -0.4; w1.position.x = -0.22; w2.position.x = 0.22;
+            g.add(w1, w2);
+            g.position.set((Math.random() - 0.5) * 24, 6 + Math.random() * 6, (Math.random() - 0.5) * 24);
+            scene.add(g);
+            creatures.push({ mesh: g, phase: Math.random() * 6.28, kind: 'bird' });
+          }
+        } else if (kind === 'fields') {
+          // Fireflies — glowing amber points bobbing low.
+          for (let i = 0; i < 28; i++) {
+            const m = new THREE.Mesh(
+              new THREE.SphereGeometry(0.05, 6, 6),
+              new THREE.MeshBasicMaterial({ color: 0xf5cd82 }),
+            );
+            m.position.set((Math.random() - 0.5) * 26, 0.5 + Math.random() * 2, (Math.random() - 0.5) * 26);
+            scene.add(m);
+            creatures.push({ mesh: m, phase: Math.random() * 6.28, kind: 'firefly' });
+          }
+        } else if (kind === 'wave') {
+          // Fish — silver arcs that leap near the water plane occasionally.
+          for (let i = 0; i < 5; i++) {
+            const m = new THREE.Mesh(
+              new THREE.CapsuleGeometry(0.08, 0.3, 4, 8),
+              new THREE.MeshBasicMaterial({ color: 0xc4d4e0 }),
+            );
+            m.position.set((Math.random() - 0.5) * 20, HEIGHT * 0.18, (Math.random() - 0.5) * 20);
+            m.visible = false;
+            scene.add(m);
+            creatures.push({ mesh: m, phase: Math.random() * 20, kind: 'fish' });
+          }
+        }
+      };
+      spawnCreatures();
+
+      // ── Controls ──────────────────────────────────────────────────
       const keysDown = new Set<string>();
-      let yaw = Math.PI; // looking toward -z (into the terrain)
+      let yaw = Math.PI;
       let pitch = -0.15;
       let dragging = false;
       let lastX = 0, lastY = 0;
+      let fly = false;
 
       const onKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') { onClose(); return; }
@@ -218,7 +362,9 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
           if (near) { void setActiveFile(near); onClose(); }
           return;
         }
+        if (e.key === 'f' || e.key === 'F') { fly = !fly; setFlying(fly); return; }
         keysDown.add(e.key.toLowerCase());
+        if (e.key === ' ') e.preventDefault(); // don't scroll
       };
       const onKeyUp = (e: KeyboardEvent) => keysDown.delete(e.key.toLowerCase());
       const onMouseDown = (e: MouseEvent) => { dragging = true; lastX = e.clientX; lastY = e.clientY; };
@@ -227,10 +373,9 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
         if (!dragging) return;
         yaw   -= (e.clientX - lastX) * 0.0032;
         pitch -= (e.clientY - lastY) * 0.0032;
-        pitch = Math.max(-1.2, Math.min(0.6, pitch));
+        pitch = Math.max(-1.2, Math.min(0.9, pitch));
         lastX = e.clientX; lastY = e.clientY;
       };
-      // Click a waypoint when near it.
       const onClick = () => {
         const near = nearFileRef.current;
         if (near) { void setActiveFile(near); onClose(); }
@@ -249,47 +394,130 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
       };
       window.addEventListener('resize', resize);
 
+      // Wind sway (#17) — cheap value noise.
+      const swayNoise = (t: number) => Math.sin(t * 0.7) * 0.5 + Math.sin(t * 1.9 + 1.3) * 0.3;
+
       let last = performance.now();
+      const startMs = last;
       let raf = 0;
       const draw = () => {
         const now = performance.now();
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
+        const tSec = (now - startMs) / 1000;
 
-        // Look direction from yaw/pitch.
         const dir = new THREE.Vector3(
           Math.sin(yaw) * Math.cos(pitch),
           Math.sin(pitch),
           Math.cos(yaw) * Math.cos(pitch),
         );
-        // Movement on the horizontal plane.
         const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)).normalize();
         const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
-        const speed = 6 * dt;
+        const speed = (fly ? 10 : 6) * dt;
         if (keysDown.has('w') || keysDown.has('arrowup'))    camera.position.addScaledVector(fwd, speed);
         if (keysDown.has('s') || keysDown.has('arrowdown'))  camera.position.addScaledVector(fwd, -speed);
         if (keysDown.has('a') || keysDown.has('arrowleft'))  camera.position.addScaledVector(right, speed);
         if (keysDown.has('d') || keysDown.has('arrowright')) camera.position.addScaledVector(right, -speed);
+        if (fly) {
+          if (keysDown.has(' '))     camera.position.y += speed;
+          if (keysDown.has('shift')) camera.position.y -= speed;
+        }
 
-        // Clamp to terrain bounds + ride the surface (eye height 1.5).
         const half = SIZE / 2 - 1;
         camera.position.x = Math.max(-half, Math.min(half, camera.position.x));
         camera.position.z = Math.max(-half, Math.min(half, camera.position.z));
-        const ground = heightAt(camera.position.x, camera.position.z);
-        camera.position.y += (ground + 1.5 - camera.position.y) * Math.min(1, dt * 8);
+        if (!fly) {
+          const ground = heightAt(camera.position.x, camera.position.z);
+          camera.position.y += (ground + 1.5 - camera.position.y) * Math.min(1, dt * 8);
+        } else {
+          camera.position.y = Math.max(0.5, Math.min(40, camera.position.y));
+        }
 
-        camera.lookAt(camera.position.clone().add(dir));
+        // Wind sway — small look-direction wobble (#17). Stronger
+        // standing still; barely there while moving so it doesn't
+        // induce motion sickness.
+        const swayAmt = 0.012;
+        const sway = new THREE.Vector3(
+          swayNoise(tSec) * swayAmt,
+          swayNoise(tSec + 11) * swayAmt * 0.6,
+          0,
+        );
+        camera.lookAt(camera.position.clone().add(dir).add(sway));
 
-        // Waypoint proximity — pulse the nearest within 3 units, billboard all.
+        // Footprint trail (#2) — drop a decal every ~0.6 units travelled,
+        // only on the ground (not flying).
+        if (!fly && camera.position.distanceTo(lastTrailPos) > 0.6) {
+          lastTrailPos = camera.position.clone();
+          const gY = heightAt(camera.position.x, camera.position.z);
+          const decalMat = new THREE.MeshBasicMaterial({
+            color: trailColor, transparent: true, opacity: 0.5, depthWrite: false,
+          });
+          const decal = new THREE.Mesh(trailGeo, decalMat);
+          decal.rotation.x = -Math.PI / 2;
+          decal.position.set(camera.position.x, gY + 0.02, camera.position.z);
+          scene.add(decal);
+          trailDecals.push({ mesh: decal, born: now });
+          if (trailDecals.length > TRAIL_MAX) {
+            const old = trailDecals.shift()!;
+            scene.remove(old.mesh);
+            (old.mesh.material as InstanceType<typeof THREE.Material>).dispose?.();
+          }
+        }
+        // Fade trail decals over 8s.
+        for (let i = trailDecals.length - 1; i >= 0; i--) {
+          const td = trailDecals[i];
+          const age = (now - td.born) / 1000;
+          const m = td.mesh.material as InstanceType<typeof THREE.MeshBasicMaterial>;
+          m.opacity = Math.max(0, 0.5 * (1 - age / 8));
+          if (age > 8) {
+            scene.remove(td.mesh); m.dispose?.(); trailDecals.splice(i, 1);
+          }
+        }
+
+        // Water shimmer.
+        if (waterMat) (waterMat.uniforms.uTime as { value: number }).value = tSec;
+
+        // Wildlife (#18).
+        for (const c of creatures) {
+          if (c.kind === 'bird') {
+            const r = 8 + (c.phase % 3) * 2;
+            c.mesh.position.x = Math.cos(tSec * 0.18 + c.phase) * r;
+            c.mesh.position.z = Math.sin(tSec * 0.18 + c.phase) * r;
+            c.mesh.position.y = 7 + Math.sin(tSec * 0.5 + c.phase) * 1.5;
+            c.mesh.rotation.y = -tSec * 0.18 - c.phase + Math.PI / 2;
+            // Wing flap.
+            const g = c.mesh as InstanceType<typeof THREE.Group>;
+            const flap = Math.sin(tSec * 8 + c.phase) * 0.3;
+            g.children[0].rotation.z = 0.4 + flap;
+            g.children[1].rotation.z = -0.4 - flap;
+          } else if (c.kind === 'firefly') {
+            c.mesh.position.x += Math.sin(tSec * 0.6 + c.phase) * 0.01;
+            c.mesh.position.y += Math.cos(tSec * 0.9 + c.phase) * 0.008;
+            const mm = (c.mesh as InstanceType<typeof THREE.Mesh>).material as InstanceType<typeof THREE.MeshBasicMaterial>;
+            mm.opacity = 0.4 + Math.sin(tSec * 2 + c.phase) * 0.4;
+            mm.transparent = true;
+          } else if (c.kind === 'fish') {
+            // Leap once per cycle: visible only on the arc.
+            const cyc = (tSec + c.phase) % 14;
+            if (cyc < 1.2) {
+              c.mesh.visible = true;
+              const u = cyc / 1.2;
+              c.mesh.position.y = HEIGHT * 0.18 + Math.sin(u * Math.PI) * 1.6;
+              c.mesh.rotation.z = (u - 0.5) * 2.4;
+            } else {
+              c.mesh.visible = false;
+            }
+          }
+        }
+
+        // Waypoint proximity.
         let closest: { id: string; dist: number } | null = null;
         for (const wp of waypoints) {
           const d = wp.group.position.distanceTo(camera.position);
-          const s = d < 3 ? 1.3 : 1.0;
-          const orb = wp.group.children[0] as InstanceType<typeof THREE.Mesh>;
-          orb.scale.setScalar(s + Math.sin(now / 300) * 0.08 * (d < 3 ? 1 : 0.3));
+          wp.group.scale.setScalar(d < 4 ? 1.15 : 1.0);
           if (!closest || d < closest.dist) closest = { id: wp.id, dist: d };
         }
-        const newNear = closest && closest.dist < 3 ? closest.id : null;
+        const newNear = closest && closest.dist < 4 ? closest.id : null;
         if (newNear !== nearFileRef.current) setNearFile(newNear);
 
         renderer.render(scene, camera);
@@ -308,12 +536,14 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
         window.removeEventListener('resize', resize);
         if (raf) cancelAnimationFrame(raf);
         geom.dispose(); mat.dispose(); paintTex.dispose(); depthTex?.dispose();
+        skyGeo.dispose(); skyMat.dispose();
+        waterMat?.dispose();
         renderer.dispose();
       };
     })().catch(() => { if (!cancelled) setStatus('error'); });
 
     return () => { cancelled = true; cleanup?.(); };
-  }, [src, onClose, setActiveFile]);
+  }, [src, kind, onClose, setActiveFile]);
 
   return (
     <div className="mv-world-overlay">
@@ -327,9 +557,12 @@ export function PaintingWorld({ src, onClose }: PaintingWorldProps) {
       <div className="mv-world-hud">
         <span><kbd>WASD</kbd> move</span>
         <span><kbd>drag</kbd> look</span>
+        <span className={flying ? 'mv-world-near' : ''}>
+          <kbd>F</kbd> {flying ? 'flying · space/shift' : 'fly'}
+        </span>
         {nearFile
-          ? <span className="mv-world-near"><kbd>E</kbd> / click · open this file</span>
-          : <span>walk to a glowing marker to open a file</span>}
+          ? <span className="mv-world-near"><kbd>E</kbd> / click · open</span>
+          : <span>walk to a page to open it</span>}
         <span><kbd>esc</kbd> leave</span>
       </div>
     </div>
