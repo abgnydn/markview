@@ -47,7 +47,12 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
       if (cancelled) return;
       if (!paintImg) { setStatus('error'); return; }
 
-      const cloud = buildGaussianCloud(paintImg, depthResult.bitmap, 55000);
+      // Immersive view = the focus, so spend the detail budget: ~150k
+      // gaussians (vs 55k for the backdrop) captures far more of the
+      // high-res painting. Lighter on low-DPR / small screens.
+      const dpr0 = Math.min(window.devicePixelRatio || 1, 2);
+      const targetCount = window.innerWidth < 900 || dpr0 < 1.5 ? 80000 : 150000;
+      const cloud = buildGaussianCloud(paintImg, depthResult.bitmap, targetCount);
       if (cancelled || !cloud) { setStatus('error'); return; }
       const { base, colors, seeds, count: N, splatScale } = cloud;
 
@@ -81,7 +86,10 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
 
       const material = new THREE.ShaderMaterial({
         uniforms: {
-          uScale: { value: splatScale * 2.6 },
+          // Tight footprint — ~1.6× the grid spacing: enough overlap to
+          // close holes, small enough to keep brushstroke detail crisp
+          // (the old 2.6× smeared neighbours into mush).
+          uScale: { value: splatScale * 0.85 },
           uReveal: { value: 0.0 },
         },
         transparent: true,
@@ -116,7 +124,7 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
           void main() {
             float r2 = dot(vCorner, vCorner);
             if (r2 > 1.0) discard;
-            float a = exp(-r2 * 4.5) * clamp(uReveal * 1.2, 0.0, 1.0);
+            float a = exp(-r2 * 5.5) * clamp(uReveal * 1.2, 0.0, 1.0);
             gl_FragColor = vec4(vColor * a, a);
           }
         `,
