@@ -134,11 +134,11 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // ── Particle backend — 'webgl' (CPU sim, universal) or 'webgpu'
   // (TSL compute sim, opt-in). Toggled with `b`; requires navigator.gpu.
   // Any WebGPU init failure flips back to WebGL via onFallback.
-  const [gpuParticles, setGpuParticles] = useState(
-    () => typeof sessionStorage !== 'undefined'
-      && sessionStorage.getItem('mv-gpu-particles') === '1'
-      && typeof navigator !== 'undefined' && 'gpu' in navigator,
-  );
+  //
+  // DELIBERATELY NOT persisted: the WebGPU path is experimental and a
+  // heavy GPU load, so a page reload always starts on the safe WebGL
+  // backend. It only ever turns on via an explicit `b` press in-session.
+  const [gpuParticles, setGpuParticles] = useState(false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
@@ -147,8 +147,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       if (!('gpu' in navigator)) { flashHint('Particles · WebGPU unavailable'); return; }
       setGpuParticles((prev) => {
         const next = !prev;
-        try { sessionStorage.setItem('mv-gpu-particles', next ? '1' : '0'); } catch { /* ignore */ }
-        flashHint(next ? 'Particles · WebGPU compute' : 'Particles · WebGL');
+        flashHint(next ? 'Particles · WebGPU compute (experimental)' : 'Particles · WebGL');
         return next;
       });
     };
@@ -157,7 +156,6 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   }, [flashHint]);
   const onGpuFallback = useCallback(() => {
     setGpuParticles(false);
-    try { sessionStorage.setItem('mv-gpu-particles', '0'); } catch { /* ignore */ }
   }, []);
 
   // ── #14 Caption flourish — show the painting's title bottom-left
