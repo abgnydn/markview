@@ -37,6 +37,7 @@ import { RelatedNotes } from '@/components/viewer/related-notes';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
 import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
 const PaintingWorld = lazy(() => import('@/components/atmosphere/painting-world').then((m) => ({ default: m.PaintingWorld })));
+const SplatWorld = lazy(() => import('@/components/atmosphere/splat-world').then((m) => ({ default: m.SplatWorld })));
 import { useAtmosphereRotation } from '@/hooks/use-atmosphere-rotation';
 import { useEmbeddingsBackfill } from '@/hooks/use-embeddings-backfill';
 import { useViewerOverlays } from '@/hooks/use-viewer-overlays';
@@ -105,13 +106,19 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // "Go inside the painting" — the AtmosphereDots Footprints button
   // dispatches markview:enter-painting; we resolve the current
   // painting's image URL and mount the walkable PaintingWorld.
-  const [worldSrc, setWorldSrc] = useState<string | null>(null);
+  const [world, setWorld] = useState<{ src: string; splat: boolean } | null>(null);
   React.useEffect(() => {
     const onEnter = () => {
       if (atmosphere === 'none') return;
+      // Volumetric mode (`v`, persisted in sessionStorage) → enter the
+      // painting as a navigable Gaussian-splat cloud; otherwise the
+      // walkable depth-terrain world.
+      const splat = (() => {
+        try { return sessionStorage.getItem('mv-splat') === '1'; } catch { return false; }
+      })();
       void import('@/components/atmosphere/atmospheres').then(({ pickPaintingFor }) => {
         const p = pickPaintingFor(atmosphere as Exclude<typeof atmosphere, 'none'>);
-        setWorldSrc(p.imageSrc);
+        setWorld({ src: p.imageSrc, splat });
       });
     };
     window.addEventListener('markview:enter-painting', onEnter);
@@ -258,9 +265,13 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       {atmosphere !== 'none' && (
         <PaintingAtmosphere atmosphere={atmosphere} paintingNonce={paintingNonce} />
       )}
-      {worldSrc && (
+      {world && (
         <Suspense fallback={null}>
-          <PaintingWorld src={worldSrc} kind={atmosphere} onClose={() => setWorldSrc(null)} />
+          {world.splat ? (
+            <SplatWorld src={world.src} kind={atmosphere} onClose={() => setWorld(null)} />
+          ) : (
+            <PaintingWorld src={world.src} kind={atmosphere} onClose={() => setWorld(null)} />
+          )}
         </Suspense>
       )}
       <ShareStatus />

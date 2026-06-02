@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ensureDepth, isWebGLSupported } from '@/lib/atmosphere/depth';
+import { buildGaussianCloud } from '@/lib/atmosphere/splat-cloud';
 
 interface SplatPaintingProps {
   src: string;
@@ -66,183 +67,15 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
         texLoader.load(src, (t) => resolve(t.image as HTMLImageElement), undefined, reject);
       });
       if (cancelled) return;
-      const paintAspect = paintImg.width / paintImg.height;
 
-      // Grid resolution → target ~55k gaussians (fewer on low-DPR /
-      // small screens to stay light on integrated GPUs). The grid keeps
-      // the painting's aspect so cells are roughly square in world space.
+      // Lift the painting + depth into a gaussian cloud (front grid +
+      // LDI behind layer) via the shared builder. Fewer points on
+      // low-DPR / small screens to stay light on integrated GPUs.
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const targetCount = window.innerWidth < 900 || dpr < 1.5 ? 32000 : 55000;
-      const GH = Math.max(120, Math.round(Math.sqrt(targetCount / paintAspect)));
-      const GW = Math.round(GH * paintAspect);
-      const N0 = GW * GH;
-
-      // Sample colours: draw the painting into a GW×GH canvas, read once.
-      const colCanvas = document.createElement('canvas');
-      colCanvas.width = GW; colCanvas.height = GH;
-      const colCtx = colCanvas.getContext('2d', { willReadFrequently: true });
-      if (!colCtx) { setFallback(true); return; }
-      colCtx.drawImage(paintImg, 0, 0, GW, GH);
-      const colData = colCtx.getImageData(0, 0, GW, GH).data;
-
-      // Sample depth: draw the depth bitmap into the same grid.
-      const depCanvas = document.createElement('canvas');
-      depCanvas.width = GW; depCanvas.height = GH;
-      const depCtx = depCanvas.getContext('2d', { willReadFrequently: true });
-      if (!depCtx) { setFallback(true); return; }
-      depCtx.drawImage(depthResult.bitmap, 0, 0, GW, GH);
-      const depData = depCtx.getImageData(0, 0, GW, GH).data;
-
-      // ── Read depth into a float grid (top-down, row 0 = top) ──────
-      // Both grids come from getImageData, so colour + depth share the
-      // same row index — no flip. (The relief shader's `1.0 - uv.y` is a
-      // Three texture-UV convention, irrelevant to direct pixel reads.)
-      const dGrid = new Float32Array(N0);
-      for (let p = 0; p < N0; p++) dGrid[p] = depData[p * 4] / 255;
-
-      const srgbToLinear = (c: number) => {
-        const v = c / 255;
-        return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-      };
-
-      // ── LDI inpainting — fill the disocclusion gaps ───────────────
-      // A single gaussian per cell leaves holes BEHIND foreground
-      // silhouettes: pan the camera and you'd see canvas through the
-      // gap a near object used to cover. We synthesise a second layer.
-      //
-      //  1. front[] = cells on the NEAR side of a depth cliff (they
-      //     occlude something). Dilated a few cells into the foreground
-      //     so wider orbits stay covered.
-      //  2. Diffuse the BACKGROUND colour + depth (from the !front
-      //     cells) inward across the front band — a cheap Gauss–Seidel
-      //     inpaint of what's plausibly hidden behind the silhouette.
-      //  3. Emit an extra "behind" gaussian per filled cell at the
-      //     inpainted (farther) depth + colour. Now a small orbit
-      //     reveals background pigment, not holes.
-      const EDGE = 0.06;          // depth cliff that counts as a silhouette
-      const BAND = 3;             // cells to dilate the fill into the foreground
-      const idxOf = (i: number, j: number) => j * GW + i;
-      const front = new Uint8Array(N0);
-      for (let j = 0; j < GH; j++) {
-        for (let i = 0; i < GW; i++) {
-          const here = dGrid[idxOf(i, j)];
-          let minNb = here;
-          if (i > 0) minNb = Math.min(minNb, dGrid[idxOf(i - 1, j)]);
-          if (i < GW - 1) minNb = Math.min(minNb, dGrid[idxOf(i + 1, j)]);
-          if (j > 0) minNb = Math.min(minNb, dGrid[idxOf(i, j - 1)]);
-          if (j < GH - 1) minNb = Math.min(minNb, dGrid[idxOf(i, j + 1)]);
-          if (here - minNb > EDGE) front[idxOf(i, j)] = 1;
-        }
-      }
-      // Dilate the front band toward the (nearer) foreground interior.
-      for (let b = 1; b < BAND; b++) {
-        const grow: number[] = [];
-        for (let j = 0; j < GH; j++) {
-          for (let i = 0; i < GW; i++) {
-            const c = idxOf(i, j);
-            if (front[c]) continue;
-            const here = dGrid[c];
-            const nbFront =
-              (i > 0 && front[idxOf(i - 1, j)] && here >= dGrid[idxOf(i - 1, j)] - 0.02) ||
-              (i < GW - 1 && front[idxOf(i + 1, j)] && here >= dGrid[idxOf(i + 1, j)] - 0.02) ||
-              (j > 0 && front[idxOf(i, j - 1)] && here >= dGrid[idxOf(i, j - 1)] - 0.02) ||
-              (j < GH - 1 && front[idxOf(i, j + 1)] && here >= dGrid[idxOf(i, j + 1)] - 0.02);
-            if (nbFront) grow.push(c);
-          }
-        }
-        for (const c of grow) front[c] = 1;
-      }
-      // Inpaint background colour + depth into the front band. Known =
-      // every !front cell (true background) seeds the diffusion.
-      const bgR = new Float32Array(N0), bgG = new Float32Array(N0), bgB = new Float32Array(N0);
-      const bgD = new Float32Array(N0);
-      const known = new Uint8Array(N0);
-      for (let p = 0; p < N0; p++) {
-        if (!front[p]) {
-          known[p] = 1;
-          bgR[p] = colData[p * 4]; bgG[p] = colData[p * 4 + 1]; bgB[p] = colData[p * 4 + 2];
-          bgD[p] = dGrid[p];
-        }
-      }
-      for (let k = 0; k < 16; k++) {
-        for (let j = 0; j < GH; j++) {
-          for (let i = 0; i < GW; i++) {
-            const c = idxOf(i, j);
-            if (known[c]) continue;
-            let r = 0, g = 0, bl = 0, dd = 0, cnt = 0;
-            const acc = (nc: number) => {
-              if (known[nc]) { r += bgR[nc]; g += bgG[nc]; bl += bgB[nc]; dd += bgD[nc]; cnt++; }
-            };
-            if (i > 0) acc(idxOf(i - 1, j));
-            if (i < GW - 1) acc(idxOf(i + 1, j));
-            if (j > 0) acc(idxOf(i, j - 1));
-            if (j < GH - 1) acc(idxOf(i, j + 1));
-            if (cnt > 0) {
-              bgR[c] = r / cnt; bgG[c] = g / cnt; bgB[c] = bl / cnt; bgD[c] = dd / cnt;
-              known[c] = 1; // Gauss–Seidel: usable by later cells this pass
-            }
-          }
-        }
-      }
-      // Collect the behind-layer cells (filled + meaningfully farther).
-      const behind: number[] = [];
-      for (let p = 0; p < N0; p++) {
-        if (front[p] && known[p] && bgD[p] < dGrid[p] - 0.02) behind.push(p);
-      }
-
-      // ── Build the gaussian cloud (unit-plane coords) ──────────────
-      // x ∈ [-aspect/2, aspect/2], y ∈ [-0.5, 0.5], z = (depth-0.5)*range.
-      const DEPTH_RANGE = 0.62;
-      const N = N0 + behind.length;
-      const base = new Float32Array(N * 3);   // canonical (settled) positions
-      const colors = new Float32Array(N * 3);
-      const seeds = new Float32Array(N * 3);   // scatter direction for assemble
-      const scatterFor = (i: number, j: number, out: number, salt: number) => {
-        const h = Math.sin((i * 12.9898 + j * 78.233 + salt) * 43758.5453);
-        const a = (h - Math.floor(h)) * Math.PI * 2;
-        const h2 = Math.sin((i * 39.346 + j * 11.135 + salt) * 12543.21);
-        const r = 0.5 + (h2 - Math.floor(h2)) * 1.4;
-        seeds[out * 3] = Math.cos(a) * r;
-        seeds[out * 3 + 1] = Math.sin(a) * r;
-        seeds[out * 3 + 2] = Math.sin(i * 7.13 + j * 3.7 + salt) * 0.6;
-      };
-      // Front layer — one gaussian per grid cell.
-      let n = 0;
-      for (let j = 0; j < GH; j++) {
-        for (let i = 0; i < GW; i++) {
-          const u = (i + 0.5) / GW;
-          const v = (j + 0.5) / GH;
-          const idx = (j * GW + i);
-          const d = dGrid[idx];
-          const ci = idx * 4;
-          base[n * 3]     = (u - 0.5) * paintAspect;
-          base[n * 3 + 1] = (0.5 - v);                 // canvas y is top-down
-          base[n * 3 + 2] = (d - 0.5) * DEPTH_RANGE;
-          colors[n * 3]     = srgbToLinear(colData[ci]);
-          colors[n * 3 + 1] = srgbToLinear(colData[ci + 1]);
-          colors[n * 3 + 2] = srgbToLinear(colData[ci + 2]);
-          scatterFor(i, j, n, 0);
-          n++;
-        }
-      }
-      // Behind layer — inpainted background under the silhouettes.
-      for (const p of behind) {
-        const i = p % GW, j = (p / GW) | 0;
-        const u = (i + 0.5) / GW;
-        const v = (j + 0.5) / GH;
-        base[n * 3]     = (u - 0.5) * paintAspect;
-        base[n * 3 + 1] = (0.5 - v);
-        base[n * 3 + 2] = (bgD[p] - 0.5) * DEPTH_RANGE;
-        colors[n * 3]     = srgbToLinear(bgR[p]);
-        colors[n * 3 + 1] = srgbToLinear(bgG[p]);
-        colors[n * 3 + 2] = srgbToLinear(bgB[p]);
-        scatterFor(i, j, n, 101);
-        n++;
-      }
-
-      // Per-gaussian footprint — grid spacing × overlap so neighbours
-      // fuse into continuous colour rather than reading as dots.
-      const splatScale = (1.0 / GH) * 1.9;
+      const cloud = buildGaussianCloud(paintImg, depthResult.bitmap, targetCount);
+      if (cancelled || !cloud) { setFallback(true); return; }
+      const { base, colors, seeds, count: N, splatScale, paintAspect } = cloud;
 
       // ── Three.js scene ────────────────────────────────────────────
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, premultipliedAlpha: true });

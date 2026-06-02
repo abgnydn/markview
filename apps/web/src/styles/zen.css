@@ -2849,6 +2849,77 @@ body.mv-keyhint-show [data-keyhint]::after {
 }
 .mv-world-near { color: var(--zen-accent, #b9a4ff); }
 
+/* ── SplatWorld — immersive Gaussian-splat exploration ───────────── */
+.splat-world {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #06050a;
+  animation: mv-fade-in 400ms ease both;
+}
+.splat-world-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+.splat-world-canvas:active { cursor: grabbing; }
+.splat-world-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--zen-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(236, 232, 224, 0.7);
+  pointer-events: none;
+}
+.splat-world-hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+  transform: translateX(-50%);
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: rgba(11, 10, 13, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--zen-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(236, 232, 224, 0.55);
+  pointer-events: none;
+  animation: mv-fade-in 700ms ease both;
+}
+.splat-world-exit {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: 18px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 10, 13, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(236, 232, 224, 0.7);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+.splat-world-exit:hover {
+  background: rgba(28, 26, 34, 0.8);
+  color: rgba(236, 232, 224, 0.95);
+}
+
 /* "Go inside" button in the atmosphere strip. */
 .mv-atm-enter {
   background: transparent;
