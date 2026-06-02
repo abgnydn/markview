@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ATMOSPHERES, pickPaintingFor, type ParticleKind } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
 import { WebGLParticles } from './webgl-particles';
+import { WebGPUParticles } from './webgpu-particles';
 import { DepthPainting } from './depth-painting';
 import { SplatPainting } from './splat-painting';
 
@@ -108,7 +109,12 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   const [splatMode, setSplatMode] = useState(
     () => typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mv-splat') === '1',
   );
-  const [modeHint, setModeHint] = useState(false);
+  // Transient toast text shown on a `v`/`b` toggle ('' = hidden).
+  const [hint, setHint] = useState('');
+  const flashHint = useCallback((text: string) => {
+    setHint(text);
+    window.setTimeout(() => setHint(''), 1800);
+  }, []);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
@@ -117,13 +123,41 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       setSplatMode((prev) => {
         const next = !prev;
         try { sessionStorage.setItem('mv-splat', next ? '1' : '0'); } catch { /* ignore */ }
+        flashHint(next ? 'Volumetric · pigment cloud' : 'Relief · depth surface');
         return next;
       });
-      setModeHint(true);
-      window.setTimeout(() => setModeHint(false), 1800);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
+  }, [flashHint]);
+
+  // ── Particle backend — 'webgl' (CPU sim, universal) or 'webgpu'
+  // (TSL compute sim, opt-in). Toggled with `b`; requires navigator.gpu.
+  // Any WebGPU init failure flips back to WebGL via onFallback.
+  const [gpuParticles, setGpuParticles] = useState(
+    () => typeof sessionStorage !== 'undefined'
+      && sessionStorage.getItem('mv-gpu-particles') === '1'
+      && typeof navigator !== 'undefined' && 'gpu' in navigator,
+  );
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key !== 'b' && e.key !== 'B') return;
+      if (!('gpu' in navigator)) { flashHint('Particles · WebGPU unavailable'); return; }
+      setGpuParticles((prev) => {
+        const next = !prev;
+        try { sessionStorage.setItem('mv-gpu-particles', next ? '1' : '0'); } catch { /* ignore */ }
+        flashHint(next ? 'Particles · WebGPU compute' : 'Particles · WebGL');
+        return next;
+      });
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [flashHint]);
+  const onGpuFallback = useCallback(() => {
+    setGpuParticles(false);
+    try { sessionStorage.setItem('mv-gpu-particles', '0'); } catch { /* ignore */ }
   }, []);
 
   // ── #14 Caption flourish — show the painting's title bottom-left
@@ -177,12 +211,20 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       )}
 
       {displayedCfg.particles !== 'none' && (
-        /* GPU particle system — ~3000 particles per atmosphere driven
-           by a Perlin wind field, cursor force, gravity, life/respawn
-           cycle, and a per-atmosphere sprite texture. Replaces both
-           the old CSS keyframe field and the small canvas flock with
-           a single richer layer. */
-        <WebGLParticles kind={displayedCfg.particles} />
+        gpuParticles ? (
+          /* TSL compute simulation on the WebGPU backend — same look,
+             every particle's physics stepped on the GPU. Falls back to
+             the WebGL field on any init error. */
+          <WebGPUParticles
+            key={`gpu-${displayedCfg.particles}`}
+            kind={displayedCfg.particles}
+            onFallback={onGpuFallback}
+          />
+        ) : (
+          /* GPU-rendered, CPU-simulated particle field — curl-noise wind,
+             cursor force, gravity, life/respawn, per-atmosphere sprite. */
+          <WebGLParticles kind={displayedCfg.particles} />
+        )
       )}
 
       <div className="atmosphere-credit">
@@ -200,12 +242,12 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         {displayed.painting.attributionDetail.split(' · ')[0]}
       </div>
 
-      {/* `v`-key mode toast — confirms the relief ↔ volumetric switch. */}
+      {/* `v` / `b` key toast — confirms render-mode / particle-backend. */}
       <div
-        className={`atmosphere-mode-hint${modeHint ? ' atmosphere-mode-hint-show' : ''}`}
+        className={`atmosphere-mode-hint${hint ? ' atmosphere-mode-hint-show' : ''}`}
         aria-hidden="true"
       >
-        {splatMode ? 'Volumetric · pigment cloud' : 'Relief · depth surface'}
+        {hint}
       </div>
     </div>
   );

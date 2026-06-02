@@ -25,7 +25,7 @@ interface WebGLParticlesProps {
  *   motes  — slow upward float, soft glow, sparse
  */
 
-interface KindConfig {
+export interface KindConfig {
   count: number;
   spriteSize: number;       // canvas px for the sprite texture
   sprite: (ctx: CanvasRenderingContext2D, size: number) => void;
@@ -149,7 +149,7 @@ const drawMote = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.fill();
 };
 
-const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
+export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
   petals: {
     // Cherry-blossom flurries IRL are sparse — a few dozen visible at a
     // time, not hundreds. Big size variance so a couple of large petals
