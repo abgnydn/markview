@@ -228,13 +228,18 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
         const material = new THREE.SpriteNodeMaterial();
         material.transparent = true;
         material.depthWrite = false;
+        // Orthographic pixel camera — sprites MUST disable size
+        // attenuation or they render at the wrong (tiny) scale. (The
+        // canonical example uses a perspective camera, so it never hits
+        // this.) With attenuation off, scaleNode is in world units = px.
+        material.sizeAttenuation = false;
         const posAttr = posBuf.toAttribute();
         const velAttr = velBuf.toAttribute();
         material.positionNode = vec3(posAttr.x, posAttr.y, 0);
         material.scaleNode = posAttr.w;
         material.rotationNode = posAttr.z;
         const tex = texture(spriteTex, uv());
-        material.colorNode = tex;
+        material.colorNode = tex.rgb;          // colorNode wants vec3
         material.opacityNode = tex.a.mul(velAttr.w);
 
         const sprite = new THREE.Sprite(material);
@@ -272,7 +277,10 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
           last = now;
           renderer.compute(computeUpdate);
           renderer.render(scene, camera);
-          firstFrameOk = true;
+          if (!firstFrameOk) {
+            firstFrameOk = true;
+            console.log(`[webgpu-particles] running · kind=${kind} · count=${COUNT}`);
+          }
           raf = requestAnimationFrame(tick);
         };
         raf = requestAnimationFrame(tick);
