@@ -2285,6 +2285,35 @@ body::after {
   transform: translateY(0);
 }
 
+/* `v`-key mode toast — small pill, top-center, confirms relief ↔
+   volumetric. Mirrors the caption's fade but rides in from the top. */
+.atmosphere-mode-hint {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  z-index: 4;
+  pointer-events: none;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--zen-sans, system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--zen-soft, rgba(255,255,255,0.72));
+  background: rgba(20, 18, 28, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transform: translate(-50%, -10px);
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+.atmosphere-mode-hint.atmosphere-mode-hint-show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 /* #7 Sticky H1 mini-title — a 12px small-caps whisper-bar that appears
    at the top of the page after the user scrolls past the H1. Component
    (sticky-title.tsx) renders it; CSS handles the visual + transition. */

@@ -6,6 +6,7 @@ import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
 import { WebGLParticles } from './webgl-particles';
 import { DepthPainting } from './depth-painting';
+import { SplatPainting } from './splat-painting';
 
 interface PaintingAtmosphereProps {
   atmosphere: Exclude<Atmosphere, 'none'>;
@@ -101,6 +102,30 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     };
   }, [cfg]);
 
+  // ── Render mode — 'relief' (depth-displaced mesh) or 'splat' (3D
+  // Gaussian pigment cloud). Toggled with the `v` key (volumetric);
+  // persisted for the session so it survives painting rotations.
+  const [splatMode, setSplatMode] = useState(
+    () => typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mv-splat') === '1',
+  );
+  const [modeHint, setModeHint] = useState(false);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key !== 'v' && e.key !== 'V') return;
+      setSplatMode((prev) => {
+        const next = !prev;
+        try { sessionStorage.setItem('mv-splat', next ? '1' : '0'); } catch { /* ignore */ }
+        return next;
+      });
+      setModeHint(true);
+      window.setTimeout(() => setModeHint(false), 1800);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   // ── #14 Caption flourish — show the painting's title bottom-left
   // for 2s on swap. Re-fires whenever the displayed painting changes
   // (atmosphere change or rotation tick).
@@ -134,11 +159,22 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
           put while the sky drifts; the painting subtly tilts toward the
           cursor. Falls back to a plain <img> while depth is computing or
           when WebGL isn't available. */}
-      <DepthPainting
-        className="atmosphere-image"
-        src={displayed.painting.imageSrc}
-        paintingKey={displayed.painting.key}
-      />
+      {splatMode ? (
+        /* Volumetric mode — the painting lifted into a 3D Gaussian-splat
+           cloud from its depth map. Orbits gently to show real parallax;
+           soft pigment gaussians fuse where a triangle mesh would tear. */
+        <SplatPainting
+          className="atmosphere-image"
+          src={displayed.painting.imageSrc}
+          paintingKey={displayed.painting.key}
+        />
+      ) : (
+        <DepthPainting
+          className="atmosphere-image"
+          src={displayed.painting.imageSrc}
+          paintingKey={displayed.painting.key}
+        />
+      )}
 
       {displayedCfg.particles !== 'none' && (
         /* GPU particle system — ~3000 particles per atmosphere driven
@@ -162,6 +198,14 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         aria-hidden="true"
       >
         {displayed.painting.attributionDetail.split(' · ')[0]}
+      </div>
+
+      {/* `v`-key mode toast — confirms the relief ↔ volumetric switch. */}
+      <div
+        className={`atmosphere-mode-hint${modeHint ? ' atmosphere-mode-hint-show' : ''}`}
+        aria-hidden="true"
+      >
+        {splatMode ? 'Volumetric · pigment cloud' : 'Relief · depth surface'}
       </div>
     </div>
   );
