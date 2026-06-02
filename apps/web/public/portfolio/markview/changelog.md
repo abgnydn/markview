@@ -11,15 +11,15 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **feat**: feat(atmosphere): walk inside the painting as a splat cloud — [`d1b1294`](https://github.com/abgnydn/markview/commit/d1b12944ee42128ff504861d9ee5c79218d42bb4)
+- **fix**: fix(atmosphere): make WebGPU particles safe — no auto-enable, low count — [`049af0f`](https://github.com/abgnydn/markview/commit/049af0face9a86a046c76da7c3bdab33da3690c0)
+- **fix**: fix(atmosphere): WebGPU particles invisible under ortho camera — [`b86f76a`](https://github.com/abgnydn/markview/commit/b86f76a232c6513f3d00d76b3fbb4a7c0df2fbcd)
+- **feat**: feat(atmosphere): TSL/WebGPU compute particle backend (opt-in, `b`) — [`96154b9`](https://github.com/abgnydn/markview/commit/96154b9672bfaaaa7c5084ee2450ac6ab4283636)
+- **feat**: feat(atmosphere): LDI inpainting fills splat disocclusion gaps — [`8216486`](https://github.com/abgnydn/markview/commit/821648658258f1241dccb8f7d1a0aa3b3c981f2a)
+- **feat**: feat(atmosphere): single-image → 3D gaussian-splat painting mode — [`d4c77e6`](https://github.com/abgnydn/markview/commit/d4c77e670ea92064f330a9f8567fa3a04f266bb3)
+- **fix**: fix: soften DOF, remove ink-dropper, minimal colored-dot cursor — [`4079986`](https://github.com/abgnydn/markview/commit/40799866f75493d818630bddc49d461c273f33cd)
 - **feat**: feat(atmosphere): DOF + anaglyph + living light + dissolve-in (flat b… — [`47146bf`](https://github.com/abgnydn/markview/commit/47146bf7176586a8faf67425e7c3f9be6633472b)
 - **fix**: fix(atmosphere): surface the whole pack — 31 paintings stopped feelin… — [`996a40b`](https://github.com/abgnydn/markview/commit/996a40bdeb41f77bbac705e4bbde326e84c3609f)
 - **feat**: feat(atmosphere): 16 more CC0 paintings — packs now 8/7/9/6 — [`52f4509`](https://github.com/abgnydn/markview/commit/52f4509091852d5795fa6562b3fb2ba4072bed54)
 - **fix**: fix(world): fly actually flies + WASD no longer switches files behind it — [`72ed3d5`](https://github.com/abgnydn/markview/commit/72ed3d529facafad42be2d6e0453117f04401ba4)
 - **feat**: feat(world): readable pages, trails, sky dome, fly, water, wind, wild… — [`ba51ced`](https://github.com/abgnydn/markview/commit/ba51ced2d4ff0e2c5108edf5c5fea832a7472392)
-- **feat**: feat(atmosphere): walkable painting world — "go inside" the painting — [`162cd81`](https://github.com/abgnydn/markview/commit/162cd81c6a195c8585b2c44e60094478ddf89545)
-- **feat**: feat: AI co-author (Tab-to-ghost) + ink-dropper cursor — [`178c71b`](https://github.com/abgnydn/markview/commit/178c71b849cd694190c5a91b368b95b649b79491)
-- **feat**: feat(projects): chronicle chat + manifest cleanup + prerender fix — [`078338c`](https://github.com/abgnydn/markview/commit/078338c90bc9e3097d7dc11d8c9eabbda70ed27f)
-- **fix**: fix(atmosphere): accumulation now actually piles up — [`24c5314`](https://github.com/abgnydn/markview/commit/24c53146be04311d655dae29dac4cd1619c4b284)
-- **feat**: feat(web): pre-render /projects so the page is visible without JS — [`c210b71`](https://github.com/abgnydn/markview/commit/c210b71e1f53d66417f8ca25861113edfaa68d3d)
-- **feat**: feat(atmosphere): persistent accumulation layer — snow piles, petals … — [`1776edc`](https://github.com/abgnydn/markview/commit/1776edcb93ac047311eb6e411ff366d302f60806)
-- **feat**: feat(atmosphere): shader post-processing pass — bloom, SSAO, god rays… — [`6a0f1e6`](https://github.com/abgnydn/markview/commit/6a0f1e63a9ed87b6b9ecaacb498ea813ef359693)

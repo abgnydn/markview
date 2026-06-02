@@ -10,6 +10,8 @@
 
 ### The first accurate real-time visualization of a full-scale LLM forward pass.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20505470.svg)](https://doi.org/10.5281/zenodo.20505470)
+
 3.8 billion parameters. Your GPU. Your browser. Every tensor rendered 1:1.<br>
 No server. No API key. No fakery.
 
@@ -279,9 +281,18 @@ src/
 
 <br>
 
-## The Butterfly experiment
+## Experiments
 
-Butterfly is more than one of the four overlays — it's a real, **pre-registered** test of a context-compaction mechanism. We filed it wrong the first time, refuted our own claim, then re-filed against a harder regime and confirmed it. Both pre-registrations and outcomes live in [`PREDICTIONS.md`](PREDICTIONS.md).
+> **The Butterfly investigation now has its own home and DOI:
+> [github.com/abgnydn/butterfly](https://github.com/abgnydn/butterfly).** The
+> compaction harness, the trained taggers, and the full writeup
+> ([`PAPER.md`](https://github.com/abgnydn/butterfly/blob/main/PAPER.md)) moved
+> there; neuropulse keeps the in-app demo (`src/butterfly-mode.ts`) and the
+> git-timestamped pre-registrations ([`PREDICTIONS.md`](PREDICTIONS.md)). The
+> reproduce commands below name scripts that now live in the butterfly repo —
+> drop the `tools/` prefix and run them from a butterfly checkout.
+
+This section is an honest log of a multi-round exploration, not a finished feature claim. Butterfly started as one of the overlays and became a pre-registered probe of a context-compaction mechanism. We refuted our first prediction, confirmed a harder one, layered on supervised training, then ran a downstream QA evaluation that narrowed what we can actually claim. Pre-registrations live in [`PREDICTIONS.md`](PREDICTIONS.md); the full post-mortem with self-critique lives in a private research vault.
 
 The question: at a fixed token budget, does **tag-and-rebuild** preserve load-bearing information better than naive `lastN` truncation?
 
@@ -413,7 +424,7 @@ Reproduce: `node tools/butterfly-adversarial.mjs`.
 
 ### External benchmark — LongMemEval oracle (500 real conversations)
 
-The natural next test: does the regex-tagger win replicate on an independent dataset? [LongMemEval](https://github.com/xiaowu0162/LongMemEval) (ICLR 2025) is the canonical long-term-conversational-memory benchmark, cited by MemoryAgentBench (ICLR 2026). Each example is a list of `{role, content, has_answer: bool}` sessions; ground truth is the set of evidence turns flagged `has_answer: true`.
+The natural next test: does the regex-tagger win replicate on an independent dataset? [LongMemEval](https://github.com/xiaowu0162/LongMemEval) (Wu et al., ICLR 2025; arXiv:2410.10813) is the canonical long-term-conversational-memory benchmark, alongside MemoryAgentBench (arXiv:2507.05257, 2025). Each example is a list of `{role, content, has_answer: bool}` sessions; ground truth is the set of evidence turns flagged `has_answer: true`.
 
 Direct score: "what fraction of evidence turns survive in the compacted memory" — no LLM judge needed.
 
@@ -572,13 +583,30 @@ The model learned that on LongMemEval, **evidence is short user statements** ("I
 
 **The full story:** the mechanism is real, the tagger does the work, and a tiny domain-trained classifier substantially outperforms hand-coded rules — provided you train it on data representative of where you'll deploy it. The engineering recipe is "label a few hundred examples from your target, train a 14-parameter classifier, ship a 1.2 KB model." Not "build a smart LLM tagger." Not "tune a hand-coded regex forever."
 
-### The fully hardened claim
+### Downstream QA — the harder test
 
-Putting all the rounds together:
+Substring preservation is necessary but not sufficient. The question that actually matters: when you feed the compacted memory + the question to an LLM, does it answer correctly? We ran the full pipeline on N=100 LongMemEval-oracle examples (answerer: qwen3-4b-mlx; judges: qwen3-4b and gemma-4-e4b, two independent passes to control same-model bias).
 
-> A 14-parameter softmax classifier trained on ~11K has_answer-labeled turns from LongMemEval **preserves 87% of evidence turns at a 2K-token budget on the oracle benchmark** (3× context compression), vs lastN's 23% and a hand-coded regex's 29%. On the harder *longmemeval_s* held-out split (121K-token contexts, 550 turns per example), the same classifier triples the regex baseline. Training on the wrong distribution underperforms hand rules; training on the right distribution outperforms by ~60 percentage points. Generic "find what's important" prompts on frontier LLMs don't replicate the mechanism either.
->
-> **The engineering work is the tagger and its training distribution.** Ship a 1.2 KB classifier, not an LLM agent loop.
+| Strategy | qwen3-4b judge | gemma-4 judge | inter-judge agreement |
+|---|---|---|---|
+| longmem-trained | 38% | 29% | 87% |
+| longmem-hybrid | 36% | 25% | 87% |
+| lastN | 15% | 7% | 90% |
+| regex | 12% | 9% | 93% |
+
+The trained tagger holds a 22-23 pp gap over lastN under both judges. Inter-judge agreement is high (87-93%), so the ranking isn't a same-model artifact. The 38% absolute number is much lower than the 87% substring-preservation number — substring preservation overstates downstream usefulness by ~2×.
+
+**Then it breaks.** Running the same eval on `longmemeval_s` (50 sessions per question, ~50-100K-token haystacks) at budget=2048: every strategy collapses to 0-5%. Butterfly's tag-by-message approach can't surface the right session out of 50; lastN can't either. The mechanism works in the "modest haystack, evidence is local" regime (oracle) and fails in the "large haystack, retrieval needed" regime (_s).
+
+### What we learned
+
+Honest scope, not a hardened claim:
+
+- **On modest haystacks (oracle):** a 14-parameter softmax classifier trained on ~11K has_answer-labeled turns delivers 38% downstream QA accuracy vs lastN's 15% — a real 2.5× lift on the metric that matters (LLM-judged answer correctness, not substring preservation).
+- **On large multi-session haystacks (_s, _m):** butterfly's tag-by-message strategy underperforms or ties the trivial baseline. This regime needs session-level retrieval (vector DB / BM25) as a pre-step before compaction can help.
+- **Domain-lock is real.** The classifier trained on LongMemEval has *negative* weights on identifier features (file paths, decision keywords). On engineering chat, where the needles ARE identifier-shaped, it preserves 0% of evidence vs regex's 100%. A production deployment would need per-domain labeled data or a multi-domain training corpus.
+- **The chrysalis loop — butterfly's actual novel claim — was never validated downstream.** The QA eval used single-pass tag-and-rebuild. Whether iterated multi-generation compaction with noise beats single-pass at downstream QA is still an open question.
+- **The lastN baseline is weak.** Production memory systems (mem0, Letta) use vector retrieval + LLM summarization. Beating lastN is necessary but not sufficient to claim production relevance.
 
 ### Reproduce in 4 ms
 
@@ -594,17 +622,19 @@ Output is deterministic. Same input → same answer. The regex tagger is rule-ba
 
 ### What this proves — and what it doesn't
 
-This isolates the **compaction mechanism** from every confounding question: is the tagger smart enough, can the rebuilder compress, will the judge be consistent, does the model finish in time. We answer one question, cleanly:
+What we can defend:
 
-> *At sufficient compression pressure with noise compounding, tag-and-rebuild preserves load-bearing content where naive truncation does not.*
+> *On in-distribution conversational memory with modest haystacks (one or a few sessions), a learned per-message classifier outperforms zero-shot truncation baselines at downstream QA — by a factor of ~2.5× at a 2K-token budget.*
 
 What this does **not** claim:
 
-- **Not a tagger-agnostic claim.** As the LLM-tagger replication above shows, the regex tagger's bias toward needle-shaped patterns is load-bearing. A learned tagger with a different prior (Qwen3-14B in our test) does not replicate the win. The mechanism is real but it inherits whatever the tagger prioritizes.
-- **Not a generalization across transcripts.** Four transcripts written by one person. This is a mechanism-existence proof on a small, internally consistent set — not a benchmark.
-- **Not a substitute for `/compact`.** Frontier-model summarization is cheaper and better when you have access to a frontier model. The "butterfly + small local model" lane is for the local-first niche.
+- **Not a long-term memory system.** Fails on multi-session haystacks (LongMemEval _s, _m) where retrieval — not compaction — is the bottleneck.
+- **Not a tagger-agnostic claim.** The classifier inherits whatever the training labels prioritize. Cross-domain test: 0% needle preservation on engineering chat with the LongMemEval-trained classifier. Per-domain labels or a multi-domain training set required for deployment.
+- **Not a chrysalis-loop validation.** The QA eval ran single-pass tag-and-rebuild. The multi-generation noise-compounding mechanism — butterfly's original novel claim — was never measured downstream.
+- **Not a comparison against a real production baseline.** lastN-at-fixed-budget is a weak baseline. mem0 / Letta / vector-retrieval + LLM-summary systems are the actual prior art and were not benchmarked.
+- **Not a substitute for `/compact`.** Frontier-model summarization is cheaper and better when you have access to one. The "small local classifier + small local answerer" lane is for the local-first niche.
 
-The full methodology — pre-registered thresholds, threats to validity, the original failure mode, the scope-shift to pure code — is in [`PREDICTIONS.md`](PREDICTIONS.md). The implementation is [`tools/butterfly-purecode-hard.mjs`](tools/butterfly-purecode-hard.mjs) — ~340 lines, no dependencies.
+Methodology and pre-registered thresholds: [`PREDICTIONS.md`](PREDICTIONS.md). Compaction implementation: [`tools/butterfly-purecode-hard.mjs`](tools/butterfly-purecode-hard.mjs) (~340 lines, no dependencies). QA evaluator: [`tools/butterfly-qa-eval.mjs`](tools/butterfly-qa-eval.mjs).
 
 <br>
 
@@ -650,9 +680,12 @@ Open **http://localhost:5173/app/** in Chrome, Edge, or Safari Technology Previe
   title   = {Neuropulse: Real-Time 1:1 Visualization of a Full-Scale LLM
              Forward Pass in the Browser},
   year    = {2026},
-  url     = {https://github.com/abgnydn/neuropulse}
+  doi     = {10.5281/zenodo.20505470},
+  url     = {https://doi.org/10.5281/zenodo.20505470}
 }
 ```
+
+DOI: [10.5281/zenodo.20505470](https://doi.org/10.5281/zenodo.20505470) (concept — resolves to the latest version).
 
 <br>
 

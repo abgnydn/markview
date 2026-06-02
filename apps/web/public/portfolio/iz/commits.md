@@ -1,5 +1,10 @@
 # Commits — iz
 
+## 2026-06-02
+
+- `08:13` **policy: add prior-art/differentiation section + co-signer outreach kit** — +189 −0 — [`73d551a`](https://github.com/abgnydn/iz/commit/73d551ac57281e75d4565478ec1273a2f87411f2)
+- `07:27` **fix(policy): reframe as position paper, remove false 10 June deadline** — +9 −8 — [`41f289a`](https://github.com/abgnydn/iz/commit/41f289a3c37d5c4edb6de5670e42026bd1eee07e)
+
 ## 2026-06-01
 
 - `17:47` **Wire Zenodo DOI 10.5281/zenodo.20496086 into all surfaces** — +10 −5 — [`9f121f9`](https://github.com/abgnydn/iz/commit/9f121f96b91061505e1e1d2d40a1fb4aa08ed131)
@@ -68,8 +73,3 @@
 - `07:38` **browser-native training: WebGPU loop using fused-lora shaders** — +2948 −2 — [`b353c05`](https://github.com/abgnydn/iz/commit/b353c05612722e3c78183da5e365bb13349efac2)
 - `07:24` **iz-1 substrate: Steps 7-9 + Pass 1/2 code + browser stub + paper outline** — +2078 −0 — [`2b2c8ae`](https://github.com/abgnydn/iz/commit/2b2c8ae3aa4a9e510a415794b0e7c5e91240fc99)
 - `06:49` **Step 6: disclosure scraper + first ground-truth rows** — +1001 −0 — [`4b630e5`](https://github.com/abgnydn/iz/commit/4b630e5a56dce0ef766045ce151683cb924798b3)
-- `06:35` **iz-1 Day 1: TR-MRV-Bench seed list (57 facilities)** — +645 −4 — [`1db8ca2`](https://github.com/abgnydn/iz/commit/1db8ca27789a47206a129845b110fbfcc2cf1ee3)
-
-## 2026-05-20
-
-- `06:18` **marketing: update report contact to Ahmet Baris Gunaydin · hi@barisgu…** — +3 −3 — [`f641f50`](https://github.com/abgnydn/iz/commit/f641f5031b3dc539a2ff8ec4d2e7682f4d3e9993)

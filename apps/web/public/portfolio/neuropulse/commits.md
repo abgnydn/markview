@@ -1,5 +1,26 @@
 # Commits — neuropulse
 
+## 2026-06-02
+
+- `07:29` **docs: wire Zenodo DOI 10.5281/zenodo.20505470 into CITATION.cff + REA…** — +7 −2 — [`3a1d6cf`](https://github.com/abgnydn/neuropulse/commit/3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e)
+- `06:21` **paper: elevate neuropulse manuscript to publication standard** — +307 −200 — [`13b43e9`](https://github.com/abgnydn/neuropulse/commit/13b43e930493c154ec357e9ae31d913f840182fd)
+- `06:04` **research(e45): add neuropulse manuscript — first 1:1 full-scale LLM f…** — +272 −1 — [`71d713f`](https://github.com/abgnydn/neuropulse/commit/71d713f282679b88f086dec57b2311dbf5b7bea8)
+- `05:42` **research(butterfly): split compaction study into its own repo; add Ze…** — +146 −4470 — [`d7d8c63`](https://github.com/abgnydn/neuropulse/commit/d7d8c637e063087b04ea11648bda4bbdc5e6a62e)
+
+## 2026-05-27
+
+- `11:00` **research(e45): phase-0 small-model control — cliff sharpens with scale** — +359 −0 — [`87aba35`](https://github.com/abgnydn/neuropulse/commit/87aba35554fa17d8ae58b3eda68f428fe61d368e)
+- `08:34` **research(e45): phase-2 multi-prompt sweep — cliff at iter=2 is universal** — +1649 −0 — [`09bd84e`](https://github.com/abgnydn/neuropulse/commit/09bd84e4817b1c304aac8dad4e33e08802e3d62d)
+
+## 2026-05-26
+
+- `13:47` **research(e45): phase-2 iter sweep — Path A falsified at zero-shot inf…** — +169 −2 — [`809dbf5`](https://github.com/abgnydn/neuropulse/commit/809dbf568b091d0fd42670a35f30485e3b758fbc)
+- `11:56` **research(e45): phase-1 wiring gate CLOSED — fixedpoint @ max_iter=1 ≡…** — +10 −2 — [`3fc27d4`](https://github.com/abgnydn/neuropulse/commit/3fc27d45c5871c968bbfc74488dbb355c5cba03e)
+- `08:55` **research(e45): suppress pyright false-positives on torch re-exports** — +4 −0 — [`efb6e65`](https://github.com/abgnydn/neuropulse/commit/efb6e650309aff8607d994c4a1bfdd4a6cb5768c)
+- `08:54` **research(e45): phase-0 small-model control — picard disentanglement h…** — +473 −0 — [`d4886eb`](https://github.com/abgnydn/neuropulse/commit/d4886eb3c857e46b4d85374a7c92167e0262b55a)
+- `08:51` **research(e45): scaffold continuous-attention fixed-point kernel + wiring** — +440 −16 — [`710c68a`](https://github.com/abgnydn/neuropulse/commit/710c68a95518f8007f9ef7373b205a8351f454ba)
+- `07:07` **research(predictions): file P-20260526-07 — continuous-attention self…** — +32 −0 — [`3d8bb14`](https://github.com/abgnydn/neuropulse/commit/3d8bb14cd4117e009910c431e969670e550779a3)
+
 ## 2026-05-21
 
 - `07:44` **research(butterfly): longmemeval_m — the pattern holds across 3 order…** — +96 −3 — [`c8d13e4`](https://github.com/abgnydn/neuropulse/commit/c8d13e4cf63accd39da3b329b6a4203546c40f1a)
@@ -76,18 +97,3 @@
 
 - `10:31` **feat(ui): top-anchored input + answer card · bottom orb rail · color-…** — +247 −65 — [`66c8399`](https://github.com/abgnydn/neuropulse/commit/66c8399712411fa1512a9c991b895570cfab1401)
 - `10:10` **feat(butterfly-mode): rubric self-judge + tighter tagger + sharper qu…** — +41 −19 — [`951bcfc`](https://github.com/abgnydn/neuropulse/commit/951bcfc84ee49ce2d3179acb98cada77c9b45118)
-- `09:38` **feat: every panel is drag-to-move now, persisted in localStorage** — +103 −1 — [`c952a14`](https://github.com/abgnydn/neuropulse/commit/c952a1474dbc454ae3f86764ea972ad19badfc14)
-- `09:29` **feat(butterfly-mode): wire residual-stream viz (v2)** — +3 −0 — [`1910c31`](https://github.com/abgnydn/neuropulse/commit/1910c31aee8b39077cdaa1fce75138255d441b30)
-- `09:06` **feat: new prompt interrupts the in-flight generation** — +136 −3 — [`c4e3410`](https://github.com/abgnydn/neuropulse/commit/c4e341080278a5000210484f0773ef7cc8a35b69)
-- `08:47` **fix(ui): give the prompt input a real width, contain the goBtn overflow** — +16 −3 — [`b3dcdf1`](https://github.com/abgnydn/neuropulse/commit/b3dcdf13a3a6ee0d856032297116857a173674f4)
-- `08:10` **fix(ui): dock all panels to corners — game-style HUD, no more 3D scatter** — +76 −10 — [`9ddab7e`](https://github.com/abgnydn/neuropulse/commit/9ddab7e7575dc4d76499cbd014855ee6646f4aab)
-- `07:41` **feat: soft Gaussian-sprite render mode (S key)** — +561 −0 — [`a6cac3f`](https://github.com/abgnydn/neuropulse/commit/a6cac3f5dd3f37451f478735a3bc57064db9dcad)
-- `06:38` **copy: replace "no X. no Y." negation pattern with positive framing** — +14 −14 — [`a47f44f`](https://github.com/abgnydn/neuropulse/commit/a47f44f766960b54cfaaab8945dc8853ae379873)
-- `05:45` **fix(ui): shrink journey HUD + give camera real zoom-out room** — +27 −19 — [`73b08d7`](https://github.com/abgnydn/neuropulse/commit/73b08d76837001a2bd4ffac3072ba72ea0096c54)
-- `05:42` **fix(ui): move ablation panel out of journey-HUD zone, add A toggle + …** — +54 −6 — [`eb17601`](https://github.com/abgnydn/neuropulse/commit/eb17601540c359ed8df233bcd6bb3eab4e327bb4)
-- `05:23` **docs: surface live ablation on the marketing page** — +24 −3 — [`1d440bb`](https://github.com/abgnydn/neuropulse/commit/1d440bb8da9a80b0782df7bf8c88dae442bbf8cc)
-
-## 2026-04-24
-
-- `17:39` **feat: per-layer ablation sweep + head-impact strip** — +199 −34 — [`ff25279`](https://github.com/abgnydn/neuropulse/commit/ff25279353fa51ddb0b47ecf69c80e7c62567cd4)
-- `17:28` **feat: live attention-head ablation + HUD-docked panels** — +1900 −212 — [`b118db9`](https://github.com/abgnydn/neuropulse/commit/b118db9a8dd77c90476d88e30054bb11d14cb5d2)

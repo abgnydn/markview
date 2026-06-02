@@ -1,7 +1,19 @@
 # Commits — markview
 
+## 2026-06-02
+
+- `08:55` **perf(atmosphere): sharpen the splat world — more points, tighter foot…** — +11 −3 — [`f6bbbd7`](https://github.com/abgnydn/markview/commit/f6bbbd7508219f1550a4a8733031209023972d31)
+- `08:46` **feat(atmosphere): walk inside the painting as a splat cloud** — +552 −178 — [`d1b1294`](https://github.com/abgnydn/markview/commit/d1b12944ee42128ff504861d9ee5c79218d42bb4)
+- `08:14` **fix(atmosphere): make WebGPU particles safe — no auto-enable, low count** — +76 −94 — [`049af0f`](https://github.com/abgnydn/markview/commit/049af0face9a86a046c76da7c3bdab33da3690c0)
+- `06:07` **fix(atmosphere): WebGPU particles invisible under ortho camera** — +10 −2 — [`b86f76a`](https://github.com/abgnydn/markview/commit/b86f76a232c6513f3d00d76b3fbb4a7c0df2fbcd)
+- `05:59` **feat(atmosphere): TSL/WebGPU compute particle backend (opt-in, `b`)** — +377 −15 — [`96154b9`](https://github.com/abgnydn/markview/commit/96154b9672bfaaaa7c5084ee2450ac6ab4283636)
+- `05:50` **feat(atmosphere): LDI inpainting fills splat disocclusion gaps** — +131 −24 — [`8216486`](https://github.com/abgnydn/markview/commit/821648658258f1241dccb8f7d1a0aa3b3c981f2a)
+- `05:36` **feat(atmosphere): single-image → 3D gaussian-splat painting mode** — +467 −5 — [`d4c77e6`](https://github.com/abgnydn/markview/commit/d4c77e670ea92064f330a9f8567fa3a04f266bb3)
+- `05:20` **fix: soften DOF, remove ink-dropper, minimal colored-dot cursor** — +21 −227 — [`4079986`](https://github.com/abgnydn/markview/commit/40799866f75493d818630bddc49d461c273f33cd)
+
 ## 2026-06-01
 
+- `22:35` **chore(portfolio): daily sync 2026-06-01** — +1118 −992 — [`87f7516`](https://github.com/abgnydn/markview/commit/87f75168a4bee27dbcba61227a7e588aadc1ac45)
 - `17:40` **feat(atmosphere): DOF + anaglyph + living light + dissolve-in (flat b…** — +97 −6 — [`47146bf`](https://github.com/abgnydn/markview/commit/47146bf7176586a8faf67425e7c3f9be6633472b)
 - `17:21` **fix(atmosphere): surface the whole pack — 31 paintings stopped feelin…** — +72 −14 — [`996a40b`](https://github.com/abgnydn/markview/commit/996a40bdeb41f77bbac705e4bbde326e84c3609f)
 - `16:50` **feat(atmosphere): 16 more CC0 paintings — packs now 8/7/9/6** — +112 −0 — [`52f4509`](https://github.com/abgnydn/markview/commit/52f4509091852d5795fa6562b3fb2ba4072bed54)
@@ -55,15 +67,3 @@
 - `13:43` **feat(atmosphere): depth-aware painting parallax via Depth Anything v2** — +1294 −65 — [`5bf8eb8`](https://github.com/abgnydn/markview/commit/5bf8eb8110640f92588bfedc539d54dd403936cc)
 - `13:25` **fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam** — +17418 −18 — [`1d28274`](https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b)
 - `12:44` **feat(viewer): final 3 polish items — annotations + smart-cap + cursor…** — +670 −0 — [`ea52a8e`](https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6)
-- `12:35` **feat(viewer): 4 more polish items — mini-map, smart-paste, audio wave…** — +463 −0 — [`73e3f52`](https://github.com/abgnydn/markview/commit/73e3f52c654005b4d67dc669f1889849fc4f7572)
-- `11:28` **feat(ui): round-3 polish — 13 of 20 items shipped** — +656 −29 — [`f5e98c2`](https://github.com/abgnydn/markview/commit/f5e98c2f7cbaa4c5d28752f63ffcea2aaee1ee94)
-- `11:07` **feat(viewer): cards mode — H2 sections become swipeable cards** — +411 −2 — [`98a0e1c`](https://github.com/abgnydn/markview/commit/98a0e1cd6d98ecaee2d7fce7c3f6904e3d9130c6)
-- `10:50` **feat(viewer): margin footnotes + constellation mode in graph view** — +228 −21 — [`7d4f03f`](https://github.com/abgnydn/markview/commit/7d4f03fc857bff7f95a28f4d3ddb33578905612f)
-- `08:24` **feat(ui): theme confirm modal + brush-stroke cursors + richer audio +…** — +682 −127 — [`24d6bcf`](https://github.com/abgnydn/markview/commit/24d6bcff1492f0a09850cf7b014fd7112bea5985)
-- `07:53` **fix(atmosphere): drop near-duplicate snow paintings + redesign SVG cu…** — +60 −37 — [`238f7f4`](https://github.com/abgnydn/markview/commit/238f7f40865739de6ffafa79de4b9bfa6fdb2bf0)
-- `07:32` **fix(ui): TOC scroll-spy + mobile sidebar blur + appearance-aware cursor** — +69 −12 — [`ec32774`](https://github.com/abgnydn/markview/commit/ec3277415bc5a094156ade3314a3f491230470bf)
-
-## 2026-05-27
-
-- `11:42` **fix(ui): un-hide paragraphs + TOC scroll-spy + slower motion + 14 new…** — +1124 −110 — [`ccef112`](https://github.com/abgnydn/markview/commit/ccef112cd5d6a55c1278261c92fae1a709e2daaa)
-- `11:25` **feat(ui): 19 polish items — lighter, smoother, more alive** — +665 −8 — [`966d63e`](https://github.com/abgnydn/markview/commit/966d63e021856f0c36bbf5cfe7d75ae61fd9b7df)

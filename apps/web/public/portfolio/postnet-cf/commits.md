@@ -1,5 +1,11 @@
 # Commits — postnet-cf
 
+## 2026-06-02
+
+- `08:24` **add .zenodo.json for GitHub→Zenodo auto-deposit; bump version labels …** — +48 −2 — [`44e4966`](https://github.com/abgnydn/postnet-cf/commit/44e49660ae1f0d796b808bc389900a06e7844e41)
+- `05:38` **paper draft v0.6 — figures, contributions list, comparison table** — +7120 −0 — [`960b6ea`](https://github.com/abgnydn/postnet-cf/commit/960b6eada7a4cb52da81057680d41409b31d7cff)
+- `05:19` **paper draft v0.5 + LICENSE — round 3 verification pass** — +43 −5 — [`5bf0f80`](https://github.com/abgnydn/postnet-cf/commit/5bf0f80693a3fe50f51a613f7dcc69a12f8cbda0)
+
 ## 2026-06-01
 
 - `17:27` **paper draft v0.4 — round 2 verification pass: 4 precision fixes** — +5 −5 — [`686a20c`](https://github.com/abgnydn/postnet-cf/commit/686a20c98e0cf6030f3c061674781934911b41d7)
@@ -64,6 +70,3 @@
 - `11:01` **phase 19: smoke-test runner + verifier retry logic** — +162 −14 — [`5ecef4e`](https://github.com/abgnydn/postnet-cf/commit/5ecef4e6cafe83603018a8a51241d210b72ea1a8)
 - `09:27` **phase 18: browser workers consume WS push (tournament + ternary)** — +71 −7 — [`492ca66`](https://github.com/abgnydn/postnet-cf/commit/492ca6654d12df09a059b3b6431826a24f57b750)
 - `09:26` **phase 17: byzantine defense + WS push ported to Ternary** — +82 −12 — [`02d58ab`](https://github.com/abgnydn/postnet-cf/commit/02d58ab689bddb9af2cb52b10f7c57b341d7da1b)
-- `09:22` **phase 16: byzantine defense + WS push ported to Tournament** — +85 −16 — [`f2742b6`](https://github.com/abgnydn/postnet-cf/commit/f2742b6efc7d368e753a728058cd7b54449d8988)
-- `09:17` **phase 15: README polish — landing page for the 14-phase substrate** — +65 −2 — [`d7aca33`](https://github.com/abgnydn/postnet-cf/commit/d7aca333b6f8bcdedf6b1627c5c9c8ee7f30fa5a)
-- `09:16` **phase 14: sliding-window fraud detection — defends against patient at…** — +103 −11 — [`f935e22`](https://github.com/abgnydn/postnet-cf/commit/f935e22aa8c2b65a5dfda548d4f87fde33144dc6)

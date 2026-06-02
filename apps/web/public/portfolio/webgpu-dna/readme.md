@@ -5,6 +5,7 @@
 [![Live demo](https://img.shields.io/badge/live-webgpudna.com-6ea8ff)](https://webgpudna.com)
 [![Geant4-DNA validated](https://img.shields.io/badge/Geant4--DNA-cross--checked-b0ffd0)](#numbers)
 [![Tests](https://img.shields.io/badge/tests-46%20%E2%9C%93-82c98b)](./tests)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20506339.svg)](https://doi.org/10.5281/zenodo.20506339)
 
 A WebGPU port of [Geant4-DNA](https://geant4-dna.in2p3.fr/) — the CNRS/IN2P3-coordinated Monte Carlo track-structure toolkit for radiobiology — running entirely in the browser.
 
@@ -62,6 +63,24 @@ validation/        Geant4-DNA comparison harness (compare.py, analyze_g4.py)
 
 Deep-dive: [`ARCHITECTURE.md`](./ARCHITECTURE.md). Standing physics diagnoses: [`PHYSICS_DIAGNOSIS.md`](./PHYSICS_DIAGNOSIS.md). Research protocol: [`RESEARCH.md`](./RESEARCH.md). **Engineering standards** (the 15-principle canonical discipline shared with the sibling WebGPU/WGSL research projects): [`RESEARCH_STANDARDS.md`](./RESEARCH_STANDARDS.md). Forward roadmap with multi-agent wall-clock estimates: [`ROADMAP.md`](./ROADMAP.md). Recipe for adding a new physics model: [`EXTENDING.md`](./EXTENDING.md). Design docs for the two named structural fixes (one refuted via Geant4 source archaeology, one waiting on the headless native runtime): [`H2OP_TRACKING_DESIGN.md`](./H2OP_TRACKING_DESIGN.md) and [`CROSS_PRIMARY_IRT_DESIGN.md`](./CROSS_PRIMARY_IRT_DESIGN.md).
 
+## Deployment
+
+Production (**webgpudna.com**) is **Cloudflare Pages**, deployed manually:
+
+```bash
+npm run build                                                   # → dist/
+wrangler pages deploy dist --project-name=webgpudna --branch=main
+```
+
+The production Pages project is **`webgpudna`** (no hyphen) — it owns
+webgpudna.com. Do **not** use the `webgpu-dna` (hyphenated) project; that one
+is stale and only serves `webgpu-dna.pages.dev`.
+
+A Vercel GitHub integration also auto-builds a parallel mirror
+(`webgpu-dna.vercel.app`) on every push to `main`, but that mirror does **not**
+serve the custom domain — pushing alone does not update webgpudna.com; the
+`wrangler` deploy above does.
+
 ## Regenerating cross sections
 
 The committed `public/cross_sections.wgsl` (1.3 MB) is generated from the G4EMLOW reference data (245 MB, not committed). To rebuild:
@@ -91,7 +110,7 @@ Reference snapshot for the WebGPU side: `N = 4096` primaries at 10 keV unless ot
 
 **Reproducibility caveat:** fp32 `atomicAdd` reductions on the dose grid and `rad_buf` counters are not order-deterministic across GPU vendors — same WGSL on different hardware (Apple Metal vs Nvidia Vulkan vs Intel iGPU) yields **statistically equivalent results within MC noise, NOT bit-exact**. The same machine + same seed + same shader hash IS bit-exact across re-runs. Every artifact emits `env.shaderHashes.{helpers,primary,secondary,chemistry}_wgsl` (added 2026-05-12) so you can group rows by shader version when the joint-fix scales or other shader-side tunables shift the baseline.
 
-**Citing this work:** see [`CITATION.cff`](./CITATION.cff). The current release is `v0.4.0` ([GitHub Release](https://github.com/abgnydn/webgpu-dna/releases/tag/v0.4.0)); a Zenodo DOI per release is on the todo list.
+**Citing this work:** see [`CITATION.cff`](./CITATION.cff). The current release is `v0.4.1` ([GitHub Release](https://github.com/abgnydn/webgpu-dna/releases/tag/v0.4.1)). Zenodo concept DOI [10.5281/zenodo.20506339](https://doi.org/10.5281/zenodo.20506339) (always resolves to the latest version); the v0.4.1 version DOI is [10.5281/zenodo.20506340](https://doi.org/10.5281/zenodo.20506340).
 
 **Where we deliberately differ from Geant4-DNA `DNA_Opt2`** (Emfietzoglou excitation, the σ_exc/recomb tuning knobs, per-primary IRT, fp32 atomics, fiber-grid geometry) — with the rationale and measured cost of each — is catalogued in [`GEANT4_DIVERGENCES.md`](./GEANT4_DIVERGENCES.md). Every cost figure there links back to its row in this section.
 
@@ -153,6 +172,7 @@ Reference snapshot for the WebGPU side: `N = 4096` primaries at 10 keV unless ot
 | E10i | ✗ noisy (partial closure) | **Joint fix end-to-end Playwright validation**: `(σ_exc_scale = 0.5, recomb_boost = 2.0)` lifts RMS dev 30.3% → **19.0%**, CSDA @ 100 eV 0.587× → **0.74×**, G(H₂) 0.51× → **0.78×**. G(H), G(H₂O₂) close; G(OH)/G(eaq) take 5-9% collateral damage. Two-knob structural limit. | [E10i](./experiments/results/2026-05-12/level-4/E10i-joint-fix-validation.json) |
 | E10j | ⚠ noisy (audit closure) | **POST joint-fix G-values at 1 μs vs chem6** — closes the audit gap where the prior §Numbers row mixed pre-fix and post-fix numbers. Result: G(OH) 0.895× (was 0.907×), G(eaq) 0.815× (was 0.830×), G(H) **1.096×** (was 0.992× — joint fix overshoots H slightly), G(H₂O₂) 0.693× (was 0.711×), G(H₂) **0.860×** (was 0.752× — big improvement). Per-primary IRT partitioning still dominates the 1 μs gap. | [E10j](./experiments/results/2026-05-12/level-4/E10j-post-joint-fix-vs-chem6-at-1us.json) |
 | E11  | ✗ honest negative | **GPU chem backend vs IRT worker** on the same rad bin: GPU matches within 5% at t ≤ 100 ps; diverges upward at 1 μs (G(OH) 2.33× IRT, G(eaq) 2.19×). GPU is 13.6× faster (14.2 s vs 194 s) but inaccurate at long times — quantifies why `DEFAULT_CHEM_BACKEND = 'worker'`. | [E11](./experiments/results/2026-05-11/level-4/E11-gpu-chem-vs-irt.json) |
+| E10r | ✓ informative — **RECOMB_BOOST is not load-bearing** | **Parameter-free chemistry (RECOMB_BOOST 2.0→1.0)** @ 1 μs vs chem6: G(OH) **0.914×**, G(eaq) **0.858×**, G(H) **0.928×** (the 1.096× overshoot disappears), G(H₂) 0.741×, G(H₂O₂) 0.693×. **5-species RMS @1μs only 19.7% vs 18.3% tuned** — removing the unphysical knob costs ~1.4 pp and improves 3 of 5 species. The knob mainly props up H₂ at the cost of an H overshoot; the paper reports the parameter-free values. | [E10r](./experiments/results/2026-06-02/level-4/E10r-recomb-free-chemistry.json) |
 
 ## Level 5 — DNA damage (3 pass / 1 fail closed)
 

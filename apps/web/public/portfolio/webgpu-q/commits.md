@@ -1,5 +1,19 @@
 # Commits — webgpu-q
 
+## 2026-06-02
+
+- `09:05` **feat(swarm): emit committed artifacts for the scaling table; correct …** — +471 −105 — [`ecef9e8`](https://github.com/abgnydn/webgpu-q/commit/ecef9e86980f2a20dd50fb1a993e5457c1ed187e)
+- `08:43` **docs(paper): lead correctness with what's validated, not test counts;…** — +65 −15 — [`2540b86`](https://github.com/abgnydn/webgpu-q/commit/2540b8614a087391d2a9486c3a599f527c202a05)
+- `08:31` **docs(paper): correct claims that failed an against-the-repo audit** — +67 −50 — [`33406a9`](https://github.com/abgnydn/webgpu-q/commit/33406a93e89ee6d585e214b798e42215431efdfb)
+- `07:28` **docs(paper): cite the two prior WebGPU single-kernel-fusion preprints** — +44 −3 — [`0f099ab`](https://github.com/abgnydn/webgpu-q/commit/0f099abe9c53930fd2003fdd426a5b368391d1c8)
+- `07:15` **chore(release): prep v0.9.1 — reconcile version, refresh Zenodo metadata** — +10 −9 — [`6a3b99d`](https://github.com/abgnydn/webgpu-q/commit/6a3b99def1347d1b2aeed0135e0cede1cc2e07a1)
+- `07:07` **docs(paper): add four data figures; fix fusion tier-ladder table over…** — +150 −5 — [`22548b1`](https://github.com/abgnydn/webgpu-q/commit/22548b16907c512134856e6a5cb5735884b786ea)
+- `06:59` **docs(paper): LaTeX build of kernel-fusion manuscript w/ verified refs** — +285 −0 — [`4ef116b`](https://github.com/abgnydn/webgpu-q/commit/4ef116b01edd6961558d85350e3ff20178f572cd)
+- `06:56` **docs(paper): LaTeX build of chemistry+swarm manuscript w/ verified refs** — +603 −13 — [`ca974da`](https://github.com/abgnydn/webgpu-q/commit/ca974da004502c252ba1fc1b1af0659e262fc030)
+- `06:28` **docs(paper): v0.5 — third figure (swarm protocol), numbered refs, re-…** — +128 −23 — [`e89ffef`](https://github.com/abgnydn/webgpu-q/commit/e89ffef42ffb660a2e7b574abff4f5f0cc424cd2)
+- `05:34` **docs(paper): render fusion manuscript to PDF (pandoc+xelatex, Menlo m…** — +0 −0 — [`8873ee4`](https://github.com/abgnydn/webgpu-q/commit/8873ee451a96e1cf1edb9ad8c7292a076a42c9c7)
+- `05:27` **docs(paper): draft the kernel-fusion manuscript (Level 3) — companion…** — +205 −0 — [`9a93278`](https://github.com/abgnydn/webgpu-q/commit/9a932784e4ef979ac10eb803c1e6b9bc2093f8f5)
+
 ## 2026-06-01
 
 - `16:47` **docs: wire in Zenodo DOI 10.5281/zenodo.20494383** — +6 −3 — [`8e2fbfe`](https://github.com/abgnydn/webgpu-q/commit/8e2fbfeaf4c2f486c79092a2133c514b7aeb67dc)
@@ -47,14 +61,3 @@
 - `15:22` **diag(jk): worker-count sweep — find optimal poolSize per hardware** — +88 −0 — [`d097625`](https://github.com/abgnydn/webgpu-q/commit/d097625178a4c0e4bb55ebdc63a51f3a672eef8a)
 - `15:11` **perf(jk): 4× SIMD unroll on X-build inner loop** — +22 −0 — [`73f5d2b`](https://github.com/abgnydn/webgpu-q/commit/73f5d2b0f4f6d65ebf050ff35368efcfb131006a)
 - `14:56` **perf(jk): exploit K symmetry in build_jk_df_slice — SCF 20 s → 17 s** — +22 −2 — [`3e020e4`](https://github.com/abgnydn/webgpu-q/commit/3e020e4ce463678e92410e82e772b8716cb948d2)
-- `14:38` **perf(jk): reuse JK_DF worker scratch buffers — SCF 43 s → 20 s** — +27 −2 — [`5cacb7e`](https://github.com/abgnydn/webgpu-q/commit/5cacb7ecf64328a4df984f2cb5d975a353431e4d)
-- `14:30` **perf(hf): pre-warm JK_DF workers before SCF iter loop** — +48 −1 — [`d9b633a`](https://github.com/abgnydn/webgpu-q/commit/d9b633abd15c98d651ed3dcf730720d4eb968c26)
-- `14:26` **diag(hf): per-iter SCF profiling via opts.profileCallback** — +150 −0 — [`563e8d1`](https://github.com/abgnydn/webgpu-q/commit/563e8d1c0b6b78d5b58b08b694ff82b3cf4fe7b1)
-- `14:10` **perf(df): release V tensor SAB before SCF — drops peak resident from** — +8 −0 — [`3123505`](https://github.com/abgnydn/webgpu-q/commit/312350541440ddff906ce7070d66e51259ae48ff)
-- `13:05` **perf(df): parallel V build + parallel B back-sub on Cholesky path —** — +443 −21 — [`10cfe14`](https://github.com/abgnydn/webgpu-q/commit/10cfe14e1976173e8ad7bee9f880cd4dac13d5fc)
-- `12:25` **bench(naphthalene): parallel JK_DF — HF SCF 86 s → 34 s (2.5×)** — +5 −5 — [`67d345d`](https://github.com/abgnydn/webgpu-q/commit/67d345d478faa28927d16a3dfcedbd46b9205e47)
-- `12:23` **feat(df): parallel buildJK_DF — 4.62× on benzene aux-DF Fock build** — +532 −18 — [`2961724`](https://github.com/abgnydn/webgpu-q/commit/2961724ee26f1d358784ddc7bcf0a3870102b1b6)
-- `11:56` **feat(naphthalene): cc-pVDZ HF in a browser tab — first molecule beyon…** — +138 −1 — [`8335684`](https://github.com/abgnydn/webgpu-q/commit/83356842f644d02ab1e254f9bc3920394e58295f)
-- `11:28` **perf(df): X-build loop transpose + SIMD — benzene aux-DF HF SCF 21 s …** — +36 −10 — [`38fc930`](https://github.com/abgnydn/webgpu-q/commit/38fc9301e07d9a3ca7c45cd01fc20fdbec073493)
-- `11:24` **perf(df): K-build transpose + SIMD — benzene aux-DF HF SCF 42 s → 21 …** — +46 −11 — [`aad8bbc`](https://github.com/abgnydn/webgpu-q/commit/aad8bbc126763d4ce9dc5dc682679ad1e97e6ab1)
-- `11:20` **build(vite): worker.format=es for WASM code-splitting in workers** — +5 −0 — [`9c7e9cd`](https://github.com/abgnydn/webgpu-q/commit/9c7e9cdbaae80c792743931ae71256891f01d5e9)

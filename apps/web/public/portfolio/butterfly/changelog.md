@@ -4,7 +4,7 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Tags
 
-_no tags yet_
+- `v0.1.0`
 
 ## Recent highlights
 

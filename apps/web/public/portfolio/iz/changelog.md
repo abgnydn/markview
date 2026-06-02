@@ -11,6 +11,7 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **fix**: fix(policy): reframe as position paper, remove false 10 June deadline — [`41f289a`](https://github.com/abgnydn/iz/commit/41f289a3c37d5c4edb6de5670e42026bd1eee07e)
 - **fix**: fix(zenodo): match webgpu-q's working schema exactly — [`7895dce`](https://github.com/abgnydn/iz/commit/7895dce6340377a66027db0f0b40b3fc40eecfb7)
 - **fix**: fix(zenodo): simplify metadata to minimal known-good schema — [`2474344`](https://github.com/abgnydn/iz/commit/24743441d1e541f843fd4ed6640fd1a2030a0c95)
 - **fix**: fix(policy): align th.num headers with td.num cells (right-align) — [`a86beac`](https://github.com/abgnydn/iz/commit/a86beacc2b4aac77e72946a2ef932df28d1fba48)

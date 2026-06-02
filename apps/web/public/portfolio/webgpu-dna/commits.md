@@ -1,5 +1,19 @@
 # Commits — webgpu-dna
 
+## 2026-06-02
+
+- `08:16` **docs: wire in Zenodo DOIs (concept 20506339, v0.4.1 version 20506340)** — +7 −3 — [`9c12e51`](https://github.com/abgnydn/webgpu-dna/commit/9c12e513e56d32c677b85f2b0fc21a4d8485c218)
+- `08:08` **paper: drop orphaned figures + rebuild after merging the parallel effort** — +0 −41 — [`e522759`](https://github.com/abgnydn/webgpu-dna/commit/e52275923d8fbe2b240ca6a2120bfc9e5ce2f224)
+- `08:08` **merge: integrate parallel paper effort (e2d67ef)** — +41 −0 — [`31a1014`](https://github.com/abgnydn/webgpu-dna/commit/31a101456f7051f5ce2f54ddb938f56b4745b168)
+- `07:11` **release: v0.4.1 — paper + parameter-free chemistry** — +31 −5 — [`c74a1a9`](https://github.com/abgnydn/webgpu-dna/commit/c74a1a96237b3f8251d732f4e770115fa8decfb2)
+- `07:00` **E10r: measure parameter-free chemistry — RECOMB_BOOST is not load-bea…** — +72 −34 — [`8f533af`](https://github.com/abgnydn/webgpu-dna/commit/8f533afaeb19a5ee4517f3a3633b407909a5a949)
+- `06:39` **paper: generate all 5 figures from artifacts, verify all citations, r…** — +76 −68 — [`e2d67ef`](https://github.com/abgnydn/webgpu-dna/commit/e2d67ef6994c90539aefcb9a04f9df05b65ef200)
+- `06:16` **paper: resolve the four reviewer issues (refs, RECOMB framing, figure…** — +229 −114 — [`9b087bb`](https://github.com/abgnydn/webgpu-dna/commit/9b087bbcceadefdd88b398b36d151b903b69ab26)
+- `05:36` **docs(readme): pin the real Cloudflare Pages project (webgpudna, not t…** — +6 −2 — [`e3402c4`](https://github.com/abgnydn/webgpu-dna/commit/e3402c43a3b3432fdf20390e9f5cb7a5f3b3498f)
+- `05:28` **docs(readme): document the actual deploy path (Cloudflare Pages via w…** — +14 −0 — [`9c8d58e`](https://github.com/abgnydn/webgpu-dna/commit/9c8d58e571b30b77f20eeb24ee2c2a363113ffe5)
+- `05:10` **docs(paper): add arXiv-style preprint draft (LaTeX + PDF)** — +577 −0 — [`5054fcb`](https://github.com/abgnydn/webgpu-dna/commit/5054fcb8dc7af9767eb042af1e8d3861bb87afb7)
+- `05:10` **fix: correct gMicroMC/MPEXS method attribution (reaction-radius, not …** — +13 −6 — [`1bcb87a`](https://github.com/abgnydn/webgpu-dna/commit/1bcb87a99ad2881030c0ba61b2a77c787d888548)
+
 ## 2026-06-01
 
 - `17:09` **release: v0.4.0 — audit closure + structural pivots** — +71 −13 — [`1704df6`](https://github.com/abgnydn/webgpu-dna/commit/1704df6d721bf09161a6912004915a5a2c10ce7f)
@@ -50,17 +64,3 @@
 - `08:23` **L4 stage 6: E10e cross-event recomb explains only ~16% of the H2 deficit** — +338 −0 — [`078e4a5`](https://github.com/abgnydn/webgpu-dna/commit/078e4a5ec50d7a7c7b01f8ed755f0dd9ad1efc4c)
 - `08:19` **CLAUDE.md: surface the E5b low-E CSDA deficit as a substantive finding** — +22 −8 — [`134fc4c`](https://github.com/abgnydn/webgpu-dna/commit/134fc4c01b4dc41fb0b48f54d94b39eace21d779)
 - `08:17` **L2 stage 7: E5b CSDA at all 8 ESTAR energies — surfaces a low-E deficit** — +490 −0 — [`9799fbc`](https://github.com/abgnydn/webgpu-dna/commit/9799fbc9dea40ca8ce16da6fb4e5aef9963add14)
-- `08:08` **PHYSICS_DIAGNOSIS: rule out pre-chem branching, name the cross-event …** — +37 −8 — [`e7e943c`](https://github.com/abgnydn/webgpu-dna/commit/e7e943c6142c4402a752fc2e4ea82acaa78dfb64)
-- `08:00` **L5 hit-mask: thread IRT-side indirect hits into DSB clusterer** — +13 −13 — [`d0fee7e`](https://github.com/abgnydn/webgpu-dna/commit/d0fee7e34d9d6f120cc00b7c26a02c8cff2be2c4)
-- `06:59` **L5 marquee closure: calibrate SSB_P_INDIRECT 0.4 → 0.05 (ratio 2.96)** — +97 −25 — [`8a43869`](https://github.com/abgnydn/webgpu-dna/commit/8a43869abcacc43d4cd53484963cc830ee8b8555)
-- `06:53` **L5 stage 5: IRT-side indirect SSB scoring — SSB_ind 0 → 451** — +396 −37 — [`16f8f35`](https://github.com/abgnydn/webgpu-dna/commit/16f8f35a26da4981fc97734e42dbce0dd24ac72d)
-
-## 2026-05-11
-
-- `14:23` **L5 stage 4: E13c real-harness re-validation + split SSB damage radii** — +365 −29 — [`0a5ce80`](https://github.com/abgnydn/webgpu-dna/commit/0a5ce800adc258322ec9dd280ce0104e998012ed)
-- `14:10` **L5 stage 3: E13b parametric SSB radius + APPLY physics fix (0.29 → 1.…** — +508 −24 — [`e5e302a`](https://github.com/abgnydn/webgpu-dna/commit/e5e302a1e3539ded587d46f0f53a0d91df7775d4)
-- `13:00` **L6 stage 5: E15d Phase A α/β + peak throughput across all 8 ESTAR ene…** — +597 −3 — [`3d64849`](https://github.com/abgnydn/webgpu-dna/commit/3d64849804ed7b47363d64c17b9b9ce76d894a88)
-- `12:56` **L1 stage 10: E3b Champion angular CDF (25 of 25 energies pass)** — +513 −7 — [`02c23d2`](https://github.com/abgnydn/webgpu-dna/commit/02c23d23fde6a98f612e8767642929021d584c9c)
-- `11:09` **L1 stage 9: E1c shell-fraction closure — Σ XSF_i = 1.0 across all bins** — +388 −9 — [`3dc36a7`](https://github.com/abgnydn/webgpu-dna/commit/3dc36a79f9d1d68b81894f1c2a694c64c1a97fc6)
-- `11:04` **L1 stage 8: E2b per-level Emfietzoglou σ_exc bit-match (all 5 levels …** — +300 −7 — [`f8384a6`](https://github.com/abgnydn/webgpu-dna/commit/f8384a6384c14b90dfdeda86bec89b280e55f60c)
-- `11:00` **L1 stage 7: E1b per-shell Born σ_ion bit-match (all 5 shells pass)** — +315 −4 — [`86828f2`](https://github.com/abgnydn/webgpu-dna/commit/86828f2f3be8f944e56e59ed6cfc48a93fc71432)
