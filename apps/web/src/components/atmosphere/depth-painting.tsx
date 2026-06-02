@@ -136,7 +136,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           // Depth-of-field — focal plane (0..1 depth) follows scroll;
           // pixels far from it blur. uDofAmount scales the effect.
           uFocal:      { value: 0.62 },
-          uDofAmount:  { value: 1.0 },
+          uDofAmount:  { value: 0.5 },
           // Dissolve-in — 0 = nothing, 1 = fully assembled. Animated
           // 0→1 on mount so the painting "burns in" from noise.
           uReveal:     { value: 0.0 },
@@ -252,8 +252,11 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
             vec2 motion = skyOff * far + midOff * mid;
 
             // ── Depth-of-field circle-of-confusion ────────────────
-            float coc = clamp(abs(vDepth - uFocal) * 2.4, 0.0, 1.0) * uDofAmount;
-            float blurR = coc * 0.014;
+            // Wide in-focus dead-zone (0.22) + low blur scale so the
+            // subject and most of the mid stay crisp — only the very
+            // far / very near edges get a whisper of softness.
+            float coc = clamp((abs(vDepth - uFocal) - 0.22) * 1.8, 0.0, 1.0) * uDofAmount;
+            float blurR = coc * 0.004;
 
             // ── Sample painting (anaglyph splits the channels by a
             //    depth-driven horizontal parallax for red/cyan 3D) ──

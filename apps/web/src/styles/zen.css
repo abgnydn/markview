@@ -3712,81 +3712,36 @@ body.mv-fast-scroll .atmosphere-cursor-canvas { opacity: 0.4; }
 }
 
 /* ────────────────────────────────────────────────────────────────────────
- * Custom cursor per appearance — a fountain-pen ink mark with a tiny
- * highlight + soft outer halo. Three concentric layers: outermost is a
- * 12px breath of color at 14% alpha (the "aura"), a 7px ring at 50%,
- * an inner 2.4px filled dot, and a 0.6px white highlight to catch the
- * eye like wet ink. Hotspot at (11,11) so the dot's center aligns with
- * the real pointer.
- *
- * Per-mood color (matched to each atmosphere's palette):
- *   default-dark   → violet ink     (#b9a4ff — brand accent)
- *   default-light  → carbon ink     (#1c1b22)
- *   fuji           → cherry-blossom (#f9a8d4)
- *   wave           → indigo wash    (#3b82f6)
- *   snow           → moon silver    (#cbd5e1)
- *   fields         → wheat amber    (#f59e0b)
- *
- * Set on body so buttons / links / inputs can still override with
- * their own pointer / text cursors below.
+ * Cursor — a minimal filled dot whose ONLY varying property is color,
+ * tinted to the active atmosphere. No icon, no rings, no arrow — just a
+ * small coloured point. Buttons + inputs keep the native pointer / text
+ * cursors so click + edit affordances are unchanged.
+ *   default-dark → violet · light → carbon ·
+ *   fuji → pink · wave → indigo · snow → silver · fields → amber
  * ──────────────────────────────────────────────────────────────────────── */
 body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='9' fill='%23b9a4ff' opacity='0.10'/><circle cx='11' cy='11' r='6' fill='none' stroke='%23b9a4ff' stroke-width='0.7' opacity='0.55'/><circle cx='11' cy='11' r='2.4' fill='%23b9a4ff' opacity='0.95'/><circle cx='10.2' cy='10.2' r='0.6' fill='white' opacity='0.55'/></svg>") 11 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%23b9a4ff'/></svg>") 6 6, auto;
 }
 :root:not(.dark):not([data-theme='dark']) body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='9' fill='%231c1b22' opacity='0.08'/><circle cx='11' cy='11' r='6' fill='none' stroke='%231c1b22' stroke-width='0.6' opacity='0.45'/><circle cx='11' cy='11' r='2.4' fill='%231c1b22' opacity='0.9'/><circle cx='10.2' cy='10.2' r='0.55' fill='%23fbf8f3' opacity='0.7'/></svg>") 11 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%231c1b22'/></svg>") 6 6, auto;
 }
 html[data-atmosphere='fuji'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='9' fill='%23f9a8d4' opacity='0.14'/><circle cx='11' cy='11' r='6' fill='none' stroke='%23f9a8d4' stroke-width='0.7' opacity='0.6'/><circle cx='11' cy='11' r='2.6' fill='%23f9a8d4' opacity='0.96'/><circle cx='10.2' cy='10.2' r='0.6' fill='white' opacity='0.6'/></svg>") 11 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%23f9a8d4'/></svg>") 6 6, auto;
 }
 html[data-atmosphere='wave'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='9' fill='%233b82f6' opacity='0.14'/><circle cx='11' cy='11' r='6' fill='none' stroke='%233b82f6' stroke-width='0.7' opacity='0.6'/><circle cx='11' cy='11' r='2.6' fill='%233b82f6' opacity='0.96'/><circle cx='10.2' cy='10.2' r='0.6' fill='white' opacity='0.6'/></svg>") 11 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%233b82f6'/></svg>") 6 6, auto;
 }
 html[data-atmosphere='snow'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='9' fill='%23cbd5e1' opacity='0.16'/><circle cx='11' cy='11' r='6' fill='none' stroke='%23cbd5e1' stroke-width='0.7' opacity='0.65'/><circle cx='11' cy='11' r='2.6' fill='%23cbd5e1' opacity='0.97'/><circle cx='10.2' cy='10.2' r='0.6' fill='white' opacity='0.7'/></svg>") 11 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%23cbd5e1'/></svg>") 6 6, auto;
 }
 html[data-atmosphere='fields'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='9' fill='%23f59e0b' opacity='0.14'/><circle cx='11' cy='11' r='6' fill='none' stroke='%23f59e0b' stroke-width='0.7' opacity='0.55'/><circle cx='11' cy='11' r='2.6' fill='%23f59e0b' opacity='0.96'/><circle cx='10.2' cy='10.2' r='0.6' fill='white' opacity='0.6'/></svg>") 11 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%23f59e0b'/></svg>") 6 6, auto;
 }
-
-/* Clickable surfaces — a finer "tap" cursor with a small chevron hint.
-   Replaces the system pointer hand so the magazine feel persists into
-   hover. Hotspot (5,4) at the tip of the arrow. */
+/* Native pointer + text on interactive surfaces — affordances unchanged. */
 button, a, [role='button'], .toolbar-btn,
 .sidebar-item, .workspace-tab, .toc-item, .search-result,
-.mv-palette-item {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M5 4 L5 17 L8.5 13.5 L11 18 L13 17 L10.5 12.5 L15 12.5 Z' fill='%23b9a4ff' stroke='white' stroke-width='0.7' opacity='0.92'/></svg>") 5 4, pointer;
-}
-:root:not(.dark):not([data-theme='dark']) button,
-:root:not(.dark):not([data-theme='dark']) a,
-:root:not(.dark):not([data-theme='dark']) [role='button'],
-:root:not(.dark):not([data-theme='dark']) .toolbar-btn,
-:root:not(.dark):not([data-theme='dark']) .sidebar-item,
-:root:not(.dark):not([data-theme='dark']) .workspace-tab,
-:root:not(.dark):not([data-theme='dark']) .toc-item,
-:root:not(.dark):not([data-theme='dark']) .search-result,
-:root:not(.dark):not([data-theme='dark']) .mv-palette-item {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><path d='M5 4 L5 17 L8.5 13.5 L11 18 L13 17 L10.5 12.5 L15 12.5 Z' fill='%231c1b22' stroke='%23fbf8f3' stroke-width='0.7' opacity='0.9'/></svg>") 5 4, pointer;
-}
-
-/* Text input — slim italic-serif beam with a tiny serif at the top */
-input, textarea, .cm-content, [contenteditable='true'] {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='22' viewBox='0 0 14 22'><line x1='7' y1='3' x2='7' y2='19' stroke='%23b9a4ff' stroke-width='1.2' opacity='0.9'/><line x1='4' y1='3' x2='10' y2='3' stroke='%23b9a4ff' stroke-width='1' opacity='0.7'/><line x1='4' y1='19' x2='10' y2='19' stroke='%23b9a4ff' stroke-width='1' opacity='0.7'/></svg>") 7 11, text;
-}
-:root:not(.dark):not([data-theme='dark']) input,
-:root:not(.dark):not([data-theme='dark']) textarea,
-:root:not(.dark):not([data-theme='dark']) .cm-content,
-:root:not(.dark):not([data-theme='dark']) [contenteditable='true'] {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='22' viewBox='0 0 14 22'><line x1='7' y1='3' x2='7' y2='19' stroke='%231c1b22' stroke-width='1.2' opacity='0.85'/><line x1='4' y1='3' x2='10' y2='3' stroke='%231c1b22' stroke-width='1' opacity='0.65'/><line x1='4' y1='19' x2='10' y2='19' stroke='%231c1b22' stroke-width='1' opacity='0.65'/></svg>") 7 11, text;
-}
-
-/* Mobile + touch: cursors are irrelevant — drop them so we don't
-   ship a few KB of SVG data URIs in CSS that no one ever sees. */
-@media (hover: none), (pointer: coarse) {
-  body, body * { cursor: auto !important; }
-  button, a, [role='button'], input, textarea { cursor: pointer !important; }
-  input, textarea, .cm-content { cursor: text !important; }
-}
+.mv-palette-item { cursor: pointer; }
+input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
 
 /* ────────────────────────────────────────────────────────────────────────
  * Zen ConfirmDialog — replaces the v1 confirm modal that lived in

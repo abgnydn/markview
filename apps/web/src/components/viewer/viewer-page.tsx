@@ -36,7 +36,6 @@ import { PresenceAvatars } from '@/components/collab/presence-avatars';
 import { RelatedNotes } from '@/components/viewer/related-notes';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
 import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
-import { InkDropper } from '@/components/atmosphere/ink-dropper';
 const PaintingWorld = lazy(() => import('@/components/atmosphere/painting-world').then((m) => ({ default: m.PaintingWorld })));
 import { useAtmosphereRotation } from '@/hooks/use-atmosphere-rotation';
 import { useEmbeddingsBackfill } from '@/hooks/use-embeddings-backfill';
@@ -259,7 +258,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       {atmosphere !== 'none' && (
         <PaintingAtmosphere atmosphere={atmosphere} paintingNonce={paintingNonce} />
       )}
-      <InkDropper enabled={atmosphere !== 'none'} />
       {worldSrc && (
         <Suspense fallback={null}>
           <PaintingWorld src={worldSrc} kind={atmosphere} onClose={() => setWorldSrc(null)} />
