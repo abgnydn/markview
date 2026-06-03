@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-02T22:24:59.108Z",
+  "generated_at": "2026-06-03T22:30:01.696Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1609,
+  "activity_90d_total": 1616,
   "activity_90d": {
     "2026-03-14": 4,
     "2026-03-15": 23,
@@ -63,7 +63,8 @@
     "2026-05-30": 3,
     "2026-05-31": 2,
     "2026-06-01": 52,
-    "2026-06-02": 43
+    "2026-06-02": 44,
+    "2026-06-03": 6
   },
   "projects": [
     {
@@ -84,7 +85,7 @@
       "pushed_at": "2026-06-02T07:29:17Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 44,
+      "commits_30d": 43,
       "commits_synced": 50,
       "last_commit": {
         "sha": "3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
@@ -125,20 +126,20 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-06-02T09:05:16Z",
+      "pushed_at": "2026-06-03T12:36:02Z",
       "default_branch": "main",
-      "latest_tag": "v0.9.1",
+      "latest_tag": "v0.9.2",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "ecef9e86980f2a20dd50fb1a993e5457c1ed187e",
-        "short_sha": "ecef9e8",
-        "message": "feat(swarm): emit committed artifacts for the scaling table; correct …",
-        "type": "feat",
-        "date": "2026-06-02T09:05:13Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/ecef9e86980f2a20dd50fb1a993e5457c1ed187e",
-        "additions": 471,
-        "deletions": 105
+        "sha": "a7ef72d5e6fae74de66ead8dfa077c8bbcad994c",
+        "short_sha": "a7ef72d",
+        "message": "chore(release): v0.9.2 — paper-hardening + artifact-backed swarm table",
+        "type": "chore",
+        "date": "2026-06-03T12:35:55Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/a7ef72d5e6fae74de66ead8dfa077c8bbcad994c",
+        "additions": 78,
+        "deletions": 9
       }
     },
     {
@@ -167,20 +168,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-06-02T08:55:49Z",
+      "pushed_at": "2026-06-03T02:41:34Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "f6bbbd7508219f1550a4a8733031209023972d31",
-        "short_sha": "f6bbbd7",
-        "message": "perf(atmosphere): sharpen the splat world — more points, tighter foot…",
-        "type": "perf",
-        "date": "2026-06-02T08:55:39Z",
-        "url": "https://github.com/abgnydn/markview/commit/f6bbbd7508219f1550a4a8733031209023972d31",
-        "additions": 11,
-        "deletions": 3
+        "sha": "69d69871eb8549dc77b78881d4b26ed1ec32a15c",
+        "short_sha": "69d6987",
+        "message": "chore(portfolio): daily sync 2026-06-02",
+        "type": "chore",
+        "date": "2026-06-02T22:24:59Z",
+        "url": "https://github.com/abgnydn/markview/commit/69d69871eb8549dc77b78881d4b26ed1ec32a15c",
+        "additions": 1120,
+        "deletions": 944
       }
     },
     {
@@ -198,20 +199,20 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-06-02T08:50:48Z",
+      "pushed_at": "2026-06-03T12:36:15Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "44e49660ae1f0d796b808bc389900a06e7844e41",
-        "short_sha": "44e4966",
-        "message": "add .zenodo.json for GitHub→Zenodo auto-deposit; bump version labels …",
-        "type": "other",
-        "date": "2026-06-02T08:24:33Z",
-        "url": "https://github.com/abgnydn/postnet-cf/commit/44e49660ae1f0d796b808bc389900a06e7844e41",
-        "additions": 48,
-        "deletions": 2
+        "sha": "2ef93c735922493184937a8e5438ade747248428",
+        "short_sha": "2ef93c7",
+        "message": "feat(ntk): held-out eval tracking + Kaggle learning-run notebook",
+        "type": "feat",
+        "date": "2026-06-03T12:36:10Z",
+        "url": "https://github.com/abgnydn/postnet-cf/commit/2ef93c735922493184937a8e5438ade747248428",
+        "additions": 360,
+        "deletions": 9
       }
     },
     {
@@ -246,6 +247,37 @@
       }
     },
     {
+      "slug": "quill",
+      "name": "quill",
+      "tagline": "Local-first grammar + writing assistant for macOS. Native overlay across all apps. Harper rules + fine-tuned Gemma 3 270M LoRA. 100% on-device.",
+      "repo": "abgnydn/quill",
+      "repo_url": "https://github.com/abgnydn/quill",
+      "live_url": null,
+      "featured": false,
+      "order": null,
+      "private": false,
+      "archived": false,
+      "language": "Rust",
+      "language_color": "#dea584",
+      "stars": 0,
+      "topics": [],
+      "pushed_at": "2026-06-03T06:03:47Z",
+      "default_branch": "master",
+      "latest_tag": "v2.0.0",
+      "commits_30d": 50,
+      "commits_synced": 50,
+      "last_commit": {
+        "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
+        "short_sha": "998fc95",
+        "message": "v2.3 negative control: pure self-resampling plateaus (88.9% -> 87.8%)",
+        "type": "other",
+        "date": "2026-06-03T06:03:44Z",
+        "url": "https://github.com/abgnydn/quill/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
+        "additions": 1093,
+        "deletions": 69
+      }
+    },
+    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "tagline": "WebGPU port of Geant4-DNA: in-browser Monte Carlo track-structure simulation with IRT chemistry and B-DNA SSB/DSB scoring",
@@ -273,37 +305,6 @@
         "date": "2026-06-02T08:16:06Z",
         "url": "https://github.com/abgnydn/webgpu-dna/commit/9c12e513e56d32c677b85f2b0fc21a4d8485c218",
         "additions": 7,
-        "deletions": 3
-      }
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "tagline": "Local-first grammar + writing assistant for macOS. Native overlay across all apps. Harper rules + fine-tuned Gemma 3 270M LoRA. 100% on-device.",
-      "repo": "abgnydn/quill",
-      "repo_url": "https://github.com/abgnydn/quill",
-      "live_url": null,
-      "featured": false,
-      "order": null,
-      "private": false,
-      "archived": false,
-      "language": "Rust",
-      "language_color": "#dea584",
-      "stars": 0,
-      "topics": [],
-      "pushed_at": "2026-06-02T08:12:54Z",
-      "default_branch": "master",
-      "latest_tag": "v2.0.0",
-      "commits_30d": 50,
-      "commits_synced": 50,
-      "last_commit": {
-        "sha": "12aa93c52bb989b0b2093fc6f238860dd4bb1d06",
-        "short_sha": "12aa93c",
-        "message": "colab: name adapter output by dataset stem to kill download collisions",
-        "type": "other",
-        "date": "2026-06-02T08:12:53Z",
-        "url": "https://github.com/abgnydn/quill/commit/12aa93c52bb989b0b2093fc6f238860dd4bb1d06",
-        "additions": 10,
         "deletions": 3
       }
     },
@@ -489,7 +490,7 @@
       "pushed_at": "2026-05-26T07:15:44Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 20,
+      "commits_30d": 19,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f110e4223c137254cdf5b054758ab24af09ef6ec",
@@ -778,7 +779,7 @@
       "pushed_at": "2026-05-18T20:04:18Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 50,
+      "commits_30d": 43,
       "commits_synced": 50,
       "last_commit": {
         "sha": "94fea2085827c68e8d89df474967fbdaf6bbd157",
@@ -809,7 +810,7 @@
       "pushed_at": "2026-05-15T03:50:00Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 7,
+      "commits_30d": 2,
       "commits_synced": 15,
       "last_commit": {
         "sha": "ebdb5b42b37705c25e5ab288a4d0bdbbbb7e3a67",
@@ -850,7 +851,7 @@
       "pushed_at": "2026-05-15T03:40:13Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 6,
+      "commits_30d": 5,
       "commits_synced": 50,
       "last_commit": {
         "sha": "9c2d099bef976c25b763eab490704843e64247ac",
@@ -881,7 +882,7 @@
       "pushed_at": "2026-05-15T03:39:56Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 8,
+      "commits_30d": 6,
       "commits_synced": 33,
       "last_commit": {
         "sha": "c7a71480b59cb09d3a56ad5dfa4a06577492a4eb",
@@ -912,7 +913,7 @@
       "pushed_at": "2026-05-15T03:39:54Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 11,
+      "commits_30d": 3,
       "commits_synced": 50,
       "last_commit": {
         "sha": "9e1238b0993130c38e824ac43b6552779e38abf8",
@@ -943,7 +944,7 @@
       "pushed_at": "2026-05-05T12:14:49Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 21,
+      "commits_30d": 10,
       "commits_synced": 50,
       "last_commit": {
         "sha": "04118c151ea6e016e6708de6c9bde9ee30649609",
@@ -974,7 +975,7 @@
       "pushed_at": "2026-05-04T13:19:01Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 2,
+      "commits_30d": 0,
       "commits_synced": 5,
       "last_commit": {
         "sha": "c2a23fcb26f49b8b8bf3980d9bbf14e25cc3c57f",
@@ -1005,7 +1006,7 @@
       "pushed_at": "2026-05-04T11:04:12Z",
       "default_branch": "master",
       "latest_tag": "v0.1.0",
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 12,
       "last_commit": {
         "sha": "11373b9c4062f9894762a32937e24c87e4eac07b",
@@ -1048,7 +1049,7 @@
       "pushed_at": "2026-05-04T11:01:25Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 2,
+      "commits_30d": 0,
       "commits_synced": 3,
       "last_commit": {
         "sha": "7088ed6bc388731b0d75f92e0150dec61716939d",
@@ -1089,7 +1090,7 @@
       "pushed_at": "2026-05-04T10:59:56Z",
       "default_branch": "master",
       "latest_tag": "v0.1.0",
-      "commits_30d": 2,
+      "commits_30d": 0,
       "commits_synced": 3,
       "last_commit": {
         "sha": "e08be45ce5d82a53421a88ee25b1f36c86dd393c",
@@ -1120,7 +1121,7 @@
       "pushed_at": "2026-05-04T10:50:49Z",
       "default_branch": "master",
       "latest_tag": "v0.1.0",
-      "commits_30d": 2,
+      "commits_30d": 0,
       "commits_synced": 8,
       "last_commit": {
         "sha": "55b03e1afcfd856db9ae68283fbc77804062b34c",
@@ -1151,7 +1152,7 @@
       "pushed_at": "2026-05-04T10:47:04Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 22,
       "last_commit": {
         "sha": "5c5974cb937bc37a493d42b87f7347f1510a3f74",
@@ -1182,7 +1183,7 @@
       "pushed_at": "2026-05-04T06:17:52Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 1,
       "last_commit": {
         "sha": "4af96de5d8ee41dddf3a9b163c04e33a9ebc6399",
@@ -1414,6 +1415,97 @@
     }
   ],
   "commits": [
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "c26faecba06d4e703dc4d12f424cfa45b81e7eae",
+      "short_sha": "c26faec",
+      "message": "docs: phase 41 zk-verifiability design doc (scoping, not code)",
+      "type": "docs",
+      "date": "2026-06-03T12:36:10Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/c26faecba06d4e703dc4d12f424cfa45b81e7eae",
+      "additions": 235,
+      "deletions": 0
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "2ef93c735922493184937a8e5438ade747248428",
+      "short_sha": "2ef93c7",
+      "message": "feat(ntk): held-out eval tracking + Kaggle learning-run notebook",
+      "type": "feat",
+      "date": "2026-06-03T12:36:10Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/2ef93c735922493184937a8e5438ade747248428",
+      "additions": 360,
+      "deletions": 9
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "a7ef72d5e6fae74de66ead8dfa077c8bbcad994c",
+      "short_sha": "a7ef72d",
+      "message": "chore(release): v0.9.2 — paper-hardening + artifact-backed swarm table",
+      "type": "chore",
+      "date": "2026-06-03T12:35:55Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/a7ef72d5e6fae74de66ead8dfa077c8bbcad994c",
+      "additions": 78,
+      "deletions": 9
+    },
+    {
+      "slug": "postnet-cf",
+      "name": "postnet-cf",
+      "language": "JavaScript",
+      "sha": "c3125e433c24afb763fe5873a5c4e04fd131f80d",
+      "short_sha": "c3125e4",
+      "message": "docs: wire in Zenodo DOI for v0.6 archive",
+      "type": "docs",
+      "date": "2026-06-03T09:18:52Z",
+      "url": "https://github.com/abgnydn/postnet-cf/commit/c3125e433c24afb763fe5873a5c4e04fd131f80d",
+      "additions": 12,
+      "deletions": 2
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "6971da7d8989548bca35dec0f274f66be219d6d6",
+      "short_sha": "6971da7",
+      "message": "feat(swarm): commit C60 artifact — closes the last unverified table row",
+      "type": "feat",
+      "date": "2026-06-03T06:14:32Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/6971da7d8989548bca35dec0f274f66be219d6d6",
+      "additions": 58,
+      "deletions": 8
+    },
+    {
+      "slug": "quill",
+      "name": "quill",
+      "language": "Rust",
+      "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
+      "short_sha": "998fc95",
+      "message": "v2.3 negative control: pure self-resampling plateaus (88.9% -> 87.8%)",
+      "type": "other",
+      "date": "2026-06-03T06:03:44Z",
+      "url": "https://github.com/abgnydn/quill/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
+      "additions": 1093,
+      "deletions": 69
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "69d69871eb8549dc77b78881d4b26ed1ec32a15c",
+      "short_sha": "69d6987",
+      "message": "chore(portfolio): daily sync 2026-06-02",
+      "type": "chore",
+      "date": "2026-06-02T22:24:59Z",
+      "url": "https://github.com/abgnydn/markview/commit/69d69871eb8549dc77b78881d4b26ed1ec32a15c",
+      "additions": 1120,
+      "deletions": 944
+    },
     {
       "slug": "webgpu-q",
       "name": "webgpu-q",
@@ -3573,19 +3665,6 @@
       "deletions": 35
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "73f5d2b0f4f6d65ebf050ff35368efcfb131006a",
-      "short_sha": "73f5d2b",
-      "message": "perf(jk): 4× SIMD unroll on X-build inner loop",
-      "type": "perf",
-      "date": "2026-05-28T15:11:54Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/73f5d2b0f4f6d65ebf050ff35368efcfb131006a",
-      "additions": 22,
-      "deletions": 0
-    },
-    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -3610,19 +3689,6 @@
       "url": "https://github.com/abgnydn/markview/commit/53bc354d02f3bd6f6ffaa22a0b73747cfbc96ba4",
       "additions": 337,
       "deletions": 16
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "3e020e4ce463678e92410e82e772b8716cb948d2",
-      "short_sha": "3e020e4",
-      "message": "perf(jk): exploit K symmetry in build_jk_df_slice — SCF 20 s → 17 s",
-      "type": "perf",
-      "date": "2026-05-28T14:56:19Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/3e020e4ce463678e92410e82e772b8716cb948d2",
-      "additions": 22,
-      "deletions": 2
     },
     {
       "slug": "iz",
@@ -3870,19 +3936,6 @@
       "url": "https://github.com/abgnydn/quill/commit/149bd7607a8f0fab9bc691cb81c869c3560ad7c0",
       "additions": 79,
       "deletions": 15
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "ea52a8e37a1f3108b37fa7180be002f41da78ba6",
-      "short_sha": "ea52a8e",
-      "message": "feat(viewer): final 3 polish items — annotations + smart-cap + cursor…",
-      "type": "feat",
-      "date": "2026-05-28T12:44:10Z",
-      "url": "https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6",
-      "additions": 670,
-      "deletions": 0
     },
     {
       "slug": "postnet-cf",
@@ -5016,45 +5069,6 @@
       "deletions": 0
     },
     {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "5ecef4e6cafe83603018a8a51241d210b72ea1a8",
-      "short_sha": "5ecef4e",
-      "message": "phase 19: smoke-test runner + verifier retry logic",
-      "type": "other",
-      "date": "2026-05-22T11:01:13Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/5ecef4e6cafe83603018a8a51241d210b72ea1a8",
-      "additions": 162,
-      "deletions": 14
-    },
-    {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "492ca6654d12df09a059b3b6431826a24f57b750",
-      "short_sha": "492ca66",
-      "message": "phase 18: browser workers consume WS push (tournament + ternary)",
-      "type": "other",
-      "date": "2026-05-22T09:27:55Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/492ca6654d12df09a059b3b6431826a24f57b750",
-      "additions": 71,
-      "deletions": 7
-    },
-    {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "02d58ab689bddb9af2cb52b10f7c57b341d7da1b",
-      "short_sha": "02d58ab",
-      "message": "phase 17: byzantine defense + WS push ported to Ternary",
-      "type": "other",
-      "date": "2026-05-22T09:26:27Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/02d58ab689bddb9af2cb52b10f7c57b341d7da1b",
-      "additions": 82,
-      "deletions": 12
-    },
-    {
       "slug": "safenpm",
       "name": "safenpm",
       "language": "TypeScript",
@@ -5430,19 +5444,6 @@
       "url": "https://github.com/abgnydn/tether/commit/0f6246ba68efd3bce56d8a3077be413c36a8e328",
       "additions": 50,
       "deletions": 8391
-    },
-    {
-      "slug": "quill",
-      "name": "quill",
-      "language": "Rust",
-      "sha": "46140494e2858d44c04469206a91214713894dc0",
-      "short_sha": "4614049",
-      "message": "v0.6: add inline diff helpers (tokenizeWords/diffWords/renderDiffHtml)",
-      "type": "other",
-      "date": "2026-05-21T12:25:14Z",
-      "url": "https://github.com/abgnydn/quill/commit/46140494e2858d44c04469206a91214713894dc0",
-      "additions": 41,
-      "deletions": 0
     },
     {
       "slug": "tether",

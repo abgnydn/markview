@@ -1,5 +1,7 @@
 # postnet-cf
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20506887.svg)](https://doi.org/10.5281/zenodo.20506887)
+
 **Live demo:** https://postnet-cf.abgunaydin94.workers.dev — open in two browser tabs to see the swarm form. *(May be temporarily 500 if the Durable Objects free-tier daily quota is exhausted by verifier load — see `docs/OPEN_QUESTIONS.md`. Local `wrangler dev` always works.)*
 
 Federated learning where workers are browser tabs and the coordinator is a Cloudflare Durable Object. Four protocol variants share the substrate — federated Adam, float-weight tournament, ternary-weight tournament, and a real-ML char-LM with sliding-window byzantine defense.

@@ -1,5 +1,11 @@
 # Commits — postnet-cf
 
+## 2026-06-03
+
+- `12:36` **feat(ntk): held-out eval tracking + Kaggle learning-run notebook** — +360 −9 — [`2ef93c7`](https://github.com/abgnydn/postnet-cf/commit/2ef93c735922493184937a8e5438ade747248428)
+- `12:36` **docs: phase 41 zk-verifiability design doc (scoping, not code)** — +235 −0 — [`c26faec`](https://github.com/abgnydn/postnet-cf/commit/c26faecba06d4e703dc4d12f424cfa45b81e7eae)
+- `09:18` **docs: wire in Zenodo DOI for v0.6 archive** — +12 −2 — [`c3125e4`](https://github.com/abgnydn/postnet-cf/commit/c3125e433c24afb763fe5873a5c4e04fd131f80d)
+
 ## 2026-06-02
 
 - `08:24` **add .zenodo.json for GitHub→Zenodo auto-deposit; bump version labels …** — +48 −2 — [`44e4966`](https://github.com/abgnydn/postnet-cf/commit/44e49660ae1f0d796b808bc389900a06e7844e41)
@@ -67,6 +73,3 @@
 - `11:05` **phase 22: trimmed-mean defense for federated Adam** — +25 −6 — [`bc02682`](https://github.com/abgnydn/postnet-cf/commit/bc02682a83662d2fc130fca7748f9697fc2a7613)
 - `11:03` **phase 21: scripts/expose.sh — cloudflared quick tunnel** — +39 −0 — [`3858e64`](https://github.com/abgnydn/postnet-cf/commit/3858e64584c5d1c7636ff835fc80106a887b7f03)
 - `11:02` **phase 20: protocol specification (v0.5)** — +214 −0 — [`74ad6de`](https://github.com/abgnydn/postnet-cf/commit/74ad6de2f1d0b7509225e47b30ae21621d63995f)
-- `11:01` **phase 19: smoke-test runner + verifier retry logic** — +162 −14 — [`5ecef4e`](https://github.com/abgnydn/postnet-cf/commit/5ecef4e6cafe83603018a8a51241d210b72ea1a8)
-- `09:27` **phase 18: browser workers consume WS push (tournament + ternary)** — +71 −7 — [`492ca66`](https://github.com/abgnydn/postnet-cf/commit/492ca6654d12df09a059b3b6431826a24f57b750)
-- `09:26` **phase 17: byzantine defense + WS push ported to Ternary** — +82 −12 — [`02d58ab`](https://github.com/abgnydn/postnet-cf/commit/02d58ab689bddb9af2cb52b10f7c57b341d7da1b)

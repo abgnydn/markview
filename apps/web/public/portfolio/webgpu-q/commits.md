@@ -1,5 +1,10 @@
 # Commits — webgpu-q
 
+## 2026-06-03
+
+- `12:35` **chore(release): v0.9.2 — paper-hardening + artifact-backed swarm table** — +78 −9 — [`a7ef72d`](https://github.com/abgnydn/webgpu-q/commit/a7ef72d5e6fae74de66ead8dfa077c8bbcad994c)
+- `06:14` **feat(swarm): commit C60 artifact — closes the last unverified table row** — +58 −8 — [`6971da7`](https://github.com/abgnydn/webgpu-q/commit/6971da7d8989548bca35dec0f274f66be219d6d6)
+
 ## 2026-06-02
 
 - `09:05` **feat(swarm): emit committed artifacts for the scaling table; correct …** — +471 −105 — [`ecef9e8`](https://github.com/abgnydn/webgpu-q/commit/ecef9e86980f2a20dd50fb1a993e5457c1ed187e)
@@ -59,5 +64,3 @@
 - `16:06` **diag(jk): prove P-partition correctness for distributed JK_DF** — +157 −0 — [`9103ed6`](https://github.com/abgnydn/webgpu-q/commit/9103ed62d18662bcf7561cd046542ac68b268641)
 - `16:01` **diag(swarm): multi-tab SAB partitioning MVP — break-the-memory-wall i…** — +152 −0 — [`78146ec`](https://github.com/abgnydn/webgpu-q/commit/78146ec758f294173c0da5789a1e1d4aa4db5804)
 - `15:22` **diag(jk): worker-count sweep — find optimal poolSize per hardware** — +88 −0 — [`d097625`](https://github.com/abgnydn/webgpu-q/commit/d097625178a4c0e4bb55ebdc63a51f3a672eef8a)
-- `15:11` **perf(jk): 4× SIMD unroll on X-build inner loop** — +22 −0 — [`73f5d2b`](https://github.com/abgnydn/webgpu-q/commit/73f5d2b0f4f6d65ebf050ff35368efcfb131006a)
-- `14:56` **perf(jk): exploit K symmetry in build_jk_df_slice — SCF 20 s → 17 s** — +22 −2 — [`3e020e4`](https://github.com/abgnydn/webgpu-q/commit/3e020e4ce463678e92410e82e772b8716cb948d2)

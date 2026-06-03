@@ -1,5 +1,9 @@
 # Commits — quill
 
+## 2026-06-03
+
+- `06:03` **v2.3 negative control: pure self-resampling plateaus (88.9% -> 87.8%)** — +1093 −69 — [`998fc95`](https://github.com/abgnydn/quill/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3)
+
 ## 2026-06-02
 
 - `08:12` **colab: name adapter output by dataset stem to kill download collisions** — +10 −3 — [`12aa93c`](https://github.com/abgnydn/quill/commit/12aa93c52bb989b0b2093fc6f238860dd4bb1d06)
@@ -72,4 +76,3 @@
 ## 2026-05-21
 
 - `12:44` **v0.7 (C+E): menubar mode + background auto-retrain** — +658 −5 — [`500ced3`](https://github.com/abgnydn/quill/commit/500ced33bc62ab1973ea4ad414ae599198d124ad)
-- `12:25` **v0.6: add inline diff helpers (tokenizeWords/diffWords/renderDiffHtml)** — +41 −0 — [`4614049`](https://github.com/abgnydn/quill/commit/46140494e2858d44c04469206a91214713894dc0)

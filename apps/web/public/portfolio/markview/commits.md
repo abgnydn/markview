@@ -2,6 +2,7 @@
 
 ## 2026-06-02
 
+- `22:24` **chore(portfolio): daily sync 2026-06-02** — +1120 −944 — [`69d6987`](https://github.com/abgnydn/markview/commit/69d69871eb8549dc77b78881d4b26ed1ec32a15c)
 - `08:55` **perf(atmosphere): sharpen the splat world — more points, tighter foot…** — +11 −3 — [`f6bbbd7`](https://github.com/abgnydn/markview/commit/f6bbbd7508219f1550a4a8733031209023972d31)
 - `08:46` **feat(atmosphere): walk inside the painting as a splat cloud** — +552 −178 — [`d1b1294`](https://github.com/abgnydn/markview/commit/d1b12944ee42128ff504861d9ee5c79218d42bb4)
 - `08:14` **fix(atmosphere): make WebGPU particles safe — no auto-enable, low count** — +76 −94 — [`049af0f`](https://github.com/abgnydn/markview/commit/049af0face9a86a046c76da7c3bdab33da3690c0)
@@ -66,4 +67,3 @@
 - `14:03` **fix(atmosphere): anchor foreground in depth parallax + un-block swap** — +462 −151 — [`4f17671`](https://github.com/abgnydn/markview/commit/4f17671f02a0c6e9d434e563a59488181217f7a1)
 - `13:43` **feat(atmosphere): depth-aware painting parallax via Depth Anything v2** — +1294 −65 — [`5bf8eb8`](https://github.com/abgnydn/markview/commit/5bf8eb8110640f92588bfedc539d54dd403936cc)
 - `13:25` **fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam** — +17418 −18 — [`1d28274`](https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b)
-- `12:44` **feat(viewer): final 3 polish items — annotations + smart-cap + cursor…** — +670 −0 — [`ea52a8e`](https://github.com/abgnydn/markview/commit/ea52a8e37a1f3108b37fa7180be002f41da78ba6)

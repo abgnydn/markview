@@ -8,4 +8,4 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
-_no feat/fix commits in the last 50_
+- **feat**: feat(ntk): held-out eval tracking + Kaggle learning-run notebook — [`2ef93c7`](https://github.com/abgnydn/postnet-cf/commit/2ef93c735922493184937a8e5438ade747248428)
