@@ -5,6 +5,22 @@ format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/) starting
 from `0.1.0`.
 
+## [0.9.3] — 2026-06-04
+
+A **deposit-correctness** release. No source, method, or figure changed — it
+exists to carry the corrected-DOI manuscripts into a fresh Zenodo archive and
+to stop the per-release DOI churn.
+
+- The v0.9.2 Zenodo files were minted from manuscripts that still cited the
+  old (v0.9.0 version) DOI; Zenodo locks files on publish, so a new version is
+  the only way to deposit the corrected PDFs. This release's `paper/main.pdf`
+  and `paper/main-fusion.pdf` cite the concept DOI `10.5281/zenodo.20494382`.
+- `CITATION.cff` (top-level and `preferred-citation`) and the README citation
+  now use the **concept DOI** throughout — it always resolves to the latest
+  version, so the citation no longer needs a per-release edit referencing a
+  version DOI that doesn't exist until after the tag is published. Each
+  release still gets its own version DOI on the Zenodo record.
+
 ## [0.9.2] — 2026-06-03
 
 A **paper-hardening and reproducibility** release. No method or kernel
@@ -54,6 +70,17 @@ artifact or honestly caveated.
 
 - Regenerated all five matplotlib figures from the committed artifacts;
   `fig-scaling` now plots the measured swarm-SCF walls (C₆₀ at 539 s).
+
+### DOI correction
+
+- Fixed the Zenodo identifier everywhere: the value wired in at v0.9.1
+  (`10.5281/zenodo.20494383`) is actually the **version DOI of v0.9.0**, not
+  the concept DOI, so the badge / citation had been pinned to the first
+  release instead of tracking latest. Corrected to the true **concept DOI
+  `10.5281/zenodo.20494382`** (all versions, resolves to latest) for the badge,
+  `CITATION.cff` top-level, and both manuscript archive lines; the
+  `preferred-citation` and the README "this release" link now carry the
+  **v0.9.2 version DOI `10.5281/zenodo.20527479`**.
 
 ## [0.9.1] — 2026-06-02
 

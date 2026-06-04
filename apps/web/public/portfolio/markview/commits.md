@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-03
+
+- `22:30` **chore(portfolio): daily sync 2026-06-03** — +255 −178 — [`21484c3`](https://github.com/abgnydn/markview/commit/21484c3dc8edfaefbd111c26495a7f44b6bad918)
+
 ## 2026-06-02
 
 - `22:24` **chore(portfolio): daily sync 2026-06-02** — +1120 −944 — [`69d6987`](https://github.com/abgnydn/markview/commit/69d69871eb8549dc77b78881d4b26ed1ec32a15c)
@@ -66,4 +70,3 @@
 - `14:19` **feat(atmosphere): real 3D painting via Three.js + fix light-theme sid…** — +187 −170 — [`85aeb64`](https://github.com/abgnydn/markview/commit/85aeb6486ea03d6ae21801850b041f197028ca1e)
 - `14:03` **fix(atmosphere): anchor foreground in depth parallax + un-block swap** — +462 −151 — [`4f17671`](https://github.com/abgnydn/markview/commit/4f17671f02a0c6e9d434e563a59488181217f7a1)
 - `13:43` **feat(atmosphere): depth-aware painting parallax via Depth Anything v2** — +1294 −65 — [`5bf8eb8`](https://github.com/abgnydn/markview/commit/5bf8eb8110640f92588bfedc539d54dd403936cc)
-- `13:25` **fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam** — +17418 −18 — [`1d28274`](https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b)

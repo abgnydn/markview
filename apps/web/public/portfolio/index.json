@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-03T22:30:01.696Z",
+  "generated_at": "2026-06-04T21:44:24.270Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1616,
+  "activity_90d_total": 1631,
   "activity_90d": {
     "2026-03-14": 4,
     "2026-03-15": 23,
@@ -64,7 +64,8 @@
     "2026-05-31": 2,
     "2026-06-01": 52,
     "2026-06-02": 44,
-    "2026-06-03": 6
+    "2026-06-03": 14,
+    "2026-06-04": 7
   },
   "projects": [
     {
@@ -85,7 +86,7 @@
       "pushed_at": "2026-06-02T07:29:17Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 43,
+      "commits_30d": 42,
       "commits_synced": 50,
       "last_commit": {
         "sha": "3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
@@ -126,20 +127,20 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-06-03T12:36:02Z",
+      "pushed_at": "2026-06-04T13:21:09Z",
       "default_branch": "main",
-      "latest_tag": "v0.9.2",
+      "latest_tag": "v0.9.3",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "a7ef72d5e6fae74de66ead8dfa077c8bbcad994c",
-        "short_sha": "a7ef72d",
-        "message": "chore(release): v0.9.2 — paper-hardening + artifact-backed swarm table",
-        "type": "chore",
-        "date": "2026-06-03T12:35:55Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/a7ef72d5e6fae74de66ead8dfa077c8bbcad994c",
-        "additions": 78,
-        "deletions": 9
+        "sha": "c90b0cd3f94906caa6fe5d31a85881275f4e6aec",
+        "short_sha": "c90b0cd",
+        "message": "fix(fusion-paper): correct the bandwidth claim — logical vs physical,…",
+        "type": "fix",
+        "date": "2026-06-04T13:20:53Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/c90b0cd3f94906caa6fe5d31a85881275f4e6aec",
+        "additions": 80,
+        "deletions": 26
       }
     },
     {
@@ -168,20 +169,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-06-03T02:41:34Z",
+      "pushed_at": "2026-06-03T22:30:03Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "69d69871eb8549dc77b78881d4b26ed1ec32a15c",
-        "short_sha": "69d6987",
-        "message": "chore(portfolio): daily sync 2026-06-02",
+        "sha": "21484c3dc8edfaefbd111c26495a7f44b6bad918",
+        "short_sha": "21484c3",
+        "message": "chore(portfolio): daily sync 2026-06-03",
         "type": "chore",
-        "date": "2026-06-02T22:24:59Z",
-        "url": "https://github.com/abgnydn/markview/commit/69d69871eb8549dc77b78881d4b26ed1ec32a15c",
-        "additions": 1120,
-        "deletions": 944
+        "date": "2026-06-03T22:30:01Z",
+        "url": "https://github.com/abgnydn/markview/commit/21484c3dc8edfaefbd111c26495a7f44b6bad918",
+        "additions": 255,
+        "deletions": 178
       }
     },
     {
@@ -247,6 +248,37 @@
       }
     },
     {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "tagline": "WebGPU port of Geant4-DNA: in-browser Monte Carlo track-structure simulation with IRT chemistry and B-DNA SSB/DSB scoring",
+      "repo": "abgnydn/webgpu-dna",
+      "repo_url": "https://github.com/abgnydn/webgpu-dna",
+      "live_url": "https://webgpudna.com",
+      "featured": false,
+      "order": null,
+      "private": false,
+      "archived": false,
+      "language": "WGSL",
+      "language_color": "#1a5e9a",
+      "stars": 2,
+      "topics": [],
+      "pushed_at": "2026-06-04T13:09:17Z",
+      "default_branch": "main",
+      "latest_tag": "v0.4.1",
+      "commits_30d": 50,
+      "commits_synced": 50,
+      "last_commit": {
+        "sha": "95815e5a92bcddcc039e8f0e1c7a9b9fd0ac8951",
+        "short_sha": "95815e5",
+        "message": "fix(honesty): cascade-ion headline was pre-joint-fix (27%) but produc…",
+        "type": "fix",
+        "date": "2026-06-04T13:09:14Z",
+        "url": "https://github.com/abgnydn/webgpu-dna/commit/95815e5a92bcddcc039e8f0e1c7a9b9fd0ac8951",
+        "additions": 19,
+        "deletions": 14
+      }
+    },
+    {
       "slug": "quill",
       "name": "quill",
       "tagline": "Local-first grammar + writing assistant for macOS. Native overlay across all apps. Harper rules + fine-tuned Gemma 3 270M LoRA. 100% on-device.",
@@ -275,37 +307,6 @@
         "url": "https://github.com/abgnydn/quill/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
         "additions": 1093,
         "deletions": 69
-      }
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "tagline": "WebGPU port of Geant4-DNA: in-browser Monte Carlo track-structure simulation with IRT chemistry and B-DNA SSB/DSB scoring",
-      "repo": "abgnydn/webgpu-dna",
-      "repo_url": "https://github.com/abgnydn/webgpu-dna",
-      "live_url": "https://webgpudna.com",
-      "featured": false,
-      "order": null,
-      "private": false,
-      "archived": false,
-      "language": "WGSL",
-      "language_color": "#1a5e9a",
-      "stars": 2,
-      "topics": [],
-      "pushed_at": "2026-06-02T08:16:08Z",
-      "default_branch": "main",
-      "latest_tag": "v0.4.1",
-      "commits_30d": 50,
-      "commits_synced": 50,
-      "last_commit": {
-        "sha": "9c12e513e56d32c677b85f2b0fc21a4d8485c218",
-        "short_sha": "9c12e51",
-        "message": "docs: wire in Zenodo DOIs (concept 20506339, v0.4.1 version 20506340)",
-        "type": "docs",
-        "date": "2026-06-02T08:16:06Z",
-        "url": "https://github.com/abgnydn/webgpu-dna/commit/9c12e513e56d32c677b85f2b0fc21a4d8485c218",
-        "additions": 7,
-        "deletions": 3
       }
     },
     {
@@ -779,7 +780,7 @@
       "pushed_at": "2026-05-18T20:04:18Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 43,
+      "commits_30d": 18,
       "commits_synced": 50,
       "last_commit": {
         "sha": "94fea2085827c68e8d89df474967fbdaf6bbd157",
@@ -851,7 +852,7 @@
       "pushed_at": "2026-05-15T03:40:13Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 5,
+      "commits_30d": 3,
       "commits_synced": 50,
       "last_commit": {
         "sha": "9c2d099bef976c25b763eab490704843e64247ac",
@@ -882,7 +883,7 @@
       "pushed_at": "2026-05-15T03:39:56Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 6,
+      "commits_30d": 5,
       "commits_synced": 33,
       "last_commit": {
         "sha": "c7a71480b59cb09d3a56ad5dfa4a06577492a4eb",
@@ -913,7 +914,7 @@
       "pushed_at": "2026-05-15T03:39:54Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 3,
+      "commits_30d": 2,
       "commits_synced": 50,
       "last_commit": {
         "sha": "9e1238b0993130c38e824ac43b6552779e38abf8",
@@ -944,7 +945,7 @@
       "pushed_at": "2026-05-05T12:14:49Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 10,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "04118c151ea6e016e6708de6c9bde9ee30649609",
@@ -1416,6 +1417,136 @@
   ],
   "commits": [
     {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "c90b0cd3f94906caa6fe5d31a85881275f4e6aec",
+      "short_sha": "c90b0cd",
+      "message": "fix(fusion-paper): correct the bandwidth claim — logical vs physical,…",
+      "type": "fix",
+      "date": "2026-06-04T13:20:53Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/c90b0cd3f94906caa6fe5d31a85881275f4e6aec",
+      "additions": 80,
+      "deletions": 26
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "95815e5a92bcddcc039e8f0e1c7a9b9fd0ac8951",
+      "short_sha": "95815e5",
+      "message": "fix(honesty): cascade-ion headline was pre-joint-fix (27%) but produc…",
+      "type": "fix",
+      "date": "2026-06-04T13:09:14Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/95815e5a92bcddcc039e8f0e1c7a9b9fd0ac8951",
+      "additions": 19,
+      "deletions": 14
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "6f02f07d92e1ea0d081baf3a794f2cfffbf67f99",
+      "short_sha": "6f02f07",
+      "message": "chore(release): v0.9.3 — deposit the corrected-DOI papers; concept DO…",
+      "type": "chore",
+      "date": "2026-06-04T11:19:05Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/6f02f07d92e1ea0d081baf3a794f2cfffbf67f99",
+      "additions": 27,
+      "deletions": 11
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "e0c261f94ae9ea78043f34273bd11d29c1cd2359",
+      "short_sha": "e0c261f",
+      "message": "fix(honesty): correct a stale live-site number + two doc claims the c…",
+      "type": "fix",
+      "date": "2026-06-04T11:09:46Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/e0c261f94ae9ea78043f34273bd11d29c1cd2359",
+      "additions": 15,
+      "deletions": 12
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "98923a4cdba83cd886631d458691990481b46c6b",
+      "short_sha": "98923a4",
+      "message": "fix(zenodo): use the real concept DOI; wire in the v0.9.2 version DOI",
+      "type": "fix",
+      "date": "2026-06-04T11:07:30Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/98923a4cdba83cd886631d458691990481b46c6b",
+      "additions": 26,
+      "deletions": 13
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "1bfacae99c08365bd1cf2dda651717104c5ca8a1",
+      "short_sha": "1bfacae",
+      "message": "test(E15-fair): measure the ntuple I/O slope + cross-check the timing…",
+      "type": "test",
+      "date": "2026-06-04T11:05:42Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/1bfacae99c08365bd1cf2dda651717104c5ca8a1",
+      "additions": 24,
+      "deletions": 8
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "ecc7105d69e52890ca247d0c6a4c9f375c1f599f",
+      "short_sha": "ecc7105",
+      "message": "feat(E12-local-exact): wire up the exact-dose refinement — run-ready,…",
+      "type": "feat",
+      "date": "2026-06-04T06:59:46Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/ecc7105d69e52890ca247d0c6a4c9f375c1f599f",
+      "additions": 96,
+      "deletions": 3
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "21484c3dc8edfaefbd111c26495a7f44b6bad918",
+      "short_sha": "21484c3",
+      "message": "chore(portfolio): daily sync 2026-06-03",
+      "type": "chore",
+      "date": "2026-06-03T22:30:01Z",
+      "url": "https://github.com/abgnydn/markview/commit/21484c3dc8edfaefbd111c26495a7f44b6bad918",
+      "additions": 255,
+      "deletions": 178
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "a9ea446452e1e179a1ba991c0f4bac5dbf740caf",
+      "short_sha": "a9ea446",
+      "message": "feat(E15-fair): measure Geant4 init overhead — it's ~2 s, retracting …",
+      "type": "feat",
+      "date": "2026-06-03T13:00:11Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/a9ea446452e1e179a1ba991c0f4bac5dbf740caf",
+      "additions": 66,
+      "deletions": 22
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "08dfccfe2bc53e3fea660ddf13be0c1803f79289",
+      "short_sha": "08dfccf",
+      "message": "feat(E12-local): absolute DNA-damage yields vindicated — 223×/796× wa…",
+      "type": "feat",
+      "date": "2026-06-03T12:54:47Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/08dfccfe2bc53e3fea660ddf13be0c1803f79289",
+      "additions": 224,
+      "deletions": 37
+    },
+    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -1455,6 +1586,58 @@
       "deletions": 9
     },
     {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "a284f5b7fcdacc554fa4f418ff2cf3933f248b79",
+      "short_sha": "a284f5b",
+      "message": "docs(L1): stop calling the cross-section ratio-matches \"bit-matches\"",
+      "type": "docs",
+      "date": "2026-06-03T12:34:24Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/a284f5b7fcdacc554fa4f418ff2cf3933f248b79",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "2907d4ea9abe4cdce1aae263f86b9f978bd9b86b",
+      "short_sha": "2907d4e",
+      "message": "fix(L4): stop the chemistry harness from inviting a low-LET-vs-10keV …",
+      "type": "fix",
+      "date": "2026-06-03T12:33:27Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/2907d4ea9abe4cdce1aae263f86b9f978bd9b86b",
+      "additions": 37,
+      "deletions": 3
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "6ab2d9185b002a6165cc5f5ed21446dff8fd9ac3",
+      "short_sha": "6ab2d91",
+      "message": "docs(L6): correct performance claims to apple-to-apple — fusion is ~2…",
+      "type": "docs",
+      "date": "2026-06-03T12:24:20Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/6ab2d9185b002a6165cc5f5ed21446dff8fd9ac3",
+      "additions": 63,
+      "deletions": 17
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "d0b6556a6ae2bd34f1c999a735294063d5175f72",
+      "short_sha": "d0b6556",
+      "message": "docs(L5): correct DNA-damage overstatement — calibrated fit, not a va…",
+      "type": "docs",
+      "date": "2026-06-03T12:15:44Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/d0b6556a6ae2bd34f1c999a735294063d5175f72",
+      "additions": 110,
+      "deletions": 13
+    },
+    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -1466,6 +1649,19 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/c3125e433c24afb763fe5873a5c4e04fd131f80d",
       "additions": 12,
       "deletions": 2
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "6e5845d46b8bdd29f393840b280e04a2e64fd8e3",
+      "short_sha": "6e5845d",
+      "message": "docs(roadmap): fold in this session's findings — DOI minted, both bro…",
+      "type": "docs",
+      "date": "2026-06-03T09:11:06Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/6e5845d46b8bdd29f393840b280e04a2e64fd8e3",
+      "additions": 39,
+      "deletions": 3
     },
     {
       "slug": "webgpu-q",
@@ -3587,32 +3783,6 @@
       "deletions": 60
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "9103ed62d18662bcf7561cd046542ac68b268641",
-      "short_sha": "9103ed6",
-      "message": "diag(jk): prove P-partition correctness for distributed JK_DF",
-      "type": "other",
-      "date": "2026-05-28T16:06:11Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/9103ed62d18662bcf7561cd046542ac68b268641",
-      "additions": 157,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "78146ec758f294173c0da5789a1e1d4aa4db5804",
-      "short_sha": "78146ec",
-      "message": "diag(swarm): multi-tab SAB partitioning MVP — break-the-memory-wall i…",
-      "type": "other",
-      "date": "2026-05-28T16:01:59Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/78146ec758f294173c0da5789a1e1d4aa4db5804",
-      "additions": 152,
-      "deletions": 0
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -3637,19 +3807,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/ca1e621dde68f1141ca7e8266e9cd7d11e9399a5",
       "additions": 226,
       "deletions": 42
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "d097625178a4c0e4bb55ebdc63a51f3a672eef8a",
-      "short_sha": "d097625",
-      "message": "diag(jk): worker-count sweep — find optimal poolSize per hardware",
-      "type": "other",
-      "date": "2026-05-28T15:22:17Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/d097625178a4c0e4bb55ebdc63a51f3a672eef8a",
-      "additions": 88,
-      "deletions": 0
     },
     {
       "slug": "postnet-cf",
@@ -3884,19 +4041,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/08aa9b56492c29952b9fc73c970b60b802f03e41",
       "additions": 623,
       "deletions": 9
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "1d28274b61777aad4f5d9f091682510b5ba7af0b",
-      "short_sha": "1d28274",
-      "message": "fix(ui): cursors v3 — brand-mark echo + refined arrow + serif I-beam",
-      "type": "fix",
-      "date": "2026-05-28T13:25:52Z",
-      "url": "https://github.com/abgnydn/markview/commit/1d28274b61777aad4f5d9f091682510b5ba7af0b",
-      "additions": 17418,
-      "deletions": 18
     },
     {
       "slug": "quill",
@@ -6954,32 +7098,6 @@
       "deletions": 63
     },
     {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "d41f94bc49cc5f843959f72145575475f011312a",
-      "short_sha": "d41f94b",
-      "message": "PHYSICS_DIAGNOSIS: synthesize the joint σ_exc + recomb fix from E10h",
-      "type": "other",
-      "date": "2026-05-12T09:14:35Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/d41f94bc49cc5f843959f72145575475f011312a",
-      "additions": 20,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "27c2b32129b7f53dbf89b6b36ea2735bda96545d",
-      "short_sha": "27c2b32",
-      "message": "L4 stage 9: E10h — time-integrated recomb (proper branching) is neces…",
-      "type": "other",
-      "date": "2026-05-12T09:14:10Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/27c2b32129b7f53dbf89b6b36ea2735bda96545d",
-      "additions": 520,
-      "deletions": 0
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -7006,32 +7124,6 @@
       "deletions": 26
     },
     {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "cc478ad6ed07c80d4cd963c9beff10789a1154c4",
-      "short_sha": "cc478ad",
-      "message": "PHYSICS_DIAGNOSIS: quantify the missing recomb fraction from E10g",
-      "type": "other",
-      "date": "2026-05-12T09:05:15Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/cc478ad6ed07c80d4cd963c9beff10789a1154c4",
-      "additions": 9,
-      "deletions": 4
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "b56514f4a3ae2e67608c6632cade64dbadbe2f72",
-      "short_sha": "b56514f",
-      "message": "L4 stage 8: E10g — recomb-rate sensitivity quantifies the missing rec…",
-      "type": "other",
-      "date": "2026-05-12T09:04:54Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/b56514f4a3ae2e67608c6632cade64dbadbe2f72",
-      "additions": 338,
-      "deletions": 0
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -7043,97 +7135,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/2a19835de932e507d2278d3631114eae5676e648",
       "additions": 303,
       "deletions": 307
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "69785888941647b418f4400dcd828a76d0997fab",
-      "short_sha": "6978588",
-      "message": "PHYSICS_DIAGNOSIS: E10f narrows the H2/H2O2 deficit to pre-chem only",
-      "type": "other",
-      "date": "2026-05-12T08:54:18Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/69785888941647b418f4400dcd828a76d0997fab",
-      "additions": 22,
-      "deletions": 7
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "b9416fa0b6da45461e321cda1568dafc4fa1f275",
-      "short_sha": "b9416fa",
-      "message": "L4 stage 7: E10f per-primary partitioning — refuted for 0.1 ps, confi…",
-      "type": "other",
-      "date": "2026-05-12T08:53:30Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/b9416fa0b6da45461e321cda1568dafc4fa1f275",
-      "additions": 264,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "7eed67ecd9c82535d503f695cb6af872310e8823",
-      "short_sha": "7eed67e",
-      "message": "PHYSICS_DIAGNOSIS: mark cross-event recomb REFUTED, name 3 new leads",
-      "type": "other",
-      "date": "2026-05-12T08:27:07Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/7eed67ecd9c82535d503f695cb6af872310e8823",
-      "additions": 30,
-      "deletions": 14
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "7f0cbd666013a4868bf2f581ecaf22cb3b4fe538",
-      "short_sha": "7f0cbd6",
-      "message": "L4 E10e revision: cross-event recomb hypothesis REFUTED (0.0086 delta_P)",
-      "type": "other",
-      "date": "2026-05-12T08:26:33Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/7f0cbd666013a4868bf2f581ecaf22cb3b4fe538",
-      "additions": 37,
-      "deletions": 34
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "078e4a5ec50d7a7c7b01f8ed755f0dd9ad1efc4c",
-      "short_sha": "078e4a5",
-      "message": "L4 stage 6: E10e cross-event recomb explains only ~16% of the H2 deficit",
-      "type": "other",
-      "date": "2026-05-12T08:23:50Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/078e4a5ec50d7a7c7b01f8ed755f0dd9ad1efc4c",
-      "additions": 338,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "134fc4c01b4dc41fb0b48f54d94b39eace21d779",
-      "short_sha": "134fc4c",
-      "message": "CLAUDE.md: surface the E5b low-E CSDA deficit as a substantive finding",
-      "type": "other",
-      "date": "2026-05-12T08:19:03Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/134fc4c01b4dc41fb0b48f54d94b39eace21d779",
-      "additions": 22,
-      "deletions": 8
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "9799fbc9dea40ca8ce16da6fb4e5aef9963add14",
-      "short_sha": "9799fbc",
-      "message": "L2 stage 7: E5b CSDA at all 8 ESTAR energies — surfaces a low-E deficit",
-      "type": "other",
-      "date": "2026-05-12T08:17:54Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/9799fbc9dea40ca8ce16da6fb4e5aef9963add14",
-      "additions": 490,
-      "deletions": 0
     },
     {
       "slug": "neuropulse",

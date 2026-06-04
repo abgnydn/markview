@@ -1,5 +1,22 @@
 # Commits — webgpu-dna
 
+## 2026-06-04
+
+- `13:09` **fix(honesty): cascade-ion headline was pre-joint-fix (27%) but produc…** — +19 −14 — [`95815e5`](https://github.com/abgnydn/webgpu-dna/commit/95815e5a92bcddcc039e8f0e1c7a9b9fd0ac8951)
+- `11:09` **fix(honesty): correct a stale live-site number + two doc claims the c…** — +15 −12 — [`e0c261f`](https://github.com/abgnydn/webgpu-dna/commit/e0c261f94ae9ea78043f34273bd11d29c1cd2359)
+- `11:05` **test(E15-fair): measure the ntuple I/O slope + cross-check the timing…** — +24 −8 — [`1bfacae`](https://github.com/abgnydn/webgpu-dna/commit/1bfacae99c08365bd1cf2dda651717104c5ca8a1)
+- `06:59` **feat(E12-local-exact): wire up the exact-dose refinement — run-ready,…** — +96 −3 — [`ecc7105`](https://github.com/abgnydn/webgpu-dna/commit/ecc7105d69e52890ca247d0c6a4c9f375c1f599f)
+
+## 2026-06-03
+
+- `13:00` **feat(E15-fair): measure Geant4 init overhead — it's ~2 s, retracting …** — +66 −22 — [`a9ea446`](https://github.com/abgnydn/webgpu-dna/commit/a9ea446452e1e179a1ba991c0f4bac5dbf740caf)
+- `12:54` **feat(E12-local): absolute DNA-damage yields vindicated — 223×/796× wa…** — +224 −37 — [`08dfccf`](https://github.com/abgnydn/webgpu-dna/commit/08dfccfe2bc53e3fea660ddf13be0c1803f79289)
+- `12:34` **docs(L1): stop calling the cross-section ratio-matches "bit-matches"** — +1 −1 — [`a284f5b`](https://github.com/abgnydn/webgpu-dna/commit/a284f5b7fcdacc554fa4f418ff2cf3933f248b79)
+- `12:33` **fix(L4): stop the chemistry harness from inviting a low-LET-vs-10keV …** — +37 −3 — [`2907d4e`](https://github.com/abgnydn/webgpu-dna/commit/2907d4ea9abe4cdce1aae263f86b9f978bd9b86b)
+- `12:24` **docs(L6): correct performance claims to apple-to-apple — fusion is ~2…** — +63 −17 — [`6ab2d91`](https://github.com/abgnydn/webgpu-dna/commit/6ab2d9185b002a6165cc5f5ed21446dff8fd9ac3)
+- `12:15` **docs(L5): correct DNA-damage overstatement — calibrated fit, not a va…** — +110 −13 — [`d0b6556`](https://github.com/abgnydn/webgpu-dna/commit/d0b6556a6ae2bd34f1c999a735294063d5175f72)
+- `09:11` **docs(roadmap): fold in this session's findings — DOI minted, both bro…** — +39 −3 — [`6e5845d`](https://github.com/abgnydn/webgpu-dna/commit/6e5845d46b8bdd29f393840b280e04a2e64fd8e3)
+
 ## 2026-06-02
 
 - `08:16` **docs: wire in Zenodo DOIs (concept 20506339, v0.4.1 version 20506340)** — +7 −3 — [`9c12e51`](https://github.com/abgnydn/webgpu-dna/commit/9c12e513e56d32c677b85f2b0fc21a4d8485c218)
@@ -53,14 +70,3 @@
 - `10:17` **og-image: refresh stale metrics + comment that this file mirrors READ…** — +5 −3 — [`4721c21`](https://github.com/abgnydn/webgpu-dna/commit/4721c21969b166c21fcb27be0f9f0157c709e2a5)
 - `10:13` **docs: consolidate all numbers into README § Numbers as single source …** — +170 −318 — [`244bde0`](https://github.com/abgnydn/webgpu-dna/commit/244bde04e0beac974a8a97f13ed3ca5cae265d47)
 - `10:05` **JOINT FIX (σ_exc=0.5, recomb_boost=2.0): partial closure of chemistry…** — +423 −9 — [`7177257`](https://github.com/abgnydn/webgpu-dna/commit/7177257542d7d603dcca31b0c7067d170a255043)
-- `09:14` **PHYSICS_DIAGNOSIS: synthesize the joint σ_exc + recomb fix from E10h** — +20 −0 — [`d41f94b`](https://github.com/abgnydn/webgpu-dna/commit/d41f94bc49cc5f843959f72145575475f011312a)
-- `09:14` **L4 stage 9: E10h — time-integrated recomb (proper branching) is neces…** — +520 −0 — [`27c2b32`](https://github.com/abgnydn/webgpu-dna/commit/27c2b32129b7f53dbf89b6b36ea2735bda96545d)
-- `09:05` **PHYSICS_DIAGNOSIS: quantify the missing recomb fraction from E10g** — +9 −4 — [`cc478ad`](https://github.com/abgnydn/webgpu-dna/commit/cc478ad6ed07c80d4cd963c9beff10789a1154c4)
-- `09:04` **L4 stage 8: E10g — recomb-rate sensitivity quantifies the missing rec…** — +338 −0 — [`b56514f`](https://github.com/abgnydn/webgpu-dna/commit/b56514f4a3ae2e67608c6632cade64dbadbe2f72)
-- `08:54` **PHYSICS_DIAGNOSIS: E10f narrows the H2/H2O2 deficit to pre-chem only** — +22 −7 — [`6978588`](https://github.com/abgnydn/webgpu-dna/commit/69785888941647b418f4400dcd828a76d0997fab)
-- `08:53` **L4 stage 7: E10f per-primary partitioning — refuted for 0.1 ps, confi…** — +264 −0 — [`b9416fa`](https://github.com/abgnydn/webgpu-dna/commit/b9416fa0b6da45461e321cda1568dafc4fa1f275)
-- `08:27` **PHYSICS_DIAGNOSIS: mark cross-event recomb REFUTED, name 3 new leads** — +30 −14 — [`7eed67e`](https://github.com/abgnydn/webgpu-dna/commit/7eed67ecd9c82535d503f695cb6af872310e8823)
-- `08:26` **L4 E10e revision: cross-event recomb hypothesis REFUTED (0.0086 delta_P)** — +37 −34 — [`7f0cbd6`](https://github.com/abgnydn/webgpu-dna/commit/7f0cbd666013a4868bf2f581ecaf22cb3b4fe538)
-- `08:23` **L4 stage 6: E10e cross-event recomb explains only ~16% of the H2 deficit** — +338 −0 — [`078e4a5`](https://github.com/abgnydn/webgpu-dna/commit/078e4a5ec50d7a7c7b01f8ed755f0dd9ad1efc4c)
-- `08:19` **CLAUDE.md: surface the E5b low-E CSDA deficit as a substantive finding** — +22 −8 — [`134fc4c`](https://github.com/abgnydn/webgpu-dna/commit/134fc4c01b4dc41fb0b48f54d94b39eace21d779)
-- `08:17` **L2 stage 7: E5b CSDA at all 8 ESTAR energies — surfaces a low-E deficit** — +490 −0 — [`9799fbc`](https://github.com/abgnydn/webgpu-dna/commit/9799fbc9dea40ca8ce16da6fb4e5aef9963add14)

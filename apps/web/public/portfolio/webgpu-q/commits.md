@@ -1,5 +1,11 @@
 # Commits — webgpu-q
 
+## 2026-06-04
+
+- `13:20` **fix(fusion-paper): correct the bandwidth claim — logical vs physical,…** — +80 −26 — [`c90b0cd`](https://github.com/abgnydn/webgpu-q/commit/c90b0cd3f94906caa6fe5d31a85881275f4e6aec)
+- `11:19` **chore(release): v0.9.3 — deposit the corrected-DOI papers; concept DO…** — +27 −11 — [`6f02f07`](https://github.com/abgnydn/webgpu-q/commit/6f02f07d92e1ea0d081baf3a794f2cfffbf67f99)
+- `11:07` **fix(zenodo): use the real concept DOI; wire in the v0.9.2 version DOI** — +26 −13 — [`98923a4`](https://github.com/abgnydn/webgpu-q/commit/98923a4cdba83cd886631d458691990481b46c6b)
+
 ## 2026-06-03
 
 - `12:35` **chore(release): v0.9.2 — paper-hardening + artifact-backed swarm table** — +78 −9 — [`a7ef72d`](https://github.com/abgnydn/webgpu-q/commit/a7ef72d5e6fae74de66ead8dfa077c8bbcad994c)
@@ -61,6 +67,3 @@
 - `16:29` **feat(swarm): scale swarm HF SCF to 4 tabs on naphthalene cc-pVDZ** — +226 −0 — [`22ae86a`](https://github.com/abgnydn/webgpu-q/commit/22ae86a9a981ffa918765043bf897d6288b1210e)
 - `16:23` **feat(swarm): full distributed HF SCF across 2 browser tabs — works** — +265 −2 — [`07c09be`](https://github.com/abgnydn/webgpu-q/commit/07c09bea46766fdf110d5ab733631384a9fd1f7d)
 - `16:08` **feat(swarm): distribute JK_DF build across 2 tabs via BroadcastChannel** — +217 −0 — [`ba1c272`](https://github.com/abgnydn/webgpu-q/commit/ba1c272b67f5568c9815a26ff5844f01b338bf46)
-- `16:06` **diag(jk): prove P-partition correctness for distributed JK_DF** — +157 −0 — [`9103ed6`](https://github.com/abgnydn/webgpu-q/commit/9103ed62d18662bcf7561cd046542ac68b268641)
-- `16:01` **diag(swarm): multi-tab SAB partitioning MVP — break-the-memory-wall i…** — +152 −0 — [`78146ec`](https://github.com/abgnydn/webgpu-q/commit/78146ec758f294173c0da5789a1e1d4aa4db5804)
-- `15:22` **diag(jk): worker-count sweep — find optimal poolSize per hardware** — +88 −0 — [`d097625`](https://github.com/abgnydn/webgpu-q/commit/d097625178a4c0e4bb55ebdc63a51f3a672eef8a)
