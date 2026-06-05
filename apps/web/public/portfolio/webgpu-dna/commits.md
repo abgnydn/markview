@@ -1,5 +1,15 @@
 # Commits — webgpu-dna
 
+## 2026-06-05
+
+- `06:34` **feat(kaggle): WGSL-on-free-GPU probe notebook (wgpu-py), importable f…** — +197 −5 — [`f05f5fb`](https://github.com/abgnydn/webgpu-dna/commit/f05f5fb52698d926b0592a782f7bc59bdc97edce)
+- `04:47` **experiment(E10-ci-energy-sweep): 8-energy IRT G-value sweep computed …** — +110 −0 — [`eed9efb`](https://github.com/abgnydn/webgpu-dna/commit/eed9efbcfd699e73149e6a788adc98b363f0befd)
+- `04:38` **docs: free-compute strategy + Oracle E15-fairer runbook (FREE_COMPUTE…** — +102 −1 — [`7581d48`](https://github.com/abgnydn/webgpu-dna/commit/7581d48a01a83021131ddb4b930d5f4d02e0dadb)
+- `04:37` **ci: parallelize the IRT chemistry across all 8 ESTAR energies (dynami…** — +49 −27 — [`152c22e`](https://github.com/abgnydn/webgpu-dna/commit/152c22e3b8c4b10ebc94b34dcb3605a12859244b)
+- `04:26` **ci: run the memory-heavy IRT chemistry on GitHub's 16 GB runner (no W…** — +107 −0 — [`edcd5d2`](https://github.com/abgnydn/webgpu-dna/commit/edcd5d2435dd3f4ed32c0486c051b6258003b717)
+- `04:08` **docs(diagnosis): cascade-ion deficit is RECOMB destroying autoionisat…** — +35 −0 — [`1554087`](https://github.com/abgnydn/webgpu-dna/commit/155408711afae5864f369bb4700ace77a9f51ec0)
+- `03:56` **fix(honesty): disclose the shipped-vs-reported RECOMB_BOOST split (pa…** — +10 −3 — [`d21e074`](https://github.com/abgnydn/webgpu-dna/commit/d21e07434b4b0eadbe7fa1262a3e61beaa29f2fd)
+
 ## 2026-06-04
 
 - `13:09` **fix(honesty): cascade-ion headline was pre-joint-fix (27%) but produc…** — +19 −14 — [`95815e5`](https://github.com/abgnydn/webgpu-dna/commit/95815e5a92bcddcc039e8f0e1c7a9b9fd0ac8951)
@@ -63,10 +73,3 @@
 - `12:28` **L2 post-joint-fix completion: E6c + E7b + E5c-rerun + dump regen pipe…** — +865 −28 — [`832743d`](https://github.com/abgnydn/webgpu-dna/commit/832743d1f5aa628abe8d68cb71d5cb3783c2158b)
 - `12:13` **L2 marquee closure: E5d post-joint-fix CSDA sweep — 8/8 energies impr…** — +394 −3 — [`d3dcb4b`](https://github.com/abgnydn/webgpu-dna/commit/d3dcb4bb204b4817b032c38fd97a0d3e5690935a)
 - `12:07` **docs+L2/L4: close the six audit gaps a researcher would ask about** — +806 −4 — [`116b2d6`](https://github.com/abgnydn/webgpu-dna/commit/116b2d66638940606a353affe65bfc11913a69ee)
-- `10:58` **docs(index): add §Feature scope — explicit Geant4-DNA vs port comparison** — +109 −0 — [`724eb9e`](https://github.com/abgnydn/webgpu-dna/commit/724eb9e76312841b041dc65d7df0982eadb9abf4)
-- `10:53` **docs(index): fix two stale comparison-table claims surfaced by audit** — +6 −6 — [`a400702`](https://github.com/abgnydn/webgpu-dna/commit/a400702c9f9989d58b2999847ac6d5d4808db1ee)
-- `10:32` **v0.3.0 — research-grade closure release** — +105 −3 — [`5723207`](https://github.com/abgnydn/webgpu-dna/commit/5723207840253de7312d8263e3459dda0b787dd0)
-- `10:25` **fix(build): pin fetch-demo to demo-v1 tag — /latest/download 404s on …** — +4 −1 — [`80c69b3`](https://github.com/abgnydn/webgpu-dna/commit/80c69b32655fce8ae877de47e1ccefb0313fdbcc)
-- `10:17` **og-image: refresh stale metrics + comment that this file mirrors READ…** — +5 −3 — [`4721c21`](https://github.com/abgnydn/webgpu-dna/commit/4721c21969b166c21fcb27be0f9f0157c709e2a5)
-- `10:13` **docs: consolidate all numbers into README § Numbers as single source …** — +170 −318 — [`244bde0`](https://github.com/abgnydn/webgpu-dna/commit/244bde04e0beac974a8a97f13ed3ca5cae265d47)
-- `10:05` **JOINT FIX (σ_exc=0.5, recomb_boost=2.0): partial closure of chemistry…** — +423 −9 — [`7177257`](https://github.com/abgnydn/webgpu-dna/commit/7177257542d7d603dcca31b0c7067d170a255043)

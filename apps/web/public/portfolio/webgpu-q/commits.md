@@ -1,5 +1,19 @@
 # Commits — webgpu-q
 
+## 2026-06-05
+
+- `07:37` **perf(swarm): WASM SIMD mode-projection — ~3.4× faster streaming build…** — +151 −34 — [`818495c`](https://github.com/abgnydn/webgpu-q/commit/818495ce75e993597ee9b5eb206cdbe016b69354)
+- `06:38` **test(df): streaming-DF accuracy ladder vs exact HF — auto-aux L1 alre…** — +65 −0 — [`c83211f`](https://github.com/abgnydn/webgpu-q/commit/c83211fc8faa119eeb39c1ad9be1f27632188728)
+- `06:24` **feat(swarm): emit env-stamped artifacts from the scaling ladder; CI u…** — +23 −2 — [`2e89a39`](https://github.com/abgnydn/webgpu-q/commit/2e89a39f857cb562ffa16aa58649377e253dba14)
+- `05:23` **fix(swarm): build tab slices concurrently, not serially — the CI time…** — +9 −7 — [`021df92`](https://github.com/abgnydn/webgpu-q/commit/021df92e9ad7986bdc7072ee22ed16fd17c3ab46)
+- `04:45` **ci(swarm): scaling-wall workflow — streaming swarm past the 2 GB Arra…** — +64 −0 — [`ab12a17`](https://github.com/abgnydn/webgpu-q/commit/ab12a1781c83860d7eaaa91141935a42e1901fcc)
+- `04:44` **feat(swarm): N-tab streaming scaling ladder with a non-interacting en…** — +205 −1 — [`fda9aaf`](https://github.com/abgnydn/webgpu-q/commit/fda9aafc177349dfb03cce4ded7847385dbd4810)
+- `04:30` **feat(swarm): streaming swarm HF e2e — each tab self-builds its slice,…** — +200 −0 — [`60c628d`](https://github.com/abgnydn/webgpu-q/commit/60c628d30df54952ac62d13f520e066dc224f24c)
+- `04:21` **feat(swarm): partition:{tab,of} option — each tab self-tiles the mode…** — +44 −3 — [`a2d49d8`](https://github.com/abgnydn/webgpu-q/commit/a2d49d8efac3793fb4a68b4dc6b765e71cedc7cf)
+- `04:18` **feat(swarm): cooperative streaming aux-DF build — integrals built onc…** — +186 −0 — [`b46091b`](https://github.com/abgnydn/webgpu-q/commit/b46091b236bc354da37b664153e27d7fb25a87df)
+- `03:59` **test(swarm): full DF-HF SCF from independently-built mode-slices == s…** — +54 −1 — [`410cb35`](https://github.com/abgnydn/webgpu-q/commit/410cb35947e15932fed51827fe5b7a0251fe16d2)
+- `03:57` **feat(swarm): streaming mode-partitioned aux-DF build — never material…** — +255 −1 — [`3e4ce3c`](https://github.com/abgnydn/webgpu-q/commit/3e4ce3c51f08e3662130eb4033d910a7b4e2453f)
+
 ## 2026-06-04
 
 - `13:20` **fix(fusion-paper): correct the bandwidth claim — logical vs physical,…** — +80 −26 — [`c90b0cd`](https://github.com/abgnydn/webgpu-q/commit/c90b0cd3f94906caa6fe5d31a85881275f4e6aec)
@@ -53,17 +67,3 @@
 - `08:47` **test(swarm): anthracene cc-pVDZ with delayed-DIIS recipe** — +272 −9 — [`213f75d`](https://github.com/abgnydn/webgpu-q/commit/213f75d89f90746e18d4fc4bd0303e2fb563788e)
 - `08:37` **fix(numbers): rebase two drifted claims to current empirical values** — +8 −2 — [`41f9ea3`](https://github.com/abgnydn/webgpu-q/commit/41f9ea31963b41dd31ab744829e46e7dce4bd3e7)
 - `08:29` **feat(hf): diisStartIter option for delayed DIIS activation** — +45 −10 — [`b450896`](https://github.com/abgnydn/webgpu-q/commit/b450896dfe85235d0dfba0779797d81955ada6da)
-- `06:59` **ci(swarm): offload swarm benches to GitHub Actions runners** — +142 −0 — [`ecec5e5`](https://github.com/abgnydn/webgpu-q/commit/ecec5e528d35bd08bdef99101a45c85c333d53c5)
-- `06:43` **feat(swarm): C₆₀ buckminsterfullerene HF SCF in browser tabs —** — +268 −0 — [`9298d0e`](https://github.com/abgnydn/webgpu-q/commit/9298d0e8ed3b21f61d2b114c9a6dd29d00311ae2)
-
-## 2026-05-28
-
-- `17:45` **feat(swarm): pentacene C₂₂H₁₄ HF SCF in browser swarm — 5 fused rings,** — +251 −0 — [`3e15ab5`](https://github.com/abgnydn/webgpu-q/commit/3e15ab5a3d90cdfe7f394d16008c35bf32405639)
-- `17:32` **diag(swarm): topology sweep — 4 tabs × 2 inner beats 2 tabs × 4 inner** — +17 −10 — [`416dbe4`](https://github.com/abgnydn/webgpu-q/commit/416dbe4d56eac4115bf1ea64d8c05a060b767766)
-- `17:28` **perf(swarm): inner-parallelism inside each worker tab — naphthalene** — +22 −7 — [`ae83213`](https://github.com/abgnydn/webgpu-q/commit/ae83213b5bff3443336ca73a9a5114b485fd387a)
-- `17:22` **fix(swarm): pin anthracene swarm e2e to STO-3G (passes) with cc-pVDZ** — +11 −6 — [`dcd8ee7`](https://github.com/abgnydn/webgpu-q/commit/dcd8ee7734f4182d94b8faf279a25c32ed3d7bae)
-- `17:10` **diag(swarm): anthracene STO-3G converges in 4-tab swarm — isolates the** — +20 −4 — [`a14f134`](https://github.com/abgnydn/webgpu-q/commit/a14f134bb0e339aea2fbe8cd562aaaf374d56dbe)
-- `16:53` **feat(swarm): anthracene cc-pVDZ 4-tab swarm — architecture works,** — +245 −0 — [`f1a2fa7`](https://github.com/abgnydn/webgpu-q/commit/f1a2fa77e68eed6b405c33a181cdcb400ebfffb0)
-- `16:29` **feat(swarm): scale swarm HF SCF to 4 tabs on naphthalene cc-pVDZ** — +226 −0 — [`22ae86a`](https://github.com/abgnydn/webgpu-q/commit/22ae86a9a981ffa918765043bf897d6288b1210e)
-- `16:23` **feat(swarm): full distributed HF SCF across 2 browser tabs — works** — +265 −2 — [`07c09be`](https://github.com/abgnydn/webgpu-q/commit/07c09bea46766fdf110d5ab733631384a9fd1f7d)
-- `16:08` **feat(swarm): distribute JK_DF build across 2 tabs via BroadcastChannel** — +217 −0 — [`ba1c272`](https://github.com/abgnydn/webgpu-q/commit/ba1c272b67f5568c9815a26ff5844f01b338bf46)

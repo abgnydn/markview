@@ -1,5 +1,10 @@
 # Commits — postnet-cf
 
+## 2026-06-05
+
+- `07:43` **feat(ntk): 2-honest-worker full-rate learning-run notebook** — +292 −0 — [`e790fc3`](https://github.com/abgnydn/postnet-cf/commit/e790fc3f27f48faed9f2cb837ca7e4fd7f30d280)
+- `07:41` **results(ntk): bank phase 40 learning run — held-out generalisation** — +325 −0 — [`f377642`](https://github.com/abgnydn/postnet-cf/commit/f37764247b3845b4b4c47f815318db3f73f76363)
+
 ## 2026-06-03
 
 - `12:36` **feat(ntk): held-out eval tracking + Kaggle learning-run notebook** — +360 −9 — [`2ef93c7`](https://github.com/abgnydn/postnet-cf/commit/2ef93c735922493184937a8e5438ade747248428)
@@ -71,5 +76,3 @@
 - `11:08` **phase 24: README phase table catches up to phase 23** — +9 −0 — [`8b403a7`](https://github.com/abgnydn/postnet-cf/commit/8b403a71f7ffcb6fb00bad5a3d315856e9234994)
 - `11:06` **phase 23: interactive byzantine demo on /lm.html** — +36 −11 — [`b8e8e69`](https://github.com/abgnydn/postnet-cf/commit/b8e8e69b2d0d3ef1bbcdb9e6670c755c2e866646)
 - `11:05` **phase 22: trimmed-mean defense for federated Adam** — +25 −6 — [`bc02682`](https://github.com/abgnydn/postnet-cf/commit/bc02682a83662d2fc130fca7748f9697fc2a7613)
-- `11:03` **phase 21: scripts/expose.sh — cloudflared quick tunnel** — +39 −0 — [`3858e64`](https://github.com/abgnydn/postnet-cf/commit/3858e64584c5d1c7636ff835fc80106a887b7f03)
-- `11:02` **phase 20: protocol specification (v0.5)** — +214 −0 — [`74ad6de`](https://github.com/abgnydn/postnet-cf/commit/74ad6de2f1d0b7509225e47b30ae21621d63995f)
