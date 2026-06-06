@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-05
+
+- `21:28` **chore(portfolio): daily sync 2026-06-05** — +914 −762 — [`00c0817`](https://github.com/abgnydn/markview/commit/00c0817e813b45a83a6235223b7488868a6cb450)
+
 ## 2026-06-04
 
 - `21:44` **chore(portfolio): daily sync 2026-06-04** — +327 −285 — [`839bf7d`](https://github.com/abgnydn/markview/commit/839bf7d4b69e90de36f21ec78966934f2e5e4c46)
@@ -72,4 +76,3 @@
 - `14:33` **feat(atmosphere): living paintings — depth-band motion in the shader** — +15874 −10 — [`5962fc5`](https://github.com/abgnydn/markview/commit/5962fc528b50654cfd4197e99150bb058953cb41)
 - `14:24` **fix(atmosphere): cover-fit the 3D painting plane to the camera frustum** — +63 −13917 — [`c6cfa91`](https://github.com/abgnydn/markview/commit/c6cfa91065f3938e27e3b3bf796995678d330bb1)
 - `14:19` **feat(atmosphere): real 3D painting via Three.js + fix light-theme sid…** — +187 −170 — [`85aeb64`](https://github.com/abgnydn/markview/commit/85aeb6486ea03d6ae21801850b041f197028ca1e)
-- `14:03` **fix(atmosphere): anchor foreground in depth parallax + un-block swap** — +462 −151 — [`4f17671`](https://github.com/abgnydn/markview/commit/4f17671f02a0c6e9d434e563a59488181217f7a1)

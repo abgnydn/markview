@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-05T21:28:18.054Z",
+  "generated_at": "2026-06-06T21:08:38.531Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1678,
+  "activity_90d_total": 1679,
   "activity_90d": {
     "2026-03-14": 4,
     "2026-03-15": 23,
@@ -66,7 +66,7 @@
     "2026-06-02": 44,
     "2026-06-03": 14,
     "2026-06-04": 8,
-    "2026-06-05": 27
+    "2026-06-05": 28
   },
   "projects": [
     {
@@ -170,20 +170,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-06-04T21:44:25Z",
+      "pushed_at": "2026-06-05T21:28:19Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "839bf7d4b69e90de36f21ec78966934f2e5e4c46",
-        "short_sha": "839bf7d",
-        "message": "chore(portfolio): daily sync 2026-06-04",
+        "sha": "00c0817e813b45a83a6235223b7488868a6cb450",
+        "short_sha": "00c0817",
+        "message": "chore(portfolio): daily sync 2026-06-05",
         "type": "chore",
-        "date": "2026-06-04T21:44:24Z",
-        "url": "https://github.com/abgnydn/markview/commit/839bf7d4b69e90de36f21ec78966934f2e5e4c46",
-        "additions": 327,
-        "deletions": 285
+        "date": "2026-06-05T21:28:18Z",
+        "url": "https://github.com/abgnydn/markview/commit/00c0817e813b45a83a6235223b7488868a6cb450",
+        "additions": 914,
+        "deletions": 762
       }
     },
     {
@@ -843,7 +843,7 @@
       "pushed_at": "2026-05-15T03:50:00Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 2,
+      "commits_30d": 1,
       "commits_synced": 15,
       "last_commit": {
         "sha": "ebdb5b42b37705c25e5ab288a4d0bdbbbb7e3a67",
@@ -915,7 +915,7 @@
       "pushed_at": "2026-05-15T03:39:56Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 5,
+      "commits_30d": 1,
       "commits_synced": 33,
       "last_commit": {
         "sha": "c7a71480b59cb09d3a56ad5dfa4a06577492a4eb",
@@ -946,7 +946,7 @@
       "pushed_at": "2026-05-15T03:39:54Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 2,
+      "commits_30d": 1,
       "commits_synced": 50,
       "last_commit": {
         "sha": "9e1238b0993130c38e824ac43b6552779e38abf8",
@@ -1417,6 +1417,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "00c0817e813b45a83a6235223b7488868a6cb450",
+      "short_sha": "00c0817",
+      "message": "chore(portfolio): daily sync 2026-06-05",
+      "type": "chore",
+      "date": "2026-06-05T21:28:18Z",
+      "url": "https://github.com/abgnydn/markview/commit/00c0817e813b45a83a6235223b7488868a6cb450",
+      "additions": 914,
+      "deletions": 762
+    },
     {
       "slug": "postnet-cf",
       "name": "postnet-cf",
@@ -4172,19 +4185,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/ae9541c3d2ded0fffc80d69d37d93e821f40cd61",
       "additions": 604,
       "deletions": 10
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "4f17671f02a0c6e9d434e563a59488181217f7a1",
-      "short_sha": "4f17671",
-      "message": "fix(atmosphere): anchor foreground in depth parallax + un-block swap",
-      "type": "fix",
-      "date": "2026-05-28T14:03:43Z",
-      "url": "https://github.com/abgnydn/markview/commit/4f17671f02a0c6e9d434e563a59488181217f7a1",
-      "additions": 462,
-      "deletions": 151
     },
     {
       "slug": "postnet-cf",
