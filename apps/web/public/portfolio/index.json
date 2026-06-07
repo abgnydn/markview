@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-06T21:08:38.531Z",
+  "generated_at": "2026-06-07T21:18:11.601Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1679,
+  "activity_90d_total": 1680,
   "activity_90d": {
     "2026-03-14": 4,
     "2026-03-15": 23,
@@ -66,7 +66,8 @@
     "2026-06-02": 44,
     "2026-06-03": 14,
     "2026-06-04": 8,
-    "2026-06-05": 28
+    "2026-06-05": 28,
+    "2026-06-06": 1
   },
   "projects": [
     {
@@ -170,20 +171,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-06-05T21:28:19Z",
+      "pushed_at": "2026-06-06T21:08:39Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.1.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "00c0817e813b45a83a6235223b7488868a6cb450",
-        "short_sha": "00c0817",
-        "message": "chore(portfolio): daily sync 2026-06-05",
+        "sha": "267c917aa5209fdd06998a644f8147dece3fd15c",
+        "short_sha": "267c917",
+        "message": "chore(portfolio): daily sync 2026-06-06",
         "type": "chore",
-        "date": "2026-06-05T21:28:18Z",
-        "url": "https://github.com/abgnydn/markview/commit/00c0817e813b45a83a6235223b7488868a6cb450",
-        "additions": 914,
-        "deletions": 762
+        "date": "2026-06-06T21:08:38Z",
+        "url": "https://github.com/abgnydn/markview/commit/267c917aa5209fdd06998a644f8147dece3fd15c",
+        "additions": 31,
+        "deletions": 28
       }
     },
     {
@@ -812,7 +813,7 @@
       "pushed_at": "2026-05-18T20:04:18Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 8,
+      "commits_30d": 6,
       "commits_synced": 50,
       "last_commit": {
         "sha": "94fea2085827c68e8d89df474967fbdaf6bbd157",
@@ -1417,6 +1418,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "267c917aa5209fdd06998a644f8147dece3fd15c",
+      "short_sha": "267c917",
+      "message": "chore(portfolio): daily sync 2026-06-06",
+      "type": "chore",
+      "date": "2026-06-06T21:08:38Z",
+      "url": "https://github.com/abgnydn/markview/commit/267c917aa5209fdd06998a644f8147dece3fd15c",
+      "additions": 31,
+      "deletions": 28
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4146,19 +4160,6 @@
       "url": "https://github.com/abgnydn/markview/commit/c6cfa91065f3938e27e3b3bf796995678d330bb1",
       "additions": 63,
       "deletions": 13917
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "85aeb6486ea03d6ae21801850b041f197028ca1e",
-      "short_sha": "85aeb64",
-      "message": "feat(atmosphere): real 3D painting via Three.js + fix light-theme sid…",
-      "type": "feat",
-      "date": "2026-05-28T14:19:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/85aeb6486ea03d6ae21801850b041f197028ca1e",
-      "additions": 187,
-      "deletions": 170
     },
     {
       "slug": "postnet-cf",
