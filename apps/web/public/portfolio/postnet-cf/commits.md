@@ -1,5 +1,10 @@
 # Commits — postnet-cf
 
+## 2026-06-08
+
+- `08:19` **fix(ntk): per-flip η + winner-baseline audit — kills 2-worker false q…** — +36 −7 — [`fd27a5c`](https://github.com/abgnydn/postnet-cf/commit/fd27a5ca448b7703b7089aada47673665f2a5237)
+- `07:43` **results(ntk): 2-honest-worker run — confirms η-adapt + falsifies §10 …** — +676 −0 — [`451fb33`](https://github.com/abgnydn/postnet-cf/commit/451fb33713c39d753def4aa40b70412181dc89e7)
+
 ## 2026-06-05
 
 - `07:43` **feat(ntk): 2-honest-worker full-rate learning-run notebook** — +292 −0 — [`e790fc3`](https://github.com/abgnydn/postnet-cf/commit/e790fc3f27f48faed9f2cb837ca7e4fd7f30d280)
@@ -74,5 +79,3 @@
 
 - `11:10` **phase 25: arXiv-style paper draft** — +115 −0 — [`db3a78c`](https://github.com/abgnydn/postnet-cf/commit/db3a78ca7b56ba371e474adf2e09fda9f84442e7)
 - `11:08` **phase 24: README phase table catches up to phase 23** — +9 −0 — [`8b403a7`](https://github.com/abgnydn/postnet-cf/commit/8b403a71f7ffcb6fb00bad5a3d315856e9234994)
-- `11:06` **phase 23: interactive byzantine demo on /lm.html** — +36 −11 — [`b8e8e69`](https://github.com/abgnydn/postnet-cf/commit/b8e8e69b2d0d3ef1bbcdb9e6670c755c2e866646)
-- `11:05` **phase 22: trimmed-mean defense for federated Adam** — +25 −6 — [`bc02682`](https://github.com/abgnydn/postnet-cf/commit/bc02682a83662d2fc130fca7748f9697fc2a7613)

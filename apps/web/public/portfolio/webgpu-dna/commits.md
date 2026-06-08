@@ -1,5 +1,31 @@
 # Commits — webgpu-dna
 
+## 2026-06-08
+
+- `13:50` **experiment(E20): cascade deficit RESOLVED to the secondary cascade — …** — +61 −0 — [`49d3cf7`](https://github.com/abgnydn/webgpu-dna/commit/49d3cf79a62c9045e257fe2623a87d58036c9b75)
+- `13:43` **experiment(E19): energy partition is healthy — the cascade deficit is…** — +60 −0 — [`18cf87d`](https://github.com/abgnydn/webgpu-dna/commit/18cf87dea9d2cf62d8ff11018ad3347ce3bb48fd)
+- `13:31` **docs(native): reconcile README next-steps with E17/E18 findings** — +9 −4 — [`7fc84a2`](https://github.com/abgnydn/webgpu-dna/commit/7fc84a220b349f3b20e50ab81632247c0b6eef16)
+- `13:30` **research(cascade): rule out excitation as the energy sink — Geant4 is…** — +28 −0 — [`bb12f4b`](https://github.com/abgnydn/webgpu-dna/commit/bb12f4beb376a49de453a19e7dc3cf3f080a9963)
+- `13:12` **experiment(E18): IRT rates + diffusion coeffs are bit-identical to Ge…** — +76 −0 — [`bc1ac37`](https://github.com/abgnydn/webgpu-dna/commit/bc1ac37ae4d2a2fc3224db65eba6048936939ad4)
+- `13:09` **experiment(E17): density sweep — cross-primary is a coupled H2-up/OH-…** — +49 −2 — [`286a7bf`](https://github.com/abgnydn/webgpu-dna/commit/286a7bf09e6c93a168c95fc04fe768e99ec3492f)
+- `13:01` **experiment(E17): cross-primary IRT works + validates E10f — recovers …** — +119 −0 — [`3d81a35`](https://github.com/abgnydn/webgpu-dna/commit/3d81a3571bd6221b533a8ef9f1ab2164634bc377)
+- `12:47` **feat(native): Phase A+B physics runs natively in Deno — bit-identical…** — +129 −3 — [`a522cc8`](https://github.com/abgnydn/webgpu-dna/commit/a522cc8520c148a5494ee35664f9a8b37b9cba43)
+- `12:40` **feat(native): de-risk the webgpu-dna-native foundation — wgpu-native …** — +93 −0 — [`70ff688`](https://github.com/abgnydn/webgpu-dna/commit/70ff688f06f08328fbd8e89274a19669890fc0a1)
+- `12:02` **experiment(E7e): σ_exc REFUTED as the residual cascade-deficit lever** — +54 −5 — [`4005218`](https://github.com/abgnydn/webgpu-dna/commit/4005218a5fa4a79d9c8705a4f86c6dd2d19899b7)
+- `11:59` **docs(housekeeping): refresh the stale CLAUDE start-here block + ROADM…** — +17 −1 — [`98e677a`](https://github.com/abgnydn/webgpu-dna/commit/98e677ae06047eacaac1cdbf636e25db01789130)
+- `11:44` **docs: wire in the v0.5.0 Zenodo version DOI (10.5281/zenodo.20593367)** — +4 −4 — [`7de17d0`](https://github.com/abgnydn/webgpu-dna/commit/7de17d05ba449855f30e060f8b08914f82ef1d40)
+- `11:38` **feat(v0.5.0): remove the RECOMB_BOOST fudge — pipeline is now paramet…** — +106 −69 — [`b393434`](https://github.com/abgnydn/webgpu-dna/commit/b39343406412cdad9ad257ed7c00bbd6926ef8c6)
+- `11:26` **experiment(E13d): SSB ratio holds at RECOMB=1.0 (2.46->2.32, still in…** — +34 −0 — [`988ddd3`](https://github.com/abgnydn/webgpu-dna/commit/988ddd36bd25fa5437824b6340718fe2cffa608d)
+- `11:20` **ci: SSB revalidation workflow (run_irt_ssb.cjs on a 16 GB runner)** — +73 −0 — [`3af4fe1`](https://github.com/abgnydn/webgpu-dna/commit/3af4fe1c0ec2fa402d469ba48586b44ca8566921)
+- `11:20` **tools(ssb): CI-runnable IRT chemistry + SSB/DSB scoring driver (run_i…** — +190 −0 — [`32c4d3b`](https://github.com/abgnydn/webgpu-dna/commit/32c4d3b1c4dfa82d627d0ca080c01e433eac465b)
+- `11:02` **experiment(E12-local-exact): exact voxel dose confirms the C≈981 prox…** — +38 −9 — [`282361d`](https://github.com/abgnydn/webgpu-dna/commit/282361d8e485ed7ef21ac3866bbd3c1b7dede1fc)
+- `11:00` **experiment(E7d): RECOMB→1.0 recovers cascade ions 0.677×→0.766× — mec…** — +55 −5 — [`7b37249`](https://github.com/abgnydn/webgpu-dna/commit/7b37249a2c26d3d69ca0b103888c548ae46c078e)
+- `10:29` **docs(free-compute): fix the closing line — native runtime does NOT un…** — +8 −3 — [`382d361`](https://github.com/abgnydn/webgpu-dna/commit/382d361d9e87e9883c7ab836f74e6a60b9869915)
+- `09:56` **docs(free-compute): Colab confirmed compute-only too (Tesla T4, no NV…** — +2 −2 — [`cda87b1`](https://github.com/abgnydn/webgpu-dna/commit/cda87b18c3f530013260395984973b4a501b717b)
+- `08:25` **feat(kaggle): make the GPU probe Kaggle+Colab portable (relative clon…** — +25 −17 — [`24f6cf6`](https://github.com/abgnydn/webgpu-dna/commit/24f6cf6f80432e46b8a70792e16bdc460e99aa83)
+- `08:23` **docs(free-compute): Kaggle/Colab GPU path TESTED and CLOSED — compute…** — +29 −17 — [`5dec213`](https://github.com/abgnydn/webgpu-dna/commit/5dec2131c15b665a65b7db65ecbb2b46c455a8b4)
+- `08:17` **feat(kaggle): build the NVIDIA Vulkan ICD detection/registration into…** — +86 −60 — [`ebaa918`](https://github.com/abgnydn/webgpu-dna/commit/ebaa9182011b3e8573e9450ee9c4452f0039abb0)
+
 ## 2026-06-05
 
 - `06:34` **feat(kaggle): WGSL-on-free-GPU probe notebook (wgpu-py), importable f…** — +197 −5 — [`f05f5fb`](https://github.com/abgnydn/webgpu-dna/commit/f05f5fb52698d926b0592a782f7bc59bdc97edce)
@@ -38,38 +64,3 @@
 - `06:16` **paper: resolve the four reviewer issues (refs, RECOMB framing, figure…** — +229 −114 — [`9b087bb`](https://github.com/abgnydn/webgpu-dna/commit/9b087bbcceadefdd88b398b36d151b903b69ab26)
 - `05:36` **docs(readme): pin the real Cloudflare Pages project (webgpudna, not t…** — +6 −2 — [`e3402c4`](https://github.com/abgnydn/webgpu-dna/commit/e3402c43a3b3432fdf20390e9f5cb7a5f3b3498f)
 - `05:28` **docs(readme): document the actual deploy path (Cloudflare Pages via w…** — +14 −0 — [`9c8d58e`](https://github.com/abgnydn/webgpu-dna/commit/9c8d58e571b30b77f20eeb24ee2c2a363113ffe5)
-- `05:10` **docs(paper): add arXiv-style preprint draft (LaTeX + PDF)** — +577 −0 — [`5054fcb`](https://github.com/abgnydn/webgpu-dna/commit/5054fcb8dc7af9767eb042af1e8d3861bb87afb7)
-- `05:10` **fix: correct gMicroMC/MPEXS method attribution (reaction-radius, not …** — +13 −6 — [`1bcb87a`](https://github.com/abgnydn/webgpu-dna/commit/1bcb87a99ad2881030c0ba61b2a77c787d888548)
-
-## 2026-06-01
-
-- `17:09` **release: v0.4.0 — audit closure + structural pivots** — +71 −13 — [`1704df6`](https://github.com/abgnydn/webgpu-dna/commit/1704df6d721bf09161a6912004915a5a2c10ce7f)
-- `16:21` **docs: catalogue deliberate divergences from Geant4-DNA DNA_Opt2** — +79 −0 — [`e40a6d7`](https://github.com/abgnydn/webgpu-dna/commit/e40a6d7f6e72f27fb3e3a4f239dd5de971d968e5)
-- `16:21` **GPU-SBS inter-track chemistry: browser-native path closed — needs nat…** — +2510 −26 — [`4f2abcb`](https://github.com/abgnydn/webgpu-dna/commit/4f2abcb302b51337edf2e319c256970299652d01)
-
-## 2026-05-14
-
-- `13:50` **docs(readme): link RESEARCH_STANDARDS.md (shared canonical discipline…** — +1 −1 — [`acea15c`](https://github.com/abgnydn/webgpu-dna/commit/acea15c4f8c9398cd73b87b898fce012619a53ae)
-- `13:49` **docs: add canonical RESEARCH_STANDARDS.md (mirror of webgpu-q/RESEARC…** — +363 −0 — [`60e5a70`](https://github.com/abgnydn/webgpu-dna/commit/60e5a709d3373a1b2954feaa5e949876721532e4)
-- `09:10` **docs(CLAUDE): next-session start-here block — points at the 2 design …** — +41 −0 — [`fd85ee3`](https://github.com/abgnydn/webgpu-dna/commit/fd85ee3c78af2f847b59cf493dceb0725d1c703b)
-- `06:06` **docs(README): link to H2OP_TRACKING_DESIGN.md + CROSS_PRIMARY_IRT_DES…** — +1 −1 — [`a9e4f14`](https://github.com/abgnydn/webgpu-dna/commit/a9e4f1462cbf5a65673b6788c70804b748f2b9dd)
-
-## 2026-05-13
-
-- `10:54` **CROSS_PRIMARY_IRT_DESIGN: memory-ceiling constraint surfaces native-r…** — +91 −12 — [`6cca750`](https://github.com/abgnydn/webgpu-dna/commit/6cca750e2228e27c557e58da668b30b6ca115f1b)
-- `10:44` **CROSS_PRIMARY_IRT_DESIGN.md: design doc for the new Tier 1 fix** — +196 −15 — [`5fab44c`](https://github.com/abgnydn/webgpu-dna/commit/5fab44c9cc5cda606d8183a389c37b020096ec13)
-- `10:38` **H2OP tracking — premise REFUTED by Geant4 source archaeology** — +159 −31 — [`e540fea`](https://github.com/abgnydn/webgpu-dna/commit/e540fead34b059f31738722c9f0898bf7f47491c)
-- `10:34` **H2OP_TRACKING_DESIGN.md: design doc for the Tier 1 structural fix** — +239 −1 — [`c274997`](https://github.com/abgnydn/webgpu-dna/commit/c274997e4d1fc0145909ad6743546d96da06a798)
-- `09:23` **ROADMAP: strike retrofit Tier 0 item — done in prior commit** — +6 −6 — [`983b5d5`](https://github.com/abgnydn/webgpu-dna/commit/983b5d53ade0e2228f3ad846b1e98e467f603337)
-- `09:22` **audit: retrofit shaderHashes onto 48 pre-2026-05-12 artifacts** — +720 −41 — [`840e337`](https://github.com/abgnydn/webgpu-dna/commit/840e33781bba2d5288cb5150c2187323531345d2)
-- `08:18` **L2 E5e: W_sec cutoff sweep — alternative third knob refuted** — +365 −0 — [`0ff7615`](https://github.com/abgnydn/webgpu-dna/commit/0ff7615b4a0695cd1cbf223317a2b64347bfccb2)
-- `08:15` **ROADMAP.md: forward plan with multi-agent wall-clock estimates** — +241 −1 — [`68c3e39`](https://github.com/abgnydn/webgpu-dna/commit/68c3e396b4227641549b8a7588b3c4132369e1b7)
-- `07:31` **L4/L5 post-joint-fix re-runs: E10 / E10d / E13c against current shaders** — +820 −3 — [`7edc11c`](https://github.com/abgnydn/webgpu-dna/commit/7edc11c6f1ffc55aec9ff8241d5dab750c2c4a58)
-
-## 2026-05-12
-
-- `13:07` **L2 E7c: asymmetric RECOMB_BOOST attempt — honest negative** — +385 −32 — [`5b2ff18`](https://github.com/abgnydn/webgpu-dna/commit/5b2ff181806fb1eb1afa0914eb8d1e1116816cb9)
-- `12:30` **fix(build): copy rad_buf into fresh ArrayBuffer for Blob construction** — +7 −1 — [`4d68ec2`](https://github.com/abgnydn/webgpu-dna/commit/4d68ec244adf03dc5d34d468a54c0cef813c8053)
-- `12:28` **L2 post-joint-fix completion: E6c + E7b + E5c-rerun + dump regen pipe…** — +865 −28 — [`832743d`](https://github.com/abgnydn/webgpu-dna/commit/832743d1f5aa628abe8d68cb71d5cb3783c2158b)
-- `12:13` **L2 marquee closure: E5d post-joint-fix CSDA sweep — 8/8 energies impr…** — +394 −3 — [`d3dcb4b`](https://github.com/abgnydn/webgpu-dna/commit/d3dcb4bb204b4817b032c38fd97a0d3e5690935a)
-- `12:07` **docs+L2/L4: close the six audit gaps a researcher would ask about** — +806 −4 — [`116b2d6`](https://github.com/abgnydn/webgpu-dna/commit/116b2d66638940606a353affe65bfc11913a69ee)

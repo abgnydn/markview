@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-07
+
+- `21:18` **chore(portfolio): daily sync 2026-06-07** — +30 −26 — [`26ce51a`](https://github.com/abgnydn/markview/commit/26ce51ab051ce4e8f29d5c7a74e0070666014ec4)
+
 ## 2026-06-06
 
 - `21:08` **chore(portfolio): daily sync 2026-06-06** — +31 −28 — [`267c917`](https://github.com/abgnydn/markview/commit/267c917aa5209fdd06998a644f8147dece3fd15c)
@@ -78,4 +82,3 @@
 - `16:08` **feat(cinemagraph): Colab notebook + Replicate cloud backend** — +311 −60 — [`a9f9bce`](https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a)
 - `15:04` **feat(atmosphere): cinemagraph pipeline — SVD renderer + Three.js Vide…** — +337 −16 — [`53bc354`](https://github.com/abgnydn/markview/commit/53bc354d02f3bd6f6ffaa22a0b73747cfbc96ba4)
 - `14:33` **feat(atmosphere): living paintings — depth-band motion in the shader** — +15874 −10 — [`5962fc5`](https://github.com/abgnydn/markview/commit/5962fc528b50654cfd4197e99150bb058953cb41)
-- `14:24` **fix(atmosphere): cover-fit the 3D painting plane to the camera frustum** — +63 −13917 — [`c6cfa91`](https://github.com/abgnydn/markview/commit/c6cfa91065f3938e27e3b3bf796995678d330bb1)

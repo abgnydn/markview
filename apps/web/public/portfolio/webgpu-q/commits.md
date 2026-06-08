@@ -1,5 +1,31 @@
 # Commits — webgpu-q
 
+## 2026-06-08
+
+- `12:53` **feat(gpu): GPU DF-JK — per-iteration Fock contraction from the B-tens…** — +189 −0 — [`53e3c4b`](https://github.com/abgnydn/webgpu-q/commit/53e3c4b6d11a63615cf245635a244bb45a45f3f1)
+- `12:48` **test(gpu): end-to-end DF build (buildDFAuto) wins ~1.25-1.3x in the d…** — +35 −0 — [`5dc76e0`](https://github.com/abgnydn/webgpu-q/commit/5dc76e0e885a0dbba31cf754d01d0840cca75a3d)
+- `12:45` **perf(gpu): buildBFromV projects in WASM SIMD — GPU DF build now wins …** — +32 −15 — [`da81ea6`](https://github.com/abgnydn/webgpu-q/commit/da81ea6a15907483140c38d1748776cc89cb0d17)
+- `12:38` **feat(gpu): buildDFAuto — auto-select the GPU integral path where it wins** — +105 −0 — [`f16c6cd`](https://github.com/abgnydn/webgpu-q/commit/f16c6cd76fce17da06b95648ee98d5234ef4805d)
+- `12:05` **test(gpu): d-regime scaling — GPU integral win GROWS with size (1.35×…** — +41 −0 — [`1ecdfcc`](https://github.com/abgnydn/webgpu-q/commit/1ecdfcc1ba787be112c662d6b62b529ccb88095e)
+- `12:00` **test(gpu): characterize the GPU integral win — it's angular-momentum-…** — +67 −0 — [`3207dbb`](https://github.com/abgnydn/webgpu-q/commit/3207dbb87898133a5b1414a08fa8b37728ab42b7)
+- `11:55` **perf(gpu): box-only R zeroing — GPU integral build now BEATS WASM (1.…** — +12 −3 — [`281d1c8`](https://github.com/abgnydn/webgpu-q/commit/281d1c8fc7a66e2d190e3a33482ed4af040f7a9a)
+- `11:37` **perf(gpu): 2-slab R-tensor in the 3-index kernel — 1.5× faster, corre…** — +19 −10 — [`2a4aba1`](https://github.com/abgnydn/webgpu-q/commit/2a4aba14831629ba6f86671548f6a27f1d9f2c08)
+- `11:28` **feat(gpu): WebGPU integral build #4 — measure the win (correct, but n…** — +151 −0 — [`f771e22`](https://github.com/abgnydn/webgpu-q/commit/f771e2213c7eaf1080a9bc84f7259673519f4bb8)
+- `11:19` **feat(gpu): WebGPU integral build #3b/#3c — full s/p/d 3-index, valida…** — +322 −41 — [`7d78b18`](https://github.com/abgnydn/webgpu-q/commit/7d78b1856f969ccf9c65825f8bdfe21f8dcb47f4)
+- `11:04` **feat(gpu): WebGPU integral build #3 — s-only 3-index tensor, validate…** — +215 −0 — [`bb31240`](https://github.com/abgnydn/webgpu-q/commit/bb31240156d5951348cc4316e7d30bf1cf3fb76c)
+- `10:32` **feat(gpu): WebGPU integral build #2 — s/p/d 2-index metric in f32, va…** — +212 −110 — [`f61032b`](https://github.com/abgnydn/webgpu-q/commit/f61032bc7acfcf92489836590d421602bb388b5b)
+- `10:15` **feat(gpu): WebGPU integral build #1 — 2-index metric in f32, validate…** — +231 −0 — [`45f38f6`](https://github.com/abgnydn/webgpu-q/commit/45f38f61821ef4c398090253ce297fa46841fe06)
+- `10:01` **test(df): f32 feasibility probe — step 0 of the WebGPU integral build** — +60 −0 — [`992e0e5`](https://github.com/abgnydn/webgpu-q/commit/992e0e54426b652b4da9181af39a51cfd3badd19)
+- `09:39` **feat(swarm): N-machine distributed HF — N=2 and N=4 across separate VMs** — +117 −105 — [`1fdc487`](https://github.com/abgnydn/webgpu-q/commit/1fdc487b68ea16232b5f02918ce0e82a1c71cb68)
+- `09:35` **docs(readme): cross-machine swarm now verified — N=2 distributed HF t…** — +1 −1 — [`217c251`](https://github.com/abgnydn/webgpu-q/commit/217c25184f05f8efdf7198e3e46692a05f2f4a5b)
+- `09:31` **feat(swarm): N=2 cross-machine distributed HF over a free relay — the…** — +302 −1 — [`d900fc0`](https://github.com/abgnydn/webgpu-q/commit/d900fc064d662d81c6bd61acc10b42e9a2ceb542)
+- `08:43` **feat(swarm): cross-machine proof via free public relay (WebRTC needs …** — +103 −2 — [`1450f59`](https://github.com/abgnydn/webgpu-q/commit/1450f5916e3962bb529d6dbb887414c3bd4f6515)
+- `08:35` **feat(swarm): cross-machine WebRTC de-risk — 2 Actions VMs, free TURN** — +159 −2 — [`9b1a921`](https://github.com/abgnydn/webgpu-q/commit/9b1a9213e92595f2d4d6bfb50e26e0ed4135926a)
+- `07:51` **chore(release): v0.9.4 — the streaming swarm crosses the 2 GB single-…** — +73 −16 — [`a6d1b6b`](https://github.com/abgnydn/webgpu-q/commit/a6d1b6bb08d94a14150fb7c3a75b566551f738c4)
+- `07:38` **docs(paper): write up the streaming swarm crossing the 2 GB single-al…** — +109 −9 — [`d8111f4`](https://github.com/abgnydn/webgpu-q/commit/d8111f4642267be58eba77a6c2adc8058792281a)
+- `07:24` **feat(swarm): commit the wall-crossing headline artifact — 40 H2 cc-pV…** — +45 −0 — [`5100f57`](https://github.com/abgnydn/webgpu-q/commit/5100f57ac036c715f28271c520d13968fc151bb4)
+- `06:39` **ci(swarm): raise scaling-ladder test cap to 100 min for slow-runner v…** — +1 −1 — [`52ab041`](https://github.com/abgnydn/webgpu-q/commit/52ab041f74889a7bb2d466171a5f80a63e6a3475)
+
 ## 2026-06-05
 
 - `07:37` **perf(swarm): WASM SIMD mode-projection — ~3.4× faster streaming build…** — +151 −34 — [`818495c`](https://github.com/abgnydn/webgpu-q/commit/818495ce75e993597ee9b5eb206cdbe016b69354)
@@ -38,32 +64,3 @@
 - `06:28` **docs(paper): v0.5 — third figure (swarm protocol), numbered refs, re-…** — +128 −23 — [`e89ffef`](https://github.com/abgnydn/webgpu-q/commit/e89ffef42ffb660a2e7b574abff4f5f0cc424cd2)
 - `05:34` **docs(paper): render fusion manuscript to PDF (pandoc+xelatex, Menlo m…** — +0 −0 — [`8873ee4`](https://github.com/abgnydn/webgpu-q/commit/8873ee451a96e1cf1edb9ad8c7292a076a42c9c7)
 - `05:27` **docs(paper): draft the kernel-fusion manuscript (Level 3) — companion…** — +205 −0 — [`9a93278`](https://github.com/abgnydn/webgpu-q/commit/9a932784e4ef979ac10eb803c1e6b9bc2093f8f5)
-
-## 2026-06-01
-
-- `16:47` **docs: wire in Zenodo DOI 10.5281/zenodo.20494383** — +6 −3 — [`8e2fbfe`](https://github.com/abgnydn/webgpu-q/commit/8e2fbfeaf4c2f486c79092a2133c514b7aeb67dc)
-- `16:37` **docs: Zenodo deposit prep — rendered paper PDF, .zenodo.json, CITATIO…** — +45 −5 — [`bcbe063`](https://github.com/abgnydn/webgpu-q/commit/bcbe063c27e2de1471fe9ec62ed9c469a44ebb94)
-- `16:26` **docs(paper): v0.4 — align language to published-paper conventions** — +37 −22 — [`2005c45`](https://github.com/abgnydn/webgpu-q/commit/2005c450d41617c0c1a8900dbd0896bc6c924d03)
-- `16:20` **docs(paper): v0.3 — validation coverage, availability + reproducibility** — +57 −5 — [`a917070`](https://github.com/abgnydn/webgpu-q/commit/a917070f204188903ab943045187971715c27d18)
-- `16:12` **docs(paper): memory-wall figure + fleshed swarm protocol (§2.4)** — +126 −7 — [`0b43e54`](https://github.com/abgnydn/webgpu-q/commit/0b43e541015118ee267c314a544399e8e44b5ee0)
-- `12:24` **fix(ci): ignore post-success teardown RPC flake; revert forks/serial …** — +21 −17 — [`2a2990b`](https://github.com/abgnydn/webgpu-q/commit/2a2990bc581080c31cd2ac237c29a2d058732f5f)
-- `12:16` **docs(paper): add scaling figure (acene series + C₆₀), wire into manus…** — +83 −0 — [`f9b9d5b`](https://github.com/abgnydn/webgpu-q/commit/f9b9d5b208460447058457534e25ba0b94238c3f)
-- `12:13` **docs(paper): first manuscript draft — browser-native QC + tab swarm t…** — +239 −0 — [`d7171b9`](https://github.com/abgnydn/webgpu-q/commit/d7171b9fc082464e7222d096823d535b930b51b1)
-- `12:10` **fix(ci): run vitest files serially — fixes onTaskUpdate ack starvation** — +18 −10 — [`97fbc16`](https://github.com/abgnydn/webgpu-q/commit/97fbc16ebf2ce6b893336b443da6bddef6e4d2ef)
-- `11:31` **fix(swarm): assert architectural invariant, not RHF convergence, for** — +34 −11 — [`5264c8a`](https://github.com/abgnydn/webgpu-q/commit/5264c8a2a6c998797284e5c03c4e916b6da39a22)
-- `11:28` **fix(ci): switch vitest to forks pool — kills the onTaskUpdate IPC flake** — +12 −7 — [`e84408e`](https://github.com/abgnydn/webgpu-q/commit/e84408e94d0b50177b6eeb530989a2712eb44572)
-
-## 2026-05-29
-
-- `11:00` **docs: add NOTICE file for Apache 2.0 §4(d) compliance** — +49 −0 — [`00e1a7c`](https://github.com/abgnydn/webgpu-q/commit/00e1a7c76630604b69871c95c898fb05ccd85760)
-- `10:51` **docs: design for per-tab independent B-tensor build** — +194 −0 — [`9535a0c`](https://github.com/abgnydn/webgpu-q/commit/9535a0ce4505ead050c3d2d44ac877b1b684f217)
-- `10:49` **feat(swarm): octacene C₃₄H₂₀ STO-3G — 8-ring acene, 190 basis** — +281 −1 — [`40188d7`](https://github.com/abgnydn/webgpu-q/commit/40188d7540748dbf8b354b54c54a3406ccddfbcb)
-- `10:30` **feat(swarm): heptacene C₃₀H₁₈ STO-3G — 7-ring acene with delayed-DIIS** — +253 −1 — [`80fb9e4`](https://github.com/abgnydn/webgpu-q/commit/80fb9e49dc08922c5f5689b411a1a163a25c06b5)
-- `10:26` **feat(swarm): hexacene C₂₆H₁₆ HF SCF — 6 fused rings, 146 basis** — +265 −1 — [`c2df6a9`](https://github.com/abgnydn/webgpu-q/commit/c2df6a9ae77975ddd8b2fb608ebd3e73c6ee58eb)
-- `10:19` **docs(ci): document C₆₀ Ubuntu failure root cause in swarm-benches.yml** — +12 −0 — [`039bfa1`](https://github.com/abgnydn/webgpu-q/commit/039bfa1638ef01213bde30ec8ac139a6b89ac304)
-- `10:16` **fix(swarm): relax anthracene cc-pVDZ energy bounds — converges to a** — +31 −9 — [`b01003b`](https://github.com/abgnydn/webgpu-q/commit/b01003b2e479af893f8e49e87b4a289aae219389)
-- `10:14` **docs+ci: v0.9 changelog draft + vitest IPC timeout fix** — +94 −0 — [`af72b37`](https://github.com/abgnydn/webgpu-q/commit/af72b37982fc1d80117b25ebce2b7068cef7b496)
-- `09:55` **fix(swarm): move test.use({ trace }) to top level — Playwright doesn'…** — +2 −1 — [`bce8266`](https://github.com/abgnydn/webgpu-q/commit/bce8266c413cc32e151cb3bea311c7803a787c01)
-- `08:47` **test(swarm): anthracene cc-pVDZ with delayed-DIIS recipe** — +272 −9 — [`213f75d`](https://github.com/abgnydn/webgpu-q/commit/213f75d89f90746e18d4fc4bd0303e2fb563788e)
-- `08:37` **fix(numbers): rebase two drifted claims to current empirical values** — +8 −2 — [`41f9ea3`](https://github.com/abgnydn/webgpu-q/commit/41f9ea31963b41dd31ab744829e46e7dce4bd3e7)
-- `08:29` **feat(hf): diisStartIter option for delayed DIIS activation** — +45 −10 — [`b450896`](https://github.com/abgnydn/webgpu-q/commit/b450896dfe85235d0dfba0779797d81955ada6da)
