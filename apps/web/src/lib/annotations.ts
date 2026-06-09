@@ -14,6 +14,17 @@
  * No backend, no CRDT. Power-user feature for solo workspaces.
  */
 
+export type AnnotationColor = 'yellow' | 'green' | 'blue' | 'pink';
+
+/** Highlight-label palette, shared by the toolbar, panel, and margin dots. */
+export const ANNOTATION_COLORS: AnnotationColor[] = ['yellow', 'green', 'blue', 'pink'];
+export const ANNOTATION_COLOR_MAP: Record<AnnotationColor, string> = {
+  yellow: '#fef08a',
+  green: '#bbf7d0',
+  blue: '#bfdbfe',
+  pink: '#fbcfe8',
+};
+
 export interface Annotation {
   id: string;
   fileId: string;
@@ -24,6 +35,8 @@ export interface Annotation {
   /** ~24 chars immediately after. */
   contextAfter: string;
   note: string;
+  /** Highlight colour label. Older stored notes default to yellow. */
+  color: AnnotationColor;
   createdAt: number;
 }
 
@@ -50,6 +63,7 @@ export function annotationFromSelection(
   fileId: string,
   root: Element,
   note: string,
+  color: AnnotationColor = 'yellow',
 ): Annotation | null {
   const sel = window.getSelection();
   if (!sel || sel.isCollapsed || sel.rangeCount === 0) return null;
@@ -75,8 +89,14 @@ export function annotationFromSelection(
     contextBefore: normalizeWS(before),
     contextAfter: normalizeWS(after),
     note,
+    color,
     createdAt: Date.now(),
   };
+}
+
+/** Back-fill a colour on annotations loaded from older storage. */
+export function withDefaultColor(list: Annotation[]): Annotation[] {
+  return list.map((a) => (a.color ? a : { ...a, color: 'yellow' as AnnotationColor }));
 }
 
 /**

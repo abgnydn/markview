@@ -3,11 +3,10 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   type Annotation,
-  loadAnnotations,
-  saveAnnotations,
   annotationFromSelection,
   reanchor,
 } from '@/lib/annotations';
+import { useAnnotationStore } from '@/stores/annotation-store';
 
 interface AnnotationsLayerProps {
   fileId: string | null;
@@ -30,7 +29,12 @@ interface AnnotationsLayerProps {
  * found) cluster at the bottom of the dot column with a faded ring.
  */
 export function AnnotationsLayer({ fileId, refreshKey }: AnnotationsLayerProps) {
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  // The annotation list lives in the shared store (so the toolbar's writes
+  // show here immediately); the layer keeps only its own view state.
+  const annotations = useAnnotationStore((s) => s.annotations);
+  const addAnnotation = useAnnotationStore((s) => s.add);
+  const removeAnnotation = useAnnotationStore((s) => s.remove);
+  const loadAnnotationsForFile = useAnnotationStore((s) => s.load);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [editing, setEditing] = useState<{ id: string; note: string } | null>(null);
   const [positions, setPositions] = useState<Map<string, { top: number; orphan: boolean }>>(new Map());
@@ -38,17 +42,10 @@ export function AnnotationsLayer({ fileId, refreshKey }: AnnotationsLayerProps) 
   const [draftNote, setDraftNote] = useState('');
   const draftInputRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // Load annotations whenever active file changes.
+  // Load the active file's annotations into the shared store on file switch.
   useEffect(() => {
-    if (!fileId) { setAnnotations([]); return; }
-    setAnnotations(loadAnnotations(fileId));
-  }, [fileId]);
-
-  // Persist on every change.
-  useEffect(() => {
-    if (!fileId) return;
-    saveAnnotations(fileId, annotations);
-  }, [annotations, fileId]);
+    if (fileId) loadAnnotationsForFile(fileId);
+  }, [fileId, loadAnnotationsForFile]);
 
   // ⌘⇧A creates an annotation from the current selection.
   useEffect(() => {
@@ -90,7 +87,7 @@ export function AnnotationsLayer({ fileId, refreshKey }: AnnotationsLayerProps) 
     if (!draft) { setEditing(null); setDraftAt(null); return; }
     if (!draftNote.trim()) { abortDraft(); return; }
     const final: Annotation = { ...draft, note: draftNote.trim() };
-    setAnnotations((cur) => [...cur, final]);
+    addAnnotation(final);
     pendingDraftRef.current = null;
     setEditing(null);
     setDraftAt(null);
@@ -137,7 +134,7 @@ export function AnnotationsLayer({ fileId, refreshKey }: AnnotationsLayerProps) 
   }, [annotations, refreshKey]);
 
   const deleteAnnotation = (id: string) => {
-    setAnnotations((cur) => cur.filter((a) => a.id !== id));
+    removeAnnotation(id);
     if (hoverId === id) setHoverId(null);
   };
 

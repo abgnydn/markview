@@ -1,15 +1,18 @@
 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { MessageSquarePlus, Highlighter, X, Trash2 } from 'lucide-react';
-import { useAnnotationStore, Annotation } from '@/stores/annotation-store';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { MessageSquarePlus, Highlighter, Trash2 } from 'lucide-react';
+import { useAnnotationStore } from '@/stores/annotation-store';
+import {
+  annotationFromSelection,
+  ANNOTATION_COLORS,
+  ANNOTATION_COLOR_MAP,
+  type Annotation,
+  type AnnotationColor,
+} from '@/lib/annotations';
 
-const COLORS: Annotation['color'][] = ['yellow', 'green', 'blue', 'pink'];
-const COLOR_MAP = {
-  yellow: '#fef08a',
-  green: '#bbf7d0',
-  blue: '#bfdbfe',
-  pink: '#fbcfe8',
-};
+/** The root the layer re-anchors against — anchors must be built relative to
+ *  the same element so stored offsets line up on reload. */
+const CONTENT_SELECTOR = '.markdown-content';
 
 interface AnnotationToolbarProps {
   fileId: string;
@@ -18,17 +21,20 @@ interface AnnotationToolbarProps {
 
 /**
  * Floating toolbar that appears on text selection inside the markdown viewer.
- * Lets users highlight text and add notes.
+ * Lets users highlight text and add notes — backed by the shared annotation
+ * store (re-anchoring storage), so highlights persist and survive edits.
  */
 export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarProps) {
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
-  const [selectedText, setSelectedText] = useState('');
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [noteText, setNoteText] = useState('');
-  const [color, setColor] = useState<Annotation['color']>('yellow');
+  const [color, setColor] = useState<AnnotationColor>('yellow');
   const toolbarRef = useRef<HTMLDivElement>(null);
+  // The anchor (text + surrounding context) captured at selection time — the
+  // live selection is gone by the time the user clicks a toolbar button.
+  const pendingRef = useRef<Annotation | null>(null);
 
-  const addAnnotation = useAnnotationStore((s) => s.addAnnotation);
+  const add = useAnnotationStore((s) => s.add);
 
   const handleSelectionChange = useCallback(() => {
     const selection = window.getSelection();
@@ -49,11 +55,14 @@ export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarPro
       return;
     }
 
+    // Capture the re-anchorable annotation now, before the selection clears.
+    const root = document.querySelector(CONTENT_SELECTOR);
+    pendingRef.current = root ? annotationFromSelection(fileId, root, '') : null;
+
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
     const containerRect = containerRef.current.getBoundingClientRect();
 
-    setSelectedText(text);
     setPosition({
       top: rect.top - containerRect.top - 44,
       left: Math.min(
@@ -61,7 +70,7 @@ export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarPro
         containerRect.width - 180
       ),
     });
-  }, [containerRef, showNoteInput]);
+  }, [containerRef, showNoteInput, fileId]);
 
   useEffect(() => {
     document.addEventListener('selectionchange', handleSelectionChange);
@@ -81,22 +90,19 @@ export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarPro
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleHighlight = (withNote = false) => {
-    if (withNote) {
-      setShowNoteInput(true);
-      return;
-    }
-    addAnnotation({ fileId, text: selectedText, note: '', color });
-    setPosition(null);
-    window.getSelection()?.removeAllRanges();
-  };
-
-  const handleSubmitNote = () => {
-    addAnnotation({ fileId, text: selectedText, note: noteText, color });
+  const commit = (note: string) => {
+    const draft = pendingRef.current;
+    if (draft) add({ ...draft, note, color });
+    pendingRef.current = null;
     setPosition(null);
     setShowNoteInput(false);
     setNoteText('');
     window.getSelection()?.removeAllRanges();
+  };
+
+  const handleHighlight = (withNote = false) => {
+    if (withNote) { setShowNoteInput(true); return; }
+    commit('');
   };
 
   if (!position) return null;
@@ -110,11 +116,11 @@ export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarPro
       {!showNoteInput ? (
         <div className="annotation-toolbar-buttons">
           <div className="annotation-color-row">
-            {COLORS.map((c) => (
+            {ANNOTATION_COLORS.map((c) => (
               <button
                 key={c}
                 className={`annotation-color-btn ${color === c ? 'active' : ''}`}
-                style={{ background: COLOR_MAP[c] }}
+                style={{ background: ANNOTATION_COLOR_MAP[c] }}
                 onClick={() => setColor(c)}
               />
             ))}
@@ -140,7 +146,7 @@ export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarPro
             <button className="annotation-note-cancel" onClick={() => { setShowNoteInput(false); setNoteText(''); }}>
               Cancel
             </button>
-            <button className="annotation-note-save" onClick={handleSubmitNote}>
+            <button className="annotation-note-save" onClick={() => commit(noteText)}>
               Save
             </button>
           </div>
@@ -151,23 +157,17 @@ export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarPro
 }
 
 /**
- * Panel showing all annotations for a file.
+ * Panel showing all annotations for the active file.
  */
 interface AnnotationPanelProps {
   fileId: string;
 }
 
-export function AnnotationPanel({ fileId }: AnnotationPanelProps) {
-  const allAnnotations = useAnnotationStore((s) => s.annotations);
+export function AnnotationPanel({ fileId: _fileId }: AnnotationPanelProps) {
+  const annotations = useAnnotationStore((s) => s.annotations);
   const activeId = useAnnotationStore((s) => s.activeAnnotationId);
   const setActive = useAnnotationStore((s) => s.setActiveAnnotation);
-  const removeAnnotation = useAnnotationStore((s) => s.removeAnnotation);
-  const updateNote = useAnnotationStore((s) => s.updateNote);
-
-  const annotations = useMemo(
-    () => allAnnotations.filter((a) => a.fileId === fileId),
-    [allAnnotations, fileId]
-  );
+  const removeAnnotation = useAnnotationStore((s) => s.remove);
 
   if (annotations.length === 0) return null;
 
@@ -184,8 +184,8 @@ export function AnnotationPanel({ fileId }: AnnotationPanelProps) {
             className={`annotation-panel-item ${activeId === ann.id ? 'active' : ''}`}
             onClick={() => setActive(ann.id)}
           >
-            <div className="annotation-panel-highlight" style={{ borderLeftColor: COLOR_MAP[ann.color] }}>
-              <span className="annotation-panel-text">&ldquo;{ann.text.slice(0, 80)}{ann.text.length > 80 ? '...' : ''}&rdquo;</span>
+            <div className="annotation-panel-highlight" style={{ borderLeftColor: ANNOTATION_COLOR_MAP[ann.color] }}>
+              <span className="annotation-panel-text">&ldquo;{ann.anchorText.slice(0, 80)}{ann.anchorText.length > 80 ? '...' : ''}&rdquo;</span>
             </div>
             {ann.note && <div className="annotation-panel-note">{ann.note}</div>}
             <div className="annotation-panel-actions">
