@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef, useState, useCallback, startTransition } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';
+import { expandTransclusions, hasTransclusion, type TranscludeResolver } from '@/lib/markdown/transclude';
 import { useThemeStore } from '@/stores/theme-store';
 import { usePluginStore } from '@/lib/plugins/plugin-registry';
 import '@/lib/plugins/embed-plugin';
@@ -15,6 +16,8 @@ interface MarkdownRendererProps {
   /** Make task-list checkboxes interactive — called with the 0-based index
       of the toggled checkbox (document order) and its new state. */
   onToggleTask?: (index: number, checked: boolean) => void;
+  /** Resolve `![[note]]` / `![[note#heading]]` transclusions to markdown. */
+  resolveTransclusion?: TranscludeResolver;
 }
 
 /**
@@ -230,7 +233,7 @@ function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string) 
   </div>`;
 }
 
-export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles, onToggleTask }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles, onToggleTask, resolveTransclusion }: MarkdownRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [html, setHtml] = useState('');
   const resolved = useThemeStore((s) => s.resolved);
@@ -241,11 +244,20 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
 
     const process = async () => {
       try {
+        // Expand `![[note]]` / `![[note#heading]]` transclusions into the
+        // embedded markdown FIRST — before the wikilink pass below, which
+        // would otherwise mangle the `[[...]]` inside `![[...]]`.
+        let source = content;
+        if (resolveTransclusion && hasTransclusion(source)) {
+          source = await expandTransclusions(source, resolveTransclusion);
+          if (cancelled) return;
+        }
+
         // Expand `[[name]]` wikilinks into standard markdown links. The
         // target gets `.md` appended so they flow through the same
         // internal-link handler as `[text](other.md)`. Pipe-style aliases
         // ([[file|display text]]) are honored.
-        const preprocessed = content.replace(
+        const preprocessed = source.replace(
           /\[\[([^\]\n|]+?)(?:\|([^\]\n]+))?\]\]/g,
           (_match, target: string, alias?: string) => {
             const label = (alias ?? target).trim();
@@ -302,7 +314,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
 
     process();
     return () => { cancelled = true; };
-  }, [content, resolved]);
+  }, [content, resolved, resolveTransclusion]);
 
   // Extract headings after HTML is set
   useEffect(() => {

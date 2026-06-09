@@ -104,6 +104,24 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
     }
   }, [activeFileContent, updateActiveFileContent]);
 
+  // Resolve `![[note]]` transclusions against the active workspace's files.
+  const resolveTransclusion = useCallback(async (name: string, heading?: string) => {
+    if (!activeWorkspaceId) return null;
+    const [{ db }, { extractSection }] = await Promise.all([
+      import('@/lib/storage/db'),
+      import('@/lib/markdown/transclude'),
+    ]);
+    const files = await db.files.where('workspaceId').equals(activeWorkspaceId).toArray();
+    const lc = name.toLowerCase();
+    const match = files.find((f) =>
+      f.displayName.toLowerCase() === lc ||
+      f.filename.toLowerCase() === lc ||
+      f.filename.toLowerCase() === `${lc}.md`,
+    );
+    if (!match) return null;
+    return heading ? extractSection(match.content, heading) : match.content;
+  }, [activeWorkspaceId]);
+
   // Collab
   const collabIsActive = useCollabStore((s) => s.isActive);
   const collabIsHost = useCollabStore((s) => s.isHost);
@@ -425,6 +443,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 onNavigateToFile={onNavigateToFile}
                 workspaceFiles={workspaceFileNames}
                 onToggleTask={isGuestMode ? undefined : handleToggleTask}
+                resolveTransclusion={resolveTransclusion}
               />
             ) : (
               <div className="viewer-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh', opacity: 0.15, userSelect: 'none', pointerEvents: 'none' }}>
