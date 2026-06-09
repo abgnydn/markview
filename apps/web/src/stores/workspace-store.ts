@@ -46,6 +46,9 @@ interface WorkspaceState {
   deleteWorkspace: (workspaceId: string) => Promise<void>;
   renameWorkspace: (workspaceId: string, title: string) => Promise<void>;
   setActiveFile: (fileId: string) => Promise<void>;
+  /** Update the active file's content in place + persist (no scroll/view
+      transition) — used by inline edits like task-list checkbox toggles. */
+  updateActiveFileContent: (content: string) => Promise<void>;
   addFiles: (files: { filename: string; content: string }[]) => Promise<void>;
   removeFile: (fileId: string) => Promise<void>;
   reorderFiles: (fromIndex: number, toIndex: number) => void;
@@ -435,6 +438,18 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
             : ws
         ),
       });
+    }
+  },
+
+  // ---------- Update active file content in place ----------
+  updateActiveFileContent: async (content) => {
+    const { activeFileId } = get();
+    if (!activeFileId) return;
+    set({ activeFileContent: content });
+    try {
+      await db.files.update(activeFileId, { content });
+    } catch (err) {
+      console.warn('[workspace] failed to persist inline edit', err);
     }
   },
 

@@ -82,7 +82,27 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // backfill / related-notes to whatever workspace was active at first
   // render and not follow a workspace switch.
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
+  const updateActiveFileContent = useWorkspaceStore((s) => s.updateActiveFileContent);
   const isContentLoading = useWorkspaceStore((s) => s.isContentLoading);
+
+  // Interactive task lists — flip the document-order Nth `- [ ]`/`- [x]`
+  // line in the source when its rendered checkbox is toggled, then persist.
+  const handleToggleTask = useCallback((index: number, checked: boolean) => {
+    if (activeFileContent == null) return;
+    const taskRe = /^(\s*[-*+]\s+\[)[ xX](\])/;
+    const lines = activeFileContent.split('\n');
+    let n = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (taskRe.test(lines[i])) {
+        n += 1;
+        if (n === index) {
+          lines[i] = lines[i].replace(taskRe, `$1${checked ? 'x' : ' '}$2`);
+          void updateActiveFileContent(lines.join('\n'));
+          return;
+        }
+      }
+    }
+  }, [activeFileContent, updateActiveFileContent]);
 
   // Collab
   const collabIsActive = useCollabStore((s) => s.isActive);
@@ -404,6 +424,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 onHtmlRendered={handleHtmlRendered}
                 onNavigateToFile={onNavigateToFile}
                 workspaceFiles={workspaceFileNames}
+                onToggleTask={isGuestMode ? undefined : handleToggleTask}
               />
             ) : (
               <div className="viewer-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh', opacity: 0.15, userSelect: 'none', pointerEvents: 'none' }}>

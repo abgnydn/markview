@@ -12,6 +12,9 @@ interface MarkdownRendererProps {
   onHtmlRendered?: (html: string) => void;
   onNavigateToFile?: (filename: string) => void;
   workspaceFiles?: string[]; // filenames for link validation
+  /** Make task-list checkboxes interactive — called with the 0-based index
+      of the toggled checkbox (document order) and its new state. */
+  onToggleTask?: (index: number, checked: boolean) => void;
 }
 
 /**
@@ -227,7 +230,7 @@ function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string) 
   </div>`;
 }
 
-export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles, onToggleTask }: MarkdownRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [html, setHtml] = useState('');
   const resolved = useThemeStore((s) => s.resolved);
@@ -604,6 +607,25 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
       .filter((c): c is () => void => typeof c === 'function');
     return () => cleanups.forEach((c) => c());
   }, [html]);
+
+  // Interactive task lists — enable the (otherwise disabled) GFM checkboxes
+  // and report each toggle by its document-order index so the host can flip
+  // the matching `- [ ]` / `- [x]` line in the source.
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root || !onToggleTask) return;
+    const boxes = Array.from(
+      root.querySelectorAll<HTMLInputElement>('li.task-list-item input[type="checkbox"]'),
+    );
+    const cleanups = boxes.map((box, i) => {
+      box.disabled = false;
+      box.style.cursor = 'pointer';
+      const onChange = () => onToggleTask(i, box.checked);
+      box.addEventListener('change', onChange);
+      return () => box.removeEventListener('change', onChange);
+    });
+    return () => cleanups.forEach((c) => c());
+  }, [html, onToggleTask]);
 
   return (
     <div className="markdown-content" ref={contentRef} style={{ fontSize: 'var(--content-font-size, 16px)' }}>
