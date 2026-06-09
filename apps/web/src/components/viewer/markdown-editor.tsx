@@ -25,6 +25,7 @@ import type { Awareness } from 'y-protocols/awareness';
 import { MarkdownRenderer } from './markdown-renderer';
 import { coAuthor } from './editor-coauthor';
 import { markviewCompletions, invalidateCompletionCache } from './editor-completions';
+import { slashCommands } from './editor-slash';
 import { clipboardToTable } from './editor-paste';
 
 interface MarkdownEditorProps {
@@ -284,6 +285,7 @@ function buildExtensions(
         autocompletion({
           override: [
             (ctx: CompletionContext) => markviewCompletions(workspaceId)(ctx),
+            slashCommands,
           ],
           activateOnTyping: true,
           maxRenderedOptions: 12,
