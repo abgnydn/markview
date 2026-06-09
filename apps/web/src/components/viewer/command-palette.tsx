@@ -75,6 +75,14 @@ export function CommandPalette() {
       run: () => wsStore.switchWorkspace(ws.id),
     }));
 
+    // Jump to any file in the active workspace — type its name to navigate.
+    const fileCmds: Command[] = wsStore.files.map((f) => ({
+      id: `file-${f.id}`,
+      label: `Go to · ${f.displayName || f.filename}`,
+      hint: wsStore.activeFileId === f.id ? '✓ open' : '',
+      run: () => void wsStore.setActiveFile(f.id),
+    }));
+
     const misc: Command[] = [
       {
         id: 'open-search',
@@ -103,7 +111,7 @@ export function CommandPalette() {
       },
     ];
 
-    return [...misc, ...atmCmds, ...themeCmds, ...wsCmds];
+    return [...misc, ...fileCmds, ...atmCmds, ...themeCmds, ...wsCmds];
   }, [open]);
 
   const filtered = useMemo(() => {
@@ -134,7 +142,7 @@ export function CommandPalette() {
         <input
           ref={inputRef}
           className="mv-palette-input"
-          placeholder="Run a command…"
+          placeholder="Run a command or jump to a file…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
