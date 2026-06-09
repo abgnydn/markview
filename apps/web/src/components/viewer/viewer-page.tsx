@@ -34,6 +34,7 @@ const AiChat = lazy(() => import('@/components/viewer/ai-chat').then((m) => ({ d
 import { ShareStatus } from '@/components/collab/share-status';
 import { PresenceAvatars } from '@/components/collab/presence-avatars';
 import { RelatedNotes } from '@/components/viewer/related-notes';
+import { BacklinksPanel } from '@/components/viewer/backlinks-panel';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
 import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
 const PaintingWorld = lazy(() => import('@/components/atmosphere/painting-world').then((m) => ({ default: m.PaintingWorld })));
@@ -463,6 +464,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
           <div className="viewer-right-rail">
             <TableOfContents headings={headings} scrollContainerRef={contentRef} />
             <MiniMap refreshKey={activeFileId ?? ''} />
+            <BacklinksPanel fileId={activeFileId} workspaceId={activeWorkspaceId} />
             <RelatedNotes
               content={activeFileContent}
               fileId={activeFileId}
