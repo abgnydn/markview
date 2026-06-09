@@ -1,4 +1,4 @@
-const CACHE_NAME = 'markview-v3';
+const CACHE_NAME = 'markview-v4';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -26,10 +26,19 @@ self.addEventListener('fetch', (event) => {
     return; // Let the browser handle cross-origin and POST requests directly
   }
 
-  // Network-first for navigation, cache-first for assets
+  // Network-first for navigation; refresh the cached app-shell on every
+  // successful load so the offline copy never goes stale (a stale '/'
+  // references hashed chunk URLs that may have been evicted → broken
+  // offline). Fall back to the cached shell when the network is down.
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match('/'))
+      fetch(event.request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/', copy));
+          return res;
+        })
+        .catch(() => caches.match('/'))
     );
   } else {
     event.respondWith(

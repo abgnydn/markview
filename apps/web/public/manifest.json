@@ -1,13 +1,13 @@
 {
   "name": "MarkView",
   "short_name": "MarkView",
-  "description": "High-performance embeddable markdown rendering stack & native offline viewer",
+  "description": "A calm, local-first markdown editor — write, organize, and read offline. Your notes stay in your browser.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0d1117",
-  "theme_color": "#0d1117",
+  "background_color": "#0b0a0d",
+  "theme_color": "#0b0a0d",
   "icons": [
     {
       "src": "/icon-192.png",
