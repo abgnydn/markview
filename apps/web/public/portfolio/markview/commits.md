@@ -1,5 +1,34 @@
 # Commits — markview
 
+## 2026-06-09
+
+- `12:39` **chore(release): desktop 0.3.0** — +8 −8 — [`5dc04d8`](https://github.com/abgnydn/markview/commit/5dc04d8afdc01e15ee8c9a068cbe690245c06209)
+- `12:18` **feat(editor): selection format bubble** — +111 −0 — [`70123a7`](https://github.com/abgnydn/markview/commit/70123a7a7dae1b3b180fc1dbc334d9d32098e3ea)
+- `12:14` **feat(editor): smart typography — curly quotes, em dash, ellipsis, arrow** — +109 −0 — [`fc2defc`](https://github.com/abgnydn/markview/commit/fc2defcacd80ecb31a2326d104ff7873ab3d6f12)
+- `12:12` **feat(editor): list continuation + toggle formatting + fuller shortcuts** — +77 −28 — [`fe5fc84`](https://github.com/abgnydn/markview/commit/fe5fc8412e4ec3ce5188714065238ccd02e111ea)
+- `11:58` **feat(pkm): backlinks panel — "what links here" for the active note** — +169 −0 — [`056d8cf`](https://github.com/abgnydn/markview/commit/056d8cf72a1612b49186d793963fafb2e37ef45b)
+- `11:56` **feat(pkm): transclusion — ![[note]] / ![[note#heading]] embeds inline** — +164 −3 — [`6c6e7ec`](https://github.com/abgnydn/markview/commit/6c6e7ecca28df928d4ce641757c4e888344a24da)
+- `11:52` **feat(editor): paste/drop images — local-first asset storage** — +150 −1 — [`2e26266`](https://github.com/abgnydn/markview/commit/2e26266c7d4f0ab8649a0ea072e2a5a807b10eb8)
+- `11:42` **feat(editor): slash-command menu for inserting blocks** — +76 −0 — [`c100dca`](https://github.com/abgnydn/markview/commit/c100dcaad5f8610b60745c864625f33ecd51c0a6)
+- `11:39` **feat(editor): smart-paste — spreadsheet→table, URL-over-selection→link** — +126 −17 — [`9caef34`](https://github.com/abgnydn/markview/commit/9caef349a9e9418cc753b48f745f05f409fdc4be)
+- `11:36` **feat(markdown): interactive task lists — click to toggle, persists to…** — +59 −1 — [`6826591`](https://github.com/abgnydn/markview/commit/6826591f6c80ecccbc17eff2ef3cd6b558353d0f)
+- `11:32` **feat(markdown): ==highlight==, ^sup^, ~sub~, and :emoji: shortcodes** — +146 −1 — [`286c99d`](https://github.com/abgnydn/markview/commit/286c99df68ca9f4302d4249476b52d3d1b972868)
+- `10:38` **feat(palette): jump to any file from ⌘P** — +10 −2 — [`b4831cb`](https://github.com/abgnydn/markview/commit/b4831cb5200090ccbdf3dd6b5b2ce04562958387)
+- `10:36` **feat(web): CSP + security headers, lazy-load editor off landing, real…** — +2244 −75 — [`ba60dfb`](https://github.com/abgnydn/markview/commit/ba60dfb19d61b70d27f23c911473c8f48e391ab8)
+- `08:09` **style(zen): restyle overflow menu + logo-only brand mark in topbar an…** — +120 −9 — [`a2cb001`](https://github.com/abgnydn/markview/commit/a2cb0016ea5a05815b15440f3b76a9868dd6979a)
+- `08:09` **feat(desktop): restore file-open bridge, register associations, bump …** — +94 −12 — [`d5776bb`](https://github.com/abgnydn/markview/commit/d5776bb59d76fbee323d1be2c4b7982c1cde661f)
+- `08:09` **fix(pwa): match app colours, refresh offline shell, clearer description** — +15 −6 — [`ff227a5`](https://github.com/abgnydn/markview/commit/ff227a5e65c3896b597daf96cf0bf8bca5055f8a)
+- `08:09` **refactor(renderer): extract decodeHtmlEntities — was copy-pasted 4×** — +19 −36 — [`70b92b6`](https://github.com/abgnydn/markview/commit/70b92b661ab2936fc4e007ed4a6cc0116747c91c)
+- `08:09` **refactor(annotations): one store — toolbar/panel UI over re-anchoring…** — +179 −115 — [`d3d124c`](https://github.com/abgnydn/markview/commit/d3d124cf0947b7bf4cf1a95ff43dabfdeb756e19)
+- `08:09` **fix(export): preserve nested lists in DOCX and tables-with-text in PPTX** — +85 −18 — [`7df2ed4`](https://github.com/abgnydn/markview/commit/7df2ed48c61cb4618e334306ff2fa42ad2304ccd)
+- `08:09` **perf+fix: debounce preview, ref-ify graph hover, memoize processor; c…** — +150 −106 — [`8131d1f`](https://github.com/abgnydn/markview/commit/8131d1f27d7f101b63c70e0a6eacd58e9bc34c82)
+- `08:09` **fix(security): escape code-fence plugin output; close collab/reorder/…** — +208 −22 — [`6b4edb5`](https://github.com/abgnydn/markview/commit/6b4edb5c575b7ef27774643a0f4473fbc538a2e7)
+- `08:09` **refactor(atmosphere): share one gaussian-splat renderer + O(N) counti…** — +225 −220 — [`da72865`](https://github.com/abgnydn/markview/commit/da728653520397a7d86562013d05a38b1381790c)
+
+## 2026-06-08
+
+- `21:53` **chore(portfolio): daily sync 2026-06-08** — +1215 −1058 — [`617eff8`](https://github.com/abgnydn/markview/commit/617eff86053f5f0846bb4e70e203781dcd19d49c)
+
 ## 2026-06-07
 
 - `21:18` **chore(portfolio): daily sync 2026-06-07** — +30 −26 — [`26ce51a`](https://github.com/abgnydn/markview/commit/26ce51ab051ce4e8f29d5c7a74e0070666014ec4)
@@ -50,35 +79,3 @@
 ## 2026-05-31
 
 - `21:03` **chore(portfolio): daily sync 2026-05-31** — +56 −51 — [`388dbe8`](https://github.com/abgnydn/markview/commit/388dbe88a091b7a53a6c8cddafb2763915659ce7)
-
-## 2026-05-30
-
-- `21:03` **chore(portfolio): daily sync 2026-05-30** — +59 −55 — [`af8f75b`](https://github.com/abgnydn/markview/commit/af8f75bf4af13380248a383a9cc9fd9219f020d2)
-- `10:37` **fix(atmosphere): accumulation now actually piles up** — +22 −9 — [`24c5314`](https://github.com/abgnydn/markview/commit/24c53146be04311d655dae29dac4cd1619c4b284)
-- `10:34` **ci: deploy workflow for Cloudflare Pages** — +56 −0 — [`71c9265`](https://github.com/abgnydn/markview/commit/71c9265a20b7c36bcdd9051dd9eecad47af75a5a)
-
-## 2026-05-29
-
-- `21:54` **chore(portfolio): daily sync 2026-05-29** — +871 −874 — [`0b9726a`](https://github.com/abgnydn/markview/commit/0b9726a2cf6be67e5ecbc61d2ca649615b80f10c)
-- `14:24` **feat(web): pre-render /projects so the page is visible without JS** — +165 −1 — [`c210b71`](https://github.com/abgnydn/markview/commit/c210b71e1f53d66417f8ca25861113edfaa68d3d)
-- `11:09` **feat(atmosphere): persistent accumulation layer — snow piles, petals …** — +100 −2 — [`1776edc`](https://github.com/abgnydn/markview/commit/1776edcb93ac047311eb6e411ff366d302f60806)
-- `10:55` **feat(atmosphere): shader post-processing pass — bloom, SSAO, god rays…** — +125 −24 — [`6a0f1e6`](https://github.com/abgnydn/markview/commit/6a0f1e63a9ed87b6b9ecaacb498ea813ef359693)
-- `10:23` **fix(atmosphere): drop cursor parallax + 4 particle realism upgrades** — +62 −45 — [`e480938`](https://github.com/abgnydn/markview/commit/e480938d3cbc5e7b87730016b04f959cb5235f1a)
-- `09:07` **chore(cleanup): drop 6 features + consolidate 3 — ~700 lines removed** — +326 −2439 — [`fbeffa3`](https://github.com/abgnydn/markview/commit/fbeffa3c259772fd6f820a2813e0190765084d32)
-- `07:55` **tweak(atmosphere): halve the aerial-perspective haze** — +6 −2 — [`e36c13d`](https://github.com/abgnydn/markview/commit/e36c13dac8cc866bb5b64a6b7ee1bf4488a3d668)
-- `07:44` **fix(atmosphere): WCAG-AA text contrast under bright paintings** — +38 −7 — [`4d19940`](https://github.com/abgnydn/markview/commit/4d1994098b9d7522fd004dc5c3b9032a232f945f)
-- `06:45` **revert(atmosphere): disable cinemagraph path — 1024×576 looked soft** — +12 −7 — [`a0a5ed1`](https://github.com/abgnydn/markview/commit/a0a5ed15317c2915771cb2f970ec93cf2f8f2c8a)
-
-## 2026-05-28
-
-- `21:58` **chore(portfolio): daily sync 2026-05-28** — +399 −407 — [`024a093`](https://github.com/abgnydn/markview/commit/024a0934d98951df59f40cbc735141e8e21281be)
-- `18:00` **fix(atmosphere): attach video to DOM + timeout fallback + SW cache bump** — +35 −8 — [`119a732`](https://github.com/abgnydn/markview/commit/119a732239c4e8f3ab038b0ed344e50e083fac22)
-- `17:51` **feat(atmosphere): ship 14 cinemagraph MP4s — paintings are now alive** — +0 −0 — [`ea9a4b2`](https://github.com/abgnydn/markview/commit/ea9a4b218fde4f4308c55241a03bbcfa429dc247)
-- `17:19` **refactor(atmosphere): one bottom-left strip — drop sidebar atmosphere…** — +159 −266 — [`4e995f7`](https://github.com/abgnydn/markview/commit/4e995f7a33330ba2e5ce4434da1847e2053c78d5)
-- `17:08` **fix(particles): curl-noise wind + z-depth parallax (AAA pattern)** — +66 −41 — [`6d0c3e6`](https://github.com/abgnydn/markview/commit/6d0c3e67290a9896e3f7a028831c6b8963c9f18d)
-- `17:01` **fix(particles): natural shapes + sparser densities — stop looking spr…** — +106 −72 — [`0f0b1c6`](https://github.com/abgnydn/markview/commit/0f0b1c6ff0930bd1da1a61313e2e9b110daf05bb)
-- `16:53` **feat(projects): 90-day heatmap + 20 UI affordances on /projects** — +2023 −909 — [`246463c`](https://github.com/abgnydn/markview/commit/246463c9a25051cf51e981ec399000fc68037733)
-- `16:51` **feat(atmosphere): GPU particle system — thousands of particles + wind…** — +478 −18 — [`0504af4`](https://github.com/abgnydn/markview/commit/0504af440a12745a79e2430571465771ea63f609)
-- `16:08` **feat(cinemagraph): Colab notebook + Replicate cloud backend** — +311 −60 — [`a9f9bce`](https://github.com/abgnydn/markview/commit/a9f9bcebac246341ae0bf42659ccd90d0bfb159a)
-- `15:04` **feat(atmosphere): cinemagraph pipeline — SVD renderer + Three.js Vide…** — +337 −16 — [`53bc354`](https://github.com/abgnydn/markview/commit/53bc354d02f3bd6f6ffaa22a0b73747cfbc96ba4)
-- `14:33` **feat(atmosphere): living paintings — depth-band motion in the shader** — +15874 −10 — [`5962fc5`](https://github.com/abgnydn/markview/commit/5962fc528b50654cfd4197e99150bb058953cb41)

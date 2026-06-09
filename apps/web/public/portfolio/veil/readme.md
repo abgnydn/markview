@@ -2,6 +2,8 @@
 
 > A privacy layer between your app and any third-party LLM. The model sees `EMAIL_1`; the user sees `alice@acme.com` back.
 
+**🌐 [veil-7xs.pages.dev](https://veil-7xs.pages.dev/)** — what it does, in one page.
+
 [![CI](https://github.com/abgnydn/veil/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/veil/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 [![Rust](https://img.shields.io/badge/Rust-stable-orange.svg)](https://www.rust-lang.org/)
@@ -65,6 +67,29 @@ veil classifies content into four tiers and enforces two hard invariants **in co
 ## k-anonymity (cohort blending)
 
 For `private` content, pseudonymization hides the *values* but the prompt still reveals one real user. With `cohortK>1`, veil fans the prompt out alongside `k-1` siblings whose pseudonyms are drawn from a disjoint pool, then **crypto-scrambles every number into one space** so real and siblings are indistinguishable — a wire-side adversary picks the real one with probability `1/k` (entropy `log2(k)`). The real response is un-scrambled and reverse-mapped; siblings are dropped. Off by default (costs k× provider calls). See [`docs/CONTRACT.md §9`](./docs/CONTRACT.md) for the closed/open caveats.
+
+## See it in 10 seconds
+
+```bash
+./scripts/demo.sh
+```
+
+Drives the real enforcer with a stand-in cloud provider that **records the exact
+bytes it receives** — no API key, nothing sent anywhere:
+
+```
+You type:
+  Email the Q3 deck at /Users/baris/q3.pdf to alice@acme.com, CC bob@acme.com …
+What the cloud actually receives:        (captured off the wire, tier=private)
+  Email the Q3 deck at PATH_1 to EMAIL_1, CC EMAIL_2 …      ← identifiers gone
+What you get back:                       (real values restored locally)
+  Done — Email the Q3 deck at /Users/baris/q3.pdf to alice@acme.com …
+
+You type:
+  deploy prod with AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY
+What the cloud receives:
+  ✗ nothing.  secret-tier → withheld, fail-closed.
+```
 
 ## Quick start
 
@@ -175,7 +200,7 @@ All roadmap items are shipped; remaining work is documented hardening:
 
 - ✅ Pseudonymization round-trip (engine + streaming reverse-map)
 - ✅ Tier enforcement with fail-closed invariants (`VeilEnforcer`)
-- ✅ Learned NER detector (GLiNER) — validated, ~F1 0.89 at threshold 0.5 ([eval](./examples/gliner-detector/README.md))
+- ✅ Learned NER detector (GLiNER) — benchmarked on ai4privacy: recall 0.92 / precision 0.45 (F1 0.60) at threshold 0.5; recall-strong, which is what a privacy filter needs ([details](./examples/gliner-detector/README.md))
 - ✅ MCP consumer enforcing tier algebra end-to-end
 - ✅ k-anonymity cohort blending (pool-range / determinism / positional fingerprints closed)
 - ⏳ Deferred: content-template hiding (needs a local vector store), the timing side-channel, a published accuracy benchmark. See [`docs/VEIL.md §4.3`](./docs/VEIL.md).

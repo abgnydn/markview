@@ -1,5 +1,15 @@
 # Commits — veil
 
+## 2026-06-09
+
+- `11:23` **feat(web): landing page, deployed to Cloudflare Pages** — +156 −0 — [`b6f98c0`](https://github.com/abgnydn/veil/commit/b6f98c0afcfc3dafcce93ec9b3549a1164fbd39f)
+- `08:53` **feat(examples): live demo — a real Claude fixes the bug via `claude -…** — +96 −5 — [`b826f75`](https://github.com/abgnydn/veil/commit/b826f750038f42a1852e5ba7c585f62b59adbc22)
+- `08:33` **feat(examples): coding-agent demo — file reads sanitized before the m…** — +1562 −2 — [`6a9c127`](https://github.com/abgnydn/veil/commit/6a9c1270840bb1730b736bb06607b3a6ff4d159f)
+- `08:05` **feat: watch-the-wire demo + fix credential detection it exposed** — +387 −3 — [`d6426ef`](https://github.com/abgnydn/veil/commit/d6426efa69328181fa1d46d1be695a964261180b)
+- `06:45` **feat(gliner): real accuracy benchmark on ai4privacy (corrects the han…** — +146 −26 — [`b72cdd8`](https://github.com/abgnydn/veil/commit/b72cdd8fef0f1d01c8ccec285822b2887d758bcf)
+- `06:39` **feat(cohort): opt-in content-hiding via decoy corpus** — +313 −15 — [`a640d47`](https://github.com/abgnydn/veil/commit/a640d47bf6dd4cbab39963b8632f6886156252ee)
+- `06:34` **chore(ts): remove legacy router.ts + cohort.ts stub** — +4 −519 — [`21d9f5e`](https://github.com/abgnydn/veil/commit/21d9f5e08ce3805dbe93854b0e9d89439966d424)
+
 ## 2026-06-08
 
 - `13:45` **docs(readme): refresh to the real architecture (engine + shell + GLiN…** — +126 −97 — [`50220ca`](https://github.com/abgnydn/veil/commit/50220ca0dbf727641e34c0501d89ca110ca94e80)

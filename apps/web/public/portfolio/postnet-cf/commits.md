@@ -1,5 +1,12 @@
 # Commits — postnet-cf
 
+## 2026-06-09
+
+- `11:23` **results(ntk): lockstep run — η runaway + DO eviction; -0.30 is uncont…** — +377 −0 — [`f25502f`](https://github.com/abgnydn/postnet-cf/commit/f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41)
+- `08:49` **fix(ntk): nonlocal theta in lockstep reconstruct_apply — UnboundLocal…** — +1 −0 — [`bde3aa7`](https://github.com/abgnydn/postnet-cf/commit/bde3aa76ff24e181a74ebba90529007ffbe7ea65)
+- `08:16` **feat(ntk): lockstep --virtual-workers mode for clean full-rate co-tra…** — +329 −1 — [`fd18d4b`](https://github.com/abgnydn/postnet-cf/commit/fd18d4b9e5b594033a92026f170271f093c7ac7d)
+- `08:01` **results(ntk): fixed 2-worker re-run — quarantine gone, drift gone, -0…** — +672 −0 — [`a04c75b`](https://github.com/abgnydn/postnet-cf/commit/a04c75be294c92b63db4da770126b2c41a2b6d3b)
+
 ## 2026-06-08
 
 - `08:19` **fix(ntk): per-flip η + winner-baseline audit — kills 2-worker false q…** — +36 −7 — [`fd27a5c`](https://github.com/abgnydn/postnet-cf/commit/fd27a5ca448b7703b7089aada47673665f2a5237)
@@ -72,10 +79,3 @@
 - `06:10` **phase 30: CLAUDE.md with Resume here block** — +41 −0 — [`98d6d89`](https://github.com/abgnydn/postnet-cf/commit/98d6d89ae5e1ed83164eacbe1a5e429a84347a65)
 - `06:08` **phase 29: docs/README.md — entry point for the docs/ folder** — +23 −0 — [`1228723`](https://github.com/abgnydn/postnet-cf/commit/12287235d4a8da624e2173732277b3a475dd29eb)
 - `06:07` **phase 28: docs/OPEN_QUESTIONS.md — explicit research inventory** — +82 −0 — [`8e59a8b`](https://github.com/abgnydn/postnet-cf/commit/8e59a8b834540ab81c393ac0dfc014ef8328c6fa)
-- `06:06` **phase 27: README deploy section — R2 prerequisite** — +7 −0 — [`58ba265`](https://github.com/abgnydn/postnet-cf/commit/58ba2653c0feff34354db658d8702fdd64599cb9)
-- `05:33` **phase 26: DEPLOYED to *.workers.dev** — +2 −0 — [`39b5bbd`](https://github.com/abgnydn/postnet-cf/commit/39b5bbd143b1cb3a403a4da22486095c410eef05)
-
-## 2026-05-22
-
-- `11:10` **phase 25: arXiv-style paper draft** — +115 −0 — [`db3a78c`](https://github.com/abgnydn/postnet-cf/commit/db3a78ca7b56ba371e474adf2e09fda9f84442e7)
-- `11:08` **phase 24: README phase table catches up to phase 23** — +9 −0 — [`8b403a7`](https://github.com/abgnydn/postnet-cf/commit/8b403a71f7ffcb6fb00bad5a3d315856e9234994)

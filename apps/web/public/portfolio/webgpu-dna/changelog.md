@@ -9,6 +9,76 @@ from `0.1.0`.
 
 _Nothing pending. Open a PR or issue to start the next entry._
 
+## [0.7.0] — 2026-06-09 — real Born excitation, σ_exc fudge removed
+
+### Changed
+- **Excitation model: scaled-Emfietzoglou → real Born cross section** (`sigma_excitation_e_born.dat`),
+  and **`SIGMA_EXC_SCALE` 0.39 → 1.0 (removed)** — the excitation is now parameter-free.
+  A physics-list audit (E29) showed both Geant4 oracles — `dnaphysics` (cascade) and
+  `chem6` (chemistry) — register `G4EmDNAPhysics_option2`, which uses
+  `G4DNABornExcitationModel` for **all** electron energies (no Emfietzoglou for opt2).
+  So Born is the reference, and the old flat 0.39×Emfietzoglou approximation left
+  low-energy secondaries over-excited ~4× (Emf/Born is ~2.5× at keV but ~10× at ~10 eV).
+- **Closes the chronic sub-keV CSDA deficit** — the project's weakest spot, and the
+  energy range where Geant4-DNA matters most:
+  - CSDA 100 eV **0.782→0.956×**, 300 eV 0.852→**0.986×**, 500 eV 0.894→**0.994×**,
+    1 keV 0.933→**0.987×**; all 8 energies now **0.956–1.005×**
+  - cascade ions 0.937→**0.942×**; chemistry RMS 6.8→7.0% (flat; G(H) overshoot 1.055→0.939× fixed)
+  - energy conservation 99.89%, primary bit-exact, 46/46 tests
+- **No physics-list seam**: cascade and chemistry are validated against the *same*
+  reference (option2) — resolves a methodological concern.
+- SSB ratio drifted 2.72→3.26 (the calibrated `P_indirect`, tuned for the prior
+  physics) — reported honestly as a calibrated fit, **not** re-tuned to the band.
+
+## [0.6.1] — 2026-06-09 — σ_exc → Born level (clean win)
+
+### Changed
+- **`SIGMA_EXC_SCALE` 0.5 → 0.39 (≈ Born level).** The v0.6.0 full cascade
+  unlocked a better excitation scale: 0.5 had been tuned for the *truncated*
+  cascade (over-exciting to compensate for the missing tertiary radicals). With
+  the full cascade supplying the radicals, ≈Born excitation improves **every
+  axis** and nothing regresses — and it shrinks the Emfietzoglou divergence
+  (more Geant4-faithful):
+  - CSDA: 100 eV 0.736→**0.782×**, 300 eV 0.810→**0.852×**, 500 eV 0.857→**0.894×**,
+    1 keV 0.912→**0.933×**, 10 keV 0.994→**0.997×**
+  - cascade ions: 0.931→**0.937×**
+  - chemistry RMS vs chem6: 7.6→**6.8%** (G(H) overshoot 1.085→1.055×, G(eaq) 0.887→0.899×)
+  - SSB ratio: **2.72** (in PARTRAC band)
+- This corrects E26 (which had inferred the residual was an immovable σ_exc
+  floor) and E7e (σ_exc can't be lowered without breaking chemistry) — both were
+  true for the truncated cascade, false for the full one (E28).
+
+## [0.6.0] — 2026-06-09 — full electron cascade
+
+### Changed
+- **The secondary shader now tracks the full electron cascade (tertiary / gen3+).**
+  Previously `secondary.wgsl` absorbed tertiary electrons in place, truncating the
+  cascade at depth 2. It now emits them into `sec_buf` (G4DNABornAngle direction
+  sampling, OH+H₃O⁺ products, deferred eaq), and `dispatch.ts` grows the Phase B
+  wavefront in chunks (re-reading the secondary counter) so they get tracked.
+  `SP` gains a `max_sec` field (repurposed `_pad2`).
+- **This resolves the long-standing cascade-ion deficit — a clean win on every axis:**
+  - cascade ions @10 keV **0.766× → 0.931×** vs Geant4
+  - chemistry RMS vs chem6 **19.7% → 7.6%** (G(H₂) 0.74→0.99×, G(H₂O₂) 0.69→0.93×
+    — the long-standing chem6 1 µs gap is closed)
+  - SSB indirect/direct ratio **2.53** (PARTRAC band, no recalibration)
+  - primary track **bit-exact** (195.4 ionisations/primary vs Geant4 195.6, by
+    trackID), energy conserved, validated across all 8 ESTAR energies + the browser
+  - only G(H) slightly overshoots (0.93× → 1.09×)
+
+### Investigation (committed honestly, including a self-caught error)
+- **E20** — analysed the 6.8 GB Geant4 ntuple by trackID: primary ionisations are
+  bit-exact; the entire deficit is the secondary cascade.
+- **E21** — decomposed by cascade generation: 80% of the deficit is the untracked
+  tertiary (gen3+) cascade.
+- **E22** — implemented the tertiary cascade.
+- **E23–E24 (retracted)** — a normalization bug in the *analysis* (`run_irt` invoked
+  with `n_therm=10000` instead of 4096, under-normalising G by 0.41×) made the fix
+  look like it broke chemistry; two experiments then chased a phantom
+  "over-recombination". Caught by verify-before-asserting when the production
+  baseline came back wrong.
+- **E25** — corrected: with proper normalization the cascade *improves* every species.
+
 ## [0.5.0] — 2026-06-08 — parameter-free pipeline
 
 ### Changed
