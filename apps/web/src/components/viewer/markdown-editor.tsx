@@ -25,6 +25,7 @@ import type { Awareness } from 'y-protocols/awareness';
 import { MarkdownRenderer } from './markdown-renderer';
 import { coAuthor } from './editor-coauthor';
 import { markviewCompletions, invalidateCompletionCache } from './editor-completions';
+import { clipboardToTable } from './editor-paste';
 
 interface MarkdownEditorProps {
   content: string;
@@ -301,26 +302,50 @@ function buildExtensions(
     syntaxHighlighting(markviewHighlight),
     focusParagraphPlugin,
     markviewTheme,
-    // R16 — Smart-paste: when the user pastes a bare URL that ends
-    // up on its own line (after the paste), auto-convert it to a
-    // markdown link `[host](url)`. Future work: a CORS proxy on the
-    // share-worker for og:title fetching → real rich cards.
+    // Smart-paste:
+    //   1. a URL pasted over a selection  → [selection](url)
+    //   2. spreadsheet / HTML-table data  → a markdown table
+    //   3. a bare URL on an empty line    → [host](url)
     EditorView.domEventHandlers({
       paste(event, view) {
-        const text = event.clipboardData?.getData('text/plain') ?? '';
-        const m = text.trim().match(/^(https?:\/\/[^\s]+)$/i);
-        if (!m) return false;
-        let host = '';
-        try { host = new URL(m[1]!).host.replace(/^www\./, ''); } catch { return false; }
-        // Replace only if the paste lands on an otherwise-empty line.
+        const cd = event.clipboardData;
+        if (!cd) return false;
+        const text = cd.getData('text/plain') ?? '';
+        const html = cd.getData('text/html') ?? '';
         const { state } = view;
-        const line = state.doc.lineAt(state.selection.main.head);
-        if (line.text.trim() !== '') return false;
-        event.preventDefault();
-        view.dispatch({
-          changes: { from: line.from, to: line.to, insert: `[${host}](${m[1]!})` },
-        });
-        return true;
+        const sel = state.selection.main;
+        const urlMatch = text.trim().match(/^(https?:\/\/[^\s]+)$/i);
+
+        // 1. URL over a non-empty selection → wrap it as a link.
+        if (urlMatch && !sel.empty) {
+          const selected = state.sliceDoc(sel.from, sel.to);
+          event.preventDefault();
+          view.dispatch({ changes: { from: sel.from, to: sel.to, insert: `[${selected}](${urlMatch[1]})` } });
+          return true;
+        }
+
+        // 2. Tabular paste (Excel / Sheets / web table) → markdown table.
+        const table = clipboardToTable(text, html);
+        if (table) {
+          event.preventDefault();
+          view.dispatch({
+            changes: { from: sel.from, to: sel.to, insert: table },
+            selection: { anchor: sel.from + table.length },
+          });
+          return true;
+        }
+
+        // 3. Bare URL on an otherwise-empty line → [host](url).
+        if (urlMatch) {
+          let host = '';
+          try { host = new URL(urlMatch[1]!).host.replace(/^www\./, ''); } catch { return false; }
+          const line = state.doc.lineAt(sel.head);
+          if (line.text.trim() !== '') return false;
+          event.preventDefault();
+          view.dispatch({ changes: { from: line.from, to: line.to, insert: `[${host}](${urlMatch[1]!})` } });
+          return true;
+        }
+        return false;
       },
     }),
     // AI co-author — Tab at line-end spawns a ghost continuation in
