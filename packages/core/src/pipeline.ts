@@ -81,7 +81,10 @@ const sanitizeSchema = {
     // SECURITY: 'data:' intentionally NOT allowed for src — SVG data-URIs
     // can carry inline JavaScript that fires on render. If you need
     // inline images, encode them server-side and serve via http(s).
-    src: ['http', 'https'],
+    // 'asset:' is a private scheme for local IndexedDB images — inert in the
+    // DOM (the browser can't load it) until the resolveAssets enhancer swaps
+    // it for an object URL, so it carries no XSS surface.
+    src: ['http', 'https', 'asset'],
     cite: ['http', 'https'],
   },
   allowComments: false,

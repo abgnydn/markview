@@ -68,11 +68,26 @@ export interface DBEmbedding {
   vector: ArrayBuffer;
 }
 
+/**
+ * A pasted / dropped image, stored as a Blob and referenced from markdown as
+ * `![alt](asset:<id>)`. The renderer resolves the id to a transient object
+ * URL — keeps images local-first with no upload, and out of the document text
+ * (which stays small and diffable).
+ */
+export interface DBAsset {
+  id: string;
+  workspaceId: string;
+  blob: Blob;
+  mime: string;
+  createdAt: number;
+}
+
 class MarkViewDB extends Dexie {
   workspaces!: EntityTable<DBWorkspace, 'id'>;
   files!: EntityTable<DBFile, 'id'>;
   snapshots!: EntityTable<DBSnapshot, 'id'>;
   embeddings!: EntityTable<DBEmbedding, 'id'>;
+  assets!: EntityTable<DBAsset, 'id'>;
 
   constructor() {
     super('markview');
@@ -112,6 +127,15 @@ class MarkViewDB extends Dexie {
       files: 'id, workspaceId, [workspaceId+order]',
       snapshots: 'id, fileId, [fileId+createdAt], createdAt',
       embeddings: 'id, fileId, workspaceId, [workspaceId+fileId]',
+    });
+
+    // v5 — assets table for pasted/dropped images
+    this.version(5).stores({
+      workspaces: 'id, updatedAt',
+      files: 'id, workspaceId, [workspaceId+order]',
+      snapshots: 'id, fileId, [fileId+createdAt], createdAt',
+      embeddings: 'id, fileId, workspaceId, [workspaceId+fileId]',
+      assets: 'id, workspaceId, createdAt',
     });
   }
 }

@@ -18,7 +18,26 @@
  * re-running on the same DOM doesn't double-wire.
  */
 
+import { getAssetUrl } from '@/lib/assets';
+
 type Cleanup = (() => void) | void;
+
+// ── Local image assets — swap `asset:<id>` srcs for object URLs ──────────
+export function resolveAssets(root: HTMLElement): Cleanup {
+  const imgs = root.querySelectorAll<HTMLImageElement>('img[src^="asset:"]');
+  imgs.forEach((img) => {
+    const id = (img.getAttribute('src') || '').slice('asset:'.length);
+    if (!id) return;
+    void getAssetUrl(id).then((url) => {
+      if (url) {
+        img.src = url;
+      } else {
+        img.alt = img.alt || 'image not found';
+        img.style.opacity = '0.4';
+      }
+    });
+  });
+}
 
 // ── Paragraph scroll-reveal ─────────────────────────────────────────────
 export function revealOnScroll(root: HTMLElement): Cleanup {
@@ -464,6 +483,7 @@ export function externalLinkTooltips(root: HTMLElement): Cleanup {
 
 /** All self-contained enhancers, in apply order. */
 export const DOM_ENHANCERS = [
+  resolveAssets,
   revealOnScroll,
   marginFootnotes,
   wikilinkFlyIn,

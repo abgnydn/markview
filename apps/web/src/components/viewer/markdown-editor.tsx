@@ -267,6 +267,37 @@ const markviewTheme = EditorView.theme(
   },
 );
 
+/** First image File from a clipboard / drag DataTransfer, or null. */
+function imageFromTransfer(dt: DataTransfer): File | null {
+  for (const item of Array.from(dt.items ?? [])) {
+    if (item.kind === 'file' && item.type.startsWith('image/')) {
+      const f = item.getAsFile();
+      if (f) return f;
+    }
+  }
+  for (const f of Array.from(dt.files ?? [])) {
+    if (f.type.startsWith('image/')) return f;
+  }
+  return null;
+}
+
+/** Store an image as a local asset and insert `![alt](asset:id)` at `pos`
+ *  (or the cursor). Returns the position just after the inserted text. */
+async function insertImageAsset(
+  view: EditorView,
+  file: File,
+  workspaceId: string,
+  pos?: number,
+): Promise<number> {
+  const { storeAsset } = await import('@/lib/assets');
+  const id = await storeAsset(file, workspaceId);
+  const alt = (file.name || 'image').replace(/\.[^.]+$/, '');
+  const at = pos ?? view.state.selection.main.head;
+  const md = `![${alt}](asset:${id})`;
+  view.dispatch({ changes: { from: at, insert: md }, selection: { anchor: at + md.length } });
+  return at + md.length;
+}
+
 function buildExtensions(
   onDocChange: (doc: string) => void,
   collab: { yText?: Y.Text; awareness?: Awareness },
@@ -305,6 +336,7 @@ function buildExtensions(
     focusParagraphPlugin,
     markviewTheme,
     // Smart-paste:
+    //   0. an image  → store locally + insert ![](asset:id)
     //   1. a URL pasted over a selection  → [selection](url)
     //   2. spreadsheet / HTML-table data  → a markdown table
     //   3. a bare URL on an empty line    → [host](url)
@@ -312,6 +344,15 @@ function buildExtensions(
       paste(event, view) {
         const cd = event.clipboardData;
         if (!cd) return false;
+
+        // 0. Image on the clipboard → persist as a local asset.
+        const imageFile = imageFromTransfer(cd);
+        if (imageFile && workspaceId) {
+          event.preventDefault();
+          void insertImageAsset(view, imageFile, workspaceId);
+          return true;
+        }
+
         const text = cd.getData('text/plain') ?? '';
         const html = cd.getData('text/html') ?? '';
         const { state } = view;
@@ -348,6 +389,17 @@ function buildExtensions(
           return true;
         }
         return false;
+      },
+      drop(event, view) {
+        const files = Array.from(event.dataTransfer?.files ?? []).filter((f) => /^image\//.test(f.type));
+        if (files.length === 0 || !workspaceId) return false;
+        event.preventDefault();
+        const pos = view.posAtCoords({ x: event.clientX, y: event.clientY }) ?? view.state.selection.main.head;
+        void (async () => {
+          let at = pos;
+          for (const f of files) at = await insertImageAsset(view, f, workspaceId, at);
+        })();
+        return true;
       },
     }),
     // AI co-author — Tab at line-end spawns a ghost continuation in
