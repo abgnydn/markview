@@ -1,6 +1,6 @@
 [package]
 name = "markview-desktop"
-version = "0.2.0"
+version = "0.3.0"
 description = "MarkView — local-first markdown editor with real-time collab"
 authors = ["Ahmet Barış Günaydın <hi@barisgunaydin.com>"]
 license = "Apache-2.0"

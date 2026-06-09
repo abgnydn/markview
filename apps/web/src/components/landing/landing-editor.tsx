@@ -29,10 +29,10 @@ const RELEASES_URL = 'https://github.com/abgnydn/markview/releases/latest';
 const DL = (asset: string) =>
   `https://github.com/abgnydn/markview/releases/latest/download/${asset}`;
 
-const ASSET_MAC_ARM = 'MarkView_0.2.0_aarch64.dmg';
-const ASSET_MAC_X64 = 'MarkView_0.2.0_x64.dmg';
-const ASSET_WIN_SETUP = 'MarkView_0.2.0_x64-setup.exe';
-const ASSET_LINUX_APPIMAGE = 'MarkView_0.2.0_amd64.AppImage';
+const ASSET_MAC_ARM = 'MarkView_0.3.0_aarch64.dmg';
+const ASSET_MAC_X64 = 'MarkView_0.3.0_x64.dmg';
+const ASSET_WIN_SETUP = 'MarkView_0.3.0_x64-setup.exe';
+const ASSET_LINUX_APPIMAGE = 'MarkView_0.3.0_amd64.AppImage';
 
 function pickDownload(): { href: string; label: string; tooltip: string } {
   if (typeof navigator === 'undefined') {
