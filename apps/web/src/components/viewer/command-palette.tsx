@@ -109,6 +109,19 @@ export function CommandPalette() {
           : 'Vertical writing · turn on (Japanese-style)',
         run: () => document.documentElement.classList.toggle('mv-vertical'),
       },
+      {
+        id: 'toggle-typography',
+        label: (() => {
+          try { return localStorage.getItem('mv-smart-typography') === '0' ? 'Smart typography · turn on' : 'Smart typography · turn off'; }
+          catch { return 'Smart typography · toggle'; }
+        })(),
+        run: () => {
+          try {
+            const off = localStorage.getItem('mv-smart-typography') === '0';
+            localStorage.setItem('mv-smart-typography', off ? '1' : '0');
+          } catch { /* ignore */ }
+        },
+      },
     ];
 
     return [...misc, ...fileCmds, ...atmCmds, ...themeCmds, ...wsCmds];

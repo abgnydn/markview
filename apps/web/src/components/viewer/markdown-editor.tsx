@@ -27,6 +27,7 @@ import { coAuthor } from './editor-coauthor';
 import { markviewCompletions, invalidateCompletionCache } from './editor-completions';
 import { slashCommands } from './editor-slash';
 import { clipboardToTable } from './editor-paste';
+import { smartTypography } from './editor-typography';
 
 interface MarkdownEditorProps {
   content: string;
@@ -363,6 +364,7 @@ function buildExtensions(
     highlightSelectionMatches(),
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     syntaxHighlighting(markviewHighlight),
+    smartTypography(),
     focusParagraphPlugin,
     markviewTheme,
     // Smart-paste:
