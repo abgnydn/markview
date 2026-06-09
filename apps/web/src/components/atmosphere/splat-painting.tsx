@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ensureDepth, isWebGLSupported } from '@/lib/atmosphere/depth';
 import { buildGaussianCloud } from '@/lib/atmosphere/splat-cloud';
+import { createSplatRenderer } from '@/lib/atmosphere/gaussian-renderer';
 
 interface SplatPaintingProps {
   src: string;
@@ -22,14 +23,14 @@ interface SplatPaintingProps {
  *
  *  1. ensureDepth() gives a per-painting depth map (Depth Anything v2,
  *     cached). We already pay this cost for the relief mesh.
- *  2. We sample a dense grid (~55k cells) and LIFT each pixel into a
+ *  2. We sample a dense grid (32–55k cells) and LIFT each pixel into a
  *     3D Gaussian: world position from (u, v, depth), colour from the
  *     painting, a soft isotropic footprint sized to overlap neighbours.
  *     The painting stops being a displaced sheet and becomes a volume
  *     of floating pigment that coheres into the image.
  *  3. One instanced draw call renders every gaussian as a camera-facing
- *     billboard with an exp(-r²) alpha falloff. A throttled CPU radix-ish
- *     argsort keeps them back-to-front so alpha compositing is correct
+ *     billboard with an exp(-r²) alpha falloff. A throttled CPU counting
+ *     sort keeps them back-to-front so alpha compositing is correct
  *     as the camera gently orbits.
  *  4. The camera auto-orbits a few degrees + parallaxes to the cursor,
  *     so you perceive real depth — foreground motes part from the
@@ -75,7 +76,7 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
       const targetCount = window.innerWidth < 900 || dpr < 1.5 ? 32000 : 55000;
       const cloud = buildGaussianCloud(paintImg, depthResult.bitmap, targetCount);
       if (cancelled || !cloud) { setFallback(true); return; }
-      const { base, colors, seeds, count: N, splatScale, paintAspect } = cloud;
+      const { paintAspect } = cloud;
 
       // ── Three.js scene ────────────────────────────────────────────
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, premultipliedAlpha: true });
@@ -90,83 +91,10 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
       camera.position.set(0, 0, CAM_DIST);
       camera.lookAt(0, 0, 0);
 
-      // Unit-quad billboard geometry, instanced.
-      const quad = new THREE.InstancedBufferGeometry();
-      // Unit quad as vec3 (z=0) — ShaderMaterial injects `attribute vec3
-      // position`, so the corner attribute must match that type.
-      const corners = new Float32Array([
-        -0.5, -0.5, 0,  0.5, -0.5, 0,  0.5, 0.5, 0,  -0.5, 0.5, 0,
-      ]);
-      quad.setAttribute('position', new THREE.BufferAttribute(corners, 3));
-      quad.setIndex([0, 1, 2, 0, 2, 3]);
-      // Instance attributes (rewritten each sort, in back-to-front order).
-      const aOffset = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
-      const aColor = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
-      const aSeed = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
-      aOffset.setUsage(THREE.DynamicDrawUsage);
-      aColor.setUsage(THREE.DynamicDrawUsage);
-      aSeed.setUsage(THREE.DynamicDrawUsage);
-      quad.setAttribute('aOffset', aOffset);
-      quad.setAttribute('aColor', aColor);
-      quad.setAttribute('aSeed', aSeed);
-      quad.instanceCount = N;
-
-      const material = new THREE.ShaderMaterial({
-        uniforms: {
-          uScale: { value: splatScale },
-          uCover: { value: 1.0 },
-          uReveal: { value: 0.0 },
-          uOpacity: { value: 1.0 },
-        },
-        transparent: true,
-        depthTest: false,
-        depthWrite: false,
-        blending: THREE.NormalBlending,
-        premultipliedAlpha: true,
-        vertexShader: `
-          precision highp float;
-          attribute vec3 aOffset;
-          attribute vec3 aColor;
-          attribute vec3 aSeed;
-          uniform float uScale;
-          uniform float uCover;
-          uniform float uReveal;
-          varying vec2 vCorner;
-          varying vec3 vColor;
-          void main() {
-            vCorner = position.xy * 2.0;     // [-1,1] across the quad
-            vColor = aColor;
-            // Assemble: lerp from scattered (aSeed) to settled (aOffset).
-            float rv = clamp(uReveal, 0.0, 1.0);
-            vec3 settled = aOffset;
-            vec3 scattered = aOffset + aSeed * 1.4;
-            vec3 pos = mix(scattered, settled, rv);
-            // Cover-scale folds in via the model matrix; the billboard
-            // corner is added in VIEW space so gaussians always face us.
-            vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-            mv.xy += position.xy * uScale * uCover * 2.0;
-            gl_Position = projectionMatrix * mv;
-          }
-        `,
-        fragmentShader: `
-          precision highp float;
-          uniform float uReveal;
-          uniform float uOpacity;
-          varying vec2 vCorner;
-          varying vec3 vColor;
-          void main() {
-            float r2 = dot(vCorner, vCorner);
-            if (r2 > 1.0) discard;
-            // exp(-r²·k) gaussian footprint, soft to the edge.
-            float a = exp(-r2 * 4.5) * uOpacity * clamp(uReveal * 1.2, 0.0, 1.0);
-            // Premultiplied output so overlapping splats accumulate cleanly.
-            gl_FragColor = vec4(vColor * a, a);
-          }
-        `,
-      });
-
-      const mesh = new THREE.Mesh(quad, material);
-      mesh.frustumCulled = false;
+      // Instanced gaussian billboards via the shared renderer. The
+      // backdrop keeps the softer default falloff (4.5) and full footprint.
+      const splat = createSplatRenderer(THREE, cloud);
+      const { mesh, material } = splat;
       scene.add(mesh);
 
       // Cover-fit: scale the whole cloud so the unit plane fills the
@@ -180,42 +108,9 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
       };
       fit();
 
-      // ── Back-to-front sort (throttled) ───────────────────────────
-      // Sort indices by view-space z, then write the instance buffers in
-      // that order. Uniform cover-scale preserves ordering, so we sort
-      // through the unscaled offsets (cheaper, identical result).
-      const order = new Uint32Array(N);
-      for (let i = 0; i < N; i++) order[i] = i;
-      const viewZ = new Float32Array(N);
-      const offArr = aOffset.array as Float32Array;
-      const colArr = aColor.array as Float32Array;
-      const seedArr = aSeed.array as Float32Array;
-      const sortCloud = () => {
-        const m = mesh.matrixWorld.elements;
-        const vm = camera.matrixWorldInverse.elements;
-        // Combined MV z-row coefficients (so we sort in view space).
-        const a2 = vm[2] * m[0] + vm[6] * m[1] + vm[10] * m[2];
-        const b2 = vm[2] * m[4] + vm[6] * m[5] + vm[10] * m[6];
-        const c2 = vm[2] * m[8] + vm[6] * m[9] + vm[10] * m[10];
-        const d2 = vm[2] * m[12] + vm[6] * m[13] + vm[10] * m[14] + vm[14];
-        for (let i = 0; i < N; i++) {
-          viewZ[i] = a2 * base[i * 3] + b2 * base[i * 3 + 1] + c2 * base[i * 3 + 2] + d2;
-        }
-        // Ascending view z = most negative (farthest) first.
-        Array.prototype.sort.call(order, (x: number, y: number) => viewZ[x] - viewZ[y]);
-        for (let k = 0; k < N; k++) {
-          const s = order[k];
-          offArr[k * 3] = base[s * 3];     offArr[k * 3 + 1] = base[s * 3 + 1];     offArr[k * 3 + 2] = base[s * 3 + 2];
-          colArr[k * 3] = colors[s * 3];   colArr[k * 3 + 1] = colors[s * 3 + 1];   colArr[k * 3 + 2] = colors[s * 3 + 2];
-          seedArr[k * 3] = seeds[s * 3];   seedArr[k * 3 + 1] = seeds[s * 3 + 1];   seedArr[k * 3 + 2] = seeds[s * 3 + 2];
-        }
-        aOffset.needsUpdate = true;
-        aColor.needsUpdate = true;
-        aSeed.needsUpdate = true;
-      };
+      // Back-to-front sort (counting sort inside the shared renderer).
       camera.updateMatrixWorld();
-      mesh.updateMatrixWorld();
-      sortCloud();
+      splat.sort(camera);
 
       const resize = () => {
         renderer.setSize(window.innerWidth, window.innerHeight, false);
@@ -257,11 +152,11 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
         if (u.value < 1) u.value = Math.min(1, t / 1.6);
 
         // Re-sort only when the view rotated enough to matter AND at
-        // most ~8×/s — the argsort is the one heavy CPU cost, so we
+        // most ~8×/s — the sort is the one heavy CPU cost, so we
         // never let a fast cursor wiggle trigger it every frame.
         const nowMs = performance.now();
         if (Math.abs(az - lastSortAz) > 0.012 && nowMs - lastSortAt > 120) {
-          sortCloud();
+          splat.sort(camera);
           lastSortAz = az;
           lastSortAt = nowMs;
         }
@@ -284,8 +179,7 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
         window.removeEventListener('pointermove', onPointer);
         document.removeEventListener('visibilitychange', onVis);
         if (rafId) cancelAnimationFrame(rafId);
-        quad.dispose();
-        material.dispose();
+        splat.dispose();
         renderer.dispose();
       };
 

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ensureDepth } from '@/lib/atmosphere/depth';
 import { buildGaussianCloud } from '@/lib/atmosphere/splat-cloud';
+import { createSplatRenderer } from '@/lib/atmosphere/gaussian-renderer';
 
 interface SplatWorldProps {
   /** Painting image URL to enter. */
@@ -50,16 +51,14 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
       // Immersive view = the focus, so spend the detail budget: ~150k
       // gaussians (vs 55k for the backdrop) captures far more of the
       // high-res painting. Lighter on low-DPR / small screens.
-      const dpr0 = Math.min(window.devicePixelRatio || 1, 2);
-      const targetCount = window.innerWidth < 900 || dpr0 < 1.5 ? 80000 : 150000;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const targetCount = window.innerWidth < 900 || dpr < 1.5 ? 80000 : 150000;
       const cloud = buildGaussianCloud(paintImg, depthResult.bitmap, targetCount);
       if (cancelled || !cloud) { setStatus('error'); return; }
-      const { base, colors, seeds, count: N, splatScale } = cloud;
 
       const THREE = await import('three');
       if (cancelled) return;
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, premultipliedAlpha: true });
       renderer.setPixelRatio(dpr);
       renderer.setSize(window.innerWidth, window.innerHeight, false);
@@ -68,70 +67,11 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.05, 50);
 
-      // Instanced gaussian billboards (same shader as the backdrop).
-      const quad = new THREE.InstancedBufferGeometry();
-      const corners = new Float32Array([-0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0]);
-      quad.setAttribute('position', new THREE.BufferAttribute(corners, 3));
-      quad.setIndex([0, 1, 2, 0, 2, 3]);
-      const aOffset = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
-      const aColor = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
-      const aSeed = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
-      aOffset.setUsage(THREE.DynamicDrawUsage);
-      aColor.setUsage(THREE.DynamicDrawUsage);
-      aSeed.setUsage(THREE.DynamicDrawUsage);
-      quad.setAttribute('aOffset', aOffset);
-      quad.setAttribute('aColor', aColor);
-      quad.setAttribute('aSeed', aSeed);
-      quad.instanceCount = N;
-
-      const material = new THREE.ShaderMaterial({
-        uniforms: {
-          // Tight footprint — ~1.6× the grid spacing: enough overlap to
-          // close holes, small enough to keep brushstroke detail crisp
-          // (the old 2.6× smeared neighbours into mush).
-          uScale: { value: splatScale * 0.85 },
-          uReveal: { value: 0.0 },
-        },
-        transparent: true,
-        depthTest: false,
-        depthWrite: false,
-        blending: THREE.NormalBlending,
-        premultipliedAlpha: true,
-        vertexShader: `
-          precision highp float;
-          attribute vec3 aOffset;
-          attribute vec3 aColor;
-          attribute vec3 aSeed;
-          uniform float uScale;
-          uniform float uReveal;
-          varying vec2 vCorner;
-          varying vec3 vColor;
-          void main() {
-            vCorner = position.xy * 2.0;
-            vColor = aColor;
-            float rv = clamp(uReveal, 0.0, 1.0);
-            vec3 pos = mix(aOffset + aSeed * 1.4, aOffset, rv);
-            vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-            mv.xy += position.xy * uScale * 2.0;
-            gl_Position = projectionMatrix * mv;
-          }
-        `,
-        fragmentShader: `
-          precision highp float;
-          uniform float uReveal;
-          varying vec2 vCorner;
-          varying vec3 vColor;
-          void main() {
-            float r2 = dot(vCorner, vCorner);
-            if (r2 > 1.0) discard;
-            float a = exp(-r2 * 5.5) * clamp(uReveal * 1.2, 0.0, 1.0);
-            gl_FragColor = vec4(vColor * a, a);
-          }
-        `,
-      });
-
-      const mesh = new THREE.Mesh(quad, material);
-      mesh.frustumCulled = false;
+      // Instanced gaussian billboards via the shared renderer. Tight
+      // footprint (0.85× the grid spacing) + a crisp falloff keeps
+      // brushstroke detail — the old 2.6× / 5.5 combo smeared neighbours.
+      const splat = createSplatRenderer(THREE, cloud, { scaleMul: 0.85, falloff: 5.5 });
+      const { mesh, material } = splat;
       scene.add(mesh);
 
       // ── Orbit state ──────────────────────────────────────────────
@@ -154,33 +94,8 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
       };
       applyCam();
 
-      // ── Back-to-front sort (throttled) ───────────────────────────
-      const order = new Uint32Array(N);
-      for (let i = 0; i < N; i++) order[i] = i;
-      const viewZ = new Float32Array(N);
-      const offArr = aOffset.array as Float32Array;
-      const colArr = aColor.array as Float32Array;
-      const seedArr = aSeed.array as Float32Array;
-      const sortCloud = () => {
-        const m = mesh.matrixWorld.elements;
-        const vm = camera.matrixWorldInverse.elements;
-        const a2 = vm[2] * m[0] + vm[6] * m[1] + vm[10] * m[2];
-        const b2 = vm[2] * m[4] + vm[6] * m[5] + vm[10] * m[6];
-        const c2 = vm[2] * m[8] + vm[6] * m[9] + vm[10] * m[10];
-        const d2 = vm[2] * m[12] + vm[6] * m[13] + vm[10] * m[14] + vm[14];
-        for (let i = 0; i < N; i++) {
-          viewZ[i] = a2 * base[i * 3] + b2 * base[i * 3 + 1] + c2 * base[i * 3 + 2] + d2;
-        }
-        order.sort((x, y) => viewZ[x] - viewZ[y]);
-        for (let k = 0; k < N; k++) {
-          const s = order[k];
-          offArr[k * 3] = base[s * 3]; offArr[k * 3 + 1] = base[s * 3 + 1]; offArr[k * 3 + 2] = base[s * 3 + 2];
-          colArr[k * 3] = colors[s * 3]; colArr[k * 3 + 1] = colors[s * 3 + 1]; colArr[k * 3 + 2] = colors[s * 3 + 2];
-          seedArr[k * 3] = seeds[s * 3]; seedArr[k * 3 + 1] = seeds[s * 3 + 1]; seedArr[k * 3 + 2] = seeds[s * 3 + 2];
-        }
-        aOffset.needsUpdate = true; aColor.needsUpdate = true; aSeed.needsUpdate = true;
-      };
-      sortCloud();
+      // Back-to-front sort (counting sort inside the shared renderer).
+      splat.sort(camera);
 
       // ── Controls ─────────────────────────────────────────────────
       let dragging = false, lastX = 0, lastY = 0;
@@ -233,11 +148,11 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
         const u = material.uniforms.uReveal as { value: number };
         if (u.value < 1) u.value = Math.min(1, t / 1.8);
 
-        // Re-sort only when the view actually moved (the argsort is the
-        // one heavy per-frame cost at 55k+ splats), or while assembling.
+        // Re-sort only when the view actually moved (the sort is the
+        // one heavy per-frame cost at 150k splats), or while assembling.
         if (Math.abs(az - sAz) > 0.004 || Math.abs(el - sEl) > 0.004
             || Math.abs(radius - sR) > 0.01 || u.value < 1) {
-          sortCloud();
+          splat.sort(camera);
           sAz = az; sEl = el; sR = radius;
         }
         renderer.render(scene, camera);
@@ -254,8 +169,7 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
         window.removeEventListener('keyup', onKeyUp);
         window.removeEventListener('resize', onResize);
         if (raf) cancelAnimationFrame(raf);
-        quad.dispose();
-        material.dispose();
+        splat.dispose();
         renderer.dispose();
       };
     })();
