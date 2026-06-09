@@ -415,14 +415,46 @@ function stripHtmlTags(input: string): string {
 }
 
 function injectHeadingIds(html: string): string {
-  return html.replace(/\<(h[1-6])\>(.*?)\<\/\1\>/gs, (_match, tag, inner) => {
+  // Track assigned ids so duplicate heading text gets unique anchors
+  // (`setup`, `setup-1`, …) and an emoji/punctuation-only heading still
+  // gets a usable id instead of an empty one — otherwise TOC/anchor links
+  // jump to the wrong heading or nowhere.
+  const used = new Set<string>();
+  let counter = 0;
+  return html.replace(/<(h[1-6])>(.*?)<\/\1>/gs, (_match, tag, inner) => {
+    counter++;
     const text = stripHtmlTags(inner).trim();
-    const id = text
+    const base = text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
+      .replace(/\s+/g, '-') || `heading-${counter}`;
+    let id = base;
+    let n = 1;
+    while (used.has(id)) id = `${base}-${n++}`;
+    used.add(id);
     return `<${tag} id="${id}">${inner}</${tag}>`;
   });
+}
+
+// A unified() processor is immutable once built and reusable across any
+// number of .process() calls, so cache one per (alerts, sanitize) combo
+// instead of rebuilding the whole remark/rehype chain on every render —
+// the rebuild dominated cost in the per-file export-site loop and on
+// every keystroke-driven re-render.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const processorCache = new Map<string, any>();
+function getProcessor(alerts: boolean, sanitize: boolean) {
+  const key = `${alerts}:${sanitize}`;
+  const cached = processorCache.get(key);
+  if (cached) return cached;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let processor: any = unified().use(remarkParse).use(remarkGfm);
+  if (alerts) processor = processor.use(remarkAlerts);
+  processor = processor.use(remarkRehype, { allowDangerousHtml: true }).use(rehypeRaw);
+  if (sanitize) processor = processor.use(rehypeSanitize, sanitizeSchema);
+  processor = processor.use(rehypeStringify);
+  processorCache.set(key, processor);
+  return processor;
 }
 
 // ---- Main Pipeline ----
@@ -470,25 +502,8 @@ export async function renderMarkdown(
     mathBlocks = extracted.blocks;
   }
 
-  // Build the unified pipeline
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let processor: any = unified()
-    .use(remarkParse)
-    .use(remarkGfm);
-
-  if (alerts) {
-    processor = processor.use(remarkAlerts);
-  }
-
-  processor = processor
-    .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeRaw);
-
-  if (sanitize) {
-    processor = processor.use(rehypeSanitize, sanitizeSchema);
-  }
-
-  processor = processor.use(rehypeStringify);
+  // Reuse a cached processor for this (alerts, sanitize) combination.
+  const processor = getProcessor(alerts, sanitize);
 
   const result = await processor.process(content);
   let html = String(result);

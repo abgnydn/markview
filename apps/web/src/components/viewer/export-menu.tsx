@@ -85,17 +85,21 @@ export function ExportMenu() {
   );
 
   // ── Copy handlers ───────────────────────────────────────────────────
-  const handleCopyMarkdown = useCallback(async () => {
-    if (!activeFileContent) return;
-    await copyAsMarkdown(activeFileContent);
-    showToast('Copied as Markdown');
-  }, [activeFileContent]);
+  const handleCopyMarkdown = useCallback(
+    withLoading('Copied as Markdown', async () => {
+      if (!activeFileContent) return;
+      await copyAsMarkdown(activeFileContent);
+    }),
+    [activeFileContent]
+  );
 
-  const handleCopyHtml = useCallback(async () => {
-    if (!activeFileContent) return;
-    await copyAsHtml(activeFileContent);
-    showToast('Copied as rich HTML');
-  }, [activeFileContent]);
+  const handleCopyHtml = useCallback(
+    withLoading('Copied as rich HTML', async () => {
+      if (!activeFileContent) return;
+      await copyAsHtml(activeFileContent);
+    }),
+    [activeFileContent]
+  );
 
   const handleCopyImage = useCallback(
     withLoading('Copied as Image', async () => {
@@ -106,23 +110,29 @@ export function ExportMenu() {
   );
 
   // ── Download handlers ───────────────────────────────────────────────
-  const handleDownloadMd = useCallback(() => {
-    if (!activeFile || !activeFileContent) return;
-    downloadMarkdown(activeFile.filename, activeFileContent);
-    showToast('Downloaded .md');
-  }, [activeFile, activeFileContent]);
+  const handleDownloadMd = useCallback(
+    withLoading('Downloaded .md', async () => {
+      if (!activeFile || !activeFileContent) return;
+      downloadMarkdown(activeFile.filename, activeFileContent);
+    }),
+    [activeFile, activeFileContent]
+  );
 
-  const handleDownloadZip = useCallback(async () => {
-    if (!activeWorkspaceId || !activeWorkspace) return;
-    await downloadWorkspaceZip(activeWorkspaceId, activeWorkspace.title);
-    showToast('Downloaded .zip');
-  }, [activeWorkspaceId, activeWorkspace]);
+  const handleDownloadZip = useCallback(
+    withLoading('Downloaded .zip', async () => {
+      if (!activeWorkspaceId || !activeWorkspace) return;
+      await downloadWorkspaceZip(activeWorkspaceId, activeWorkspace.title);
+    }),
+    [activeWorkspaceId, activeWorkspace]
+  );
 
-  const handleDownloadHtml = useCallback(async () => {
-    if (!activeFile || !activeFileContent) return;
-    await downloadAsHtml(activeFile.filename, activeFileContent, resolved);
-    showToast('Downloaded .html');
-  }, [activeFile, activeFileContent, resolved]);
+  const handleDownloadHtml = useCallback(
+    withLoading('Downloaded .html', async () => {
+      if (!activeFile || !activeFileContent) return;
+      await downloadAsHtml(activeFile.filename, activeFileContent, resolved);
+    }),
+    [activeFile, activeFileContent, resolved]
+  );
 
   const handleDownloadPdf = useCallback(
     withLoading('Downloaded PDF', async () => {
@@ -170,21 +180,23 @@ export function ExportMenu() {
   );
 
   // ── Convert handlers ────────────────────────────────────────────────
-  const handleDownloadRst = useCallback(() => {
-    if (!activeFile || !activeFileContent) return;
-    import('@/lib/export/export-convert').then(({ downloadAsRst }) => {
+  const handleDownloadRst = useCallback(
+    withLoading('Downloaded .rst', async () => {
+      if (!activeFile || !activeFileContent) return;
+      const { downloadAsRst } = await import('@/lib/export/export-convert');
       downloadAsRst(activeFile.filename, activeFileContent);
-      showToast('Downloaded .rst');
-    });
-  }, [activeFile, activeFileContent]);
+    }),
+    [activeFile, activeFileContent]
+  );
 
-  const handleDownloadAdoc = useCallback(() => {
-    if (!activeFile || !activeFileContent) return;
-    import('@/lib/export/export-convert').then(({ downloadAsAsciidoc }) => {
+  const handleDownloadAdoc = useCallback(
+    withLoading('Downloaded .adoc', async () => {
+      if (!activeFile || !activeFileContent) return;
+      const { downloadAsAsciidoc } = await import('@/lib/export/export-convert');
       downloadAsAsciidoc(activeFile.filename, activeFileContent);
-      showToast('Downloaded .adoc');
-    });
-  }, [activeFile, activeFileContent]);
+    }),
+    [activeFile, activeFileContent]
+  );
 
   // ── Workspace handlers ──────────────────────────────────────────────
   const handleDownloadSite = useCallback(
@@ -203,14 +215,19 @@ export function ExportMenu() {
 
   const handleShareUrl = useCallback(async () => {
     if (!activeFileContent) return;
-    const { encodeMarkdownUrl, MAX_SHAREABLE_LENGTH } = await import('@/lib/sharing/url-share');
-    if (activeFileContent.length > MAX_SHAREABLE_LENGTH) {
-      showToast('File too large for URL sharing');
-      return;
+    try {
+      const { encodeMarkdownUrl, MAX_SHAREABLE_LENGTH } = await import('@/lib/sharing/url-share');
+      if (activeFileContent.length > MAX_SHAREABLE_LENGTH) {
+        showToast('File too large for URL sharing');
+        return;
+      }
+      const url = await encodeMarkdownUrl(activeFileContent, activeFile?.displayName || activeFile?.filename);
+      await navigator.clipboard.writeText(url);
+      showToast('Share URL copied!');
+    } catch (e) {
+      console.error('Export error (Share URL):', e);
+      showToast('Failed: Share URL');
     }
-    const url = await encodeMarkdownUrl(activeFileContent, activeFile?.displayName || activeFile?.filename);
-    await navigator.clipboard.writeText(url);
-    showToast('Share URL copied!');
   }, [activeFileContent, activeFile]);
 
   if (!activeFile) return null;

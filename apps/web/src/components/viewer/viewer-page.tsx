@@ -78,6 +78,10 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const files = useWorkspaceStore((s) => s.files);
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
   const activeFileContent = useWorkspaceStore((s) => s.activeFileContent);
+  // Subscribe reactively — a .getState() snapshot here would pin the
+  // backfill / related-notes to whatever workspace was active at first
+  // render and not follow a workspace switch.
+  const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const isContentLoading = useWorkspaceStore((s) => s.isContentLoading);
 
   // Collab
@@ -128,7 +132,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // Lazy-embed every file that doesn't have vectors yet (powers
   // semantic search + related-notes + AI chat). Triggers the one-time
   // MiniLM download on first run.
-  useEmbeddingsBackfill(useWorkspaceStore.getState().activeWorkspaceId);
+  useEmbeddingsBackfill(activeWorkspaceId);
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -422,7 +426,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
             <RelatedNotes
               content={activeFileContent}
               fileId={activeFileId}
-              workspaceId={useWorkspaceStore.getState().activeWorkspaceId}
+              workspaceId={activeWorkspaceId}
             />
           </div>
         )}

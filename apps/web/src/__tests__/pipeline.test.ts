@@ -139,4 +139,18 @@ describe('XSS Sanitization', () => {
     const html = await renderMarkdown(md);
     expect(html).toContain('gh-alert');
   });
+
+  it('gives duplicate headings unique ids', async () => {
+    const html = await renderMarkdown('## Setup\n\n## Setup\n\n## Setup');
+    expect(html).toContain('id="setup"');
+    expect(html).toContain('id="setup-1"');
+    expect(html).toContain('id="setup-2"');
+  });
+
+  it('gives an emoji/punctuation-only heading a usable id', async () => {
+    const html = await renderMarkdown('## 🚀');
+    // No empty id — falls back to a positional anchor.
+    expect(html).not.toContain('id=""');
+    expect(html).toMatch(/id="heading-\d+"/);
+  });
 });

@@ -44,7 +44,11 @@ export function GraphView({ onClose }: GraphViewProps) {
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
 
-  const [hoverId, setHoverId] = useState<string | null>(null);
+  // Hover is read only by the per-frame draw loop, never in JSX, so keep it
+  // in a ref. As state it changed on every mouse-move → re-rendered the
+  // component AND (being a dep below) tore down + rebuilt the entire RAF
+  // loop and all canvas listeners dozens of times a second.
+  const hoverIdRef = useRef<string | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   // B2 — Constellation mode: pause the force simulation, persist node
@@ -213,7 +217,7 @@ export function GraphView({ onClose }: GraphViewProps) {
 
     const onMouseMove = (e: MouseEvent) => {
       const n = nodeAt(e.clientX, e.clientY);
-      setHoverId(n?.id ?? null);
+      hoverIdRef.current = n?.id ?? null;
       const d = dragRef.current;
       if (d.mode === 'pan') {
         const v = viewRef.current;
@@ -278,7 +282,7 @@ export function GraphView({ onClose }: GraphViewProps) {
       if (!constellation) {
         simulate(nodesRef.current, edgesRef.current, dragRef.current.mode === 'node' ? dragRef.current.id : null);
       }
-      draw(ctx, nodesRef.current, edgesRef.current, viewRef.current, hoverId, activeFileId, focusNeighborhood, searchMatches, tagPaletteRef.current, constellation);
+      draw(ctx, nodesRef.current, edgesRef.current, viewRef.current, hoverIdRef.current, activeFileId, focusNeighborhood, searchMatches, tagPaletteRef.current, constellation);
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
@@ -292,7 +296,7 @@ export function GraphView({ onClose }: GraphViewProps) {
       canvas.removeEventListener('wheel', onWheel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hoverId, activeFileId, focusId, focusNeighborhood, searchMatches, constellation]);
+  }, [activeFileId, focusId, focusNeighborhood, searchMatches, constellation]);
 
   // Constellation persistence — when nodes are arranged manually, save
   // their (x,y) per-workspace so the layout survives reload + return

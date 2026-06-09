@@ -299,6 +299,10 @@ export function headingAnchors(root: HTMLElement): Cleanup {
 // ── Audio waveform players ──────────────────────────────────────────────
 export function audioWaveforms(root: HTMLElement): Cleanup {
   const audios = root.querySelectorAll<HTMLAudioElement>('audio:not([data-mv-enhanced])');
+  // The per-audio canvas/element listeners die with their DOM nodes on
+  // re-render, but the window 'resize' listener does not — collect those
+  // so they're removed instead of leaking one per render forever.
+  const cleanups: Array<() => void> = [];
   audios.forEach((audio) => {
     audio.setAttribute('data-mv-enhanced', '1');
     audio.controls = false;
@@ -400,7 +404,9 @@ export function audioWaveforms(root: HTMLElement): Cleanup {
     audio.addEventListener('ended', () => { play.textContent = '▶'; });
     requestAnimationFrame(drawWaveform);
     window.addEventListener('resize', drawWaveform);
+    cleanups.push(() => window.removeEventListener('resize', drawWaveform));
   });
+  return () => cleanups.forEach((c) => c());
 }
 
 // ── External link tooltips (host + favicon) ─────────────────────────────

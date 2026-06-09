@@ -65,7 +65,9 @@ export function printDocument(): void {
 
 // ---------- Helpers ----------
 
-function triggerDownload(blob: Blob, filename: string): void {
+/** Save a Blob to disk via a transient object-URL anchor click. Shared by
+ *  every export module so there's one definition of the download dance. */
+export function triggerDownload(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

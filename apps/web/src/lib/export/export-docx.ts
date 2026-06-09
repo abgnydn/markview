@@ -1,4 +1,5 @@
 import { renderMarkdown } from '@/lib/markdown/pipeline';
+import { triggerDownload } from './export-utils';
 
 /**
  * Export the active markdown as a DOCX Word document.
@@ -170,13 +171,3 @@ export async function downloadAsDocx(
   triggerDownload(blob, `${title}.docx`);
 }
 
-function triggerDownload(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}

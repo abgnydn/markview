@@ -355,6 +355,14 @@ export function MarkdownEditor({
   // from it and let the updateListener mirror future edits back.
   const initialText = yText ? yText.toString() : content;
   const [text, setText] = useState(initialText);
+  // Debounced copy of `text` that drives the live preview — without it the
+  // full markdown→Shiki→mermaid→KaTeX pipeline re-runs on every keystroke.
+  // The CodeMirror buffer stays live; only the heavy renderer waits ~180ms.
+  const [previewText, setPreviewText] = useState(initialText);
+  useEffect(() => {
+    const id = window.setTimeout(() => setPreviewText(text), 180);
+    return () => window.clearTimeout(id);
+  }, [text]);
   const [mode, setMode] = useState<'edit' | 'preview' | 'split'>('split');
   const [showHistory, setShowHistory] = useState(false);
   // #15 Cursor halo — add .editor-typing class while the user is
@@ -607,7 +615,7 @@ export function MarkdownEditor({
           {mode !== 'edit' && (
             <div className="editor-preview-pane">
               <div className="editor-preview-content">
-                <MarkdownRenderer content={text} />
+                <MarkdownRenderer content={previewText} />
               </div>
             </div>
           )}
