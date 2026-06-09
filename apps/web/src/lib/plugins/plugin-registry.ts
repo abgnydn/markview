@@ -2,6 +2,23 @@
 import { create } from 'zustand';
 
 /**
+ * Escape HTML-significant characters. Plugin renderers build raw HTML
+ * strings that are injected via dangerouslySetInnerHTML AFTER the markdown
+ * sanitizer has run, so EVERY user-derived value interpolated into that
+ * HTML must be escaped here — otherwise a fence like ```csv with a cell of
+ * `<img src=x onerror=…>` executes script (the sanitizer never sees it).
+ * Ampersand first so the entity escapes aren't double-encoded.
+ */
+export function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
  * A plugin defines a custom renderer for a specific code-fence language.
  * When rendering, if a code block has `language-{id}`, the plugin's render
  * function is called instead of the default Shiki highlighter.
@@ -68,7 +85,8 @@ export const alertPlugin: CodeFencePlugin = {
 
     const type = typeMap[firstLine] || typeMap['NOTE'];
     const bodyLines = typeMap[firstLine] ? lines.slice(1) : lines;
-    const body = bodyLines.join('<br/>');
+    // Escape each line, then join with the intended <br/> separators.
+    const body = bodyLines.map(escapeHtml).join('<br/>');
 
     return `<div class="plugin-alert" style="border-left: 4px solid ${type.color}; padding: 12px 16px; border-radius: 6px; background: ${theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'}; margin: 12px 0;">
       <div style="font-weight: 600; color: ${type.color}; margin-bottom: 6px; font-size: 0.85rem;">${type.icon} ${type.label}</div>
@@ -99,7 +117,7 @@ export const chartPlugin: CodeFencePlugin = {
     const bars = entries.map((e) => {
       const pct = max > 0 ? (e.value / max) * 100 : 0;
       return `<div style="display: flex; align-items: center; gap: 10px; margin: 4px 0;">
-        <span style="width: 100px; text-align: right; font-size: 0.8rem; color: ${textColor}; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${e.label}</span>
+        <span style="width: 100px; text-align: right; font-size: 0.8rem; color: ${textColor}; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(e.label)}</span>
         <div style="flex: 1; height: 22px; background: ${bgColor}; border-radius: 4px; overflow: hidden;">
           <div style="width: ${pct}%; height: 100%; background: ${barColor}; border-radius: 4px; transition: width 0.3s;"></div>
         </div>
@@ -134,11 +152,11 @@ export const tabsPlugin: CodeFencePlugin = {
 
     const tabButtons = tabs.map((t, i) =>
       `<button onclick="document.querySelectorAll('[data-tabgroup=\\'${tabId}\\'] .plugin-tab-pane').forEach(p=>p.style.display='none'); document.querySelectorAll('[data-tabgroup=\\'${tabId}\\'] .plugin-tab-btn').forEach(b=>{b.style.borderBottom='2px solid transparent'; b.style.color='inherit'; b.style.opacity='0.6';}); document.getElementById('${tabId}-${i}').style.display='block'; this.style.borderBottom='2px solid ${activeColor}'; this.style.color='${activeColor}'; this.style.opacity='1';"
-        class="plugin-tab-btn" style="padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: 0.82rem; font-weight: 500; color: inherit; border-bottom: 2px solid ${i === 0 ? activeColor : 'transparent'}; opacity: ${i === 0 ? '1' : '0.6'}; ${i === 0 ? `color: ${activeColor};` : ''}">${t.title}</button>`
+        class="plugin-tab-btn" style="padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: 0.82rem; font-weight: 500; color: inherit; border-bottom: 2px solid ${i === 0 ? activeColor : 'transparent'}; opacity: ${i === 0 ? '1' : '0.6'}; ${i === 0 ? `color: ${activeColor};` : ''}">${escapeHtml(t.title)}</button>`
     ).join('');
 
     const tabPanes = tabs.map((t, i) =>
-      `<div id="${tabId}-${i}" class="plugin-tab-pane" style="display: ${i === 0 ? 'block' : 'none'}; padding: 12px 16px; font-size: 0.88rem; white-space: pre-wrap; line-height: 1.6;">${t.body}</div>`
+      `<div id="${tabId}-${i}" class="plugin-tab-pane" style="display: ${i === 0 ? 'block' : 'none'}; padding: 12px 16px; font-size: 0.88rem; white-space: pre-wrap; line-height: 1.6;">${escapeHtml(t.body)}</div>`
     ).join('');
 
     return `<div class="plugin-tabs" data-tabgroup="${tabId}" style="border: 1px solid ${borderColor}; border-radius: 8px; overflow: hidden; margin: 12px 0;">
@@ -172,8 +190,8 @@ export const timelinePlugin: CodeFencePlugin = {
           <div style="width: 2px; flex: 1; background: ${lineColor};"></div>
         </div>
         <div>
-          <div style="font-size: 0.75rem; font-weight: 600; color: ${dotColor}; margin-bottom: 2px;">${e.date}</div>
-          <div style="font-size: 0.85rem; color: ${textColor};">${e.text}</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: ${dotColor}; margin-bottom: 2px;">${escapeHtml(e.date)}</div>
+          <div style="font-size: 0.85rem; color: ${textColor};">${escapeHtml(e.text)}</div>
         </div>
       </div>`
     ).join('');
@@ -215,12 +233,12 @@ export const csvPlugin: CodeFencePlugin = {
     const tableId = `csv-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`;
 
     const thCells = headers.map((h, i) =>
-      `<th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: ${textColor}; border-bottom: 2px solid ${borderColor}; cursor: pointer; user-select: none;" title="Click to sort">${h} <span style="opacity: 0.3; font-size: 10px;">⇅</span></th>`
+      `<th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: ${textColor}; border-bottom: 2px solid ${borderColor}; cursor: pointer; user-select: none;" title="Click to sort">${escapeHtml(h)} <span style="opacity: 0.3; font-size: 10px;">⇅</span></th>`
     ).join('');
 
     const bodyRows = rows.map((row, ri) =>
       `<tr style="${ri % 2 === 1 ? `background: ${stripeBg};` : ''}">${row.map(cell =>
-        `<td style="padding: 6px 12px; font-size: 13px; color: ${textColor}; border-bottom: 1px solid ${borderColor};">${cell}</td>`
+        `<td style="padding: 6px 12px; font-size: 13px; color: ${textColor}; border-bottom: 1px solid ${borderColor};">${escapeHtml(cell)}</td>`
       ).join('')}</tr>`
     ).join('');
 
@@ -252,9 +270,12 @@ export const mapPlugin: CodeFencePlugin = {
       }
     }
 
-    const lat = parseFloat(props['lat'] || props['latitude'] || '0');
-    const lng = parseFloat(props['lng'] || props['lon'] || props['longitude'] || '0');
-    const zoom = parseInt(props['zoom'] || '13', 10);
+    // Coerce to finite, in-range numbers — these are interpolated straight
+    // into the iframe src, so a non-numeric value must never survive.
+    const latRaw = parseFloat(props['lat'] || props['latitude'] || '0');
+    const lngRaw = parseFloat(props['lng'] || props['lon'] || props['longitude'] || '0');
+    const lat = Number.isFinite(latRaw) ? Math.max(-90, Math.min(90, latRaw)) : 0;
+    const lng = Number.isFinite(lngRaw) ? Math.max(-180, Math.min(180, lngRaw)) : 0;
     const label = props['label'] || props['title'] || '';
 
     if (lat === 0 && lng === 0) return '<p style="color: rgba(128,128,128,0.8); font-size: 0.85rem; font-style: italic;">Map: specify lat and lng values</p>';
@@ -262,7 +283,7 @@ export const mapPlugin: CodeFencePlugin = {
     const borderColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
     return `<div class="plugin-map" style="border: 1px solid ${borderColor}; border-radius: 10px; overflow: hidden; margin: 12px 0;">
-      ${label ? `<div style="padding: 6px 12px; font-size: 12px; font-weight: 600; color: ${theme === 'dark' ? '#c9d1d9' : '#24292f'}; background: ${theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'}; border-bottom: 1px solid ${borderColor};">📍 ${label}</div>` : ''}
+      ${label ? `<div style="padding: 6px 12px; font-size: 12px; font-weight: 600; color: ${theme === 'dark' ? '#c9d1d9' : '#24292f'}; background: ${theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'}; border-bottom: 1px solid ${borderColor};">📍 ${escapeHtml(label)}</div>` : ''}
       <iframe width="100%" height="300" frameborder="0" style="display: block;" src="https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.02}%2C${lat - 0.015}%2C${lng + 0.02}%2C${lat + 0.015}&layer=mapnik&marker=${lat}%2C${lng}"></iframe>
     </div>`;
   },

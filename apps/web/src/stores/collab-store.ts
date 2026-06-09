@@ -123,6 +123,41 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       set({ peers });
     });
 
+    // Mirror the host's collaborative edits back to IndexedDB. The editor
+    // binds CodeMirror directly to each file's Y.Text, but nothing else
+    // persists those edits — so without this the host's own work is lost
+    // when the session ends or the tab closes. Debounced per file, and
+    // flushed eagerly on teardown / pagehide so nothing in flight is dropped.
+    const contents = session.ydoc.getMap('contents');
+    const dirty = new Set<string>();
+    let flushTimer: number | null = null;
+    const flushDirty = () => {
+      if (flushTimer !== null) { clearTimeout(flushTimer); flushTimer = null; }
+      for (const fileId of dirty) {
+        const yText = contents.get(fileId) as Y.Text | undefined;
+        if (yText) {
+          db.files.update(fileId, { content: yText.toString() })
+            .catch((err) => console.warn('[collab] failed to persist host edit', err));
+        }
+      }
+      dirty.clear();
+    };
+    const contentHandler = (events: Array<Y.YEvent<Y.AbstractType<unknown>>>) => {
+      for (const ev of events) {
+        const fileId = ev.path[0];
+        if (typeof fileId === 'string') dirty.add(fileId);
+      }
+      if (flushTimer === null) flushTimer = window.setTimeout(flushDirty, 800) as unknown as number;
+    };
+    contents.observeDeep(contentHandler);
+    const onPageHide = () => flushDirty();
+    window.addEventListener('pagehide', onPageHide);
+    const unsubFiles = () => {
+      window.removeEventListener('pagehide', onPageHide);
+      contents.unobserveDeep(contentHandler);
+      flushDirty();
+    };
+
     const shareUrl = getShareUrl(roomId);
 
     set({
@@ -134,6 +169,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       localUserName: hostName,
       _session: session,
       _unsubAwareness: unsubAwareness,
+      _unsubFiles: unsubFiles,
     });
 
     return shareUrl;

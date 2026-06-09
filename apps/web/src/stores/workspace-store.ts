@@ -445,10 +445,18 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     if (toIndex < 0 || toIndex >= files.length) return;
     if (fromIndex === toIndex) return;
 
-    const newFiles = [...files];
-    const [moved] = newFiles.splice(fromIndex, 1);
-    newFiles.splice(toIndex, 0, moved);
+    const reordered = [...files];
+    const [moved] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, moved);
+    // Renumber `order` to match the new positions and persist it — files are
+    // loaded `.sortBy('order')`, so without this the reorder reverts on reload.
+    const newFiles = reordered.map((f, i) => ({ ...f, order: i }));
     set({ files: newFiles });
+    db.transaction('rw', db.files, async () => {
+      for (let i = 0; i < newFiles.length; i++) {
+        await db.files.update(newFiles[i].id, { order: i });
+      }
+    }).catch((err) => console.warn('[workspace] failed to persist file order', err));
   },
 
   // ---------- Move File To Another Workspace ----------

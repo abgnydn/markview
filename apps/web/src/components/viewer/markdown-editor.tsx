@@ -429,6 +429,29 @@ export function MarkdownEditor({
     return () => window.removeEventListener('keydown', handler);
   }, [text, hasChanges, onSave, onClose, fileId, workspaceId]);
 
+  // Flush unsaved edits when the tab is hidden or closed. `beforeunload`
+  // can't reliably await an async IndexedDB write, but visibilitychange →
+  // hidden (and pagehide) fire while the page is still alive, so onSave's
+  // write lands. A ref holds the latest text/flag so the listener stays
+  // registered once instead of re-subscribing on every keystroke.
+  const flushState = useRef({ text, hasChanges, onSave, fileId, workspaceId });
+  flushState.current = { text, hasChanges, onSave, fileId, workspaceId };
+  useEffect(() => {
+    const doFlush = () => {
+      const s = flushState.current;
+      if (!s.hasChanges) return;
+      s.onSave(s.text);
+      if (s.fileId && s.workspaceId) void createSnapshot(s.fileId, s.workspaceId, s.text, 'auto');
+    };
+    const onVisibility = () => { if (document.visibilityState === 'hidden') doFlush(); };
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', doFlush);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', doFlush);
+    };
+  }, []);
+
   // Auto-snapshot every 5 minutes if the doc has changed since the last
   // snapshot. Dedup happens in createSnapshot so a quiet doc doesn't pile
   // up duplicate rows.

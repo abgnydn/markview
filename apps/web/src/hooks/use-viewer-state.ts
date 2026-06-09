@@ -36,7 +36,20 @@ export function useViewerState() {
     // (Pre-save snapshotting is handled inside MarkdownEditor via the
     // snapshots library — see lib/snapshots.ts createSnapshot calls.)
     const { db } = await import('@/lib/storage/db');
-    await db.files.update(activeFileId, { content: newContent });
+    try {
+      await db.files.update(activeFileId, { content: newContent });
+    } catch (err) {
+      // The write failed (most likely IndexedDB quota exceeded). Surface it
+      // loudly and keep the editor open so the user can copy their work out
+      // — silently swallowing it would let them believe the save succeeded.
+      console.error('[save] failed to persist file', err);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('markview:toast', {
+          detail: { message: 'Save failed — storage may be full. Copy your text to be safe.' },
+        }));
+      }
+      return;
+    }
     // #12 Quiet save indicator — broadcast so WorkspaceTabs can pulse
     // a dot on the active tab for 800ms instead of showing a toast.
     // Plus a soft bronze chime through the atmosphere audio bus (only
@@ -62,7 +75,7 @@ export function useViewerState() {
         /* embeddings are best-effort */
       }
     })();
-  }, [activeFileId, activeFileContent]);
+  }, [activeFileId]);
 
   return {
     // Overlay state

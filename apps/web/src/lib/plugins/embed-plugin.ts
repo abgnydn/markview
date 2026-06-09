@@ -1,5 +1,18 @@
 
-import { usePluginStore, type CodeFencePlugin } from './plugin-registry';
+import { usePluginStore, escapeHtml, type CodeFencePlugin } from './plugin-registry';
+
+/** Attribute-safe http(s) URL, or null. Blocks attribute breakout + non-web
+ *  protocols (extractUrls already requires an http prefix, this is belt-and-
+ *  braces so a crafted `http://x"></iframe>…` can't escape the src/href). */
+function safeHttpUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+    return escapeHtml(u.href);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Embed plugin — renders ```embed code blocks containing URLs as embedded iframes.
@@ -102,7 +115,7 @@ function renderUrl(url: string, theme: 'dark' | 'light'): string {
   const cp = codepenEmbed(url);
   if (cp) {
     return `<div class="plugin-embed plugin-embed-codepen" style="${wrapStyle}">
-      <iframe ${iframeBase} height="400" src="https://codepen.io/${cp.user}/embed/${cp.pen}?default-tab=result&theme-id=${theme === 'dark' ? 'dark' : 'light'}"></iframe>
+      <iframe ${iframeBase} height="400" src="https://codepen.io/${encodeURIComponent(cp.user)}/embed/${cp.pen}?default-tab=result&theme-id=${theme === 'dark' ? 'dark' : 'light'}"></iframe>
     </div>`;
   }
 
@@ -138,9 +151,10 @@ function renderUrl(url: string, theme: 'dark' | 'light'): string {
   const tweetId = twitterEmbed(url);
   if (tweetId) {
     const tweetTheme = theme === 'dark' ? 'dark' : 'light';
+    const safeUrl = safeHttpUrl(url) ?? '#';
     return `<div class="plugin-embed plugin-embed-twitter" style="${wrapStyle} max-width: 550px;">
       <blockquote class="twitter-tweet" data-theme="${tweetTheme}">
-        <a href="${url}">Loading tweet...</a>
+        <a href="${safeUrl}">Loading tweet...</a>
       </blockquote>
       <script async src="https://platform.twitter.com/widgets.js"></script>
     </div>`;
@@ -155,9 +169,13 @@ function renderUrl(url: string, theme: 'dark' | 'light'): string {
     </div>`;
   }
 
-  // Generic iframe fallback
+  // Generic iframe fallback — only for a validated http(s) URL.
+  const safeUrl = safeHttpUrl(url);
+  if (!safeUrl) {
+    return `<div class="plugin-embed plugin-embed-generic" style="${wrapStyle}"><div style="padding:12px;color:rgba(128,128,128,0.8);font-size:0.85rem;font-style:italic;">Can’t embed this URL.</div></div>`;
+  }
   return `<div class="plugin-embed plugin-embed-generic" style="${wrapStyle}">
-    <iframe ${iframeBase} height="400" src="${url}" sandbox="allow-scripts allow-same-origin"></iframe>
+    <iframe ${iframeBase} height="400" src="${safeUrl}" sandbox="allow-scripts allow-same-origin"></iframe>
   </div>`;
 }
 
