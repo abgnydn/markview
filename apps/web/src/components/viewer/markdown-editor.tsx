@@ -28,6 +28,7 @@ import { markviewCompletions, invalidateCompletionCache } from './editor-complet
 import { slashCommands } from './editor-slash';
 import { clipboardToTable } from './editor-paste';
 import { smartTypography } from './editor-typography';
+import { createFormatBubble } from './editor-bubble';
 
 interface MarkdownEditorProps {
   content: string;
@@ -365,6 +366,7 @@ function buildExtensions(
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     syntaxHighlighting(markviewHighlight),
     smartTypography(),
+    createFormatBubble((view, kind) => applyFormat(view, kind as FormatKind)),
     focusParagraphPlugin,
     markviewTheme,
     // Smart-paste:

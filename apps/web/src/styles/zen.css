@@ -413,6 +413,41 @@ body::before {
   font-size: 11px !important;
 }
 
+/* Selection format bubble — floats above a selection in the editor. */
+.cm-format-bubble {
+  position: absolute;
+  display: none;
+  gap: 1px;
+  padding: 3px;
+  transform: translate(-50%, calc(-100% - 8px));
+  background: var(--zen-bg-deep);
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 8px;
+  box-shadow: var(--zen-shadow-card);
+  z-index: 40;
+  white-space: nowrap;
+}
+.cm-format-bubble-btn {
+  border: 0;
+  background: transparent;
+  color: var(--zen-fg-soft);
+  font-family: var(--zen-serif);
+  font-size: 13px;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color 160ms var(--zen-ease), background 160ms var(--zen-ease);
+}
+.cm-format-bubble-btn:hover {
+  background: var(--zen-paper-tint);
+  color: var(--zen-accent);
+}
+.cm-format-bubble-btn.is-bold { font-weight: 700; }
+.cm-format-bubble-btn.is-italic { font-style: italic; }
+.cm-format-bubble-btn.is-strike { text-decoration: line-through; }
+
 /* Overflow ("⋮") menu — same paper-panel recipe as the theme picker so the
    chrome reads as one calm surface instead of the old GitHub-dark popover. */
 .toolbar-overflow-menu {
