@@ -692,6 +692,29 @@ nav.toc a.active {
   padding: var(--zen-content-pad-y) var(--zen-edge-pad)
     calc(var(--zen-content-pad-y) * 1.6) !important;
   background: transparent !important;
+  position: relative;
+}
+/* Frosted reading band — blurs + gently darkens ONLY the painting directly
+   behind the reading column, so text is always legible while the art stays
+   sharp and vivid everywhere else (no global darkening). The horizontal mask
+   feathers the band's edges so it dissolves into the painting rather than
+   reading as a panel. Sits between the atmosphere (z:0) and the text (z:2). */
+.viewer-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  backdrop-filter: blur(16px) brightness(0.66) saturate(1.06);
+  -webkit-backdrop-filter: blur(16px) brightness(0.66) saturate(1.06);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+}
+/* Light theme: lift (brighten) the band so dark ink reads over it. */
+.light .viewer-content::before,
+[data-theme='light'] .viewer-content::before {
+  backdrop-filter: blur(16px) brightness(1.32) saturate(1.04);
+  -webkit-backdrop-filter: blur(16px) brightness(1.32) saturate(1.04);
 }
 
 /* These header pieces are redundant — the workspace name lives in the
@@ -761,6 +784,14 @@ nav.toc a.active {
   word-wrap: break-word;
   position: relative;
   z-index: 2;
+  /* Soft halo so glyph edges stay legible over any painting, independent of
+     the reading band above (belt-and-braces). A dark glow under cream ink. */
+  text-shadow: 0 1px 2px rgba(5, 4, 6, 0.6), 0 0 16px rgba(5, 4, 6, 0.4);
+}
+/* Light theme: a pale halo under dark ink. */
+.light .markdown-content,
+[data-theme='light'] .markdown-content {
+  text-shadow: 0 1px 2px rgba(251, 248, 243, 0.85), 0 0 16px rgba(251, 248, 243, 0.6);
 }
 
 .markdown-content h1,
@@ -4188,23 +4219,27 @@ body:hover .mv-atm-dots,
  * on any background. Text caret is a true italic-serif I-beam with
  * subtle serif feet — single calligraphic stroke, no triangular flares.
  * ──────────────────────────────────────────────────────────────────────── */
+/* Universal-visibility cursor — a white core (reads on dark), a dark ring
+   (reads on light), a soft shadow, and the atmosphere accent at the center.
+   Visible over ANY painting, unlike the old single-tint dot. 24×24, hotspot
+   centered. Only the accent colour varies per atmosphere. */
 body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23b9a4ff' opacity='0.10'/><circle cx='9' cy='11' r='2.4' fill='%23b9a4ff' opacity='0.96'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.55'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23b9a4ff' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.92'/></svg>") 9 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.25'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.5' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%23b9a4ff'/></svg>") 12 12, default;
 }
 :root:not(.dark):not([data-theme='dark']) body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='2.4' fill='%231c1b22' opacity='0.9'/><circle cx='8.3' cy='10.3' r='0.55' fill='%23fbf8f3' opacity='0.7'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%231c1b22' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.88'/></svg>") 9 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.22'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.55' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%231c1b22'/></svg>") 12 12, default;
 }
 html[data-atmosphere='fuji'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23f9a8d4' opacity='0.14'/><circle cx='9' cy='11' r='2.4' fill='%23f9a8d4' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.6'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23f9a8d4' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.25'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.5' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%23f9a8d4'/></svg>") 12 12, default;
 }
 html[data-atmosphere='wave'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%233b82f6' opacity='0.14'/><circle cx='9' cy='11' r='2.4' fill='%233b82f6' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.6'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%233b82f6' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.25'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.5' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%233b82f6'/></svg>") 12 12, default;
 }
 html[data-atmosphere='snow'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23cbd5e1' opacity='0.16'/><circle cx='9' cy='11' r='2.4' fill='%23cbd5e1' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.7'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23cbd5e1' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.25'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.5' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%237c8aa0'/></svg>") 12 12, default;
 }
 html[data-atmosphere='fields'] body {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='9' cy='11' r='8' fill='%23f59e0b' opacity='0.14'/><circle cx='9' cy='11' r='2.4' fill='%23f59e0b' opacity='0.97'/><circle cx='8.3' cy='10.3' r='0.6' fill='white' opacity='0.6'/><path d='M 14 4 Q 15.1 3.5 15.3 5.5' stroke='%23f59e0b' stroke-width='1.6' stroke-linecap='round' fill='none' opacity='0.95'/></svg>") 9 11, default;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.25'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.5' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%23f59e0b'/></svg>") 12 12, default;
 }
 
 /* Pointer over clickable surfaces — refined diagonal arrow with a

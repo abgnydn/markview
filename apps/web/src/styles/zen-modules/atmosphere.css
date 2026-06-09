@@ -72,6 +72,47 @@
   will-change: transform, opacity;
 }
 
+/* ── Birds — a distant flock crossing the sky (z:1, with the particles).
+   The parent animates the flight (translate); the inner SVG flaps its
+   wings (scaleY) independently so the two transforms never fight. */
+.atmosphere-birds {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.atmosphere-bird {
+  position: absolute;
+  left: -8vw;
+  animation-name: mv-bird-fly;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.atmosphere-bird svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transform-origin: 50% 35%;
+  animation: mv-bird-flap var(--flap, 0.5s) ease-in-out infinite alternate;
+}
+@keyframes mv-bird-fly {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(122vw, var(--bird-drift, -4vh)); }
+}
+@keyframes mv-bird-flap {
+  from { transform: scaleY(0.5); }
+  to   { transform: scaleY(1.1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere-bird { display: none; }
+}
+
 /* ── Petals (Fuji) — pink ellipses falling down with horizontal drift. */
 .atmosphere-particle-petals {
   top: -24px;

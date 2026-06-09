@@ -83,6 +83,12 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     return buildParticles(displayedCfg.particles, displayedCfg.id);
   }, [displayedCfg]);
 
+  // A small flock that drifts across the sky, varied per atmosphere.
+  const birds = useMemo(
+    () => (displayedCfg ? buildBirds(displayedCfg.id) : []),
+    [displayedCfg],
+  );
+
   // Switch ambient audio with the painting. Audio is muted by default
   // and needs an unlock gesture (handled inside the audio module).
   useEffect(() => {
@@ -208,6 +214,16 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         />
       )}
 
+      {/* A distant flock drifts across the sky — a quiet sign of life over
+          every painting. Pure CSS flight + wing-flap, pointer-events off. */}
+      <div className="atmosphere-birds" aria-hidden="true">
+        {birds.map((b) => (
+          <div key={b.key} className="atmosphere-bird" style={b.style}>
+            <svg viewBox="0 0 24 8"><path d="M1 6 Q 6 1 12 4.6 Q 18 1 23 6" /></svg>
+          </div>
+        ))}
+      </div>
+
       {displayedCfg.particles !== 'none' && (
         gpuParticles ? (
           /* TSL compute simulation on the WebGPU backend — same look,
@@ -254,6 +270,36 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
 interface ParticleInstance {
   key: number;
   style: React.CSSProperties;
+}
+
+/**
+ * buildBirds — a distant flock for the sky. Seeded per atmosphere so the
+ * flight pattern is stable across re-renders. Each bird gets its own height,
+ * size (depth), speed, start offset, and a tiny vertical drift.
+ */
+function buildBirds(atmosphereId: string): ParticleInstance[] {
+  const seedByAtmosphere: Record<string, number> = {
+    fuji: 0xb14d5, wave: 0x5ea91, snow: 0xfa11e, fields: 0xf1e1d,
+  };
+  const rng = mulberry32(seedByAtmosphere[atmosphereId] ?? 0xb1d533);
+  // More birds over open-sky scenes, fewer over the wave/snow close-ups.
+  const count = atmosphereId === 'fields' || atmosphereId === 'fuji' ? 7 : 5;
+  return Array.from({ length: count }, (_, i) => {
+    const scale = 0.45 + rng() * 0.95;
+    return {
+      key: i,
+      style: {
+        top: `${5 + rng() * 34}%`,
+        width: `${20 * scale}px`,
+        height: `${8 * scale}px`,
+        color: `rgba(26, 22, 31, ${0.30 + rng() * 0.24})`,
+        animationDuration: `${42 + rng() * 44}s`,
+        animationDelay: `${-rng() * 80}s`,
+        ['--bird-drift' as string]: `${(rng() - 0.5) * 12}vh`,
+        ['--flap' as string]: `${0.42 + rng() * 0.28}s`,
+      } as React.CSSProperties,
+    };
+  });
 }
 
 /**
