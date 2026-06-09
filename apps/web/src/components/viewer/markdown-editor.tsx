@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Save, X, Edit3, Bold, Italic, Strikethrough, Code, Link2,
+  Save, X, Edit3, Bold, Italic, Strikethrough, Highlighter, Code, Link2,
   Heading1, Heading2, Heading3, List, ListOrdered, Quote, Minus, Clock,
 } from 'lucide-react';
 import { createSnapshot } from '@/lib/snapshots';
@@ -12,7 +12,7 @@ import {
   EditorView, keymap, lineNumbers, highlightActiveLine,
   Decoration, type DecorationSet, ViewPlugin, type ViewUpdate,
 } from '@codemirror/view';
-import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { markdown, markdownLanguage, insertNewlineContinueMarkup, deleteMarkupBackward } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
@@ -49,9 +49,44 @@ interface MarkdownEditorProps {
 
 // Format-button kinds the toolbar dispatches.
 type FormatKind =
-  | 'bold' | 'italic' | 'strikethrough' | 'code' | 'link'
+  | 'bold' | 'italic' | 'strikethrough' | 'code' | 'highlight' | 'link'
   | 'h1' | 'h2' | 'h3'
   | 'ul' | 'ol' | 'quote' | 'hr';
+
+/**
+ * Toggle a symmetric inline marker (`**`, `*`, `~~`, `` ` ``, `==`) around the
+ * selection: unwrap if it's already wrapped (markers inside OR just outside
+ * the selection), otherwise wrap. With no selection, insert a placeholder.
+ */
+function toggleWrap(view: EditorView, marker: string, placeholder: string): void {
+  const { state } = view;
+  const sel = state.selection.main;
+  const selected = state.doc.sliceString(sel.from, sel.to);
+  const n = marker.length;
+
+  if (selected) {
+    if (selected.length >= n * 2 && selected.startsWith(marker) && selected.endsWith(marker)) {
+      const inner = selected.slice(n, selected.length - n);
+      view.dispatch({ changes: { from: sel.from, to: sel.to, insert: inner }, selection: { anchor: sel.from, head: sel.from + inner.length } });
+      return;
+    }
+    const before = state.doc.sliceString(Math.max(0, sel.from - n), sel.from);
+    const after = state.doc.sliceString(sel.to, Math.min(state.doc.length, sel.to + n));
+    if (before === marker && after === marker) {
+      view.dispatch({
+        changes: [{ from: sel.from - n, to: sel.from }, { from: sel.to, to: sel.to + n }],
+        selection: { anchor: sel.from - n, head: sel.to - n },
+      });
+      return;
+    }
+    const insert = `${marker}${selected}${marker}`;
+    view.dispatch({ changes: { from: sel.from, to: sel.to, insert }, selection: { anchor: sel.from + n, head: sel.from + n + selected.length } });
+    return;
+  }
+  const insert = `${marker}${placeholder}${marker}`;
+  view.dispatch({ changes: { from: sel.from, insert }, selection: { anchor: sel.from + n, head: sel.from + n + placeholder.length } });
+  view.focus();
+}
 
 /**
  * Apply a markdown formatting transform around the current selection (or at
@@ -63,30 +98,25 @@ function applyFormat(view: EditorView, kind: FormatKind): void {
   const sel = state.selection.main;
   const selected = state.doc.sliceString(sel.from, sel.to);
 
+  // Symmetric inline markers toggle (wrap / unwrap).
+  switch (kind) {
+    case 'bold': return toggleWrap(view, '**', 'bold');
+    case 'italic': return toggleWrap(view, '*', 'italic');
+    case 'strikethrough': return toggleWrap(view, '~~', 'text');
+    case 'highlight': return toggleWrap(view, '==', 'highlight');
+    case 'code':
+      if (selected.includes('\n')) break; // fenced block — handled below
+      return toggleWrap(view, '`', 'code');
+  }
+
   let insert = '';
   let cursorOffset = 0;
 
   switch (kind) {
-    case 'bold':
-      insert = selected ? `**${selected}**` : '**bold**';
-      cursorOffset = selected ? insert.length : 2;
-      break;
-    case 'italic':
-      insert = selected ? `*${selected}*` : '*italic*';
-      cursorOffset = selected ? insert.length : 1;
-      break;
-    case 'strikethrough':
-      insert = selected ? `~~${selected}~~` : '~~text~~';
-      cursorOffset = selected ? insert.length : 2;
-      break;
     case 'code':
-      if (selected.includes('\n')) {
-        insert = `\`\`\`\n${selected}\n\`\`\``;
-        cursorOffset = 4;
-      } else {
-        insert = selected ? `\`${selected}\`` : '`code`';
-        cursorOffset = selected ? insert.length : 1;
-      }
+      // Multi-line selection → fenced code block.
+      insert = `\`\`\`\n${selected}\n\`\`\``;
+      cursorOffset = 4;
       break;
     case 'link':
       insert = selected ? `[${selected}](url)` : '[text](url)';
@@ -407,6 +437,14 @@ function buildExtensions(
     // it gets first crack at Tab; it returns false mid-line / without
     // context, falling through to normal indentation.
     coAuthor(),
+    // Markdown list/quote continuation — Enter in a `- `/`1.`/`> `/`- [ ]`
+    // block starts the next item (double-Enter on an empty item exits it);
+    // Backspace at the start of a marker removes it. Bound before the default
+    // keymap so it wins on Enter/Backspace.
+    keymap.of([
+      { key: 'Enter', run: insertNewlineContinueMarkup },
+      { key: 'Backspace', run: deleteMarkupBackward },
+    ]),
     keymap.of([
       ...defaultKeymap,
       ...historyKeymap,
@@ -586,11 +624,21 @@ export function MarkdownEditor({
       if (!(e.metaKey || e.ctrlKey)) return;
       const inEditor = viewRef.current?.dom.contains(e.target as Node);
       if (!inEditor) return;
-      switch (e.key) {
-        case 'b': e.preventDefault(); format('bold'); break;
-        case 'i': e.preventDefault(); format('italic'); break;
-        case 'k': e.preventDefault(); format('link'); break;
+      let kind: FormatKind | null = null;
+      switch (e.key.toLowerCase()) {
+        case 'b': kind = 'bold'; break;
+        case 'i': kind = 'italic'; break;
+        case 'k': kind = 'link'; break;
+        case 'e': kind = 'code'; break;
+        case 'x': if (e.shiftKey) kind = 'strikethrough'; break;       // ⌘⇧X
+        case 'h': if (e.shiftKey) kind = 'highlight'; break;           // ⌘⇧H
+        case '1': if (e.altKey) kind = 'h1'; break;                    // ⌘⌥1
+        case '2': if (e.altKey) kind = 'h2'; break;                    // ⌘⌥2
+        case '3': if (e.altKey) kind = 'h3'; break;                    // ⌘⌥3
       }
+      if (!kind) return;
+      e.preventDefault();
+      format(kind);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -599,8 +647,9 @@ export function MarkdownEditor({
   const formatButtons = [
     { icon: Bold, type: 'bold', title: 'Bold (⌘B)' },
     { icon: Italic, type: 'italic', title: 'Italic (⌘I)' },
-    { icon: Strikethrough, type: 'strikethrough', title: 'Strikethrough' },
-    { icon: Code, type: 'code', title: 'Code' },
+    { icon: Strikethrough, type: 'strikethrough', title: 'Strikethrough (⌘⇧X)' },
+    { icon: Highlighter, type: 'highlight', title: 'Highlight (⌘⇧H)' },
+    { icon: Code, type: 'code', title: 'Code (⌘E)' },
     { icon: Link2, type: 'link', title: 'Link (⌘K)' },
     'sep',
     { icon: Heading1, type: 'h1', title: 'Heading 1' },
