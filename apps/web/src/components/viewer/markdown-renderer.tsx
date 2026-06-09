@@ -14,6 +14,21 @@ interface MarkdownRendererProps {
   workspaceFiles?: string[]; // filenames for link validation
 }
 
+/**
+ * Decode the HTML entities the markdown stringifier emits, back to raw text.
+ * `&amp;` is decoded LAST so `&amp;lt;` → `&lt;` → `<` doesn't double-decode.
+ */
+function decodeHtmlEntities(s: string): string {
+  return s
+    .replace(/&#x3C;/g, '<')
+    .replace(/&#x3E;/g, '>')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&');
+}
+
 // Shiki highlighter singleton
 let shikiHighlighter: Awaited<ReturnType<typeof import('shiki')['createHighlighter']>> | null = null;
 let shikiPromise: Promise<void> | null = null;
@@ -83,15 +98,7 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
       // Check for registered plugin
       const plugin = usePluginStore.getState().getPlugin(lang);
       if (plugin) {
-        // Decode &amp; LAST to prevent double-decoding (e.g. &amp;lt; → &lt; → <)
-        const decoded = code
-          .replace(/&#x3C;/g, '<')
-          .replace(/&#x3E;/g, '>')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'")
-          .replace(/&amp;/g, '&');
+        const decoded = decodeHtmlEntities(code);
         try {
           return plugin.render(decoded, theme);
         } catch {
@@ -99,15 +106,7 @@ function highlightHtml(html: string, theme: 'dark' | 'light'): string {
         }
       }
 
-      // Decode HTML entities — &amp; LAST to prevent double-decoding
-      const decoded = code
-        .replace(/&#x3C;/g, '<')
-        .replace(/&#x3E;/g, '>')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&amp;/g, '&');
+      const decoded = decodeHtmlEntities(code);
 
       const highlighter = shikiHighlighter;
       if (!highlighter) {
@@ -154,15 +153,7 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
     let m;
     while ((m = regex.exec(html)) !== null) {
       const encoded = m[1];
-      // Decode &amp; LAST to prevent double-decoding
-      const code = encoded
-        .replace(/&#x3C;/g, '<')
-        .replace(/&#x3E;/g, '>')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&amp;/g, '&');
+      const code = decodeHtmlEntities(encoded);
 
       const id = `mermaid-${Date.now()}-${counter++}`;
 
@@ -330,15 +321,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
       const code = wrapper.dataset.code || '';
 
       (btn as HTMLButtonElement).onclick = () => {
-        // Decode the stored code — &amp; LAST to prevent double-decoding
-        const decoded = code
-          .replace(/&#x3C;/g, '<')
-          .replace(/&#x3E;/g, '>')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'")
-          .replace(/&amp;/g, '&');
+        const decoded = decodeHtmlEntities(code);
 
         navigator.clipboard.writeText(decoded).then(() => {
           btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
