@@ -9,14 +9,26 @@ export async function downloadAsDocx(
   filename: string,
   content: string
 ): Promise<void> {
+  const title = filename.replace(/\.md$/i, '');
+  const { Packer } = await import('docx');
+  const wordDoc = await buildDocxDocument(content, title);
+  const blob = await Packer.toBlob(wordDoc);
+  triggerDownload(blob, `${title}.docx`);
+}
+
+/**
+ * Build the docx `Document` from markdown content. Split out from the
+ * download so the structure can be asserted in tests (the download side
+ * effects can't run under jsdom).
+ */
+export async function buildDocxDocument(content: string, title: string) {
   const {
-    Document, Paragraph, TextRun, HeadingLevel, Packer,
+    Document, Paragraph, TextRun, HeadingLevel,
     Table, TableRow, TableCell, WidthType, BorderStyle, AlignmentType,
     ExternalHyperlink
   } = await import('docx');
 
   const html = await renderMarkdown(content);
-  const title = filename.replace(/\.md$/i, '');
 
   // Parse HTML into a temporary DOM
   const parser = new DOMParser();
@@ -45,6 +57,10 @@ export async function downloadAsDocx(
           runs.push(new ExternalHyperlink({ children: [new TextRun({ text, style: 'Hyperlink' })], link: href }));
         } else if (tag === 'del' || tag === 's') {
           runs.push(new TextRun({ text, strike: true }));
+        } else if (tag === 'ul' || tag === 'ol') {
+          // Nested lists are emitted by processList recursion, not inline.
+        } else if (tag === 'p' || tag === 'span' || tag === 'div') {
+          runs.push(...parseInlineContent(child));
         } else {
           runs.push(new TextRun(text));
         }
@@ -62,6 +78,24 @@ export async function downloadAsDocx(
     h6: HeadingLevel.HEADING_6,
   };
 
+  // Emit a list and any nested sub-lists, each level indented one step
+  // deeper. Ordered lists number per level; the li's own inline content is
+  // taken minus its nested lists (those recurse).
+  function processList(listEl: Element, level: number) {
+    const ordered = listEl.tagName.toLowerCase() === 'ol';
+    let idx = 0;
+    listEl.querySelectorAll(':scope > li').forEach((li) => {
+      idx++;
+      const prefix = ordered ? `${idx}. ` : '• ';
+      const clone = li.cloneNode(true) as Element;
+      clone.querySelectorAll(':scope > ul, :scope > ol').forEach((n) => n.remove());
+      const runs = parseInlineContent(clone);
+      runs.unshift(new TextRun(prefix));
+      children.push(new Paragraph({ children: runs, indent: { left: 720 * (level + 1) } }));
+      li.querySelectorAll(':scope > ul, :scope > ol').forEach((sub) => processList(sub, level + 1));
+    });
+  }
+
   function processNode(el: Element) {
     const tag = el.tagName.toLowerCase();
 
@@ -77,14 +111,10 @@ export async function downloadAsDocx(
       return;
     }
 
-    // Lists
+    // Lists (recursive — nested ul/ol get a deeper indent instead of being
+    // flattened into the parent line).
     if (tag === 'ul' || tag === 'ol') {
-      el.querySelectorAll(':scope > li').forEach((li, idx) => {
-        const prefix = tag === 'ol' ? `${idx + 1}. ` : '• ';
-        const runs = parseInlineContent(li);
-        runs.unshift(new TextRun(prefix));
-        children.push(new Paragraph({ children: runs, indent: { left: 720 } }));
-      });
+      processList(el, 0);
       return;
     }
 
@@ -161,13 +191,10 @@ export async function downloadAsDocx(
     children.push(new Paragraph({ children: [new TextRun(content)] }));
   }
 
-  const wordDoc = new Document({
+  return new Document({
     title,
     creator: 'MarkView',
     sections: [{ children }],
   });
-
-  const blob = await Packer.toBlob(wordDoc);
-  triggerDownload(blob, `${title}.docx`);
 }
 

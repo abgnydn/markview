@@ -109,19 +109,23 @@ export async function downloadAsPptx(
       color: titleColor, fontFace: 'Inter', bold: true,
     });
 
-    // Content text
+    // Content text — give it less height when a table follows so the two
+    // don't overlap.
+    const hasTable = s.tables.length > 0;
     if (s.content.length > 0) {
       const bodyText = s.content.join('\n');
       const truncated = bodyText.length > 1500 ? bodyText.slice(0, 1500) + '...' : bodyText;
       slide.addText(truncated, {
-        x: 0.5, y: 1.3, w: '90%', h: 4,
+        x: 0.5, y: 1.3, w: '90%', h: hasTable ? 2.2 : 4,
         fontSize: 14, color: textColor, fontFace: 'Inter',
         valign: 'top', paraSpaceAfter: 6,
       });
     }
 
-    // Tables (first one only to avoid overflow)
-    if (s.tables.length > 0 && s.content.length === 0) {
+    // Tables (first one only to avoid overflow). Render even when the slide
+    // also has text — just place it below the text instead of dropping it.
+    if (hasTable) {
+      const tableY = s.content.length > 0 ? 3.7 : 1.3;
       const tableData = s.tables[0];
       const pptxRows = tableData.map((row, rIdx) =>
         row.map((cell) => ({
@@ -136,7 +140,7 @@ export async function downloadAsPptx(
         }))
       );
       slide.addTable(pptxRows, {
-        x: 0.5, y: 1.3, w: '90%',
+        x: 0.5, y: tableY, w: '90%',
         border: { pt: 0.5, color: isDark ? '30363d' : 'd0d7de' },
         colW: Array(tableData[0]?.length || 1).fill(12 / (tableData[0]?.length || 1)),
         fontSize: 11,
