@@ -153,4 +153,18 @@ describe('XSS Sanitization', () => {
     expect(html).not.toContain('id=""');
     expect(html).toMatch(/id="heading-\d+"/);
   });
+
+  it('renders ==highlight==, ^sup^, ~sub~ and :emoji: shortcodes', async () => {
+    const html = await renderMarkdown('Water is H~2~O and E=mc^2^. ==Key== fact :rocket:');
+    expect(html).toContain('<mark>Key</mark>');
+    expect(html).toContain('<sup>2</sup>');
+    expect(html).toContain('<sub>2</sub>');
+    expect(html).toContain('🚀');
+  });
+
+  it('leaves ~~strikethrough~~ and unknown :codes: untouched', async () => {
+    const html = await renderMarkdown('~~gone~~ and :not_a_real_emoji:');
+    expect(html).toContain('<del>gone</del>');
+    expect(html).toContain(':not_a_real_emoji:');
+  });
 });

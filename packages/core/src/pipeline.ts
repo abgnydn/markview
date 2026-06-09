@@ -8,6 +8,7 @@ import rehypeStringify from 'rehype-stringify';
 import type { Root, Blockquote, Paragraph, Text } from 'mdast';
 import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
+import { remarkInlineExtras } from './inline-extras';
 
 // ---- Types ----
 
@@ -448,7 +449,12 @@ function getProcessor(alerts: boolean, sanitize: boolean) {
   const cached = processorCache.get(key);
   if (cached) return cached;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let processor: any = unified().use(remarkParse).use(remarkGfm);
+  // singleTilde:false so `~x~` is left for the subscript rule below; only
+  // `~~x~~` stays GFM strikethrough.
+  let processor: any = unified()
+    .use(remarkParse)
+    .use(remarkGfm, { singleTilde: false })
+    .use(remarkInlineExtras);
   if (alerts) processor = processor.use(remarkAlerts);
   processor = processor.use(remarkRehype, { allowDangerousHtml: true }).use(rehypeRaw);
   if (sanitize) processor = processor.use(rehypeSanitize, sanitizeSchema);
