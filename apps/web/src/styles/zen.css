@@ -253,7 +253,57 @@ body::before {
   background: transparent !important;
 }
 .toolbar-logo { display: none !important; }
-.toolbar-brand,
+/* Logo-only brand — the M paper-stamp mark carries it (same design as the
+   landing nav). The "MarkView" text is kept in the DOM but hidden visually;
+   the home button has its own aria-label. */
+.toolbar-brand {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+/* M stamp — a small paper card with an italic serif M and a violet hanging
+   open-quote, mirroring .ed-nav-mark on the landing page. */
+.toolbar-mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 4px;
+  background: var(--zen-bg);
+  box-shadow: 0 1px 0 var(--zen-paper-tint);
+}
+.toolbar-mark-m {
+  font-family: var(--zen-serif);
+  font-size: 18px;
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1;
+  color: var(--zen-fg);
+  letter-spacing: -0.02em;
+  margin-top: 1px;
+}
+.toolbar-mark::after {
+  content: '\201C';
+  position: absolute;
+  top: -5px;
+  right: -2px;
+  font-family: var(--zen-serif);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--zen-accent);
+  opacity: 0.7;
+}
+/* Active workspace name stays the quiet uppercase mono label. */
 .toolbar-workspace-name {
   font-family: var(--zen-mono) !important;
   font-size: 10.5px !important;
@@ -361,6 +411,61 @@ body::before {
 .theme-picker-check {
   color: var(--zen-accent) !important;
   font-size: 11px !important;
+}
+
+/* Overflow ("⋮") menu — same paper-panel recipe as the theme picker so the
+   chrome reads as one calm surface instead of the old GitHub-dark popover. */
+.toolbar-overflow-menu {
+  background: var(--zen-bg-deep) !important;
+  border: 1px solid var(--zen-fg-ghost) !important;
+  border-radius: 6px !important;
+  box-shadow: var(--zen-shadow-card) !important;
+  padding: 6px !important;
+  min-width: 224px !important;
+  margin-top: 8px !important;
+}
+.toolbar-overflow-item {
+  background: transparent !important;
+  color: var(--zen-fg-soft) !important;
+  font-family: var(--zen-serif) !important;
+  font-size: 14px !important;
+  gap: 12px !important;
+  padding: 9px 12px !important;
+  border-radius: 3px !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+  transition: color 200ms var(--zen-ease), background 200ms var(--zen-ease) !important;
+}
+.toolbar-overflow-item svg {
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--zen-fg-faint) !important;
+  transition: color 200ms var(--zen-ease) !important;
+}
+.toolbar-overflow-item:hover {
+  background: var(--zen-paper-tint) !important;
+  color: var(--zen-fg) !important;
+}
+.toolbar-overflow-item:hover svg {
+  color: var(--zen-accent) !important;
+}
+/* Hairline divider between groups. */
+.toolbar-overflow-sep {
+  margin: 5px 6px !important;
+  border: 0 !important;
+  border-top: 1px solid var(--zen-fg-ghost) !important;
+}
+/* Destructive action — muted rose, washes warmer on hover. */
+.toolbar-overflow-item-danger,
+.toolbar-overflow-item-danger svg {
+  color: #d98a8a !important;
+}
+.toolbar-overflow-item-danger:hover {
+  background: rgba(217, 138, 138, 0.10) !important;
+}
+.toolbar-overflow-item-danger:hover,
+.toolbar-overflow-item-danger:hover svg {
+  color: #e8a0a0 !important;
 }
 
 /* ────────────────────────────────────────────────────────────────────────

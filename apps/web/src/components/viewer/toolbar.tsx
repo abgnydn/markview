@@ -80,7 +80,7 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
           </button>
         )}
         <button className="toolbar-home-btn" onClick={onGoHome} title="Back to home" aria-label="Back to home">
-          <img src="/icon-192.png" alt="MarkView Logo" className="toolbar-logo" style={{ width: 24, height: 24, borderRadius: 6 }} />
+          <span className="toolbar-mark" aria-hidden="true"><span className="toolbar-mark-m">M</span></span>
           <h1 className="toolbar-brand">MarkView</h1>
         </button>
         {activeWorkspace && (
@@ -219,14 +219,14 @@ export function Toolbar({ onAddFiles, readingStats, onTogglePresentation, onTogg
                   <button className="toolbar-overflow-item" onClick={() => { onToggleDiffView?.(); setShowOverflow(false); }}>
                     <FileCode2 size={16} /> Compare Git Diff
                   </button>
-                  <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid var(--border-muted)' }} />
+                  <hr className="toolbar-overflow-sep" />
                   <button className="toolbar-overflow-item" onClick={() => { onOpenFileBrowser?.(); setShowOverflow(false); }}>
                     <FolderOpen size={16} /> Browse all files
                   </button>
                   <button className="toolbar-overflow-item" onClick={() => { onGoHome?.(); setShowOverflow(false); }}>
                     <Plus size={16} style={{ transform: 'rotate(45deg)' }} /> Go to landing
                   </button>
-                  <button className="toolbar-overflow-item" onClick={() => { handleClearAll(); setShowOverflow(false); }} style={{ color: '#f87171' }}>
+                  <button className="toolbar-overflow-item toolbar-overflow-item-danger" onClick={() => { handleClearAll(); setShowOverflow(false); }}>
                     <Trash2 size={16} /> Clear All Workspaces
                   </button>
                 </div>
