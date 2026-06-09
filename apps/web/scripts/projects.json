@@ -1,6 +1,104 @@
 {
-  "$schema_note": "Edit this file to add/remove projects from the portfolio hub. Fields: slug (URL slug, also folder name under public/portfolio/<slug>/); repo (owner/name on GitHub); featured (bool \u2014 pins to hero row); order (number \u2014 featured row ordering, lower = leftmost); url (optional live deployment URL); tagline (optional override of the GitHub description). Everything else \u2014 description, language, stars, topics, commits \u2014 is pulled live by scripts/sync-portfolio.mjs.",
+  "$schema_note": "Edit this file to add/remove projects from the portfolio hub. Fields: slug (URL slug, also folder name under public/portfolio/<slug>/); repo (owner/name on GitHub); featured (bool — pins to hero row); order (number — featured row ordering, lower = leftmost); url (optional live deployment URL); tagline (optional override of the GitHub description). Everything else — description, language, stars, topics, commits — is pulled live by scripts/sync-portfolio.mjs.",
   "owner_default": "abgnydn",
+  "categories": {
+    "llm-inference": {
+      "label": "LLM inference",
+      "color": "#9b7dff"
+    },
+    "llm-training": {
+      "label": "LLM training",
+      "color": "#bc8cff"
+    },
+    "kernel-fusion": {
+      "label": "kernel fusion",
+      "color": "#e0bd7a"
+    },
+    "quantum-chemistry": {
+      "label": "quantum chemistry",
+      "color": "#5ea1e6"
+    },
+    "radiobiology": {
+      "label": "radiobiology",
+      "color": "#7ab989"
+    },
+    "biology": {
+      "label": "biology",
+      "color": "#a5d6a7"
+    },
+    "federated": {
+      "label": "federated",
+      "color": "#ff9776"
+    },
+    "privacy": {
+      "label": "privacy",
+      "color": "#e07a5f"
+    },
+    "knowledge-base": {
+      "label": "knowledge base",
+      "color": "#c084fc"
+    },
+    "agent": {
+      "label": "agent",
+      "color": "#a78bfa"
+    },
+    "3d": {
+      "label": "3D / embodied",
+      "color": "#67e8f9"
+    },
+    "vision": {
+      "label": "vision",
+      "color": "#fb7185"
+    },
+    "benchmark": {
+      "label": "benchmark",
+      "color": "#fbbf24"
+    },
+    "vertical": {
+      "label": "vertical",
+      "color": "#a5a5b2"
+    },
+    "tooling": {
+      "label": "tooling",
+      "color": "#94a3b8"
+    },
+    "research-paper": {
+      "label": "research paper",
+      "color": "#fbbf24"
+    },
+    "simulation": {
+      "label": "simulation",
+      "color": "#34d399"
+    },
+    "evolutionary": {
+      "label": "evolutionary",
+      "color": "#facc15"
+    },
+    "ternary": {
+      "label": "ternary / BitNet",
+      "color": "#c084fc"
+    },
+    "education": {
+      "label": "education",
+      "color": "#22d3ee"
+    },
+    "legal-tech": {
+      "label": "legal-tech",
+      "color": "#fb923c"
+    },
+    "climate": {
+      "label": "climate",
+      "color": "#84cc16"
+    },
+    "security": {
+      "label": "security",
+      "color": "#f87171"
+    },
+    "mcp": {
+      "label": "MCP",
+      "color": "#60a5fa"
+    }
+  },
   "projects": [
     {
       "slug": "neuropulse",
@@ -8,7 +106,16 @@
       "featured": true,
       "order": 1,
       "url": "https://neuropulse.live",
-      "tagline": "Live 3.8B-param forward pass in the browser with mech-interp ablation."
+      "tagline": "Live 3.8B-param forward pass in the browser with mech-interp ablation.",
+      "tags": [
+        "llm-inference"
+      ],
+      "impact": "Runs a 3.8-billion-parameter AI model live in your browser and lets you watch — and tweak — how it thinks, layer by layer.",
+      "related": [
+        "zero-tvm",
+        "veil",
+        "wonderlab"
+      ]
     },
     {
       "slug": "webgpu-q",
@@ -16,7 +123,19 @@
       "featured": true,
       "order": 2,
       "url": "https://webgpu-q.vercel.app",
-      "tagline": "WebGPU quantum many-body + chemistry simulator. 401 tests, FCI-validated."
+      "tagline": "WebGPU quantum many-body + chemistry simulator. Brute-force verified element-wise against PySCF, with WebGPU acceleration on the CCSD(T) bottleneck.",
+      "tags": [
+        "quantum-chemistry",
+        "kernel-fusion"
+      ],
+      "impact": "Does research-grade quantum chemistry inside a browser tab, and checks its own answers against the field's reference tool, number for number.",
+      "proof": "verified vs PySCF",
+      "doi": "10.5281/zenodo.20494383",
+      "related": [
+        "webgpu-kernel-fusion",
+        "webgpu-dna",
+        "gpubench"
+      ]
     },
     {
       "slug": "markview",
@@ -24,7 +143,16 @@
       "featured": true,
       "order": 3,
       "url": "https://markview.ai",
-      "tagline": "The editor you're using right now."
+      "tagline": "The editor you're using right now.",
+      "tags": [
+        "knowledge-base",
+        "tooling",
+        "mcp"
+      ],
+      "impact": "The markdown editor this entire portfolio is written and rendered in.",
+      "related": [
+        "davakasasi"
+      ]
     },
     {
       "slug": "postnet-cf",
@@ -32,7 +160,17 @@
       "featured": true,
       "order": 4,
       "url": "https://postnet-cf.abgunaydin94.workers.dev",
-      "tagline": "Federated SGD over Cloudflare Durable Objects. 50% Byzantine tolerance."
+      "tagline": "Federated SGD over Cloudflare Durable Objects. 50% Byzantine tolerance.",
+      "tags": [
+        "federated",
+        "privacy"
+      ],
+      "impact": "Trains a shared AI model across many machines that never swap raw data — and keeps converging even when half of them lie.",
+      "proof": "50% byzantine measured",
+      "related": [
+        "the-swarm",
+        "fused-lora"
+      ]
     },
     {
       "slug": "iz",
@@ -40,91 +178,591 @@
       "featured": true,
       "order": 5,
       "url": "https://iz-b0n.pages.dev",
-      "tagline": "TR-MRV-Bench \u2014 open emissions benchmark beating EU CBAM by 85.9%."
+      "tagline": "TR-MRV-Bench — open emissions benchmark beating EU CBAM by 85.9%.",
+      "tags": [
+        "vertical",
+        "climate"
+      ],
+      "impact": "An open benchmark for industrial carbon emissions that's dramatically more accurate than the EU's default border-tax estimate.",
+      "related": [
+        "fused-lora",
+        "fusedx",
+        "gpubench"
+      ]
     },
-    { "slug": "quill", "repo": "abgnydn/quill" },
-    { "slug": "safenpm", "repo": "abgnydn/safenpm", "url": "https://safenpm.dev" },
-    { "slug": "panel", "repo": "abgnydn/panel", "url": "https://panel-7474659131504222.aws.databricksapps.com" },
-    { "slug": "gpubench", "repo": "abgnydn/gpubench", "url": "https://gpubench.dev" },
-    { "slug": "zero-tvm", "repo": "abgnydn/zero-tvm", "url": "https://zerotvm.com" },
-    { "slug": "wonderlab", "repo": "abgnydn/wonderlab", "url": "https://the-wonderlab.pages.dev" },
-    { "slug": "webgpu-dna", "repo": "abgnydn/webgpu-dna", "url": "https://webgpudna.com" },
-    { "slug": "webgpu-p2p-evolution", "repo": "abgnydn/webgpu-p2p-evolution" },
+    {
+      "slug": "quill",
+      "repo": "abgnydn/quill",
+      "featured": true,
+      "order": 11,
+      "tagline": "Local-first grammar + writing assistant for macOS. Native system-wide overlay across every app. Harper rules + on-device Gemma/BitNet via QVAC Fabric. 100% on-device, zero cloud.",
+      "tags": [
+        "llm-inference",
+        "tooling",
+        "ternary"
+      ],
+      "impact": "Fixes your grammar in every app on a Mac without sending a single word to the cloud.",
+      "related": [
+        "veil",
+        "draw-instant"
+      ]
+    },
+    {
+      "slug": "safenpm",
+      "repo": "abgnydn/safenpm",
+      "featured": true,
+      "order": 10,
+      "url": "https://safenpm.dev",
+      "tagline": "Drop-in npm install replacement that sandboxes postinstall scripts, blocks network access, detects typosquats, and catches supply-chain attacks before they execute.",
+      "tags": [
+        "tooling",
+        "security"
+      ],
+      "impact": "Installs npm packages safely by sandboxing the hidden install scripts attackers use to slip in malware.",
+      "related": [
+        "deps0"
+      ]
+    },
+    {
+      "slug": "panel",
+      "repo": "abgnydn/panel",
+      "featured": true,
+      "order": 13,
+      "url": "https://panel-7474659131504222.aws.databricksapps.com",
+      "tagline": "Multi-agent rights advisor for APJ migrant workers — five specialists read your contract in your language, visibly disagree, then converge. Databricks APJ hackathon entry.",
+      "tags": [
+        "agent",
+        "vertical"
+      ],
+      "impact": "Five AI specialists read a migrant worker's contract in their own language, openly disagree, then reach a verdict on their rights.",
+      "related": [
+        "founder-lab"
+      ]
+    },
+    {
+      "slug": "gpubench",
+      "repo": "abgnydn/gpubench",
+      "featured": true,
+      "order": 8,
+      "url": "https://gpubench.dev",
+      "tagline": "Real WebGPU compute benchmarks running on visitors' hardware — kernel-fusion validated across hundreds of devices and seven GPU vendors.",
+      "tags": [
+        "benchmark",
+        "kernel-fusion"
+      ],
+      "impact": "Measures real GPU speed on whatever device you visit from, pooled across hundreds of machines and seven GPU brands.",
+      "proof": "7 GPU vendors",
+      "related": [
+        "kernelfusion",
+        "webgpu-kernel-fusion",
+        "wgpu-native-bench"
+      ]
+    },
+    {
+      "slug": "zero-tvm",
+      "repo": "abgnydn/zero-tvm",
+      "featured": true,
+      "order": 6,
+      "url": "https://zerotvm.com",
+      "tagline": "Phi-3-mini running in a browser on 10 hand-written WGSL kernels. No TVM, no compiler, no API key — within striking distance of the autotuned baseline for ~40× less code.",
+      "tags": [
+        "llm-inference",
+        "kernel-fusion"
+      ],
+      "impact": "Runs a full language model in your browser from ten hand-written GPU programs — no giant compiler stack, no API key.",
+      "related": [
+        "neuropulse",
+        "fused-lora",
+        "webgpu-transformer-fusion"
+      ]
+    },
+    {
+      "slug": "wonderlab",
+      "repo": "abgnydn/wonderlab",
+      "featured": true,
+      "order": 14,
+      "url": "https://the-wonderlab.pages.dev",
+      "tagline": "Open scientific questions in plain words — a 3D lab where a researcher answers anything, draws it on a whiteboard, ties it to a real benchmark. Browser-only, bring your own LLM.",
+      "tags": [
+        "agent",
+        "3d",
+        "education"
+      ],
+      "impact": "Ask any open scientific question in plain words; a 3D researcher answers it, sketches it on a whiteboard, and ties it to real data.",
+      "related": [
+        "webgpu-q",
+        "neuropulse"
+      ]
+    },
+    {
+      "slug": "webgpu-dna",
+      "repo": "abgnydn/webgpu-dna",
+      "featured": true,
+      "order": 12,
+      "url": "https://webgpudna.com",
+      "tagline": "Radiobiology Monte Carlo in a browser tab — WebGPU port of CNRS Geant4-DNA. Karamitros IRT chemistry + 21×21 B-DNA fiber-grid scoring, cross-checked against the canonical reference.",
+      "tags": [
+        "radiobiology",
+        "kernel-fusion",
+        "simulation"
+      ],
+      "impact": "Simulates how radiation damages DNA — a browser port of a CERN-grade physics tool, cross-checked against the original.",
+      "proof": "cross-checked vs Geant4-DNA",
+      "related": [
+        "webgpu-q",
+        "webgpu-kernel-fusion",
+        "wgpu-adas-bench"
+      ]
+    },
+    {
+      "slug": "webgpu-p2p-evolution",
+      "repo": "abgnydn/webgpu-p2p-evolution",
+      "tags": [
+        "federated",
+        "evolutionary"
+      ],
+      "impact": "Four playable demos where AI agents evolve in your browser and trade their 'genes' directly with other players, no server in the middle.",
+      "related": [
+        "the-swarm",
+        "swarm-bio"
+      ]
+    },
     {
       "slug": "webgpu-transformer-fusion",
       "repo": "abgnydn/webgpu-transformer-fusion",
-      "url": "https://doi.org/10.5281/zenodo.19344277"
+      "url": "https://doi.org/10.5281/zenodo.19344277",
+      "tags": [
+        "kernel-fusion",
+        "llm-inference",
+        "research-paper"
+      ],
+      "impact": "Shows that collapsing an AI model's entire inner loop into one GPU call removes the overhead that dominates small-model speed in the browser.",
+      "related": [
+        "kernelfusion",
+        "webgpu-fusion-sdk",
+        "webgpu-fusion-max",
+        "zero-tvm"
+      ]
     },
-    { "slug": "wgpu-adas-bench", "repo": "abgnydn/wgpu-adas-bench" },
-    { "slug": "webgpu-fusion-max", "repo": "abgnydn/webgpu-fusion-max" },
-    { "slug": "wgpu-native-bench", "repo": "abgnydn/wgpu-native-bench" },
+    {
+      "slug": "wgpu-adas-bench",
+      "repo": "abgnydn/wgpu-adas-bench",
+      "tags": [
+        "kernel-fusion",
+        "benchmark",
+        "vertical"
+      ],
+      "impact": "Fuses a self-driving-car sensor pipeline into a single GPU pass — many times faster than the standard PyTorch version on the same chip.",
+      "proof": "benchmarked vs PyTorch",
+      "related": [
+        "kernelfusion",
+        "wgpu-native-bench",
+        "gpubench",
+        "teklifci"
+      ]
+    },
+    {
+      "slug": "webgpu-fusion-max",
+      "repo": "abgnydn/webgpu-fusion-max",
+      "tags": [
+        "llm-inference",
+        "kernel-fusion"
+      ],
+      "impact": "Proves the single-GPU-call trick still works on a 3.6-billion-parameter model, with a large measured speedup.",
+      "proof": "measured on Phi-3-mini",
+      "related": [
+        "webgpu-fusion-sdk",
+        "webgpu-transformer-fusion"
+      ]
+    },
+    {
+      "slug": "wgpu-native-bench",
+      "repo": "abgnydn/wgpu-native-bench",
+      "tags": [
+        "benchmark",
+        "kernel-fusion"
+      ],
+      "impact": "Runs the exact same GPU code with and without a browser to measure precisely what the browser costs you.",
+      "proof": "native vs browser, same GPU",
+      "related": [
+        "gpubench",
+        "kernelfusion",
+        "wgpu-adas-bench"
+      ]
+    },
     {
       "slug": "webgpu-kernel-fusion",
       "repo": "abgnydn/webgpu-kernel-fusion",
-      "url": "https://doi.org/10.5281/zenodo.19343570"
+      "url": "https://doi.org/10.5281/zenodo.19343570",
+      "tags": [
+        "kernel-fusion",
+        "research-paper"
+      ],
+      "impact": "The first paper of the series, showing one fused GPU call beats many small ones for evolutionary search.",
+      "doi": "10.5281/zenodo.19342888",
+      "related": [
+        "kernelfusion",
+        "webgpu-q",
+        "webgpu-dna",
+        "gpubench"
+      ]
     },
     {
       "slug": "zero-burn-lab",
       "repo": "abgnydn/zero-burn-lab",
-      "tagline": "Chiang Mai burning-season simulation \u2014 the project that triggered the kernel-fusion line."
+      "tagline": "Chiang Mai burning-season simulation — the project that triggered the kernel-fusion line.",
+      "tags": [
+        "vertical",
+        "simulation",
+        "education",
+        "climate"
+      ],
+      "impact": "A simulation of Chiang Mai's smoke-season air pollution — the project that kick-started the whole GPU-speed research line.",
+      "related": [
+        "kernelfusion",
+        "mycosim"
+      ]
     },
-    { "slug": "fused-lora", "repo": "abgnydn/fused-lora", "url": "https://fused-lora.pages.dev" },
-    { "slug": "fusedx", "repo": "abgnydn/fusedx" },
-    { "slug": "hub", "repo": "abgnydn/hub" },
-    { "slug": "vault", "repo": "abgnydn/vault" },
-    { "slug": "veil", "repo": "abgnydn/veil" },
-    { "slug": "temple", "repo": "abgnydn/temple" },
-    { "slug": "context-vault", "repo": "abgnydn/context-vault" },
+    {
+      "slug": "fused-lora",
+      "repo": "abgnydn/fused-lora",
+      "featured": true,
+      "order": 9,
+      "url": "https://fused-lora.pages.dev",
+      "tagline": "Browser-native LoRA fine-tuning of BitNet b1.58 2B4T — first public demo of training a ternary 2B LLM in a web page.",
+      "tags": [
+        "llm-training",
+        "kernel-fusion",
+        "ternary"
+      ],
+      "impact": "The first public demo of fine-tuning a 2-billion-parameter AI model entirely inside a web page.",
+      "related": [
+        "fusedx",
+        "iz",
+        "zero-tvm",
+        "draw-instant"
+      ]
+    },
+    {
+      "slug": "fusedx",
+      "repo": "abgnydn/fusedx",
+      "tags": [
+        "vision",
+        "llm-training"
+      ],
+      "impact": "A browser engine that trains image-recognition models from scratch on your own GPU — the vision counterpart to fused-lora.",
+      "related": [
+        "fused-lora",
+        "iz",
+        "zero-tvm"
+      ]
+    },
+    {
+      "slug": "hub",
+      "repo": "abgnydn/hub",
+      "tags": [
+        "tooling",
+        "knowledge-base",
+        "mcp"
+      ],
+      "impact": "A tiny local server that streams my knowledge graph and running agents into the browser in real time.",
+      "related": [
+        "vault",
+        "context-vault"
+      ]
+    },
+    {
+      "slug": "vault",
+      "repo": "abgnydn/vault",
+      "tags": [
+        "knowledge-base",
+        "3d"
+      ],
+      "impact": "Turns a folder of notes into a navigable 3D galaxy where related ideas cluster by meaning.",
+      "related": [
+        "hub",
+        "context-vault"
+      ]
+    },
+    {
+      "slug": "veil",
+      "repo": "abgnydn/veil",
+      "featured": true,
+      "order": 15,
+      "tagline": "Privacy layer between any app and any third-party LLM — pseudonymizes emails / paths / URLs / IPs deterministically before the wire and reverses the mapping on the response.",
+      "tags": [
+        "privacy",
+        "llm-inference"
+      ],
+      "impact": "Strips names, emails and IPs out of your text before it reaches any AI service, then restores them in the reply.",
+      "related": [
+        "neuropulse",
+        "tether",
+        "quill",
+        "butterfly"
+      ]
+    },
+    {
+      "slug": "temple",
+      "repo": "abgnydn/temple",
+      "tags": [
+        "3d",
+        "agent"
+      ],
+      "impact": "Gives an AI assistant a body you can visit and talk to inside a 3D space.",
+      "related": [
+        "the-town"
+      ]
+    },
+    {
+      "slug": "context-vault",
+      "repo": "abgnydn/context-vault",
+      "tags": [
+        "privacy",
+        "tooling",
+        "mcp"
+      ],
+      "impact": "Lets AI tools like Claude Desktop and Cursor safely read your local files — read-only, and you choose what's shared.",
+      "related": [
+        "hub",
+        "vault"
+      ]
+    },
     {
       "slug": "tether",
       "repo": "abgnydn/tether",
       "url": "https://tether-app.pages.dev",
-      "tagline": "Local-first browser brain \u2014 SolidJS + WebGPU on Cloudflare. Persistent agent in the right rail; privacy layer chooses which model sees what before the message ships."
+      "tagline": "Local-first browser brain — SolidJS + WebGPU on Cloudflare. Persistent agent in the right rail; privacy layer chooses which model sees what before the message ships.",
+      "tags": [
+        "knowledge-base",
+        "agent",
+        "mcp"
+      ],
+      "impact": "A persistent AI sidekick living in your browser that decides which model is allowed to see what before any message is sent.",
+      "related": [
+        "veil"
+      ]
     },
-    { "slug": "webgpu-fly", "repo": "abgnydn/webgpu-fly", "url": "https://webgpu-fly.pages.dev" },
-    { "slug": "webgpu-fusion-sdk", "repo": "abgnydn/webgpu-fusion-sdk" },
-    { "slug": "butterfly", "repo": "abgnydn/butterfly" },
-    { "slug": "draw-instant", "repo": "abgnydn/draw-instant" },
+    {
+      "slug": "webgpu-fly",
+      "repo": "abgnydn/webgpu-fly",
+      "featured": true,
+      "order": 16,
+      "url": "https://webgpu-fly.pages.dev",
+      "tagline": "Realtime LIF simulation of the FlyWire connectome + MANC spine + flybody body — a fly brain talking to a fly body, live in your browser via WebGPU + WASM.",
+      "tags": [
+        "biology",
+        "3d",
+        "simulation"
+      ],
+      "impact": "Runs a real fruit-fly brain wired to a fruit-fly body, live in your browser — a tiny digital animal."
+    },
+    {
+      "slug": "webgpu-fusion-sdk",
+      "repo": "abgnydn/webgpu-fusion-sdk",
+      "tags": [
+        "llm-inference",
+        "kernel-fusion"
+      ],
+      "impact": "The browser-AI speed research packaged as a drop-in npm library other developers can install.",
+      "npm": "@webgpu-fusion/core",
+      "related": [
+        "webgpu-transformer-fusion",
+        "webgpu-fusion-max",
+        "gpubench"
+      ]
+    },
+    {
+      "slug": "butterfly",
+      "repo": "abgnydn/butterfly",
+      "featured": true,
+      "order": 17,
+      "tagline": "Online context-healing loop for long-running LLM agents — tag-then-rebuild compression preserves cross-chunk coreference instead of the cliff-edge auto-compact.",
+      "tags": [
+        "agent"
+      ],
+      "impact": "Keeps long-running AI agents coherent by compressing their memory without losing the thread, instead of abruptly forgetting.",
+      "related": [
+        "fused-lora",
+        "veil"
+      ]
+    },
+    {
+      "slug": "draw-instant",
+      "repo": "abgnydn/draw-instant",
+      "tags": [
+        "vision",
+        "kernel-fusion"
+      ],
+      "impact": "Generates images from a text prompt in real time as you type, running the diffusion model on your own GPU.",
+      "related": [
+        "fused-lora",
+        "zero-tvm",
+        "webgpu-transformer-fusion",
+        "gpubench"
+      ]
+    },
     {
       "slug": "kernelfusion",
       "repo": "abgnydn/kernelfusion",
+      "featured": true,
+      "order": 7,
       "url": "https://kernelfusion.dev",
-      "tagline": "Research umbrella for GPU kernel fusion \u2014 eliminating per-dispatch overhead across evolutionary computation and transformer inference. Two preprints."
+      "tagline": "Research umbrella for GPU kernel fusion — eliminating per-dispatch overhead across evolutionary computation and transformer inference. Two preprints.",
+      "tags": [
+        "kernel-fusion",
+        "research-paper"
+      ],
+      "impact": "The umbrella research program — two papers — behind making GPUs faster by fusing many small steps into one.",
+      "doi": "10.5281/zenodo.19342888",
+      "related": [
+        "webgpu-kernel-fusion",
+        "webgpu-transformer-fusion",
+        "gpubench",
+        "wgpu-adas-bench"
+      ]
     },
-    { "slug": "the-town", "repo": "abgnydn/the-town" },
-    { "slug": "teklifci", "repo": "abgnydn/teklifci", "url": "https://teklifci.pages.dev" },
-    { "slug": "deps0", "repo": "abgnydn/deps0" },
+    {
+      "slug": "the-town",
+      "repo": "abgnydn/the-town",
+      "tags": [
+        "3d",
+        "simulation"
+      ],
+      "impact": "A living medieval village where 15 AI villagers follow daily routines and stumble into emergent dramas.",
+      "related": [
+        "the-swarm",
+        "swarm-ensemble",
+        "temple"
+      ]
+    },
+    {
+      "slug": "teklifci",
+      "repo": "abgnydn/teklifci",
+      "url": "https://teklifci.pages.dev",
+      "tags": [
+        "vertical",
+        "vision"
+      ],
+      "impact": "A Turkish metal-shop app that turns a photo of a drawing into a priced quote in about a minute, fully offline on the phone.",
+      "proof": "eval on real drawings",
+      "related": [
+        "fused-lora",
+        "wgpu-adas-bench",
+        "zero-tvm"
+      ]
+    },
+    {
+      "slug": "deps0",
+      "repo": "abgnydn/deps0",
+      "tags": [
+        "tooling"
+      ],
+      "impact": "Copy-paste replacements for popular npm packages so you own the code and ship zero dependencies.",
+      "related": [
+        "safenpm"
+      ]
+    },
     {
       "slug": "the-swarm",
       "repo": "abgnydn/the-swarm",
-      "tagline": "Privacy-preserving distributed AI via browser-based Evolutionary Strategies \u2014 measured Byzantine tolerance at 50% attacker share."
+      "tagline": "Privacy-preserving distributed AI via browser-based Evolutionary Strategies — measured Byzantine tolerance at 50% attacker share.",
+      "tags": [
+        "federated",
+        "privacy",
+        "evolutionary"
+      ],
+      "impact": "Trains AI across many browsers that never share private data, and stays correct even when half are actively cheating.",
+      "proof": "50% byzantine measured",
+      "related": [
+        "swarm-bio",
+        "swarm-ensemble",
+        "webgpu-p2p-evolution",
+        "postnet-cf"
+      ]
     },
     {
       "slug": "mycosim",
       "repo": "abgnydn/mycosim",
-      "tagline": "Directed-evolution engine for dual-function enzymes \u2014 PETase + metallothionein fusion for a Chiang Mai water filter."
+      "tagline": "Directed-evolution engine for dual-function enzymes — PETase + metallothionein fusion for a Chiang Mai water filter.",
+      "tags": [
+        "biology",
+        "simulation",
+        "evolutionary"
+      ],
+      "impact": "Evolves a two-in-one enzyme design aimed at a low-cost water filter for Chiang Mai.",
+      "related": [
+        "swarm-bio",
+        "the-swarm"
+      ]
     },
     {
       "slug": "swarm-bio",
       "repo": "abgnydn/swarm-bio",
-      "tagline": "Browser-based protein sequence evolution via WebGPU. Honest about proxy-fitness scope (no wet-lab validation)."
+      "tagline": "Browser-based protein sequence evolution via WebGPU. Honest about proxy-fitness scope (no wet-lab validation).",
+      "tags": [
+        "biology",
+        "evolutionary"
+      ],
+      "impact": "Evolves protein sequences in the browser — and is honest that it's a computational proxy, not wet-lab proven.",
+      "related": [
+        "the-swarm",
+        "swarm-ensemble",
+        "mycosim",
+        "webgpu-p2p-evolution"
+      ]
     },
     {
       "slug": "swarm-ensemble",
       "repo": "abgnydn/swarm-ensemble",
-      "tagline": "Aggregation strategies for distributed evolution \u2014 six political-system metaphors tested on crypto trading."
+      "tagline": "Aggregation strategies for distributed evolution — six political-system metaphors tested on crypto trading.",
+      "tags": [
+        "federated",
+        "evolutionary"
+      ],
+      "impact": "Tests six ways of combining distributed AI 'votes', each modeled on a political system, on a crypto-trading task.",
+      "related": [
+        "the-swarm",
+        "swarm-bio"
+      ]
     },
     {
       "slug": "founder-lab",
       "repo": "abgnydn/founder-lab",
       "url": "https://founder-lab.pages.dev",
-      "tagline": "Multi-agent advisory panel for early-stage founders \u2014 four AI agents discuss your idea in a 3D meeting room. Local LLM, no cloud, no telemetry."
+      "tagline": "Multi-agent advisory panel for early-stage founders — four AI agents discuss your idea in a 3D meeting room. Local LLM, no cloud, no telemetry.",
+      "tags": [
+        "agent",
+        "3d"
+      ],
+      "impact": "Four AI advisors debate your startup idea in a 3D meeting room, on a local model with no cloud and no telemetry.",
+      "related": [
+        "panel",
+        "temple"
+      ]
     },
     {
       "slug": "davakasasi",
       "repo": "abgnydn/davakasasi",
       "url": "https://davakasasi.pages.dev",
-      "tagline": "Local-first AI vault for Turkish attorneys \u2014 KVKK-compliant: m\u00fcvekkil dosyalar\u0131 cihazdan \u00e7\u0131kmaz. Derivative of markview targeting Turkish solo/small-firm lawyers."
+      "tagline": "Local-first AI vault for Turkish attorneys — KVKK-compliant: müvekkil dosyaları cihazdan çıkmaz. Derivative of markview targeting Turkish solo/small-firm lawyers.",
+      "tags": [
+        "privacy",
+        "vertical",
+        "legal-tech"
+      ],
+      "impact": "A private case-file vault for Turkish lawyers where client files never leave the device, meeting strict privacy law.",
+      "related": [
+        "markview",
+        "veil"
+      ]
     }
+  ],
+  "tour": [
+    "neuropulse",
+    "webgpu-q",
+    "the-swarm",
+    "veil",
+    "iz"
   ]
 }

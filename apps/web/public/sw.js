@@ -5,8 +5,13 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Precache the app shell resiliently — addAll() rejects the whole install
+  // if any single URL 404s (which would leave the SW inactive and the app
+  // with no offline at all), so add each independently and tolerate misses.
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled(STATIC_ASSETS.map((url) => cache.add(url)))
+    )
   );
   self.skipWaiting();
 });

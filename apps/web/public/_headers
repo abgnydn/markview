@@ -1,0 +1,18 @@
+# Cloudflare Pages security headers. Applied to every response.
+#
+# CSP is deliberately conservative: it keeps 'unsafe-inline' for script and
+# style (the markdown plugins emit inline style="" and the tabs plugin emits
+# one inline onclick), so it can't break the app — but it locks down where
+# data can be sent (connect-src), what can be framed (frame-src), embedding
+# (frame-ancestors), <base>, and <object>. Every origin below traces to real
+# code (HF model weights, jsdelivr onnx wasm, GitHub import, y-webrtc
+# signaling, the embed-plugin iframe providers, the favicon service).
+#
+# To tighten script-src to 'self' later: refactor the tabs plugin off its
+# inline onclick to a delegated listener (and inject that switch script into
+# HTML exports so exported tabs keep working).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://www.google.com https://huggingface.co https://*.hf.co; font-src 'self'; connect-src 'self' https://huggingface.co https://*.hf.co https://cdn.jsdelivr.net https://raw.githubusercontent.com https://api.github.com wss://markview-yjs.abgunaydin94.workers.dev blob: data:; worker-src 'self' blob:; frame-src https://www.youtube.com https://embed.figma.com https://codepen.io https://codesandbox.io https://www.loom.com https://gist.github.com https://open.spotify.com https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY

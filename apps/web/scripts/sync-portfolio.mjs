@@ -245,6 +245,12 @@ async function syncProject(entry) {
     slug,
     name:           slug,
     tagline:        entry.tagline ?? repo.description ?? "",
+    impact:         entry.impact ?? "",   // plain-English "so what" for non-experts
+    proof:          entry.proof ?? "",    // verified-against credibility chip
+    doi:            entry.doi ?? null,    // zenodo DOI, if published
+    npm:            entry.npm ?? null,    // published npm package name, if any
+    related:        entry.related ?? [],  // edges for the 3D constellation graph
+    tags:           entry.tags ?? [],
     repo:           entry.repo,
     repo_url:       repo.url,
     live_url:       entry.url ?? null,
@@ -338,6 +344,8 @@ async function main() {
     river_count: river.length,
     activity_90d_total: activityTotal,
     activity_90d: activity,        // { "YYYY-MM-DD": count, ... }
+    categories: manifest.categories ?? null,  // controlled vocab: { slug → { label, color } }
+    tour: manifest.tour ?? [],     // curated "start here" slug order
     projects: summaries,
     commits: river,
     errors,

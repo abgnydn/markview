@@ -10,6 +10,7 @@ const Privacy = lazy(() => import("./routes/Privacy"));
 const Terms = lazy(() => import("./routes/Terms"));
 const Projects = lazy(() => import("./routes/Projects"));
 const Project = lazy(() => import("./routes/Project"));
+const ProjectsConstellation = lazy(() => import("./routes/ProjectsConstellation"));
 
 function Loading() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/3d" element={<ProjectsConstellation />} />
         <Route path="/p/:slug" element={<Project />} />
       </Routes>
     </Suspense>

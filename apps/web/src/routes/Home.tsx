@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, lazy, Suspense } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useThemeStore } from "@/stores/theme-store";
 import { useCollabStore } from "@/stores/collab-store";
-import { ViewerPage } from "@/components/viewer/viewer-page";
+// Lazy — the editor surface is the heaviest chunk in the app (CodeMirror,
+// the markdown parser, the icon set). Deferring it lets the landing paint
+// without it; returning users hit a brief Suspense fallback while it loads.
+const ViewerPage = lazy(() =>
+  import("@/components/viewer/viewer-page").then((m) => ({ default: m.ViewerPage })),
+);
 import { LandingEditor } from "@/components/landing/landing-editor";
 import { JoinDialog } from "@/components/collab/join-dialog";
 import { getRoomIdFromUrl } from "@/lib/collab/y-provider";
@@ -164,11 +169,32 @@ export default function Home() {
   }
 
   return (
-    <ViewerPage
-      onGoHome={handleGoHome}
-      addFilesInputRef={addFilesInputRef}
-      onNavigateToFile={handleNavigateToFile}
-    />
+    <Suspense fallback={<LoadingScreen />}>
+      <ViewerPage
+        onGoHome={handleGoHome}
+        addFilesInputRef={addFilesInputRef}
+        onNavigateToFile={handleNavigateToFile}
+      />
+    </Suspense>
+  );
+}
+
+function LoadingScreen() {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "var(--zen-bg-deep, #060912)",
+        color: "rgba(148,163,184,0.6)",
+        fontFamily: "ui-monospace, SFMono-Regular, monospace",
+        fontSize: 13,
+      }}
+    >
+      loading…
+    </div>
   );
 }
 

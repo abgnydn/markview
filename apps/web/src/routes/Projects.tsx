@@ -9,6 +9,7 @@
 // grid. Per-project deep view lives at /p/:slug.
 
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { useChronicleWorkspace } from "@/hooks/use-chronicle-workspace";
@@ -35,6 +36,12 @@ interface Project {
   slug: string;
   name: string;
   tagline: string;
+  impact?: string;                     // plain-English "so what" for non-experts
+  proof?: string;                      // verified-against credibility claim
+  doi?: string | null;                 // zenodo DOI, if published
+  npm?: string | null;                 // published npm package name, if any
+  related?: string[];                  // edges for the 3D constellation graph
+  tags?: string[];                     // manifest-authored controlled vocab
   repo: string;
   repo_url: string;
   live_url: string | null;
@@ -45,13 +52,18 @@ interface Project {
   language: string | null;
   language_color: string | null;
   stars: number;
-  topics: string[];
+  topics: string[];                    // GitHub repo topics (often empty)
   pushed_at: string;
   default_branch: string;
   latest_tag: string | null;
   commits_30d: number;
   commits_synced: number;
   last_commit: LastCommit | null;
+}
+
+interface CategoryDef {
+  label: string;
+  color: string;
 }
 
 interface RiverCommit extends LastCommit {
@@ -66,6 +78,7 @@ interface PortfolioIndex {
   river_count: number;
   activity_90d_total?: number;
   activity_90d?: Record<string, number>; // dayKey → count, aggregated across all repos
+  categories?: Record<string, CategoryDef>;
   projects: Project[];
   commits: RiverCommit[];
   errors: { slug: string; repo: string; error: string }[];
@@ -293,6 +306,99 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   );
 }
 
+function TagChips({
+  tags,
+  categories,
+  max,
+}: {
+  tags?: string[];
+  categories?: Record<string, CategoryDef>;
+  max?: number;
+}) {
+  if (!tags || tags.length === 0) return null;
+  const cats = categories ?? {};
+  const sliced = max ? tags.slice(0, max) : tags;
+  return (
+    <div className="proj-tag-chips">
+      {sliced.map((t) => {
+        const def = cats[t];
+        return (
+          <span
+            key={t}
+            className="proj-tag-chip"
+            style={
+              def ? { borderColor: def.color, color: def.color } : undefined
+            }
+            title={def?.label ?? t}
+          >
+            {def?.label ?? t}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+// Glanceable credibility row — turns buried rigor into a badge a stranger
+// can read in one pass: verified-against, paper (DOI), npm, live demo.
+function ProofChips({ p }: { p: Project }) {
+  const chips: ReactNode[] = [];
+  if (p.proof) {
+    chips.push(
+      <span key="verified" className="proj-proof-chip is-verified" title={p.proof}>
+        ✓ {p.proof}
+      </span>
+    );
+  }
+  if (p.doi) {
+    chips.push(
+      <a
+        key="doi"
+        className="proj-proof-chip is-link"
+        href={`https://doi.org/${p.doi}`}
+        target="_blank"
+        rel="noreferrer noopener"
+        onClick={(e) => e.stopPropagation()}
+        title={`paper · ${p.doi}`}
+      >
+        📄 paper
+      </a>
+    );
+  }
+  if (p.npm) {
+    chips.push(
+      <a
+        key="npm"
+        className="proj-proof-chip is-link"
+        href={`https://www.npmjs.com/package/${p.npm}`}
+        target="_blank"
+        rel="noreferrer noopener"
+        onClick={(e) => e.stopPropagation()}
+        title={p.npm}
+      >
+        📦 npm
+      </a>
+    );
+  }
+  if (p.live_url) {
+    chips.push(
+      <a
+        key="live"
+        className="proj-proof-chip is-link"
+        href={p.live_url}
+        target="_blank"
+        rel="noreferrer noopener"
+        onClick={(e) => e.stopPropagation()}
+        title={p.live_url}
+      >
+        ▶ live
+      </a>
+    );
+  }
+  if (chips.length === 0) return null;
+  return <div className="proj-proof-row">{chips}</div>;
+}
+
 function LangChip({
   language,
   color,
@@ -354,7 +460,13 @@ function DiffBar({ adds, dels }: { adds: number; dels: number }) {
   );
 }
 
-function FeaturedCard({ p }: { p: Project }) {
+function FeaturedCard({
+  p,
+  categories,
+}: {
+  p: Project;
+  categories?: Record<string, CategoryDef>;
+}) {
   const live = isLive(p.last_commit?.date);
   return (
     <Link to={`/p/${p.slug}`} className={`proj-feat ${live ? "is-live" : ""}`}>
@@ -367,6 +479,9 @@ function FeaturedCard({ p }: { p: Project }) {
       </div>
       <h3 className="proj-feat-title">{p.name}</h3>
       <p className="proj-feat-tag">{p.tagline}</p>
+      {p.impact && <p className="proj-feat-impact">{p.impact}</p>}
+      <ProofChips p={p} />
+      <TagChips tags={p.tags} categories={categories} max={4} />
       {p.last_commit && (
         <div className="proj-feat-msg" title={p.last_commit.message}>
           <TypeChip type={p.last_commit.type} />
@@ -393,13 +508,6 @@ function FeaturedCard({ p }: { p: Project }) {
           <span className="proj-star-pill">★ {p.stars}</span>
         )}
       </div>
-      {p.topics.length > 0 && (
-        <div className="proj-feat-topics">
-          {p.topics.slice(0, 3).map((t) => (
-            <span key={t} className="proj-topic">{t}</span>
-          ))}
-        </div>
-      )}
       <div className="proj-feat-foot">
         <span>{p.commits_30d} commits · 30d</span>
         {p.last_commit && <span>last {timeAgo(p.last_commit.date)}</span>}
@@ -507,9 +615,11 @@ function BurstRow({
 function GridCard({
   p,
   recent,
+  categories,
 }: {
   p: Project;
   recent: RiverCommit[];
+  categories?: Record<string, CategoryDef>;
 }) {
   const live = isLive(p.last_commit?.date);
   return (
@@ -526,13 +636,9 @@ function GridCard({
         {live && <span className="proj-pulse" />}
       </div>
       {p.tagline && <p className="proj-grid-tag">{p.tagline}</p>}
-      {p.topics.length > 0 && (
-        <div className="proj-grid-topics">
-          {p.topics.slice(0, 3).map((t) => (
-            <span key={t} className="proj-topic">{t}</span>
-          ))}
-        </div>
-      )}
+      {p.impact && <p className="proj-grid-impact">{p.impact}</p>}
+      <ProofChips p={p} />
+      <TagChips tags={p.tags} categories={categories} max={4} />
       <div className="proj-grid-foot">
         <LangChip language={p.language} color={p.language_color} small />
         <span className="proj-grid-when">
@@ -578,6 +684,7 @@ export default function Projects() {
   const [gridSearch, setGridSearch] = useState("");
   const [gridSort, setGridSort] = useState<GridSort>("recent");
   const [gridGroup, setGridGroup] = useState<GridGroup>("none");
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
   // Chronicle chat — RAG over every project bundle, in-browser.
   const [chatOpen, setChatOpen] = useState(false);
@@ -687,9 +794,11 @@ export default function Projects() {
   const heatmap = useMemo(() => buildHeatmap(activity), [activity]);
   const sparkline = useMemo(() => buildSparkline(activity), [activity]);
 
-  // Grid: search → sort → group
+  // Grid: category → search → sort → group
   const filteredGrid = useMemo(() => {
-    const arr = rest.filter((p) => projectMatches(p, gridSearch));
+    const arr = rest
+      .filter((p) => !categoryFilter || (p.tags ?? []).includes(categoryFilter))
+      .filter((p) => projectMatches(p, gridSearch));
     arr.sort((a, b) => {
       switch (gridSort) {
         case "commits":
@@ -704,7 +813,18 @@ export default function Projects() {
       }
     });
     return arr;
-  }, [rest, gridSearch, gridSort]);
+  }, [rest, gridSearch, gridSort, categoryFilter]);
+
+  // Category counts (live, reflect current text-search filter so the bar
+  // shows how many remain in each bucket after the search box narrows).
+  const tagCounts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const p of rest) {
+      if (!projectMatches(p, gridSearch)) continue;
+      for (const t of p.tags ?? []) m.set(t, (m.get(t) ?? 0) + 1);
+    }
+    return m;
+  }, [rest, gridSearch]);
 
   const groupedGrid = useMemo(() => {
     if (gridGroup === "none") return [["", filteredGrid]] as Array<[string, Project[]]>;
@@ -764,6 +884,18 @@ export default function Projects() {
         <p className="proj-mast-eyebrow">portfolio · barisgunaydin.com</p>
         <h1 className="proj-mast-title">Projects</h1>
 
+        <p className="proj-mast-intro">
+          {stats.projects} experiments in making heavy compute run in an ordinary
+          browser tab — quantum chemistry, language-model interpretability,
+          distributed training, privacy tooling. Built solo, and checked against
+          ground truth rather than taken on faith. Each card below says, in plain
+          words, what the thing is and why it matters. Or{" "}
+          <Link to="/projects/3d" className="proj-mast-3d-link">
+            fly through them in 3D
+          </Link>
+          .
+        </p>
+
         <div className="proj-stat-grid">
           <Stat label="projects" value={stats.projects} />
           <Stat label="commits · 7d" value={stats.week} />
@@ -771,6 +903,19 @@ export default function Projects() {
           <Stat label="commits synced" value={stats.synced.toLocaleString()} />
           <Stat label="active · 7d" value={stats.active7d} />
           <Stat label="languages" value={stats.langs} />
+        </div>
+
+        <div className="proj-mast-actions">
+          <Link to="/projects/3d" className="proj-mast-cta">
+            <span className="proj-mast-cta-glyph" aria-hidden>✦</span>
+            <span className="proj-mast-cta-text">
+              <span className="proj-mast-cta-title">Walk the constellation</span>
+              <span className="proj-mast-cta-sub">
+                fly through all {stats.projects} projects in 3D
+              </span>
+            </span>
+            <span className="proj-mast-cta-arrow" aria-hidden>↗</span>
+          </Link>
         </div>
 
         <p className="proj-mast-sync">
@@ -847,7 +992,7 @@ export default function Projects() {
         <h2 className="proj-section-title">Featured</h2>
         <div className="proj-featured-row">
           {featured.map((p) => (
-            <FeaturedCard key={p.slug} p={p} />
+            <FeaturedCard key={p.slug} p={p} categories={index.categories} />
           ))}
         </div>
       </section>
@@ -1009,6 +1154,41 @@ export default function Projects() {
           </div>
         </div>
 
+        {/* Category filter — controlled vocab from manifest. Single-select. */}
+        {index.categories && (
+          <div className="proj-tag-filter" role="group" aria-label="category filter">
+            <button
+              type="button"
+              className={`proj-tag-filter-chip ${categoryFilter === null ? "is-active" : ""}`}
+              onClick={() => setCategoryFilter(null)}
+            >
+              all <span className="proj-tag-filter-count">{rest.length}</span>
+            </button>
+            {Object.entries(index.categories)
+              .filter(([key]) => (tagCounts.get(key) ?? 0) > 0)
+              .sort((a, b) => (tagCounts.get(b[0]) ?? 0) - (tagCounts.get(a[0]) ?? 0))
+              .map(([key, def]) => {
+                const n = tagCounts.get(key) ?? 0;
+                const active = categoryFilter === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`proj-tag-filter-chip ${active ? "is-active" : ""}`}
+                    onClick={() => setCategoryFilter(active ? null : key)}
+                    style={
+                      active
+                        ? { color: def.color, borderColor: def.color, background: `${def.color}1a` }
+                        : { borderColor: `${def.color}55` }
+                    }
+                  >
+                    {def.label} <span className="proj-tag-filter-count">{n}</span>
+                  </button>
+                );
+              })}
+          </div>
+        )}
+
         {groupedGrid.map(([groupName, list]) => (
           <div key={groupName || "all"} className="proj-grid-group">
             {groupName && (
@@ -1022,6 +1202,7 @@ export default function Projects() {
                   key={p.slug}
                   p={p}
                   recent={recentByProject.get(p.slug) ?? []}
+                  categories={index.categories}
                 />
               ))}
             </div>

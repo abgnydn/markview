@@ -52,6 +52,14 @@ const projectTiles = sorted.map((p) => {
   const stars = p.stars > 0 ? `<span class="prerendered-meta-item">★ ${p.stars}</span>` : "";
   const commits = p.commits_30d > 0 ? `<span class="prerendered-meta-item">${p.commits_30d} commits/30d</span>` : "";
   const lang = p.language ? `<span class="prerendered-meta-item prerendered-meta-lang">${esc(p.language)}</span>` : "";
+  // Prefer manifest-authored tags (controlled vocab, colored per category)
+  // over the GitHub `topics` field, which is usually unset.
+  const tagChips = (p.tags || []).slice(0, 4).map((t) => {
+    const def = (data.categories || {})[t];
+    const color = def?.color ?? "#a5a5b2";
+    const label = def?.label ?? t;
+    return `<span class="prerendered-tag-chip" style="border-color:${color};color:${color};">${esc(label)}</span>`;
+  }).join("");
   const topics = (p.topics || []).slice(0, 4).map((t) => `<span class="prerendered-topic">${esc(t)}</span>`).join("");
   const featured = p.featured ? ' data-featured="true"' : '';
   return `
@@ -61,6 +69,7 @@ const projectTiles = sorted.map((p) => {
     <div class="prerendered-meta">
       ${lang}${stars}${commits}
     </div>
+    ${tagChips ? `<div class="prerendered-tag-chips">${tagChips}</div>` : ""}
     ${topics ? `<div class="prerendered-topics">${topics}</div>` : ""}
     <div class="prerendered-links">
       <a href="${esc(p.repo_url)}" class="prerendered-link" rel="noopener nofollow">github →</a>
@@ -235,6 +244,18 @@ const inlineStyles = `
     }
     .prerendered-meta-lang { color: #e0bd7a; }
     .prerendered-topics { display: flex; flex-wrap: wrap; gap: 4px; }
+    .prerendered-tag-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .prerendered-tag-chip {
+      font-family: "Berkeley Mono", ui-monospace, monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border: 1px solid;
+      border-radius: 3px;
+      background: transparent;
+      white-space: nowrap;
+    }
     .prerendered-topic {
       font-family: "Berkeley Mono", ui-monospace, monospace;
       font-size: 9.5px;
