@@ -4,8 +4,11 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { initTimeOfDayTint } from "@/lib/atmosphere/time-of-day";
+import { initTauriBridge } from "@/lib/tauri/tauri-bridge";
 
 initTimeOfDayTint();
+// Wire the desktop file-open bridge (no-op in the browser / PWA).
+void initTauriBridge();
 
 import "./app/globals.css";
 // KaTeX base styles — required for math glyph positioning to work.
