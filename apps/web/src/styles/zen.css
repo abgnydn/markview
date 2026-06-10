@@ -878,10 +878,20 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
   background: linear-gradient(180deg, #6c5638 0%, #4c3a22 100%);
   box-shadow: 0 7px 18px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
-/* Ink on paper — no halo needed on the opaque surface. */
+/* Ink on paper — solid dark sepia, no halo, slight weight so it holds its
+   own against the busy aged surface. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
-  color: #2c2418 !important;
-  text-shadow: none !important;
+  color: #1f180d !important;
+  text-shadow: 0 0.5px 0 rgba(250, 244, 228, 0.4) !important; /* faint paper catch under each glyph → crisp edge */
+}
+/* On the textured paper, ink must never fade to a ghost — keep dimmed
+   paragraphs almost fully opaque so they stay readable. */
+@media (hover: hover) {
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover p,
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover li,
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover blockquote {
+    opacity: 0.93 !important;
+  }
 }
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1,
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2,
@@ -897,10 +907,10 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote
   color: #5a4d3a !important;
 }
 /* Per-appearance paper warmth. */
-html[data-atmosphere='fuji']   .viewer-content { --paper-top: #f5ead9; --paper-bot: #efdfc9; }
-html[data-atmosphere='wave']   .viewer-content { --paper-top: #edeae0; --paper-bot: #e3ddcb; }
-html[data-atmosphere='snow']   .viewer-content { --paper-top: #eef0ef; --paper-bot: #e5e7e1; }
-html[data-atmosphere='fields'] .viewer-content { --paper-top: #f6edd2; --paper-bot: #efe1bd; }
+html[data-atmosphere='fuji']   .viewer-content { --paper-top: #ecdcbb; --paper-bot: #ddc59a; }
+html[data-atmosphere='wave']   .viewer-content { --paper-top: #e4ddc4; --paper-bot: #d4caa8; }
+html[data-atmosphere='snow']   .viewer-content { --paper-top: #e7e3d4; --paper-bot: #d8d3bd; }
+html[data-atmosphere='fields'] .viewer-content { --paper-top: #ecddb2; --paper-bot: #ddca92; }
 
 /* ════════════════ 20 classical-scroll refinements ════════════════ */
 
@@ -4994,18 +5004,19 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='340' height='340'><g fill='none' stroke-width='2.4'><circle cx='170' cy='170' r='94' stroke='%23ffffff' opacity='0.06'/><circle cx='171.6' cy='171.6' r='94' stroke='%23000000' opacity='0.05'/><path d='M122 198 L150 150 L178 192 L204 142 L228 198' stroke='%23ffffff' opacity='0.05'/><path d='M123.6 199.6 L151.6 151.6 L179.6 193.6 L205.6 143.6 L229.6 199.6' stroke='%23000000' opacity='0.045'/></g></svg>") no-repeat,
     /* 4 · embedded dark fibre specks (sparse, multiply) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='s'><feTurbulence type='turbulence' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch' seed='6' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.09  0 0 0 16 -12.4'/></filter><rect width='300' height='300' filter='url(%23s)'/></svg>"),
-    /* 5 · reddish-brown foxing age-spots (sparse, multiply) */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='x'><feTurbulence type='turbulence' baseFrequency='0.16' numOctaves='2' stitchTiles='stitch' seed='11' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.44  0 0 0 0 0.25  0 0 0 0 0.13  0 0 0 7 -4.8'/></filter><rect width='420' height='420' filter='url(%23x)'/></svg>"),
-    /* 6 · broad sepia staining / uneven yellowing (multiply) */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='540' height='540'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.008 0.011' numOctaves='4' stitchTiles='stitch' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.46  0 0 0 0 0.36  0 0 0 0 0.21  0 0 0 0.4 -0.13'/></filter><rect width='540' height='540' filter='url(%23m)'/></svg>"),
+    /* 5 · reddish-brown foxing age-spots — more, varied (multiply) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='440' height='440'><filter id='x'><feTurbulence type='turbulence' baseFrequency='0.105' numOctaves='2' stitchTiles='stitch' seed='11' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.46  0 0 0 0 0.26  0 0 0 0 0.13  0 0 0 6 -3.7'/></filter><rect width='440' height='440' filter='url(%23x)'/></svg>"),
+    /* 6 · broad sepia staining / uneven yellowing — big tea-stain blotches
+       (multiply, pronounced) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='680' height='680'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.0042 0.0055' numOctaves='4' stitchTiles='stitch' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.40  0 0 0 0 0.29  0 0 0 0 0.15  0 0 0 0.72 -0.26'/></filter><rect width='680' height='680' filter='url(%23m)'/></svg>"),
     /* 7 · fine fibre tooth, physically lit (soft-light) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='5' stitchTiles='stitch' seed='8' result='n'/><feDiffuseLighting in='n' lighting-color='%23efe6cd' surfaceScale='1.6' diffuseConstant='1.05'><feDistantLight azimuth='55' elevation='58'/></feDiffuseLighting></filter><rect width='300' height='300' filter='url(%23p)'/></svg>"),
     /* 8 · coarse cockling / surface undulation, cross-lit (overlay) */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='640'><filter id='c'><feTurbulence type='fractalNoise' baseFrequency='0.006 0.0075' numOctaves='3' stitchTiles='stitch' seed='3' result='n'/><feDiffuseLighting in='n' lighting-color='%23f2e9d2' surfaceScale='3.4' diffuseConstant='1.0'><feDistantLight azimuth='235' elevation='50'/></feDiffuseLighting></filter><rect width='640' height='640' filter='url(%23c)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='680' height='680'><filter id='c'><feTurbulence type='fractalNoise' baseFrequency='0.0052 0.0066' numOctaves='3' stitchTiles='stitch' seed='3' result='n'/><feDiffuseLighting in='n' lighting-color='%23f0e6cb' surfaceScale='4.8' diffuseConstant='1.0'><feDistantLight azimuth='235' elevation='48'/></feDiffuseLighting></filter><rect width='680' height='680' filter='url(%23c)'/></svg>"),
     /* 9 · warm per-appearance base tint */
     linear-gradient(176deg, var(--paper-top, #f4ecd6), var(--paper-bot, #ece0c6)) !important;
   background-position: calc(100% - 28px) calc(100% - 34px), 0 0, center 42%, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0 !important;
-  background-size: 58px 58px, 300px 300px, 340px 340px, 300px 300px, 420px 420px, 540px 540px, 300px 300px, 640px 640px, cover !important;
+  background-size: 58px 58px, 300px 300px, 340px 340px, 300px 300px, 440px 440px, 680px 680px, 300px 300px, 680px 680px, cover !important;
   background-repeat: no-repeat, repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, no-repeat !important;
   background-blend-mode: normal, screen, soft-light, multiply, multiply, multiply, soft-light, overlay, normal !important;
   box-shadow:
@@ -5031,10 +5042,10 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
   position: relative;
 }
-html[data-atmosphere='fuji']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.10), inset 0 66px 130px -66px rgba(255, 236, 224, 0.42), inset 0 -44px 90px -54px rgba(120, 60, 60, 0.16) !important; }
-html[data-atmosphere='wave']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.10), inset 0 66px 130px -66px rgba(232, 240, 248, 0.40), inset 0 -44px 90px -54px rgba(40, 70, 100, 0.14) !important; }
-html[data-atmosphere='snow']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(120,90,50,0.08), inset 0 66px 130px -66px rgba(238, 244, 250, 0.46), inset 0 -44px 90px -54px rgba(60, 76, 96, 0.12) !important; }
-html[data-atmosphere='fields'] .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.10), inset 0 66px 130px -66px rgba(255, 246, 216, 0.46), inset 0 -44px 90px -54px rgba(120, 90, 30, 0.18) !important; }
+html[data-atmosphere='fuji']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 236, 224, 0.20), inset 0 0 110px rgba(96, 60, 28, 0.26), inset 0 -54px 110px -56px rgba(110, 56, 40, 0.30) !important; }
+html[data-atmosphere='wave']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(232, 240, 248, 0.18), inset 0 0 110px rgba(72, 64, 36, 0.26), inset 0 -54px 110px -56px rgba(40, 64, 86, 0.28) !important; }
+html[data-atmosphere='snow']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(120,90,50,0.12), inset 0 56px 120px -70px rgba(238, 244, 250, 0.22), inset 0 0 110px rgba(80, 70, 44, 0.24), inset 0 -54px 110px -56px rgba(56, 70, 84, 0.26) !important; }
+html[data-atmosphere='fields'] .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 246, 216, 0.22), inset 0 0 110px rgba(104, 74, 30, 0.28), inset 0 -54px 110px -56px rgba(110, 84, 30, 0.32) !important; }
 
 /* Per-appearance painting grade — a gentle colour cast on the art so the
    margins around the scroll harmonise with the ink. */
