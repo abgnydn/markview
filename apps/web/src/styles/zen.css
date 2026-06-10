@@ -829,6 +829,79 @@ nav.toc a.active {
   text-shadow: 0 1px 2px rgba(251, 248, 243, 0.85), 0 0 16px rgba(251, 248, 243, 0.6);
 }
 
+/* ════════════════════════════════════════════════════════════════════════
+ * Classical scroll reading surface — when a painting atmosphere is active,
+ * the page reads like ink on a rice-paper hanging scroll (立軸): a warm
+ * paper panel holds dark-ink serif, slim wooden rods frame it top + bottom,
+ * a vermillion seal (印) sits at the foot, headings carry brush weight, and
+ * the painting shows in the margins like a mounted artwork. The opaque paper
+ * is now the contrast solution, so the frosted dark band is repurposed into
+ * the top rod. Per-appearance paper warmth via --paper-*.
+ * ════════════════════════════════════════════════════════════════════════ */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='52'><rect x='3' y='3' width='46' height='46' rx='5' fill='none' stroke='%23b0392a' stroke-width='3'/><path d='M15 16 H37 M26 16 V38 M18 27 H34 M20 38 H32' stroke='%23b0392a' stroke-width='3' stroke-linecap='round' fill='none'/></svg>") no-repeat,
+    linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
+  background-position: calc(100% - 30px) calc(100% - 36px), 0 0 !important;
+  background-size: 48px 48px, cover !important;
+  border-radius: 2px !important;
+  box-shadow:
+    0 30px 90px -34px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(120, 90, 50, 0.10) !important;
+}
+/* ::before → top scroll rod (was the frosted band). */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
+  inset: auto !important;
+  top: -11px !important;
+  left: -12px !important;
+  right: -12px !important;
+  height: 17px !important;
+  z-index: 3;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #6c5638 0%, #4c3a22 100%);
+  box-shadow: 0 5px 14px -4px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+/* ::after → bottom scroll rod. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: -12px;
+  right: -12px;
+  height: 17px;
+  z-index: 3;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #6c5638 0%, #4c3a22 100%);
+  box-shadow: 0 7px 18px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+/* Ink on paper — no halo needed on the opaque surface. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
+  color: #2c2418 !important;
+  text-shadow: none !important;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h3 {
+  color: #1d160c !important;
+  font-weight: 800 !important;   /* brush weight */
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a {
+  color: var(--zen-accent) !important;
+  filter: saturate(1.15) brightness(0.62);
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote {
+  color: #5a4d3a !important;
+}
+/* Per-appearance paper warmth. */
+html[data-atmosphere='fuji']   .viewer-content { --paper-top: #f5ead9; --paper-bot: #efdfc9; }
+html[data-atmosphere='wave']   .viewer-content { --paper-top: #edeae0; --paper-bot: #e3ddcb; }
+html[data-atmosphere='snow']   .viewer-content { --paper-top: #eef0ef; --paper-bot: #e5e7e1; }
+html[data-atmosphere='fields'] .viewer-content { --paper-top: #f6edd2; --paper-bot: #efe1bd; }
+
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3,
