@@ -1469,10 +1469,12 @@ body.mv-hidden .atmosphere-leaf,
 body.mv-hidden .atmosphere-inkmote,
 body.mv-hidden .atmosphere-bird svg,
 body.mv-hidden .atmosphere-mist { animation-play-state: paused !important; }
-/* (102) GPU-compositing hints for the ambient layers. */
-.atmosphere-bird, .atmosphere-leaf, .atmosphere-inkmote, .atmosphere-mist { transform: translateZ(0); }
-/* (103) Contain the ambient layers so they don't trigger global reflow. */
-.atmosphere-birds, .atmosphere-leaves, .atmosphere-inkmotes { contain: strict; }
+/* (102) REMOVED translateZ(0) — these elements already animate via transform
+   (which auto-promotes during the animation), so a permanent layer per element
+   only wasted GPU memory across dozens of ambient nodes. */
+/* (103) Contain the ambient layers so they don't trigger global reflow, and
+   isolate them into their own paint so animating them never repaints content. */
+.atmosphere-birds, .atmosphere-leaves, .atmosphere-inkmotes, .atmosphere-creatures { contain: strict; }
 /* (104) REMOVED — content-visibility:auto collapsed offscreen blocks to a
    1.4em guess and snapped them to real height on scroll, making the scrollbar
    jump / scroll "break on change". The render saving isn't worth a broken
@@ -5014,7 +5016,7 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
     /* 1 · raised wax seal — domed radial fill, cast shadow, catch-light */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><defs><radialGradient id='w' cx='0.4' cy='0.33' r='0.72'><stop offset='0' stop-color='%23d95f4c'/><stop offset='0.55' stop-color='%23b0392a'/><stop offset='1' stop-color='%237a2216'/></radialGradient></defs><circle cx='33' cy='34' r='24' fill='%23000000' opacity='0.30'/><circle cx='32' cy='31' r='24' fill='url(%23w)'/><circle cx='32' cy='31' r='24' fill='none' stroke='%238f2c1e' stroke-width='1.4'/><path d='M22 22 H42 M32 21 V41 M25 31 H39 M27 41 H37' stroke='%237a2216' stroke-width='2.4' stroke-linecap='round' fill='none' opacity='0.6'/><ellipse cx='26' cy='22' rx='8' ry='3.6' fill='%23ffffff' opacity='0.22'/></svg>") no-repeat,
     /* 2 · specular micro-sheen — glossy glints over the fibre (screen) */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='sp'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='4' stitchTiles='stitch' seed='8' result='n'/><feSpecularLighting in='n' surfaceScale='1.5' specularConstant='0.5' specularExponent='17' lighting-color='%23fff6e6' result='s'><feDistantLight azimuth='235' elevation='62'/></feSpecularLighting></filter><rect width='300' height='300' fill='%23000000' filter='url(%23sp)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='sp'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' stitchTiles='stitch' seed='8' result='n'/><feSpecularLighting in='n' surfaceScale='1.5' specularConstant='0.5' specularExponent='17' lighting-color='%23fff6e6' result='s'><feDistantLight azimuth='235' elevation='62'/></feSpecularLighting></filter><rect width='300' height='300' fill='%23000000' filter='url(%23sp)'/></svg>"),
     /* 3 · embossed watermark crest, held to the light (soft-light) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='340' height='340'><g fill='none' stroke-width='2.4'><circle cx='170' cy='170' r='94' stroke='%23ffffff' opacity='0.06'/><circle cx='171.6' cy='171.6' r='94' stroke='%23000000' opacity='0.05'/><path d='M122 198 L150 150 L178 192 L204 142 L228 198' stroke='%23ffffff' opacity='0.05'/><path d='M123.6 199.6 L151.6 151.6 L179.6 193.6 L205.6 143.6 L229.6 199.6' stroke='%23000000' opacity='0.045'/></g></svg>") no-repeat,
     /* 4 · embedded dark fibre specks (sparse, multiply) */
@@ -5023,9 +5025,9 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='440' height='440'><filter id='x'><feTurbulence type='turbulence' baseFrequency='0.105' numOctaves='2' stitchTiles='stitch' seed='11' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.46  0 0 0 0 0.26  0 0 0 0 0.13  0 0 0 6 -3.7'/></filter><rect width='440' height='440' filter='url(%23x)'/></svg>"),
     /* 6 · broad sepia staining / uneven yellowing — big tea-stain blotches
        (multiply, pronounced) */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='680' height='680'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.0042 0.0055' numOctaves='4' stitchTiles='stitch' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.40  0 0 0 0 0.29  0 0 0 0 0.15  0 0 0 0.72 -0.26'/></filter><rect width='680' height='680' filter='url(%23m)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='680' height='680'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.0042 0.0055' numOctaves='3' stitchTiles='stitch' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.40  0 0 0 0 0.29  0 0 0 0 0.15  0 0 0 0.72 -0.26'/></filter><rect width='680' height='680' filter='url(%23m)'/></svg>"),
     /* 7 · fine fibre tooth, physically lit (soft-light) */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='5' stitchTiles='stitch' seed='8' result='n'/><feDiffuseLighting in='n' lighting-color='%23efe6cd' surfaceScale='1.6' diffuseConstant='1.05'><feDistantLight azimuth='55' elevation='58'/></feDiffuseLighting></filter><rect width='300' height='300' filter='url(%23p)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' stitchTiles='stitch' seed='8' result='n'/><feDiffuseLighting in='n' lighting-color='%23efe6cd' surfaceScale='1.6' diffuseConstant='1.05'><feDistantLight azimuth='55' elevation='58'/></feDiffuseLighting></filter><rect width='300' height='300' filter='url(%23p)'/></svg>"),
     /* 8 · coarse cockling / surface undulation, cross-lit (overlay) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='680' height='680'><filter id='c'><feTurbulence type='fractalNoise' baseFrequency='0.0052 0.0066' numOctaves='3' stitchTiles='stitch' seed='3' result='n'/><feDiffuseLighting in='n' lighting-color='%23f0e6cb' surfaceScale='4.8' diffuseConstant='1.0'><feDistantLight azimuth='235' elevation='48'/></feDiffuseLighting></filter><rect width='680' height='680' filter='url(%23c)'/></svg>"),
     /* 9 · warm per-appearance base tint */
@@ -5062,29 +5064,24 @@ html[data-atmosphere='wave']   .viewer-content { box-shadow: 0 38px 100px -38px 
 html[data-atmosphere='snow']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(120,90,50,0.12), inset 0 56px 120px -70px rgba(238, 244, 250, 0.22), inset 0 0 110px rgba(80, 70, 44, 0.24), inset 0 -54px 110px -56px rgba(56, 70, 84, 0.26) !important; }
 html[data-atmosphere='fields'] .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 246, 216, 0.22), inset 0 0 110px rgba(104, 74, 30, 0.28), inset 0 -54px 110px -56px rgba(110, 84, 30, 0.32) !important; }
 
-/* Per-appearance painting grade — a gentle colour cast on the art so the
-   margins around the scroll harmonise with the ink. */
-html[data-atmosphere='fuji']   .atmosphere-image { filter: saturate(1.06) contrast(1.02); }
-html[data-atmosphere='wave']   .atmosphere-image { filter: saturate(1.08) brightness(0.98); }
-html[data-atmosphere='snow']   .atmosphere-image { filter: saturate(0.94) brightness(1.04); }
-html[data-atmosphere='fields'] .atmosphere-image { filter: saturate(1.1) contrast(1.03); }
+/* (per-appearance painting colour-grade removed for perf — a CSS filter on
+   the painting canvas re-applies on every depth-parallax frame.) */
 
 /* Deeper vignette per appearance — draws the eye to the scroll. */
 html[data-atmosphere]:not([data-atmosphere='none']) body::after {
   background: radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,0.16) 84%, rgba(0,0,0,0.34) 100%) !important;
 }
 
-/* Softer, slower ambient — birds + leaves + mist ease more gracefully. */
+/* Softer, slower ambient — birds + leaves ease more gracefully. */
 .atmosphere-bird svg { animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1) !important; }
 .atmosphere-leaf { animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1) !important; }
-.atmosphere-mist { mix-blend-mode: screen; }
-.light .atmosphere-mist,
-[data-theme='light'] .atmosphere-mist { mix-blend-mode: multiply; }
+/* (mist mix-blend-mode removed — blending an animated element forces a
+   backdrop re-composite every frame; a plain translucent gradient is free.) */
 
-/* The reading column breathes on hover — the candlelight warms a touch. */
-html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
-  transition: --paper-top 700ms var(--zen-ease), --paper-bot 700ms var(--zen-ease), box-shadow 600ms var(--zen-ease);
-}
+/* No --paper / box-shadow transition on appearance switch: animating a custom
+   property inside the 9-layer composite re-rasterizes + re-blends the whole
+   paper every frame for 700ms (a repaint storm). The switch snaps the paper;
+   the painting itself still crossfades. */
 
 /* Heading ink deepens on hover for a subtle calligraphic life. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1:hover,

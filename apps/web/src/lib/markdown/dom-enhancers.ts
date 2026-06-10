@@ -285,7 +285,12 @@ export function imageLightbox(root: HTMLElement): Cleanup {
     document.body.appendChild(overlay);
     document.addEventListener('keydown', onKey);
   };
-  imgs.forEach((i) => i.addEventListener('click', onClick));
+  imgs.forEach((i) => {
+    i.addEventListener('click', onClick);
+    // Perf: defer offscreen images + decode off the main thread.
+    if (!i.hasAttribute('loading')) i.loading = 'lazy';
+    if (!i.hasAttribute('decoding')) i.decoding = 'async';
+  });
   return () => {
     imgs.forEach((i) => i.removeEventListener('click', onClick));
     close();

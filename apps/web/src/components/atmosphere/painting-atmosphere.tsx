@@ -435,7 +435,7 @@ function buildCreatures(atmosphereId: string): CreatureInstance[] {
 /** buildInkMotes — slow-drifting dark dust specks for atmospheric depth. */
 function buildInkMotes(atmosphereId: string): ParticleInstance[] {
   const rng = mulberry32(0x1a4 ^ atmosphereId.charCodeAt(0) * 0x85eb);
-  return Array.from({ length: 14 }, (_, i) => {
+  return Array.from({ length: 8 }, (_, i) => {
     const size = 2 + rng() * 3;
     return {
       key: i,
