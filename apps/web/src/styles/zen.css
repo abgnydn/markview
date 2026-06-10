@@ -4986,24 +4986,28 @@ html { transition: --zen-accent 700ms var(--zen-ease); }
    rather than on top of it. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
   background:
-    /* 1 · seal */
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='52'><rect x='3' y='3' width='46' height='46' rx='5' fill='none' stroke='%23b0392a' stroke-width='3'/><path d='M15 16 H37 M26 16 V38 M18 27 H34 M20 38 H32' stroke='%23b0392a' stroke-width='3' stroke-linecap='round' fill='none'/></svg>") no-repeat,
-    /* 2 · embedded dark fibre specks (sparse, multiply) */
+    /* 1 · raised wax seal — domed radial fill, cast shadow, catch-light */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><defs><radialGradient id='w' cx='0.4' cy='0.33' r='0.72'><stop offset='0' stop-color='%23d95f4c'/><stop offset='0.55' stop-color='%23b0392a'/><stop offset='1' stop-color='%237a2216'/></radialGradient></defs><circle cx='33' cy='34' r='24' fill='%23000000' opacity='0.30'/><circle cx='32' cy='31' r='24' fill='url(%23w)'/><circle cx='32' cy='31' r='24' fill='none' stroke='%238f2c1e' stroke-width='1.4'/><path d='M22 22 H42 M32 21 V41 M25 31 H39 M27 41 H37' stroke='%237a2216' stroke-width='2.4' stroke-linecap='round' fill='none' opacity='0.6'/><ellipse cx='26' cy='22' rx='8' ry='3.6' fill='%23ffffff' opacity='0.22'/></svg>") no-repeat,
+    /* 2 · specular micro-sheen — glossy glints over the fibre (screen) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='sp'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='4' stitchTiles='stitch' seed='8' result='n'/><feSpecularLighting in='n' surfaceScale='1.5' specularConstant='0.5' specularExponent='17' lighting-color='%23fff6e6' result='s'><feDistantLight azimuth='235' elevation='62'/></feSpecularLighting></filter><rect width='300' height='300' fill='%23000000' filter='url(%23sp)'/></svg>"),
+    /* 3 · embossed watermark crest, held to the light (soft-light) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='340' height='340'><g fill='none' stroke-width='2.4'><circle cx='170' cy='170' r='94' stroke='%23ffffff' opacity='0.06'/><circle cx='171.6' cy='171.6' r='94' stroke='%23000000' opacity='0.05'/><path d='M122 198 L150 150 L178 192 L204 142 L228 198' stroke='%23ffffff' opacity='0.05'/><path d='M123.6 199.6 L151.6 151.6 L179.6 193.6 L205.6 143.6 L229.6 199.6' stroke='%23000000' opacity='0.045'/></g></svg>") no-repeat,
+    /* 4 · embedded dark fibre specks (sparse, multiply) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='s'><feTurbulence type='turbulence' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch' seed='6' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.20  0 0 0 0 0.15  0 0 0 0 0.09  0 0 0 16 -12.4'/></filter><rect width='300' height='300' filter='url(%23s)'/></svg>"),
-    /* 3 · reddish-brown foxing age-spots (sparse, multiply) */
+    /* 5 · reddish-brown foxing age-spots (sparse, multiply) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='x'><feTurbulence type='turbulence' baseFrequency='0.16' numOctaves='2' stitchTiles='stitch' seed='11' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.44  0 0 0 0 0.25  0 0 0 0 0.13  0 0 0 7 -4.8'/></filter><rect width='420' height='420' filter='url(%23x)'/></svg>"),
-    /* 4 · broad sepia staining / uneven yellowing (multiply) */
+    /* 6 · broad sepia staining / uneven yellowing (multiply) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='540' height='540'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.008 0.011' numOctaves='4' stitchTiles='stitch' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.46  0 0 0 0 0.36  0 0 0 0 0.21  0 0 0 0.4 -0.13'/></filter><rect width='540' height='540' filter='url(%23m)'/></svg>"),
-    /* 5 · fine fibre tooth, physically lit (soft-light) */
+    /* 7 · fine fibre tooth, physically lit (soft-light) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='5' stitchTiles='stitch' seed='8' result='n'/><feDiffuseLighting in='n' lighting-color='%23efe6cd' surfaceScale='1.6' diffuseConstant='1.05'><feDistantLight azimuth='55' elevation='58'/></feDiffuseLighting></filter><rect width='300' height='300' filter='url(%23p)'/></svg>"),
-    /* 6 · coarse cockling / surface undulation, cross-lit (overlay) */
+    /* 8 · coarse cockling / surface undulation, cross-lit (overlay) */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='640'><filter id='c'><feTurbulence type='fractalNoise' baseFrequency='0.006 0.0075' numOctaves='3' stitchTiles='stitch' seed='3' result='n'/><feDiffuseLighting in='n' lighting-color='%23f2e9d2' surfaceScale='3.4' diffuseConstant='1.0'><feDistantLight azimuth='235' elevation='50'/></feDiffuseLighting></filter><rect width='640' height='640' filter='url(%23c)'/></svg>"),
-    /* 7 · warm per-appearance base tint */
+    /* 9 · warm per-appearance base tint */
     linear-gradient(176deg, var(--paper-top, #f4ecd6), var(--paper-bot, #ece0c6)) !important;
-  background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0, 0 0, 0 0, 0 0 !important;
-  background-size: 48px 48px, 300px 300px, 420px 420px, 540px 540px, 300px 300px, 640px 640px, cover !important;
-  background-repeat: no-repeat, repeat, repeat, repeat, repeat, repeat, no-repeat !important;
-  background-blend-mode: normal, multiply, multiply, multiply, soft-light, overlay, normal !important;
+  background-position: calc(100% - 28px) calc(100% - 34px), 0 0, center 42%, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0 !important;
+  background-size: 58px 58px, 300px 300px, 340px 340px, 300px 300px, 420px 420px, 540px 540px, 300px 300px, 640px 640px, cover !important;
+  background-repeat: no-repeat, repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, no-repeat !important;
+  background-blend-mode: normal, screen, soft-light, multiply, multiply, multiply, soft-light, overlay, normal !important;
   box-shadow:
     0 38px 100px -38px rgba(0, 0, 0, 0.72),
     0 8px 22px -12px rgba(0, 0, 0, 0.42),
