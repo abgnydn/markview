@@ -52,7 +52,10 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
       // gaussians (vs 55k for the backdrop) captures far more of the
       // high-res painting. Lighter on low-DPR / small screens.
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const targetCount = window.innerWidth < 900 || dpr < 1.5 ? 80000 : 150000;
+      // Trimmed from 80k/150k — the synchronous build was a big part of the
+      // "entering takes too long" stall; 64k/110k still reads as high-res for
+      // the immersive view but builds noticeably faster.
+      const targetCount = window.innerWidth < 900 || dpr < 1.5 ? 64000 : 110000;
       const cloud = buildGaussianCloud(paintImg, depthResult.bitmap, targetCount);
       if (cancelled || !cloud) { setStatus('error'); return; }
 
