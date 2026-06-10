@@ -105,12 +105,30 @@ export async function embedFile(fileId: string, workspaceId: string, content: st
     await db.embeddings.where('fileId').equals(fileId).delete();
     return 0;
   }
-  const pipe = await getPipeline();
-  const result = await pipe(chunks.map((c) => c.text), { pooling: 'mean', normalize: true });
-  // `result.data` is a flat Float32Array of length N*DIM.
+  let pipe: Awaited<ReturnType<typeof getPipeline>>;
+  try {
+    pipe = await getPipeline();
+  } catch (err) {
+    console.warn('[embeddings] model unavailable — skipping', err);
+    return 0;
+  }
+  // Embed in small batches. Passing every paragraph at once builds one tensor
+  // of (N · seqLen · dim); on a large file that overflowed int32 inside ONNX
+  // Runtime ("Integer overflow" → an uncaught rejection). Batching keeps each
+  // input tensor small and bounds memory.
+  const BATCH = 16;
   const vectors: Float32Array[] = [];
-  for (let i = 0; i < chunks.length; i++) {
-    vectors.push(result.data.slice(i * DIM, (i + 1) * DIM));
+  try {
+    for (let start = 0; start < chunks.length; start += BATCH) {
+      const batch = chunks.slice(start, start + BATCH).map((c) => c.text);
+      const result = await pipe(batch, { pooling: 'mean', normalize: true });
+      for (let i = 0; i < batch.length; i++) {
+        vectors.push(result.data.slice(i * DIM, (i + 1) * DIM));
+      }
+    }
+  } catch (err) {
+    console.warn('[embeddings] embedFile failed — leaving prior vectors intact', err);
+    return 0;
   }
   // Replace all rows for this file in one transaction.
   await db.transaction('rw', db.embeddings, async () => {
@@ -128,10 +146,12 @@ export async function embedFile(fileId: string, workspaceId: string, content: st
   return chunks.length;
 }
 
-/** Embed a single query string (for search) — returns the unit vector. */
+/** Embed a single query string (for search) — returns the unit vector.
+ *  Caps the query length so an oversized input can't overflow the model. */
 export async function embedQuery(query: string): Promise<Float32Array> {
   const pipe = await getPipeline();
-  const result = await pipe(query, { pooling: 'mean', normalize: true });
+  const text = query.length > 600 ? query.slice(0, 600) : query;
+  const result = await pipe(text, { pooling: 'mean', normalize: true });
   return new Float32Array(result.data.slice(0, DIM));
 }
 

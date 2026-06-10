@@ -258,8 +258,8 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
         // cleanly fallen back to WebGL — instead of throwing uncaught inside
         // the rAF loop and leaving a silent dead canvas. This was the bug:
         // the loop's first frame was the real point of failure, unguarded.
-        await renderer.computeAsync(computeUpdate);
-        await renderer.renderAsync(scene, camera);
+        await renderer.computeAsync(computeUpdate); // await surfaces compile errors
+        renderer.render(scene, camera);             // init() already awaited → sync render
         if (cancelled) { renderer.dispose(); return; }
         console.log(`[webgpu-particles] running · kind=${kind} · count=${COUNT}`);
         // Surface success to the on-screen toast so the device/path is visible
