@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-09T21:50:22.644Z",
+  "generated_at": "2026-06-10T22:06:36.863Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1845,
+  "activity_90d_total": 1856,
   "activity_90d": {
     "2026-03-14": 4,
     "2026-03-15": 23,
@@ -70,7 +70,8 @@
     "2026-06-06": 1,
     "2026-06-07": 1,
     "2026-06-08": 72,
-    "2026-06-09": 92
+    "2026-06-09": 94,
+    "2026-06-10": 9
   },
   "categories": {
     "llm-inference": {
@@ -262,20 +263,20 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-06-09T10:27:23Z",
+      "pushed_at": "2026-06-10T11:57:56Z",
       "default_branch": "main",
       "latest_tag": "v0.9.4",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "d79299cf9b2544466d406fa26c51fa013099789b",
-        "short_sha": "d79299c",
-        "message": "Merge pull request #1 from abgnydn/cross-machine-gpu-batch",
-        "type": "other",
-        "date": "2026-06-09T10:27:23Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/d79299cf9b2544466d406fa26c51fa013099789b",
-        "additions": 2064,
-        "deletions": 87
+        "sha": "cff4c6c195a971f8f7325363555559f897bbfe98",
+        "short_sha": "cff4c6c",
+        "message": "feat(swarm): lever 3 — gzip-binary-f64 wire codec for RelayTransport …",
+        "type": "feat",
+        "date": "2026-06-10T06:40:23Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/cff4c6c195a971f8f7325363555559f897bbfe98",
+        "additions": 334,
+        "deletions": 13
       }
     },
     {
@@ -316,20 +317,20 @@
         "react",
         "viewer"
       ],
-      "pushed_at": "2026-06-09T12:42:06Z",
+      "pushed_at": "2026-06-09T21:50:23Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "5dc04d8afdc01e15ee8c9a068cbe690245c06209",
-        "short_sha": "5dc04d8",
-        "message": "chore(release): desktop 0.3.0",
+        "sha": "e6e4909047db5bae05c306152744c8778081d26e",
+        "short_sha": "e6e4909",
+        "message": "chore(portfolio): daily sync 2026-06-09",
         "type": "chore",
-        "date": "2026-06-09T12:39:31Z",
-        "url": "https://github.com/abgnydn/markview/commit/5dc04d8afdc01e15ee8c9a068cbe690245c06209",
-        "additions": 8,
-        "deletions": 8
+        "date": "2026-06-09T21:50:22Z",
+        "url": "https://github.com/abgnydn/markview/commit/e6e4909047db5bae05c306152744c8778081d26e",
+        "additions": 2757,
+        "deletions": 2013
       }
     },
     {
@@ -732,19 +733,19 @@
       "language_color": "#1a5e9a",
       "stars": 2,
       "topics": [],
-      "pushed_at": "2026-06-09T15:24:16Z",
+      "pushed_at": "2026-06-10T05:04:24Z",
       "default_branch": "main",
       "latest_tag": "v0.7.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "51ad6141b8e4fd44c3a77d6acf3a213aeded3a30",
-        "short_sha": "51ad614",
-        "message": "experiment(E34): validate oxygen network vs the REAL option3 oracle —…",
+        "sha": "d0921b767ba58e3f7ba57e636b0e504b70f5d94f",
+        "short_sha": "d0921b7",
+        "message": "experiment(E37): 100 keV proton ranges 2x too far (2.65 vs G4 1.2 / P…",
         "type": "other",
-        "date": "2026-06-09T15:24:06Z",
-        "url": "https://github.com/abgnydn/webgpu-dna/commit/51ad6141b8e4fd44c3a77d6acf3a213aeded3a30",
-        "additions": 21,
+        "date": "2026-06-10T05:04:22Z",
+        "url": "https://github.com/abgnydn/webgpu-dna/commit/d0921b767ba58e3f7ba57e636b0e504b70f5d94f",
+        "additions": 16,
         "deletions": 0
       }
     },
@@ -777,7 +778,7 @@
       "pushed_at": "2026-05-26T06:12:05Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 38,
+      "commits_30d": 33,
       "commits_synced": 38,
       "last_commit": {
         "sha": "d7bf288f9d1c356b9045db3e7076d45267d18143",
@@ -873,20 +874,20 @@
       "language_color": "#dea584",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-06-09T11:23:21Z",
+      "pushed_at": "2026-06-10T05:34:14Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 26,
-      "commits_synced": 26,
+      "commits_30d": 29,
+      "commits_synced": 29,
       "last_commit": {
-        "sha": "b6f98c0afcfc3dafcce93ec9b3549a1164fbd39f",
-        "short_sha": "b6f98c0",
-        "message": "feat(web): landing page, deployed to Cloudflare Pages",
+        "sha": "a7c07271b994221884dc22538353e642474f8779",
+        "short_sha": "a7c0727",
+        "message": "feat(detector): LLM-detector closes the leakage gap — ~4% on PUPA, fu…",
         "type": "feat",
-        "date": "2026-06-09T11:23:19Z",
-        "url": "https://github.com/abgnydn/veil/commit/b6f98c0afcfc3dafcce93ec9b3549a1164fbd39f",
-        "additions": 156,
-        "deletions": 0
+        "date": "2026-06-10T05:34:13Z",
+        "url": "https://github.com/abgnydn/veil/commit/a7c07271b994221884dc22538353e642474f8779",
+        "additions": 289,
+        "deletions": 26
       }
     },
     {
@@ -2052,6 +2053,136 @@
   ],
   "commits": [
     {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "cff4c6c195a971f8f7325363555559f897bbfe98",
+      "short_sha": "cff4c6c",
+      "message": "feat(swarm): lever 3 — gzip-binary-f64 wire codec for RelayTransport …",
+      "type": "feat",
+      "date": "2026-06-10T06:40:23Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/cff4c6c195a971f8f7325363555559f897bbfe98",
+      "additions": 334,
+      "deletions": 13
+    },
+    {
+      "slug": "veil",
+      "name": "veil",
+      "language": "Rust",
+      "sha": "a7c07271b994221884dc22538353e642474f8779",
+      "short_sha": "a7c0727",
+      "message": "feat(detector): LLM-detector closes the leakage gap — ~4% on PUPA, fu…",
+      "type": "feat",
+      "date": "2026-06-10T05:34:13Z",
+      "url": "https://github.com/abgnydn/veil/commit/a7c07271b994221884dc22538353e642474f8779",
+      "additions": 289,
+      "deletions": 26
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "d0921b767ba58e3f7ba57e636b0e504b70f5d94f",
+      "short_sha": "d0921b7",
+      "message": "experiment(E37): 100 keV proton ranges 2x too far (2.65 vs G4 1.2 / P…",
+      "type": "other",
+      "date": "2026-06-10T05:04:22Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/d0921b767ba58e3f7ba57e636b0e504b70f5d94f",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "5362833d36aebc65582c285fba025553a10f42ab",
+      "short_sha": "5362833",
+      "message": "experiment(E36): causal isolation — IRT engine is CORRECT; deficit is…",
+      "type": "other",
+      "date": "2026-06-10T05:00:03Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/5362833d36aebc65582c285fba025553a10f42ab",
+      "additions": 14858,
+      "deletions": 13
+    },
+    {
+      "slug": "veil",
+      "name": "veil",
+      "language": "Rust",
+      "sha": "1a7563e4b3eb81d16ec86cccc5793a9dcda1017b",
+      "short_sha": "1a7563e",
+      "message": "feat(bench): decisive LLM-redactor experiment — the fix works",
+      "type": "feat",
+      "date": "2026-06-10T04:46:36Z",
+      "url": "https://github.com/abgnydn/veil/commit/1a7563e4b3eb81d16ec86cccc5793a9dcda1017b",
+      "additions": 70,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "1488b242efcd9f3a5683f1b8bead5035c940138b",
+      "short_sha": "1488b24",
+      "message": "refactor(chem): make f64 WASM the recommended DF default, GPU hybrid …",
+      "type": "refactor",
+      "date": "2026-06-10T04:43:03Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/1488b242efcd9f3a5683f1b8bead5035c940138b",
+      "additions": 52,
+      "deletions": 38
+    },
+    {
+      "slug": "veil",
+      "name": "veil",
+      "language": "Rust",
+      "sha": "d71f8ccaafba71dd434a8581c03e198e664e2305",
+      "short_sha": "d71f8cc",
+      "message": "feat(bench): veil on PUPA — head-to-head leakage vs PAPILLON (the hon…",
+      "type": "feat",
+      "date": "2026-06-10T04:19:34Z",
+      "url": "https://github.com/abgnydn/veil/commit/d71f8ccaafba71dd434a8581c03e198e664e2305",
+      "additions": 119,
+      "deletions": 8
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "d0e830fc72b976b8bab6484cbdfbb7b20305ca49",
+      "short_sha": "d0e830f",
+      "message": "experiment(E35): diagnose the oxygen discrepancy -> high-LET recombin…",
+      "type": "other",
+      "date": "2026-06-10T04:04:04Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/d0e830fc72b976b8bab6484cbdfbb7b20305ca49",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "6fa7b922b8e567a0be688dbcf3a22c8dbc227fcb",
+      "short_sha": "6fa7b92",
+      "message": "fix(claims): address scientific-critic findings — separate validated …",
+      "type": "fix",
+      "date": "2026-06-10T03:54:53Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/6fa7b922b8e567a0be688dbcf3a22c8dbc227fcb",
+      "additions": 89,
+      "deletions": 8
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "e6e4909047db5bae05c306152744c8778081d26e",
+      "short_sha": "e6e4909",
+      "message": "chore(portfolio): daily sync 2026-06-09",
+      "type": "chore",
+      "date": "2026-06-09T21:50:22Z",
+      "url": "https://github.com/abgnydn/markview/commit/e6e4909047db5bae05c306152744c8778081d26e",
+      "additions": 2757,
+      "deletions": 2013
+    },
+    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -2310,6 +2441,19 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/eff4aa06468193b9c1709983cbdaebc5b70cde03",
       "additions": 471,
       "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "15dd280cd5fb10e4862a3533b07d566fed65a36f",
+      "short_sha": "15dd280",
+      "message": "feat(site): surface the swarm on the landing page — nav, card, hero t…",
+      "type": "feat",
+      "date": "2026-06-09T11:49:18Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/15dd280cd5fb10e4862a3533b07d566fed65a36f",
+      "additions": 52,
+      "deletions": 5
     },
     {
       "slug": "markview",
@@ -3404,19 +3548,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "bc1ac37ae4d2a2fc3224db65eba6048936939ad4",
-      "short_sha": "bc1ac37",
-      "message": "experiment(E18): IRT rates + diffusion coeffs are bit-identical to Ge…",
-      "type": "other",
-      "date": "2026-06-08T13:12:56Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/bc1ac37ae4d2a2fc3224db65eba6048936939ad4",
-      "additions": 76,
-      "deletions": 0
-    },
-    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -3428,19 +3559,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/a07273763f75d76e6ce0fae553293f9f89e80930",
       "additions": 13,
       "deletions": 3
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "286a7bf09e6c93a168c95fc04fe768e99ec3492f",
-      "short_sha": "286a7bf",
-      "message": "experiment(E17): density sweep — cross-primary is a coupled H2-up/OH-…",
-      "type": "other",
-      "date": "2026-06-08T13:09:20Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/286a7bf09e6c93a168c95fc04fe768e99ec3492f",
-      "additions": 49,
-      "deletions": 2
     },
     {
       "slug": "webgpu-q",
@@ -3493,19 +3611,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/c3c4a4975ac424c7c77a3f635b78ed1a0a945e01",
       "additions": 111,
       "deletions": 30
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "3d81a3571bd6221b533a8ef9f1ab2164634bc377",
-      "short_sha": "3d81a35",
-      "message": "experiment(E17): cross-primary IRT works + validates E10f — recovers …",
-      "type": "other",
-      "date": "2026-06-08T13:01:52Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/3d81a3571bd6221b533a8ef9f1ab2164634bc377",
-      "additions": 119,
-      "deletions": 0
     },
     {
       "slug": "veil",
@@ -3937,45 +4042,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "d8111f4642267be58eba77a6c2adc8058792281a",
-      "short_sha": "d8111f4",
-      "message": "docs(paper): write up the streaming swarm crossing the 2 GB single-al…",
-      "type": "docs",
-      "date": "2026-06-08T07:38:10Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/d8111f4642267be58eba77a6c2adc8058792281a",
-      "additions": 109,
-      "deletions": 9
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "5100f57ac036c715f28271c520d13968fc151bb4",
-      "short_sha": "5100f57",
-      "message": "feat(swarm): commit the wall-crossing headline artifact — 40 H2 cc-pV…",
-      "type": "feat",
-      "date": "2026-06-08T07:24:59Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/5100f57ac036c715f28271c520d13968fc151bb4",
-      "additions": 45,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "52ab041f74889a7bb2d466171a5f80a63e6a3475",
-      "short_sha": "52ab041",
-      "message": "ci(swarm): raise scaling-ladder test cap to 100 min for slow-runner v…",
-      "type": "ci",
-      "date": "2026-06-08T06:39:11Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/52ab041f74889a7bb2d466171a5f80a63e6a3475",
-      "additions": 1,
-      "deletions": 1
-    },
-    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -4039,19 +4105,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/f37764247b3845b4b4c47f815318db3f73f76363",
       "additions": 325,
       "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "818495ce75e993597ee9b5eb206cdbe016b69354",
-      "short_sha": "818495c",
-      "message": "perf(swarm): WASM SIMD mode-projection — ~3.4× faster streaming build…",
-      "type": "perf",
-      "date": "2026-06-05T07:37:25Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/818495ce75e993597ee9b5eb206cdbe016b69354",
-      "additions": 151,
-      "deletions": 34
     },
     {
       "slug": "webgpu-fly",
@@ -5001,19 +5054,6 @@
       "url": "https://github.com/abgnydn/iz/commit/948102cee7b5342931f09fadfb4a5d2f026c3e4d",
       "additions": 3163,
       "deletions": 10
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "388dbe88a091b7a53a6c8cddafb2763915659ce7",
-      "short_sha": "388dbe8",
-      "message": "chore(portfolio): daily sync 2026-05-31",
-      "type": "chore",
-      "date": "2026-05-31T21:03:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/388dbe88a091b7a53a6c8cddafb2763915659ce7",
-      "additions": 56,
-      "deletions": 51
     },
     {
       "slug": "iz",
@@ -8511,45 +8551,6 @@
       "url": "https://github.com/abgnydn/wonderlab/commit/679fb8b6c8565499af3bcad897579d2cb58e371d",
       "additions": 458,
       "deletions": 89
-    },
-    {
-      "slug": "webgpu-fly",
-      "name": "webgpu-fly",
-      "language": "TypeScript",
-      "sha": "a4e317fca1739f0f31a31a519bd8344320bb6955",
-      "short_sha": "a4e317f",
-      "message": "Trained walker: RAW obs (no normalization) — matches native exactly",
-      "type": "other",
-      "date": "2026-05-06T10:58:01Z",
-      "url": "https://github.com/abgnydn/webgpu-fly/commit/a4e317fca1739f0f31a31a519bd8344320bb6955",
-      "additions": 161,
-      "deletions": 32
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "5dc9ab74e47fb58c41140f337194d70e1bd0ac3a",
-      "short_sha": "5dc9ab7",
-      "message": "ROOT-CAUSE: stop hiding the offscreen SVG with opacity:0",
-      "type": "other",
-      "date": "2026-05-06T10:54:37Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/5dc9ab74e47fb58c41140f337194d70e1bd0ac3a",
-      "additions": 37,
-      "deletions": 2
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "bf97f3ddb4194d3a79e1abd6694e61bd886461b2",
-      "short_sha": "bf97f3d",
-      "message": "Verbose logs along the picture pipeline",
-      "type": "other",
-      "date": "2026-05-06T10:45:37Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/bf97f3ddb4194d3a79e1abd6694e61bd886461b2",
-      "additions": 35,
-      "deletions": 2
     }
   ],
   "errors": []

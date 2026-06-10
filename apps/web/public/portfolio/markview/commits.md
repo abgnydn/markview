@@ -2,6 +2,7 @@
 
 ## 2026-06-09
 
+- `21:50` **chore(portfolio): daily sync 2026-06-09** — +2757 −2013 — [`e6e4909`](https://github.com/abgnydn/markview/commit/e6e4909047db5bae05c306152744c8778081d26e)
 - `12:39` **chore(release): desktop 0.3.0** — +8 −8 — [`5dc04d8`](https://github.com/abgnydn/markview/commit/5dc04d8afdc01e15ee8c9a068cbe690245c06209)
 - `12:18` **feat(editor): selection format bubble** — +111 −0 — [`70123a7`](https://github.com/abgnydn/markview/commit/70123a7a7dae1b3b180fc1dbc334d9d32098e3ea)
 - `12:14` **feat(editor): smart typography — curly quotes, em dash, ellipsis, arrow** — +109 −0 — [`fc2defc`](https://github.com/abgnydn/markview/commit/fc2defcacd80ecb31a2326d104ff7873ab3d6f12)
@@ -75,7 +76,3 @@
 - `09:05` **feat(atmosphere): walkable painting world — "go inside" the painting** — +444 −1 — [`162cd81`](https://github.com/abgnydn/markview/commit/162cd81c6a195c8585b2c44e60094478ddf89545)
 - `08:30` **feat: AI co-author (Tab-to-ghost) + ink-dropper cursor** — +400 −0 — [`178c71b`](https://github.com/abgnydn/markview/commit/178c71b849cd694190c5a91b368b95b649b79491)
 - `08:30` **feat(projects): chronicle chat + manifest cleanup + prerender fix** — +947 −270 — [`078338c`](https://github.com/abgnydn/markview/commit/078338c90bc9e3097d7dc11d8c9eabbda70ed27f)
-
-## 2026-05-31
-
-- `21:03` **chore(portfolio): daily sync 2026-05-31** — +56 −51 — [`388dbe8`](https://github.com/abgnydn/markview/commit/388dbe88a091b7a53a6c8cddafb2763915659ce7)

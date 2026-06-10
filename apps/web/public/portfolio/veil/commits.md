@@ -1,5 +1,11 @@
 # Commits — veil
 
+## 2026-06-10
+
+- `05:34` **feat(detector): LLM-detector closes the leakage gap — ~4% on PUPA, fu…** — +289 −26 — [`a7c0727`](https://github.com/abgnydn/veil/commit/a7c07271b994221884dc22538353e642474f8779)
+- `04:46` **feat(bench): decisive LLM-redactor experiment — the fix works** — +70 −0 — [`1a7563e`](https://github.com/abgnydn/veil/commit/1a7563e4b3eb81d16ec86cccc5793a9dcda1017b)
+- `04:19` **feat(bench): veil on PUPA — head-to-head leakage vs PAPILLON (the hon…** — +119 −8 — [`d71f8cc`](https://github.com/abgnydn/veil/commit/d71f8ccaafba71dd434a8581c03e198e664e2305)
+
 ## 2026-06-09
 
 - `11:23` **feat(web): landing page, deployed to Cloudflare Pages** — +156 −0 — [`b6f98c0`](https://github.com/abgnydn/veil/commit/b6f98c0afcfc3dafcce93ec9b3549a1164fbd39f)

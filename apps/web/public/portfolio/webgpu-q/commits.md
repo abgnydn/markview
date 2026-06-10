@@ -1,7 +1,14 @@
 # Commits — webgpu-q
 
+## 2026-06-10
+
+- `06:40` **feat(swarm): lever 3 — gzip-binary-f64 wire codec for RelayTransport …** — +334 −13 — [`cff4c6c`](https://github.com/abgnydn/webgpu-q/commit/cff4c6c195a971f8f7325363555559f897bbfe98)
+- `04:43` **refactor(chem): make f64 WASM the recommended DF default, GPU hybrid …** — +52 −38 — [`1488b24`](https://github.com/abgnydn/webgpu-q/commit/1488b242efcd9f3a5683f1b8bead5035c940138b)
+- `03:54` **fix(claims): address scientific-critic findings — separate validated …** — +89 −8 — [`6fa7b92`](https://github.com/abgnydn/webgpu-q/commit/6fa7b922b8e567a0be688dbcf3a22c8dbc227fcb)
+
 ## 2026-06-09
 
+- `11:49` **feat(site): surface the swarm on the landing page — nav, card, hero t…** — +52 −5 — [`15dd280`](https://github.com/abgnydn/webgpu-q/commit/15dd280cd5fb10e4862a3533b07d566fed65a36f)
 - `10:27` **Merge pull request #1 from abgnydn/cross-machine-gpu-batch** — +2064 −87 — [`d79299c`](https://github.com/abgnydn/webgpu-q/commit/d79299cf9b2544466d406fa26c51fa013099789b)
 - `09:44` **feat(chem): runUMP2Auto — DF-UMP2 completes the {R,U}×{HF,DFT,MP2} ma…** — +189 −0 — [`08479da`](https://github.com/abgnydn/webgpu-q/commit/08479da033265dc9b1503ed7bad5db65eb5ebe0a)
 - `09:31` **feat(chem): runMP2Auto — size-gated DF-MP2, correlation energy at any…** — +122 −1 — [`50ad6de`](https://github.com/abgnydn/webgpu-q/commit/50ad6de14c30438a6bc8ec0faabc7883f8cde26a)
@@ -51,10 +58,3 @@
 - `08:43` **feat(swarm): cross-machine proof via free public relay (WebRTC needs …** — +103 −2 — [`1450f59`](https://github.com/abgnydn/webgpu-q/commit/1450f5916e3962bb529d6dbb887414c3bd4f6515)
 - `08:35` **feat(swarm): cross-machine WebRTC de-risk — 2 Actions VMs, free TURN** — +159 −2 — [`9b1a921`](https://github.com/abgnydn/webgpu-q/commit/9b1a9213e92595f2d4d6bfb50e26e0ed4135926a)
 - `07:51` **chore(release): v0.9.4 — the streaming swarm crosses the 2 GB single-…** — +73 −16 — [`a6d1b6b`](https://github.com/abgnydn/webgpu-q/commit/a6d1b6bb08d94a14150fb7c3a75b566551f738c4)
-- `07:38` **docs(paper): write up the streaming swarm crossing the 2 GB single-al…** — +109 −9 — [`d8111f4`](https://github.com/abgnydn/webgpu-q/commit/d8111f4642267be58eba77a6c2adc8058792281a)
-- `07:24` **feat(swarm): commit the wall-crossing headline artifact — 40 H2 cc-pV…** — +45 −0 — [`5100f57`](https://github.com/abgnydn/webgpu-q/commit/5100f57ac036c715f28271c520d13968fc151bb4)
-- `06:39` **ci(swarm): raise scaling-ladder test cap to 100 min for slow-runner v…** — +1 −1 — [`52ab041`](https://github.com/abgnydn/webgpu-q/commit/52ab041f74889a7bb2d466171a5f80a63e6a3475)
-
-## 2026-06-05
-
-- `07:37` **perf(swarm): WASM SIMD mode-projection — ~3.4× faster streaming build…** — +151 −34 — [`818495c`](https://github.com/abgnydn/webgpu-q/commit/818495ce75e993597ee9b5eb206cdbe016b69354)

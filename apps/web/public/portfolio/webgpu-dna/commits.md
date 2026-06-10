@@ -1,5 +1,11 @@
 # Commits — webgpu-dna
 
+## 2026-06-10
+
+- `05:04` **experiment(E37): 100 keV proton ranges 2x too far (2.65 vs G4 1.2 / P…** — +16 −0 — [`d0921b7`](https://github.com/abgnydn/webgpu-dna/commit/d0921b767ba58e3f7ba57e636b0e504b70f5d94f)
+- `05:00` **experiment(E36): causal isolation — IRT engine is CORRECT; deficit is…** — +14858 −13 — [`5362833`](https://github.com/abgnydn/webgpu-dna/commit/5362833d36aebc65582c285fba025553a10f42ab)
+- `04:04` **experiment(E35): diagnose the oxygen discrepancy -> high-LET recombin…** — +15 −0 — [`d0e830f`](https://github.com/abgnydn/webgpu-dna/commit/d0e830fc72b976b8bab6484cbdfbb7b20305ca49)
+
 ## 2026-06-09
 
 - `15:24` **experiment(E34): validate oxygen network vs the REAL option3 oracle —…** — +21 −0 — [`51ad614`](https://github.com/abgnydn/webgpu-dna/commit/51ad6141b8e4fd44c3a77d6acf3a213aeded3a30)
@@ -52,6 +58,3 @@
 - `13:43` **experiment(E19): energy partition is healthy — the cascade deficit is…** — +60 −0 — [`18cf87d`](https://github.com/abgnydn/webgpu-dna/commit/18cf87dea9d2cf62d8ff11018ad3347ce3bb48fd)
 - `13:31` **docs(native): reconcile README next-steps with E17/E18 findings** — +9 −4 — [`7fc84a2`](https://github.com/abgnydn/webgpu-dna/commit/7fc84a220b349f3b20e50ab81632247c0b6eef16)
 - `13:30` **research(cascade): rule out excitation as the energy sink — Geant4 is…** — +28 −0 — [`bb12f4b`](https://github.com/abgnydn/webgpu-dna/commit/bb12f4beb376a49de453a19e7dc3cf3f080a9963)
-- `13:12` **experiment(E18): IRT rates + diffusion coeffs are bit-identical to Ge…** — +76 −0 — [`bc1ac37`](https://github.com/abgnydn/webgpu-dna/commit/bc1ac37ae4d2a2fc3224db65eba6048936939ad4)
-- `13:09` **experiment(E17): density sweep — cross-primary is a coupled H2-up/OH-…** — +49 −2 — [`286a7bf`](https://github.com/abgnydn/webgpu-dna/commit/286a7bf09e6c93a168c95fc04fe768e99ec3492f)
-- `13:01` **experiment(E17): cross-primary IRT works + validates E10f — recovers …** — +119 −0 — [`3d81a35`](https://github.com/abgnydn/webgpu-dna/commit/3d81a3571bd6221b533a8ef9f1ab2164634bc377)

@@ -200,7 +200,7 @@ All roadmap items are shipped; remaining work is documented hardening:
 
 - ✅ Pseudonymization round-trip (engine + streaming reverse-map)
 - ✅ Tier enforcement with fail-closed invariants (`VeilEnforcer`)
-- ✅ Learned NER detector (GLiNER) — benchmarked on ai4privacy: recall 0.92 / precision 0.45 (F1 0.60) at threshold 0.5; recall-strong, which is what a privacy filter needs ([details](./examples/gliner-detector/README.md))
+- ✅ Detection, **benchmarked honestly** on [PUPA](https://huggingface.co/datasets/Columbia-NLP/PUPA) (PAPILLON's benchmark): the default regex+GLiNER leaks **33.5%** (loses ~4.5× to PAPILLON's local-LLM rewrite). But swapping in an **[LLM-detector](./examples/llm-detector/)** behind the same `Detector` boundary drops it to **~4%** — PAPILLON-class or better, **with exact reversibility** (which PAPILLON's lossy rewrite can't do). ([details](./examples/gliner-detector/README.md))
 - ✅ MCP consumer enforcing tier algebra end-to-end
 - ✅ k-anonymity cohort blending (pool-range / determinism / positional fingerprints closed)
 - ⏳ Deferred: content-template hiding (needs a local vector store), the timing side-channel, a published accuracy benchmark. See [`docs/VEIL.md §4.3`](./docs/VEIL.md).
