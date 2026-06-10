@@ -4953,3 +4953,90 @@ input, textarea, .cm-content, [contenteditable='true'] {
 :root:not(.dark):not([data-theme='dark']) [contenteditable='true'] {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='24' viewBox='0 0 14 24'><line x1='8' y1='4' x2='6' y2='20' stroke='%231c1b22' stroke-width='1.6' stroke-linecap='round' opacity='0.92'/><line x1='5' y1='4.4' x2='11' y2='4.4' stroke='%231c1b22' stroke-width='1.1' stroke-linecap='round' opacity='0.78'/><line x1='3' y1='19.6' x2='9' y2='19.6' stroke='%231c1b22' stroke-width='1.1' stroke-linecap='round' opacity='0.78'/></svg>") 7 12, text;
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+ * VISUAL POLISH PASS — atmosphere + papers. A deepening of the scroll into
+ * a richer, more dimensional surface: layered paper light + texture, carved
+ * wooden rods, per-appearance character, and smooth crossfades on switch.
+ * ════════════════════════════════════════════════════════════════════════ */
+
+/* Smooth appearance crossfade — register the theme custom properties as
+   <color> so the paper tone + ink animate when you switch atmosphere. */
+@property --paper-top    { syntax: '<color>'; inherits: true; initial-value: #f3ead7; }
+@property --paper-bot    { syntax: '<color>'; inherits: true; initial-value: #ece1ca; }
+@property --zen-accent   { syntax: '<color>'; inherits: true; initial-value: #9b7dff; }
+html { transition: --zen-accent 700ms var(--zen-ease); }
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  transition: --paper-top 700ms var(--zen-ease), --paper-bot 700ms var(--zen-ease);
+}
+
+/* Richer paper — seal + foxing blooms + a soft centre watermark + the warm
+   gradient, all in one layered background. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='52'><rect x='3' y='3' width='46' height='46' rx='5' fill='none' stroke='%23b0392a' stroke-width='3'/><path d='M15 16 H37 M26 16 V38 M18 27 H34 M20 38 H32' stroke='%23b0392a' stroke-width='3' stroke-linecap='round' fill='none'/></svg>") no-repeat,
+    radial-gradient(circle at 11% 16%, rgba(150, 110, 60, 0.06), transparent 20%),
+    radial-gradient(circle at 89% 78%, rgba(150, 110, 60, 0.05), transparent 18%),
+    radial-gradient(circle at 84% 12%, rgba(150, 110, 60, 0.04), transparent 14%),
+    radial-gradient(ellipse at 50% 36%, rgba(255, 250, 235, 0.30), transparent 62%),
+    linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
+  background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0, 0 0, 0 0 !important;
+  background-size: 48px 48px, cover, cover, cover, cover, cover !important;
+  box-shadow:
+    0 38px 100px -38px rgba(0, 0, 0, 0.72),
+    0 8px 22px -12px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 1px rgba(120, 90, 50, 0.10),
+    inset 0 66px 130px -66px rgba(255, 244, 214, 0.40),
+    inset 0 -44px 90px -54px rgba(74, 56, 30, 0.20) !important;
+}
+
+/* Carved wooden rods — knobs at the ends + a fine lengthwise grain. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
+  background:
+    radial-gradient(circle at 8px 50%, #3a2c18 0, #3a2c18 6px, transparent 7px),
+    radial-gradient(circle at calc(100% - 8px) 50%, #3a2c18 0, #3a2c18 6px, transparent 7px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 8px),
+    linear-gradient(180deg, #715a3a 0%, #4c3a22 100%) !important;
+}
+
+/* Per-appearance character — a faint light wash tints the whole paper toward
+   the scene (over the gradient, under the ink). */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
+  position: relative;
+}
+html[data-atmosphere='fuji']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.10), inset 0 66px 130px -66px rgba(255, 236, 224, 0.42), inset 0 -44px 90px -54px rgba(120, 60, 60, 0.16) !important; }
+html[data-atmosphere='wave']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.10), inset 0 66px 130px -66px rgba(232, 240, 248, 0.40), inset 0 -44px 90px -54px rgba(40, 70, 100, 0.14) !important; }
+html[data-atmosphere='snow']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(120,90,50,0.08), inset 0 66px 130px -66px rgba(238, 244, 250, 0.46), inset 0 -44px 90px -54px rgba(60, 76, 96, 0.12) !important; }
+html[data-atmosphere='fields'] .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.10), inset 0 66px 130px -66px rgba(255, 246, 216, 0.46), inset 0 -44px 90px -54px rgba(120, 90, 30, 0.18) !important; }
+
+/* Per-appearance painting grade — a gentle colour cast on the art so the
+   margins around the scroll harmonise with the ink. */
+html[data-atmosphere='fuji']   .atmosphere-image { filter: saturate(1.06) contrast(1.02); }
+html[data-atmosphere='wave']   .atmosphere-image { filter: saturate(1.08) brightness(0.98); }
+html[data-atmosphere='snow']   .atmosphere-image { filter: saturate(0.94) brightness(1.04); }
+html[data-atmosphere='fields'] .atmosphere-image { filter: saturate(1.1) contrast(1.03); }
+
+/* Deeper vignette per appearance — draws the eye to the scroll. */
+html[data-atmosphere]:not([data-atmosphere='none']) body::after {
+  background: radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,0.16) 84%, rgba(0,0,0,0.34) 100%) !important;
+}
+
+/* Softer, slower ambient — birds + leaves + mist ease more gracefully. */
+.atmosphere-bird svg { animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1) !important; }
+.atmosphere-leaf { animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1) !important; }
+.atmosphere-mist { mix-blend-mode: screen; }
+.light .atmosphere-mist,
+[data-theme='light'] .atmosphere-mist { mix-blend-mode: multiply; }
+
+/* The reading column breathes on hover — the candlelight warms a touch. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  transition: --paper-top 700ms var(--zen-ease), --paper-bot 700ms var(--zen-ease), box-shadow 600ms var(--zen-ease);
+}
+
+/* Heading ink deepens on hover for a subtle calligraphic life. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1:hover,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2:hover {
+  color: #100b04 !important;
+  transition: color 300ms var(--zen-ease);
+}
