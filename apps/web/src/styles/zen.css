@@ -1296,6 +1296,172 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content strong {
 }
 /* (59) Ordered-list numerals in the appearance ink. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content ol > li::marker { color: var(--zen-accent); }
+
+/* ════════════════ #61–110 · real-value batch ════════════════ */
+
+/* ── Editor on paper (when a painting is active) ──────────────── */
+/* (61) The editor surface becomes rice paper. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-editor,
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-scroller {
+  background: linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
+}
+/* (62) Editor ink text. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-content { color: #2c2418 !important; }
+/* (63) Vermillion brush caret. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-cursor { border-left-color: #b0392a !important; border-left-width: 2px !important; }
+/* (64) Active line — a faint warm wash. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-activeLine { background: rgba(176, 57, 42, 0.045) !important; }
+/* (65) Selection — vermillion ink wash. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-selectionBackground,
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-content ::selection { background: rgba(176, 57, 42, 0.18) !important; }
+/* (66) Gutter blends into the paper. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-gutters { background: transparent !important; color: rgba(60, 48, 30, 0.4) !important; border: none !important; }
+/* (67) Markdown markers (#, *, >) dim to faint ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-tok-meta { color: rgba(60, 48, 30, 0.45) !important; }
+/* (68) Format bar reads on paper. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-format-bar { background: rgba(245, 238, 224, 0.7) !important; }
+
+/* ── Accessibility ────────────────────────────────────────────── */
+/* (69) Visible keyboard focus ring in the appearance ink. */
+.markdown-content a:focus-visible,
+.toolbar-btn:focus-visible,
+button:focus-visible,
+.cm-format-bubble-btn:focus-visible {
+  outline: 2px solid var(--zen-accent) !important;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+/* (70) Respect prefers-contrast — drop the halo, deepen the ink. */
+@media (prefers-contrast: more) {
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content { color: #000 !important; }
+  .markdown-content { text-shadow: none !important; }
+}
+/* (71) Full reduced-motion coverage for the scroll + entrance. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content,
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p,
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-main { animation: none !important; scroll-behavior: auto !important; transition: none !important; }
+}
+/* (72) Larger touch targets for list/checkbox controls. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content input[type='checkbox'] { min-width: 18px; min-height: 18px; }
+
+/* ── Per-appearance uniqueness ────────────────────────────────── */
+/* (73) Each appearance tints its own seal. */
+html[data-atmosphere='wave']   .viewer-content { --seal: #2f6f8f; }
+html[data-atmosphere='snow']   .viewer-content { --seal: #5b6b80; }
+html[data-atmosphere='fields'] .viewer-content { --seal: #b06a1f; }
+html[data-atmosphere='fuji']   .viewer-content { --seal: #b0392a; }
+/* (74) Distinct section glyph per appearance. */
+html[data-atmosphere='wave']   .markdown-content h2::before { content: '≈'; }
+html[data-atmosphere='snow']   .markdown-content h2::before { content: '❄'; }
+html[data-atmosphere='fields'] .markdown-content h2::before { content: '☷'; }
+html[data-atmosphere='fuji']   .markdown-content h2::before { content: '❀'; }
+/* (75) Drop-cap takes each appearance's ink. */
+html[data-atmosphere='fuji']   .markdown-content > p:first-of-type::first-letter,
+html[data-atmosphere='fields'] .markdown-content > p:first-of-type::first-letter { color: var(--zen-accent); }
+/* (76) Heading underline tints toward the appearance. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2 { border-bottom-color: var(--zen-accent-soft) !important; }
+
+/* ── Mobile / responsive ──────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* (77) Larger reading on small screens, tighter padding. */
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content { font-size: 17px !important; }
+  /* (78) Paper hugs the viewport with a slim margin. */
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { padding-left: 6vw !important; padding-right: 6vw !important; }
+  /* (79) Fewer ambient creatures on small screens (perf). */
+  .atmosphere-leaves, .atmosphere-inkmotes { opacity: 0.6; }
+  /* (80) Mounting frame off on mobile (too tight). */
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content { outline: none; }
+}
+
+/* ── Print / PDF (the scroll prints as a clean leaf) ──────────── */
+@media print {
+  /* (81) Hide all ambient + chrome. */
+  .atmosphere-birds, .atmosphere-leaves, .atmosphere-mist, .atmosphere-inkmotes,
+  .toolbar, .workspace-tabs, .reading-progress, .atmosphere-image { display: none !important; }
+  /* (82) White page, black ink, no rods/shadow. */
+  html[data-atmosphere] .viewer-content { background: #fff !important; box-shadow: none !important; }
+  html[data-atmosphere] .viewer-content::before,
+  html[data-atmosphere] .viewer-content::after { display: none !important; }
+  html[data-atmosphere] .markdown-content { color: #111 !important; text-shadow: none !important; }
+  /* (83) Avoid breaking headings/quotes across pages. */
+  .markdown-content h1, .markdown-content h2, .markdown-content h3 { break-after: avoid; }
+  .markdown-content pre, .markdown-content blockquote, .markdown-content table { break-inside: avoid; }
+}
+
+/* ── Polish & quality (#84–110) ───────────────────────────────── */
+/* (84) Thin classical scrollbar in the appearance ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-main { scrollbar-width: thin; scrollbar-color: var(--zen-accent-soft) transparent; }
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-main::-webkit-scrollbar { width: 8px; }
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-main::-webkit-scrollbar-thumb { background: var(--zen-accent-soft); border-radius: 4px; }
+/* (85) Table zebra — faint warm alternate rows. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content tbody tr:nth-child(even) { background: rgba(60, 48, 30, 0.035) !important; }
+/* (86) Sticky table header on long tables. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content thead th { position: sticky; top: 0; }
+/* (87) Visited links — slightly faded ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a:visited { filter: saturate(0.8) brightness(0.85); }
+/* (88) Code language label — small ink caps. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .code-lang,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content [data-lang]::before { color: #6a5942 !important; }
+/* (89) Wide pre/table get edge fade-shadows so overflow reads. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content pre { background-attachment: local; }
+/* (90) Editor placeholder in faint ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-placeholder { color: rgba(60, 48, 30, 0.4) !important; }
+/* (91) Editor line-height for the literary feel. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-line { line-height: 1.7; }
+/* (92) Nested blockquotes deepen the vermillion. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote blockquote { border-left-color: #8a3324 !important; }
+/* (93) Image hover — a gentle lift. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content img { transition: transform 320ms var(--zen-ease), box-shadow 320ms var(--zen-ease); }
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content img:hover { transform: translateY(-2px); box-shadow: 0 14px 36px -14px rgba(0,0,0,0.55); }
+/* (94) External links get a small ↗. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a[href^='http']:not([href$='.md'])::after { content: ' ↗'; font-size: 0.78em; opacity: 0.6; }
+/* (95) samp / var classical. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content samp { font-family: var(--zen-mono); color: #3a3022; }
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content var { font-style: italic; color: #8a3324; }
+/* (96) Lead paragraph after H1 reads a touch larger. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1 + p { font-size: 1.06em; color: #3a3022; }
+/* (97) Tighter list rhythm. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content li { margin: 0.22em 0; }
+/* (98) details/summary — a classical fold. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content details { border-left: 2px solid var(--zen-accent-soft); padding-left: 0.9em; }
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content summary { cursor: pointer; color: #1d160c; font-weight: 600; }
+/* (99) Caption flourish + credit read as a classical colophon. */
+html[data-atmosphere]:not([data-atmosphere='none']) .atmosphere-caption { font-family: var(--zen-serif); font-style: italic; }
+html[data-atmosphere]:not([data-atmosphere='none']) .atmosphere-credit { letter-spacing: 0.12em; }
+/* (100) App-wide selection takes the appearance ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) ::selection { background: var(--zen-accent-soft); }
+
+/* ── Performance ──────────────────────────────────────────────── */
+/* (101) Pause every ambient animation when the tab is hidden. */
+body.mv-hidden .atmosphere-bird,
+body.mv-hidden .atmosphere-leaf,
+body.mv-hidden .atmosphere-inkmote,
+body.mv-hidden .atmosphere-bird svg,
+body.mv-hidden .atmosphere-mist { animation-play-state: paused !important; }
+/* (102) GPU-compositing hints for the ambient layers. */
+.atmosphere-bird, .atmosphere-leaf, .atmosphere-inkmote, .atmosphere-mist { transform: translateZ(0); }
+/* (103) Contain the ambient layers so they don't trigger global reflow. */
+.atmosphere-birds, .atmosphere-leaves, .atmosphere-inkmotes { contain: strict; }
+/* (104) content-visibility skips offscreen rendering of long docs. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > * { content-visibility: auto; contain-intrinsic-size: auto 1.4em; }
+/* (105) Drop will-change on the paper panel (static) to free a layer. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { will-change: auto; }
+/* (106) Reduce paint on the frosted band when no atmosphere (cheap). */
+.viewer-content::before { contain: paint; }
+/* (107) Honour data-saver: drop ambient + blur. */
+@media (prefers-reduced-data: reduce) {
+  .atmosphere-birds, .atmosphere-leaves, .atmosphere-inkmotes, .atmosphere-mist { display: none; }
+}
+/* (108) Keep the seal crisp on hi-dpi (vector already; pin size). */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { background-size: 48px 48px, cover !important; }
+/* (109) Prevent layout shift from the drop-cap float. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > p:first-of-type { min-height: 1em; }
+/* (110) Forced-colors (Windows high-contrast) — readable fallback. */
+@media (forced-colors: active) {
+  html[data-atmosphere] .markdown-content { color: CanvasText !important; text-shadow: none !important; }
+  html[data-atmosphere] .viewer-content { background: Canvas !important; }
+}
 /* (60) The whole reading column eases in when a painting is entered. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
   animation: mv-scroll-unfurl 700ms var(--zen-ease) both;

@@ -50,3 +50,11 @@ if ("serviceWorker" in navigator) {
     });
   });
 }
+
+// Pause ambient atmosphere animations when the tab is hidden — saves CPU /
+// battery. The zen-modules CSS keys `body.mv-hidden` to animation-play-state.
+if (typeof document !== "undefined") {
+  const syncHidden = () => document.body.classList.toggle("mv-hidden", document.hidden);
+  document.addEventListener("visibilitychange", syncHidden);
+  syncHidden();
+}
