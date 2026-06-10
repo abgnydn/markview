@@ -5,7 +5,6 @@ import { ATMOSPHERES, pickPaintingFor, type ParticleKind } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
 import { WebGLParticles } from './webgl-particles';
-import { WebGPUParticles } from './webgpu-particles';
 import { DepthPainting } from './depth-painting';
 import { SplatPainting } from './splat-painting';
 
@@ -157,25 +156,22 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // DELIBERATELY NOT persisted: the WebGPU path is experimental and a
   // heavy GPU load, so a page reload always starts on the safe WebGL
   // backend. It only ever turns on via an explicit `b` press in-session.
-  const [gpuParticles, setGpuParticles] = useState(false);
+  // The WebGPU compute backend is SHELVED: on Three 0.184's WebGPU renderer
+  // the instanced Sprite (`sprite.count`) draws zero instances here — device,
+  // shaders, and compute all run clean, but nothing rasterizes, and it can't be
+  // diagnosed without live GPU inspection. It also offers no visible benefit
+  // over the WebGL field (which already runs on the GPU). So `b` is now a no-op
+  // that just confirms the WebGL backend rather than switching to a dead path.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'b' && e.key !== 'B') return;
       if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
       if (isTypingTarget(e.target)) return;
-      if (!('gpu' in navigator)) { flashHint('Particles · WebGPU unavailable'); return; }
-      setGpuParticles((prev) => {
-        const next = !prev;
-        flashHint(next ? 'Particles · WebGPU compute (experimental)' : 'Particles · WebGL');
-        return next;
-      });
+      flashHint('Particles · WebGL (WebGPU compute shelved)');
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [flashHint]);
-  const onGpuFallback = useCallback(() => {
-    setGpuParticles(false);
-  }, []);
 
   // ── #14 Caption flourish — show the painting's title bottom-left
   // for 2s on swap. Re-fires whenever the displayed painting changes
@@ -267,20 +263,10 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       </div>
 
       {displayedCfg.particles !== 'none' && (
-        gpuParticles ? (
-          /* TSL compute simulation on the WebGPU backend — same look,
-             every particle's physics stepped on the GPU. Falls back to
-             the WebGL field on any init error. */
-          <WebGPUParticles
-            key={`gpu-${displayedCfg.particles}`}
-            kind={displayedCfg.particles}
-            onFallback={onGpuFallback}
-          />
-        ) : (
-          /* GPU-rendered, CPU-simulated particle field — curl-noise wind,
-             cursor force, gravity, life/respawn, per-atmosphere sprite. */
-          <WebGLParticles kind={displayedCfg.particles} />
-        )
+        /* GPU-rendered, CPU-simulated particle field — curl-noise wind,
+           cursor force, gravity, life/respawn, per-atmosphere sprite. The
+           WebGPU-compute variant is shelved (see the `b` handler above). */
+        <WebGLParticles kind={displayedCfg.particles} />
       )}
 
       <div className="atmosphere-credit">

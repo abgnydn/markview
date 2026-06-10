@@ -223,14 +223,7 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
         material.positionNode = posBuf.toAttribute();           // vec3, whole
         material.scaleNode = sizBuf.toAttribute();              // vec2, whole
         material.colorNode = vec3(tint[0], tint[1], tint[2]);
-        // shapeCircle() returns an under-typed Node; it's a valid float
-        // mask at runtime, so coerce it for the typed .mul().
         const circle = shapeCircle() as unknown as ReturnType<typeof float>;
-        // Per-instance alpha must come through a vertex attribute (toAttribute,
-        // interpolated to the fragment) — NOT attrBuf.element(instanceIndex),
-        // because instanceIndex isn't available in the fragment stage where the
-        // opacity is evaluated, so that read was zero → fully transparent
-        // particles (the "runs clean, draws nothing" bug).
         material.opacityNode = attrBuf.toAttribute().w.mul(circle);
 
         const sprite = new THREE.Sprite(material);
