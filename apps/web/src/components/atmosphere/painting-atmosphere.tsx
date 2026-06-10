@@ -92,6 +92,10 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     () => (displayedCfg ? buildLeaves(displayedCfg.id) : []),
     [displayedCfg],
   );
+  const inkMotes = useMemo(
+    () => (displayedCfg ? buildInkMotes(displayedCfg.id) : []),
+    [displayedCfg],
+  );
 
   // Switch ambient audio with the painting. Audio is muted by default
   // and needs an unlock gesture (handled inside the audio module).
@@ -240,6 +244,13 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       {/* (19) Soft mist rising along the foot of the painting — depth. */}
       <div className="atmosphere-mist" aria-hidden="true" />
 
+      {/* (38) Floating ink motes — slow dark dust catches the light. */}
+      <div className="atmosphere-inkmotes" aria-hidden="true">
+        {inkMotes.map((m) => (
+          <div key={m.key} className="atmosphere-inkmote" style={m.style} />
+        ))}
+      </div>
+
       {displayedCfg.particles !== 'none' && (
         gpuParticles ? (
           /* TSL compute simulation on the WebGPU backend — same look,
@@ -313,6 +324,28 @@ function buildBirds(atmosphereId: string): ParticleInstance[] {
         animationDelay: `${-rng() * 80}s`,
         ['--bird-drift' as string]: `${(rng() - 0.5) * 12}vh`,
         ['--flap' as string]: `${0.42 + rng() * 0.28}s`,
+      } as React.CSSProperties,
+    };
+  });
+}
+
+/** buildInkMotes — slow-drifting dark dust specks for atmospheric depth. */
+function buildInkMotes(atmosphereId: string): ParticleInstance[] {
+  const rng = mulberry32(0x1a4 ^ atmosphereId.charCodeAt(0) * 0x85eb);
+  return Array.from({ length: 14 }, (_, i) => {
+    const size = 2 + rng() * 3;
+    return {
+      key: i,
+      style: {
+        left: `${rng() * 100}%`,
+        top: `${rng() * 100}%`,
+        width: `${size}px`,
+        height: `${size}px`,
+        opacity: 0.12 + rng() * 0.18,
+        animationDuration: `${20 + rng() * 26}s`,
+        animationDelay: `${-rng() * 30}s`,
+        ['--mote-x' as string]: `${(rng() - 0.5) * 8}vw`,
+        ['--mote-y' as string]: `${(rng() - 0.5) * 8}vh`,
       } as React.CSSProperties,
     };
   });

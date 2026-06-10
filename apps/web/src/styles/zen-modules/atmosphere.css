@@ -172,9 +172,37 @@
   to   { transform: translateX(3%) scaleY(1.05); opacity: 1; }
 }
 
+/* ── (38) Floating ink motes — slow dark dust. */
+.atmosphere-inkmotes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.atmosphere-inkmote {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 16, 10, 0.9), rgba(20, 16, 10, 0) 70%);
+  animation-name: mv-inkmote-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: transform;
+}
+@keyframes mv-inkmote-drift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(var(--mote-x, 4vw), var(--mote-y, -4vh)); }
+}
+.light .atmosphere-inkmote,
+[data-theme='light'] .atmosphere-inkmote {
+  background: radial-gradient(circle, rgba(40, 30, 16, 0.6), rgba(40, 30, 16, 0) 70%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .atmosphere-bird,
-  .atmosphere-leaf { display: none; }
+  .atmosphere-leaf,
+  .atmosphere-inkmote { display: none; }
   .atmosphere-mist { animation: none; }
 }
 
