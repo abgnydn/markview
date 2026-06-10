@@ -135,9 +135,10 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   }, []);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key !== 'v' && e.key !== 'V') return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+      if (isTypingTarget(e.target)) return; // don't toggle mid-keystroke
+      e.preventDefault();
       setSplatMode((prev) => {
         const next = !prev;
         try { sessionStorage.setItem('mv-splat', next ? '1' : '0'); } catch { /* ignore */ }
@@ -159,9 +160,9 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   const [gpuParticles, setGpuParticles] = useState(false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key !== 'b' && e.key !== 'B') return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+      if (isTypingTarget(e.target)) return;
       if (!('gpu' in navigator)) { flashHint('Particles · WebGPU unavailable'); return; }
       setGpuParticles((prev) => {
         const next = !prev;
@@ -311,6 +312,16 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
 interface ParticleInstance {
   key: number;
   style: React.CSSProperties;
+}
+
+/** True when the event originates from a text-editing surface (input, textarea,
+ *  any contenteditable, or the CodeMirror editor) — so the v/b hotkeys never
+ *  fire mid-keystroke. */
+function isTypingTarget(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  if (!el) return false;
+  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) return true;
+  return typeof el.closest === 'function' && el.closest('.cm-editor') !== null;
 }
 
 /**

@@ -1438,8 +1438,10 @@ body.mv-hidden .atmosphere-mist { animation-play-state: paused !important; }
 .atmosphere-bird, .atmosphere-leaf, .atmosphere-inkmote, .atmosphere-mist { transform: translateZ(0); }
 /* (103) Contain the ambient layers so they don't trigger global reflow. */
 .atmosphere-birds, .atmosphere-leaves, .atmosphere-inkmotes { contain: strict; }
-/* (104) content-visibility skips offscreen rendering of long docs. */
-html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > * { content-visibility: auto; contain-intrinsic-size: auto 1.4em; }
+/* (104) REMOVED — content-visibility:auto collapsed offscreen blocks to a
+   1.4em guess and snapped them to real height on scroll, making the scrollbar
+   jump / scroll "break on change". The render saving isn't worth a broken
+   scroll on the reading surface. */
 /* (105) Drop will-change on the paper panel (static) to free a layer. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { will-change: auto; }
 /* (106) Reduce paint on the frosted band when no atmosphere (cheap). */

@@ -73,7 +73,10 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
       // LDI behind layer) via the shared builder. Fewer points on
       // low-DPR / small screens to stay light on integrated GPUs.
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const targetCount = window.innerWidth < 900 || dpr < 1.5 ? 32000 : 55000;
+      // Backdrop cloud — kept lighter than the immersive world so the `v`
+      // toggle's synchronous build doesn't stall the main thread (which read
+      // as lag + frozen scroll on switch).
+      const targetCount = window.innerWidth < 900 || dpr < 1.5 ? 22000 : 38000;
       const cloud = buildGaussianCloud(paintImg, depthResult.bitmap, targetCount);
       if (cancelled || !cloud) { setFallback(true); return; }
       const { paintAspect } = cloud;
