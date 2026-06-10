@@ -43,9 +43,15 @@
   --zen-code:           #e0bd7a;
   --zen-code-soft:      rgba(224, 189, 122, 0.09);
 
+  /* Literary serif for Latin, with classical CJK brush-serifs appended so
+     Chinese / Japanese text renders like old printed-paper calligraphy
+     (Songti / Mincho) — these only kick in for CJK glyphs. */
   --zen-serif:
     'Iowan Old Style', 'Charter', 'Iowan', 'New York', 'Source Serif Pro',
-    Georgia, 'Times New Roman', serif;
+    Georgia, 'Times New Roman',
+    'Source Han Serif SC', 'Source Han Serif', 'Noto Serif CJK SC',
+    'Songti SC', 'STSong', 'SimSun', 'Yu Mincho', 'Hiragino Mincho ProN',
+    serif;
   --zen-mono:
     'Berkeley Mono', 'JetBrains Mono', 'Cascadia Code', ui-monospace,
     SFMono-Regular, Menlo, monospace;
@@ -56,6 +62,35 @@
 
   --zen-ease:          cubic-bezier(0.32, 0.72, 0.32, 1);
   --zen-duration:      460ms;
+}
+
+/* ── Per-appearance palettes — each atmosphere carries its own ink colour
+   drawn from its painting, so links, highlights, hovers, the reading band,
+   the cursor + birds all feel native to the scene. data-atmosphere lives on
+   <html>, so these override the default violet accent. */
+html[data-atmosphere='fuji'] {       /* Mt. Fuji · cherry blossom — sakura rose */
+  --zen-accent:      #e0879f;
+  --zen-accent-soft: rgba(224, 135, 159, 0.26);
+  --zen-accent-glow: rgba(224, 135, 159, 0.12);
+  --zen-code:        #d98a6a;
+}
+html[data-atmosphere='wave'] {       /* The Great Wave · sea — prussian indigo */
+  --zen-accent:      #5d8fd1;
+  --zen-accent-soft: rgba(93, 143, 209, 0.26);
+  --zen-accent-glow: rgba(93, 143, 209, 0.12);
+  --zen-code:        #6fb0c4;
+}
+html[data-atmosphere='snow'] {       /* winter · frost slate */
+  --zen-accent:      #8fa9c8;
+  --zen-accent-soft: rgba(143, 169, 200, 0.26);
+  --zen-accent-glow: rgba(143, 169, 200, 0.12);
+  --zen-code:        #a7b8cc;
+}
+html[data-atmosphere='fields'] {     /* golden fields · harvest gold */
+  --zen-accent:      #cfa441;
+  --zen-accent-soft: rgba(207, 164, 65, 0.26);
+  --zen-accent-glow: rgba(207, 164, 65, 0.12);
+  --zen-code:        #d9b25a;
 }
 
 [data-theme='dark'],
