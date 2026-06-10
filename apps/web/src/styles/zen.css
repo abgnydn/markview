@@ -1035,14 +1035,15 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
 /* ════════════════ 20 more classical refinements ════════════════ */
 /* short-hand: ATM = html[data-atmosphere]:not([data-atmosphere='none']) */
 
-/* (21) Paper grain — faint fibre texture behind the ink. */
+/* (21) Fine grain — a second, finer fibre scale layered under the coarse
+   parchment tooth, so the paper reads at more than one distance. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content::after {
   content: '';
   position: absolute;
   inset: calc(var(--zen-content-pad-y) * -0.7) calc(var(--zen-edge-pad) * -1);
   z-index: -1;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.28;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.34 0 0 0 0 0.22 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
 }
 /* (22) Brocade mounting — a slim double frame around the paper (裱). */
@@ -4965,24 +4966,31 @@ input, textarea, .cm-content, [contenteditable='true'] {
 html { transition: --zen-accent 700ms var(--zen-ease); }
 /* (.viewer-content paper/box-shadow crossfade is declared once, below.) */
 
-/* Richer paper — seal + foxing blooms + a soft centre watermark + the warm
-   gradient, all in one layered background. */
+/* Realistic antique paper — built from four blended layers:
+   · seal (top)
+   · organic foxing/aging mottling — low-frequency fractal noise tinted sepia,
+     MULTIPLIED in (irregular blotches, not circles)
+   · paper fibre — fractal noise run through feDiffuseLighting so it reads as a
+     physically lit surface with real grain/tooth, SOFT-LIGHT over the tint
+   · the warm per-appearance base tint (bottom)
+   Blended via background-blend-mode so the fibre + foxing sit *in* the paper
+   rather than on top of it. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
   background:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='52'><rect x='3' y='3' width='46' height='46' rx='5' fill='none' stroke='%23b0392a' stroke-width='3'/><path d='M15 16 H37 M26 16 V38 M18 27 H34 M20 38 H32' stroke='%23b0392a' stroke-width='3' stroke-linecap='round' fill='none'/></svg>") no-repeat,
-    radial-gradient(circle at 11% 16%, rgba(150, 110, 60, 0.06), transparent 20%),
-    radial-gradient(circle at 89% 78%, rgba(150, 110, 60, 0.05), transparent 18%),
-    radial-gradient(circle at 84% 12%, rgba(150, 110, 60, 0.04), transparent 14%),
-    radial-gradient(ellipse at 50% 36%, rgba(255, 250, 235, 0.30), transparent 62%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='500' height='500'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.009 0.013' numOctaves='4' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0.45  0 0 0 0 0.35  0 0 0 0 0.21  0 0 0 0.42 -0.14'/></filter><rect width='500' height='500' filter='url(%23m)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.045' numOctaves='5' stitchTiles='stitch' seed='8' result='n'/><feDiffuseLighting in='n' lighting-color='%23efe6cd' surfaceScale='1.7' diffuseConstant='1.05'><feDistantLight azimuth='55' elevation='58'/></feDiffuseLighting></filter><rect width='320' height='320' filter='url(%23p)'/></svg>"),
     linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
-  background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0, 0 0, 0 0 !important;
-  background-size: 48px 48px, cover, cover, cover, cover, cover !important;
+  background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0 !important;
+  background-size: 48px 48px, 520px 520px, 300px 300px, cover !important;
+  background-repeat: no-repeat, repeat, repeat, no-repeat !important;
+  background-blend-mode: normal, multiply, soft-light, normal !important;
   box-shadow:
     0 38px 100px -38px rgba(0, 0, 0, 0.72),
     0 8px 22px -12px rgba(0, 0, 0, 0.42),
-    inset 0 0 0 1px rgba(120, 90, 50, 0.10),
-    inset 0 66px 130px -66px rgba(255, 244, 214, 0.40),
-    inset 0 -44px 90px -54px rgba(74, 56, 30, 0.20) !important;
+    inset 0 0 0 1px rgba(120, 90, 50, 0.14),
+    inset 0 0 70px rgba(92, 66, 32, 0.16),
+    inset 0 -44px 90px -54px rgba(74, 56, 30, 0.26) !important;
 }
 
 /* Carved wooden rods — knobs at the ends + a fine lengthwise grain. */
