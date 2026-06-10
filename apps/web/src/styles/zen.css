@@ -1183,6 +1183,131 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-main {
   scroll-behavior: smooth;
 }
 
+/* ════════════════ 20 more classical refinements (#41–60) ════════════════ */
+
+/* (41) Display math — ink on paper, centred with breathing room. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .katex { color: #2c2418 !important; }
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .katex-display {
+  margin: 1.4em 0 !important;
+  padding: 0.4em 0;
+}
+/* (42) Mermaid / diagrams — set on a soft inset panel so the rendered
+   strokes read regardless of the diagram's own theme. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .mermaid,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content svg.mermaid {
+  background: rgba(28, 24, 18, 0.78);
+  border-radius: 4px;
+  padding: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+/* (43) Code-fence plugin widgets (csv / chart / tabs / timeline / map /
+   alert / embed) — mounted on the paper with a thin mat + shadow. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content [class^='plugin-'] {
+  border-radius: 6px;
+  box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(40, 30, 16, 0.14);
+}
+/* (44) Code copy button — a small ink chip. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .code-copy-btn,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .copy-button {
+  color: #6a5942 !important;
+  background: rgba(60, 48, 30, 0.08) !important;
+}
+/* (45) Figure captions — centred classical italic. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content figcaption {
+  text-align: center;
+  font-style: italic;
+  color: #6a5942;
+  font-size: 0.9em;
+  margin-top: 0.4em;
+}
+/* (46) Heading anchors (#) — vermillion on hover. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .mv-heading-anchor {
+  color: #b0392a !important;
+}
+/* (47) Wall shadow — the scroll casts a soft shadow on the dark wall. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  margin-top: 2.2vh !important;
+  margin-bottom: 4vh !important;
+}
+/* (48) Scroll-reveal — soften the existing reveal into an ink-soak ease.
+   (No opacity:0 default here — the reveal enhancer owns visibility, so a
+   failed observer can never hide the text.) */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content li,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote {
+  transition: opacity 700ms var(--zen-ease), transform 700ms var(--zen-ease), background 280ms var(--zen-ease);
+}
+/* (49) Day/night warmth — the paper warms at dusk, cools at noon. */
+html.tod-night[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { filter: sepia(0.10) brightness(0.96); }
+html.tod-dawn[data-atmosphere]:not([data-atmosphere='none']) .viewer-content,
+html.tod-dusk[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { filter: sepia(0.14) saturate(1.05); }
+/* (50) Table of contents — a classical index column (目錄). */
+html[data-atmosphere]:not([data-atmosphere='none']) .table-of-contents,
+html[data-atmosphere]:not([data-atmosphere='none']) .toc {
+  border-left: 1px solid rgba(176, 57, 42, 0.3);
+}
+/* (51) Footnote margin notes / popovers — ink on a paper card. */
+html[data-atmosphere]:not([data-atmosphere='none']) .mv-footnote-pop,
+html[data-atmosphere]:not([data-atmosphere='none']) .mv-margin-note {
+  background: linear-gradient(180deg, #f3ead7, #ece1ca) !important;
+  color: #2c2418 !important;
+  border: 1px solid rgba(80, 62, 38, 0.2) !important;
+}
+/* (52) Wide tables / code never break the paper — they scroll within. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content pre,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .table-wrap,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content table {
+  max-width: 100%;
+  overflow-x: auto;
+}
+/* (53) Per-appearance drop-cap ink — the initial takes the scene's colour. */
+html[data-atmosphere='wave'] .markdown-content > p:first-of-type::first-letter,
+html[data-atmosphere='snow'] .markdown-content > p:first-of-type::first-letter {
+  color: var(--zen-accent);
+}
+/* (54) Per-appearance seal tint — slightly warm/cool the stamp. */
+html[data-atmosphere='wave'] .viewer-content,
+html[data-atmosphere='snow'] .viewer-content { --seal-hue: -10deg; }
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { filter: none; }
+/* (55) Responsive scroll — narrower paper + slimmer rods on small screens. */
+@media (max-width: 720px) {
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after { height: 12px; left: -6px; right: -6px; }
+  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > p:first-of-type::first-letter { font-size: 2.8em; }
+}
+/* (56) Audio / video — framed like a mounted plate. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content audio,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content video {
+  border-radius: 4px;
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+}
+/* (57) Wikilinks — a dotted ink tie distinct from external links. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a.mv-wikilink,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a[href$='.md'] {
+  text-decoration-style: dotted !important;
+}
+/* (58) Emphasis dots (着重号) — the classical way to stress a word: small
+   accent dots set beneath it. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content strong {
+  text-emphasis: filled dot var(--zen-accent);
+  -webkit-text-emphasis: filled dot var(--zen-accent);
+  text-emphasis-position: under;
+  -webkit-text-emphasis-position: under;
+}
+/* (59) Ordered-list numerals in the appearance ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content ol > li::marker { color: var(--zen-accent); }
+/* (60) The whole reading column eases in when a painting is entered. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  animation: mv-scroll-unfurl 700ms var(--zen-ease) both;
+}
+@keyframes mv-scroll-unfurl {
+  from { opacity: 0; transform: translateY(10px) scale(0.992); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { animation: none; }
+}
+
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3,
