@@ -878,12 +878,22 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
   background: linear-gradient(180deg, #6c5638 0%, #4c3a22 100%);
   box-shadow: 0 7px 18px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
-/* Ink on paper — flat solid sepia, NO text-shadow (a light catch-light
-   shadow letterpresses the glyphs into the paper, which looks like a cheap
-   emboss). Real ink sits ON the surface, fully opaque. */
-html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
+/* Ink on paper — flat solid sepia, NO text-shadow. The colour MUST be set
+   directly on the text elements: the base theme colours `p`/`li` directly
+   (cream, for dark mode), and a direct rule beats an inherited one — so
+   setting colour only on .markdown-content left the prose cream + haloed
+   (the "ghost/emboss" look). Target the text-bearing elements themselves. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content li,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content dd,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content dt,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content td,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content th,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content figcaption {
   color: #211a0e !important;
   text-shadow: none !important;
+  opacity: 1 !important;
 }
 /* Kill the focus-dim entirely on the paper — every line is solid ink, never
    faded. (The dim made non-active paragraphs look like ghost printing.) */
