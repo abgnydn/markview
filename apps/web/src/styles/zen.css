@@ -907,10 +907,10 @@ html[data-atmosphere='fields'] .viewer-content { --paper-top: #f6edd2; --paper-b
 /* (1) Illuminated drop-cap — a large vermillion serif initial on the
    opening paragraph, like a hand-painted first character. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > p:first-of-type::first-letter {
-  font-size: 3.4em;
-  line-height: 0.82;
+  font-size: 2.8em;
+  line-height: 0.86;
   float: left;
-  margin: 0.04em 0.10em 0 0;
+  margin: 0.06em 0.12em 0 0;
   color: #b0392a;
   font-weight: 700;
 }
@@ -1063,15 +1063,15 @@ html[data-atmosphere='fuji'] .viewer-content::before,
 html[data-atmosphere='fuji'] .viewer-content::after {
   filter: hue-rotate(6deg) saturate(1.1);
 }
-/* (24) Section markers — a small vermillion brush bullet before H2/H3. */
-html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2::before,
-html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h3::before {
+/* (24) Section marker — a small appearance glyph before MAJOR sections (H2)
+   only; H3 stays clean so the page doesn't read as a field of bullets. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2::before {
   content: '❖';
-  color: #b0392a;
-  font-size: 0.62em;
-  vertical-align: 0.22em;
-  margin-right: 0.5em;
-  opacity: 0.75;
+  color: var(--zen-accent);
+  font-size: 0.5em;
+  vertical-align: 0.28em;
+  margin-right: 0.55em;
+  opacity: 0.5;
 }
 /* (25) Footnote references — vermillion superscript. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content sup a,
@@ -1260,15 +1260,8 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content table {
   max-width: 100%;
   overflow-x: auto;
 }
-/* (53) Per-appearance drop-cap ink — the initial takes the scene's colour. */
-html[data-atmosphere='wave'] .markdown-content > p:first-of-type::first-letter,
-html[data-atmosphere='snow'] .markdown-content > p:first-of-type::first-letter {
-  color: var(--zen-accent);
-}
-/* (54) Per-appearance seal tint — slightly warm/cool the stamp. */
-html[data-atmosphere='wave'] .viewer-content,
-html[data-atmosphere='snow'] .viewer-content { --seal-hue: -10deg; }
-html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { filter: none; }
+/* (polish) The illuminated initial stays a consistent vermillion — it reads
+   as the seal's twin rather than shifting per appearance. */
 /* (55) Responsive scroll — narrower paper + slimmer rods on small screens. */
 @media (max-width: 720px) {
   html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
@@ -1286,11 +1279,11 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a.mv-wikil
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a[href$='.md'] {
   text-decoration-style: dotted !important;
 }
-/* (58) Emphasis dots (着重号) — the classical way to stress a word: small
-   accent dots set beneath it. */
+/* (58) Emphasis dots (着重号) — the classical stress mark. Muted vermillion
+   so it's a quiet underscore, not a loud row of beads under every bold run. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content strong {
-  text-emphasis: filled dot var(--zen-accent);
-  -webkit-text-emphasis: filled dot var(--zen-accent);
+  text-emphasis: filled dot rgba(140, 51, 36, 0.5);
+  -webkit-text-emphasis: filled dot rgba(140, 51, 36, 0.5);
   text-emphasis-position: under;
   -webkit-text-emphasis-position: under;
 }
@@ -1356,9 +1349,6 @@ html[data-atmosphere='wave']   .markdown-content h2::before { content: '≈'; }
 html[data-atmosphere='snow']   .markdown-content h2::before { content: '❄'; }
 html[data-atmosphere='fields'] .markdown-content h2::before { content: '☷'; }
 html[data-atmosphere='fuji']   .markdown-content h2::before { content: '❀'; }
-/* (75) Drop-cap takes each appearance's ink. */
-html[data-atmosphere='fuji']   .markdown-content > p:first-of-type::first-letter,
-html[data-atmosphere='fields'] .markdown-content > p:first-of-type::first-letter { color: var(--zen-accent); }
 /* (76) Heading underline tints toward the appearance. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2 { border-bottom-color: var(--zen-accent-soft) !important; }
 
@@ -1414,8 +1404,13 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote
 /* (93) Image hover — a gentle lift. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content img { transition: transform 320ms var(--zen-ease), box-shadow 320ms var(--zen-ease); }
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content img:hover { transform: translateY(-2px); box-shadow: 0 14px 36px -14px rgba(0,0,0,0.55); }
-/* (94) External links get a small ↗. */
-html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a[href^='http']:not([href$='.md'])::after { content: ' ↗'; font-size: 0.78em; opacity: 0.6; }
+/* (94) External links get a faint ↗ — quiet, so prose doesn't bristle. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a[href^='http']:not([href$='.md'])::after {
+  content: '\2197';
+  font-size: 0.62em;
+  vertical-align: 0.3em;
+  opacity: 0.4;
+}
 /* (95) samp / var classical. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content samp { font-family: var(--zen-mono); color: #3a3022; }
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content var { font-style: italic; color: #8a3324; }
@@ -4966,9 +4961,7 @@ input, textarea, .cm-content, [contenteditable='true'] {
 @property --paper-bot    { syntax: '<color>'; inherits: true; initial-value: #ece1ca; }
 @property --zen-accent   { syntax: '<color>'; inherits: true; initial-value: #9b7dff; }
 html { transition: --zen-accent 700ms var(--zen-ease); }
-html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
-  transition: --paper-top 700ms var(--zen-ease), --paper-bot 700ms var(--zen-ease);
-}
+/* (.viewer-content paper/box-shadow crossfade is declared once, below.) */
 
 /* Richer paper — seal + foxing blooms + a soft centre watermark + the warm
    gradient, all in one layered background. */
