@@ -235,35 +235,82 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
         c.arcTo(x, y, x + w, y, r);
         c.closePath();
       };
+      // Card geometry (canvas-local) + a shared aged-parchment base drawn ONCE
+      // and reused by every page, so the texture work doesn't scale with files.
+      const PX = 12, PY = 12, PW = 488, PH = 360, PR = 14;
+      const parchment = (() => {
+        const pc = document.createElement('canvas');
+        pc.width = 512; pc.height = 384;
+        const p = pc.getContext('2d')!;
+        roundRect(p, PX, PY, PW, PH, PR); p.save(); p.clip();
+        // Warm parchment gradient.
+        const grad = p.createLinearGradient(0, PY, 0, PY + PH);
+        grad.addColorStop(0, '#ece0c2'); grad.addColorStop(1, '#dcc699');
+        p.fillStyle = grad; p.fillRect(0, 0, 512, 384);
+        // Soft sepia staining blobs.
+        for (let i = 0; i < 7; i++) {
+          const sx = PX + Math.random() * PW, sy = PY + Math.random() * PH, sr = 40 + Math.random() * 90;
+          const g = p.createRadialGradient(sx, sy, 0, sx, sy, sr);
+          g.addColorStop(0, 'rgba(120,84,38,0.06)'); g.addColorStop(1, 'rgba(120,84,38,0)');
+          p.fillStyle = g; p.fillRect(0, 0, 512, 384);
+        }
+        // Fibre grain — light + dark flecks.
+        for (let i = 0; i < 900; i++) {
+          p.globalAlpha = 0.04 + Math.random() * 0.04;
+          p.fillStyle = Math.random() > 0.5 ? '#fffaf0' : '#5a431f';
+          p.fillRect(PX + Math.random() * PW, PY + Math.random() * PH, 1.3, 1.3);
+        }
+        p.globalAlpha = 1;
+        // Reddish-brown foxing spots.
+        for (let i = 0; i < 24; i++) {
+          p.fillStyle = `rgba(${(118 + Math.random() * 40) | 0},${(58 + Math.random() * 30) | 0},${(28 + Math.random() * 18) | 0},${0.12 + Math.random() * 0.16})`;
+          p.beginPath(); p.arc(PX + Math.random() * PW, PY + Math.random() * PH, 1 + Math.random() * 2.4, 0, 6.2832); p.fill();
+        }
+        // Aged-edge vignette.
+        const vg = p.createRadialGradient(256, 192, 120, 256, 192, 272);
+        vg.addColorStop(0, 'rgba(70,52,28,0)'); vg.addColorStop(1, 'rgba(70,52,28,0.30)');
+        p.fillStyle = vg; p.fillRect(0, 0, 512, 384);
+        p.restore();
+        // Scroll rods, top + bottom.
+        const rod = (ry: number) => {
+          const rg = p.createLinearGradient(0, ry, 0, ry + 15);
+          rg.addColorStop(0, '#6f5839'); rg.addColorStop(1, '#493521');
+          p.fillStyle = rg; roundRect(p, PX - 5, ry, PW + 10, 15, 5); p.fill();
+        };
+        rod(PY - 7); rod(PY + PH - 8);
+        // Vermillion wax seal, lower-right.
+        const seal = p.createRadialGradient(460, 336, 2, 466, 344, 22);
+        seal.addColorStop(0, '#d75c49'); seal.addColorStop(1, '#7a2216');
+        p.fillStyle = seal; p.beginPath(); p.arc(464, 340, 18, 0, 6.2832); p.fill();
+        p.strokeStyle = 'rgba(120,32,20,0.9)'; p.lineWidth = 2; p.stroke();
+        return pc;
+      })();
       const makePageTexture = (title: string, body: string) => {
         const c = document.createElement('canvas');
         c.width = 512; c.height = 384;
         const cx = c.getContext('2d')!;
-        cx.clearRect(0, 0, c.width, c.height);
-        // Paper card.
-        cx.fillStyle = 'rgba(248, 244, 236, 0.96)';
-        roundRect(cx, 12, 12, 488, 360, 18); cx.fill();
-        cx.strokeStyle = 'rgba(185,164,255,0.8)'; cx.lineWidth = 3;
-        roundRect(cx, 12, 12, 488, 360, 18); cx.stroke();
-        // Title.
-        cx.fillStyle = '#1c1816';
-        cx.font = '600 30px Georgia, serif';
+        cx.drawImage(parchment, 0, 0);
+        // Title — solid sepia ink + a faint brush rule beneath it.
+        cx.fillStyle = '#241a0c';
+        cx.font = '700 30px Georgia, serif';
         cx.textBaseline = 'top';
         const tt = title.length > 28 ? title.slice(0, 27) + '…' : title;
-        cx.fillText(tt, 36, 40);
-        // Body — word-wrapped excerpt.
-        cx.fillStyle = 'rgba(28,24,22,0.72)';
+        cx.fillText(tt, 40, 44);
+        cx.strokeStyle = 'rgba(40,28,14,0.32)'; cx.lineWidth = 1.5;
+        cx.beginPath(); cx.moveTo(40, 82); cx.lineTo(470, 82); cx.stroke();
+        // Body — solid sepia ink, word-wrapped excerpt.
+        cx.fillStyle = 'rgba(36,27,14,0.9)';
         cx.font = '20px Georgia, serif';
         const words = (body || '(empty)').split(/\s+/);
-        let line = ''; let yy = 96; const maxW = 440;
+        let line = ''; let yy = 100; const maxW = 416;
         for (const word of words) {
           const test = line ? line + ' ' + word : word;
           if (cx.measureText(test).width > maxW) {
-            cx.fillText(line, 36, yy); yy += 28; line = word;
-            if (yy > 330) { cx.fillText(line + '…', 36, yy); line = ''; break; }
+            cx.fillText(line, 40, yy); yy += 28; line = word;
+            if (yy > 318) { cx.fillText(line + '…', 40, yy); line = ''; break; }
           } else line = test;
         }
-        if (line && yy <= 330) cx.fillText(line, 36, yy);
+        if (line && yy <= 318) cx.fillText(line, 40, yy);
         const tex = new THREE.CanvasTexture(c);
         tex.colorSpace = THREE.SRGBColorSpace;
         return tex;
