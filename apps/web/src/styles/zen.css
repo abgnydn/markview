@@ -878,21 +878,26 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
   background: linear-gradient(180deg, #6c5638 0%, #4c3a22 100%);
   box-shadow: 0 7px 18px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
-/* Ink on paper — solid dark sepia, no halo, slight weight so it holds its
-   own against the busy aged surface. */
+/* Ink on paper — flat solid sepia, NO text-shadow (a light catch-light
+   shadow letterpresses the glyphs into the paper, which looks like a cheap
+   emboss). Real ink sits ON the surface, fully opaque. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
-  color: #1f180d !important;
-  text-shadow: 0 0.5px 0 rgba(250, 244, 228, 0.4) !important; /* faint paper catch under each glyph → crisp edge */
+  color: #211a0e !important;
+  text-shadow: none !important;
 }
-/* On the textured paper, ink must never fade to a ghost — keep dimmed
-   paragraphs almost fully opaque so they stay readable. */
-@media (hover: hover) {
-  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover p,
-  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover li,
-  html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover blockquote {
-    opacity: 0.93 !important;
-  }
+/* Kill the focus-dim entirely on the paper — every line is solid ink, never
+   faded. (The dim made non-active paragraphs look like ghost printing.) */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content li,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover p,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover li,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content:hover blockquote {
+  opacity: 1 !important;
 }
+/* No flat tint bands behind quotes/paragraphs — they read as UI, not paper. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote { background: transparent !important; }
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p:hover { background: transparent !important; }
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1,
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2,
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h3 {
