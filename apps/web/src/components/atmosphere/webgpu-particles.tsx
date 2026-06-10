@@ -262,6 +262,12 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
         await renderer.renderAsync(scene, camera);
         if (cancelled) { renderer.dispose(); return; }
         console.log(`[webgpu-particles] running · kind=${kind} · count=${COUNT}`);
+        // Surface success to the on-screen toast so the device/path is visible
+        // without opening DevTools.
+        const adapterInfo = (renderer.backend as { adapter?: { info?: unknown } } | undefined)?.adapter?.info;
+        window.dispatchEvent(new CustomEvent('markview:toast', {
+          detail: { message: `WebGPU OK · ${COUNT} particles · ${JSON.stringify(adapterInfo ?? 'adapter?')}` },
+        }));
 
         // ── Loop ─────────────────────────────────────────────────────
         let last = performance.now();
@@ -297,6 +303,10 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
         };
       } catch (err) {
         console.warn('[webgpu-particles] init failed — falling back to WebGL', err);
+        const msg = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+        window.dispatchEvent(new CustomEvent('markview:toast', {
+          detail: { message: `WebGPU failed → WebGL · ${msg}` },
+        }));
         if (!cancelled) onFallback();
       }
     })();
