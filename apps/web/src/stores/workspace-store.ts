@@ -329,7 +329,16 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const d = typeof document !== 'undefined' ? document as Document & {
       startViewTransition?: (cb: () => void) => unknown;
     } : null;
-    if (d && typeof d.startViewTransition === 'function') {
+    // A view transition snapshots + crossfades the whole page. With a painting
+    // atmosphere active that means rasterizing the heavy 9-layer paper +
+    // painting + ambient twice per file switch — the source of the file-change
+    // lag. Skip it when an atmosphere is on (and under reduced-motion); the
+    // content just swaps instantly. Keep the crossfade for the light plain view.
+    const atmo = d?.documentElement.getAttribute('data-atmosphere');
+    const heavy = atmo && atmo !== 'none';
+    const reduceMotion = typeof window !== 'undefined'
+      && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (d && typeof d.startViewTransition === 'function' && !heavy && !reduceMotion) {
       d.startViewTransition(commit);
     } else {
       commit();

@@ -1501,7 +1501,9 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
   animation: mv-scroll-unfurl 700ms var(--zen-ease) both;
 }
 @keyframes mv-scroll-unfurl {
-  from { opacity: 0; transform: translateY(10px) scale(0.992); }
+  /* translateY + opacity only — no scale. Scaling the heavy SVG-filter paper
+     re-rasterizes it, which is exactly what we don't want on a frequent path. */
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
