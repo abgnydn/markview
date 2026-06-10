@@ -88,6 +88,10 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     () => (displayedCfg ? buildBirds(displayedCfg.id) : []),
     [displayedCfg],
   );
+  const leaves = useMemo(
+    () => (displayedCfg ? buildLeaves(displayedCfg.id) : []),
+    [displayedCfg],
+  );
 
   // Switch ambient audio with the painting. Audio is muted by default
   // and needs an unlock gesture (handled inside the audio module).
@@ -214,8 +218,8 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         />
       )}
 
-      {/* A distant flock drifts across the sky — a quiet sign of life over
-          every painting. Pure CSS flight + wing-flap, pointer-events off. */}
+      {/* (17) A distant flock drifts across the sky — a quiet sign of life
+          over every painting. Pure CSS flight + wing-flap. */}
       <div className="atmosphere-birds" aria-hidden="true">
         {birds.map((b) => (
           <div key={b.key} className="atmosphere-bird" style={b.style}>
@@ -223,6 +227,18 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
           </div>
         ))}
       </div>
+
+      {/* (18) Drifting leaves — a few fall + sway + spin past the scene. */}
+      <div className="atmosphere-leaves" aria-hidden="true">
+        {leaves.map((l) => (
+          <div key={l.key} className="atmosphere-leaf" style={l.style}>
+            <svg viewBox="0 0 12 16"><path d="M6 0 C 11 5 11 11 6 16 C 1 11 1 5 6 0 Z M6 2 L6 14" /></svg>
+          </div>
+        ))}
+      </div>
+
+      {/* (19) Soft mist rising along the foot of the painting — depth. */}
+      <div className="atmosphere-mist" aria-hidden="true" />
 
       {displayedCfg.particles !== 'none' && (
         gpuParticles ? (
@@ -297,6 +313,27 @@ function buildBirds(atmosphereId: string): ParticleInstance[] {
         animationDelay: `${-rng() * 80}s`,
         ['--bird-drift' as string]: `${(rng() - 0.5) * 12}vh`,
         ['--flap' as string]: `${0.42 + rng() * 0.28}s`,
+      } as React.CSSProperties,
+    };
+  });
+}
+
+/** buildLeaves — a few leaves that fall, sway, and spin past the scene. */
+function buildLeaves(atmosphereId: string): ParticleInstance[] {
+  const rng = mulberry32(0x1eaf ^ atmosphereId.length * 0x9e37);
+  return Array.from({ length: 5 }, (_, i) => {
+    const scale = 0.7 + rng() * 0.9;
+    return {
+      key: i,
+      style: {
+        left: `${rng() * 100}%`,
+        width: `${11 * scale}px`,
+        height: `${15 * scale}px`,
+        color: `rgba(70, 52, 28, ${0.26 + rng() * 0.2})`,
+        animationDuration: `${16 + rng() * 18}s`,
+        animationDelay: `${-rng() * 30}s`,
+        ['--leaf-sway' as string]: `${5 + rng() * 9}vw`,
+        ['--leaf-spin' as string]: `${(rng() > 0.5 ? 1 : -1) * (240 + rng() * 320)}deg`,
       } as React.CSSProperties,
     };
   });

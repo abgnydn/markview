@@ -902,6 +902,136 @@ html[data-atmosphere='wave']   .viewer-content { --paper-top: #edeae0; --paper-b
 html[data-atmosphere='snow']   .viewer-content { --paper-top: #eef0ef; --paper-bot: #e5e7e1; }
 html[data-atmosphere='fields'] .viewer-content { --paper-top: #f6edd2; --paper-bot: #efe1bd; }
 
+/* ════════════════ 20 classical-scroll refinements ════════════════ */
+
+/* (1) Illuminated drop-cap — a large vermillion serif initial on the
+   opening paragraph, like a hand-painted first character. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > p:first-of-type::first-letter {
+  font-size: 3.4em;
+  line-height: 0.82;
+  float: left;
+  margin: 0.04em 0.10em 0 0;
+  color: #b0392a;
+  font-weight: 700;
+}
+/* (2) Brush divider — <hr> becomes a centred ink ornament. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content hr {
+  border: 0 !important;
+  height: 1.4em !important;
+  background: none !important;
+  text-align: center;
+  margin: 2.4em 0 !important;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content hr::after {
+  content: '❧';
+  color: #b0392a;
+  font-size: 1.2em;
+  opacity: 0.8;
+}
+/* (3) Brush underline beneath top headings — a tapered ink rule. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2 {
+  border-bottom: 2px solid rgba(28, 22, 12, 0.22) !important;
+  padding-bottom: 0.18em !important;
+}
+/* (4) Blockquote — vermillion margin mark + literary italic on paper. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content blockquote {
+  border-left: 3px solid #b0392a !important;
+  padding-left: 1.1em !important;
+  font-style: italic;
+  background: rgba(176, 57, 42, 0.04) !important;
+}
+/* (5) Highlight (==) → a brush-marker swipe in the appearance ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content mark {
+  background: linear-gradient(120deg, var(--zen-accent-soft), transparent 92%) !important;
+  color: inherit !important;
+  padding: 0 0.12em;
+  border-radius: 1px;
+}
+/* (6) Links — appearance-ink with a fine underline. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content a {
+  text-decoration-color: var(--zen-accent-soft) !important;
+  text-underline-offset: 3px;
+}
+/* (7) Fenced code — a recessed parchment slip, not a dark slab. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content pre {
+  background: rgba(60, 48, 30, 0.07) !important;
+  border: 1px solid rgba(80, 62, 38, 0.16) !important;
+  border-radius: 3px !important;
+  box-shadow: inset 0 1px 4px rgba(60, 48, 30, 0.10) !important;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content pre code {
+  color: #3a3022 !important;
+}
+/* (8) Inline code — a small ink-boxed token. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content :not(pre) > code {
+  background: rgba(176, 57, 42, 0.08) !important;
+  color: #8a3324 !important;
+  border-radius: 2px;
+  padding: 0.05em 0.32em;
+}
+/* (9) List markers — small brush dots in the appearance ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content ul > li::marker {
+  color: var(--zen-accent);
+}
+/* (10) Tables — thin ink rules, no heavy chrome. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content table {
+  border-collapse: collapse !important;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content th,
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content td {
+  border: 1px solid rgba(40, 30, 16, 0.18) !important;
+  color: #2c2418 !important;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content thead th {
+  background: rgba(60, 48, 30, 0.07) !important;
+}
+/* (11) Selection — a vermillion ink wash. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content ::selection {
+  background: rgba(176, 57, 42, 0.20);
+}
+/* (12) Classical paragraph rhythm — first-line indent on flowing prose
+   (but not the first paragraph or paragraphs after a heading). */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p + p {
+  text-indent: 1.4em;
+  margin-top: 0.2em !important;
+}
+/* (13) Scroll-rod end knobs (軸頭) — darker rounded caps at both ends. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
+  background:
+    radial-gradient(circle at 7px 50%, #3a2c18, #3a2c18 6px, transparent 7px),
+    radial-gradient(circle at calc(100% - 7px) 50%, #3a2c18, #3a2c18 6px, transparent 7px),
+    linear-gradient(180deg, #6c5638 0%, #4c3a22 100%) !important;
+}
+/* (14) Aged-paper edge — soft foxing/darkening toward the paper's rim. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--zen-content-pad-y) * -0.7) calc(var(--zen-edge-pad) * -1);
+  z-index: -1;
+  pointer-events: none;
+  box-shadow: inset 0 0 90px rgba(74, 56, 30, 0.16);
+}
+/* (15) Strong / em on paper — ink-bold, true italic serif. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content strong { color: #1d160c !important; }
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content em { font-style: italic; }
+/* (16) Images — mounted like a print with a thin ink mat. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content img {
+  border: 1px solid rgba(40, 30, 16, 0.18);
+  padding: 5px;
+  background: rgba(255, 252, 245, 0.5);
+  box-shadow: 0 8px 26px -12px rgba(0, 0, 0, 0.5);
+}
+/* (20) Candlelight — a soft warm glow pools at the head of the scroll,
+   giving the paper depth (folds into the panel's shadow stack). */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  box-shadow:
+    0 30px 90px -34px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(120, 90, 50, 0.10),
+    inset 0 64px 130px -64px rgba(255, 244, 214, 0.42) !important;
+}
+
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3,

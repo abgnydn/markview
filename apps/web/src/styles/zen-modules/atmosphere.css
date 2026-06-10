@@ -106,11 +106,76 @@
   to   { transform: translate(122vw, var(--bird-drift, -4vh)); }
 }
 @keyframes mv-bird-flap {
-  from { transform: scaleY(0.5); }
-  to   { transform: scaleY(1.1); }
+  from { transform: scaleY(0.5) rotate(-2deg); }
+  to   { transform: scaleY(1.12) rotate(2deg); }
 }
+
+/* ── (18) Drifting leaves — fall + horizontal sway + spin. */
+.atmosphere-leaves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.atmosphere-leaf {
+  position: absolute;
+  top: -6%;
+  animation-name: mv-leaf-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.atmosphere-leaf svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  stroke: rgba(0, 0, 0, 0.18);
+  stroke-width: 0.5;
+  animation: mv-leaf-spin var(--leaf-spin-dur, 6s) linear infinite;
+}
+@keyframes mv-leaf-fall {
+  0%   { transform: translate(0, -10vh) rotate(0deg); }
+  50%  { transform: translate(var(--leaf-sway, 7vw), 52vh) rotate(var(--leaf-spin, 280deg)); }
+  100% { transform: translate(0, 112vh) rotate(calc(var(--leaf-spin, 280deg) * 2)); }
+}
+@keyframes mv-leaf-spin {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+
+/* ── (19) Foot mist — a soft fog rising along the bottom of the scene. */
+.atmosphere-mist {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34vh;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    0deg,
+    rgba(236, 232, 224, 0.16) 0%,
+    rgba(236, 232, 224, 0.06) 45%,
+    transparent 100%
+  );
+  filter: blur(6px);
+  animation: mv-mist-drift 22s ease-in-out infinite alternate;
+}
+.light .atmosphere-mist,
+[data-theme='light'] .atmosphere-mist {
+  background: linear-gradient(0deg, rgba(255, 253, 248, 0.4) 0%, transparent 100%);
+}
+@keyframes mv-mist-drift {
+  from { transform: translateX(-3%) scaleY(0.96); opacity: 0.8; }
+  to   { transform: translateX(3%) scaleY(1.05); opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .atmosphere-bird { display: none; }
+  .atmosphere-bird,
+  .atmosphere-leaf { display: none; }
+  .atmosphere-mist { animation: none; }
 }
 
 /* ── Petals (Fuji) — pink ellipses falling down with horizontal drift. */
