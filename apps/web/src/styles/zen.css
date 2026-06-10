@@ -939,6 +939,14 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > p:first-
   color: #b0392a;
   font-weight: 700;
 }
+/* The lede (first paragraph after H1) is styled by a separate base rule
+   `.markdown-content h1 + p::first-letter { color: var(--zen-fg) }` — cream,
+   which is invisible on the paper (the "white K"). My `> p:first-of-type`
+   rule doesn't match it when the content is wrapped, so colour the lede
+   initial vermillion directly. */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1 + p::first-letter {
+  color: #b0392a !important;
+}
 /* (2) Brush divider — <hr> becomes a centred ink ornament. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content hr {
   border: 0 !important;

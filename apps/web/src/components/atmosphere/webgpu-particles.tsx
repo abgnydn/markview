@@ -252,10 +252,20 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
         };
         window.addEventListener('resize', onResize);
 
+        // ── Warm-up frame (INSIDE the try) ───────────────────────────
+        // Run one compute + render through the awaitable API so any TSL /
+        // shader-compile or device error surfaces HERE — caught below and
+        // cleanly fallen back to WebGL — instead of throwing uncaught inside
+        // the rAF loop and leaving a silent dead canvas. This was the bug:
+        // the loop's first frame was the real point of failure, unguarded.
+        await renderer.computeAsync(computeUpdate);
+        await renderer.renderAsync(scene, camera);
+        if (cancelled) { renderer.dispose(); return; }
+        console.log(`[webgpu-particles] running · kind=${kind} · count=${COUNT}`);
+
         // ── Loop ─────────────────────────────────────────────────────
         let last = performance.now();
         let raf = 0;
-        let firstFrameOk = false;
         const tick = () => {
           const now = performance.now();
           uDt.value = Math.min(0.05, (now - last) / 1000);
@@ -263,10 +273,6 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
           last = now;
           renderer.compute(computeUpdate);
           renderer.render(scene, camera);
-          if (!firstFrameOk) {
-            firstFrameOk = true;
-            console.log(`[webgpu-particles] running · kind=${kind} · count=${COUNT}`);
-          }
           raf = requestAnimationFrame(tick);
         };
         raf = requestAnimationFrame(tick);
