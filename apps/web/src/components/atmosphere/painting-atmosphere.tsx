@@ -96,6 +96,10 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     () => (displayedCfg ? buildInkMotes(displayedCfg.id) : []),
     [displayedCfg],
   );
+  const creatures = useMemo(
+    () => (displayedCfg ? buildCreatures(displayedCfg.id) : []),
+    [displayedCfg],
+  );
 
   // Switch ambient audio with the painting. Audio is muted by default
   // and needs an unlock gesture (handled inside the audio module).
@@ -251,6 +255,16 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         ))}
       </div>
 
+      {/* Per-appearance creatures — cranes (Fuji), butterflies (Fields),
+          koi (Wave), a lone crow (Snow). Native to each painting. */}
+      <div className="atmosphere-creatures" aria-hidden="true">
+        {creatures.map((c) => (
+          <div key={c.key} className={`atmosphere-creature atmosphere-creature-${c.kind}`} style={c.style}>
+            {CREATURE_SVG[c.kind]}
+          </div>
+        ))}
+      </div>
+
       {displayedCfg.particles !== 'none' && (
         gpuParticles ? (
           /* TSL compute simulation on the WebGPU backend — same look,
@@ -327,6 +341,84 @@ function buildBirds(atmosphereId: string): ParticleInstance[] {
       } as React.CSSProperties,
     };
   });
+}
+
+// Per-appearance creature silhouettes. Stroke shapes (crane/crow) vs filled
+// (butterfly/koi) are split apart in CSS.
+const CREATURE_SVG: Record<string, React.ReactNode> = {
+  crane: (
+    <svg viewBox="0 0 46 22">
+      <path d="M2 13 Q 12 4 22 11 Q 32 4 44 12" />
+      <path d="M22 11 L 30 9 L 34 10" />
+      <path d="M2 13 L 0 11" />
+    </svg>
+  ),
+  crow: (
+    <svg viewBox="0 0 24 8"><path d="M1 6 Q 6 1 12 4.6 Q 18 1 23 6" /></svg>
+  ),
+  butterfly: (
+    <svg viewBox="0 0 22 18">
+      <path d="M11 9 C 4 1 -1 6 4 12 C 8 17 11 12 11 9 Z" />
+      <path d="M11 9 C 18 1 23 6 18 12 C 14 17 11 12 11 9 Z" />
+      <line x1="11" y1="5" x2="11" y2="14" />
+    </svg>
+  ),
+  koi: (
+    <svg viewBox="0 0 34 16">
+      <path d="M3 8 Q 14 1 26 8 Q 14 15 3 8 Z" />
+      <path d="M26 8 L 33 3 L 31 8 L 33 13 Z" />
+    </svg>
+  ),
+};
+
+interface CreatureInstance { key: number; kind: string; style: React.CSSProperties }
+
+/** buildCreatures — the creature native to each appearance. */
+function buildCreatures(atmosphereId: string): CreatureInstance[] {
+  const rng = mulberry32(0xc4ea ^ atmosphereId.length * 0x27d4);
+  const make = (kind: string, count: number): CreatureInstance[] =>
+    Array.from({ length: count }, (_, i) => {
+      const scale = 0.7 + rng() * 0.7;
+      let style: React.CSSProperties;
+      if (kind === 'crane') {
+        style = {
+          top: `${8 + rng() * 22}%`, width: `${42 * scale}px`, height: `${20 * scale}px`,
+          color: `rgba(28, 24, 30, ${0.4 + rng() * 0.2})`,
+          animationDuration: `${54 + rng() * 36}s`, animationDelay: `${-rng() * 80}s`,
+          ['--c-drift' as string]: `${(rng() - 0.5) * 10}vh`,
+        };
+      } else if (kind === 'butterfly') {
+        style = {
+          left: `${rng() * 90}%`, top: `${30 + rng() * 45}%`, width: `${14 * scale}px`, height: `${12 * scale}px`,
+          color: 'var(--zen-accent)',
+          animationDuration: `${14 + rng() * 12}s`, animationDelay: `${-rng() * 20}s`,
+          ['--c-sway' as string]: `${6 + rng() * 10}vw`, ['--c-rise' as string]: `${(rng() - 0.5) * 30}vh`,
+          ['--flap' as string]: `${0.18 + rng() * 0.14}s`,
+        };
+      } else if (kind === 'koi') {
+        style = {
+          top: `${72 + rng() * 18}%`, width: `${30 * scale}px`, height: `${14 * scale}px`,
+          color: `rgba(190, 72, 40, ${0.55 + rng() * 0.25})`,
+          animationDuration: `${38 + rng() * 30}s`, animationDelay: `${-rng() * 40}s`,
+          ['--c-drift' as string]: `${(rng() - 0.5) * 6}vh`,
+        };
+      } else {
+        style = {
+          top: `${10 + rng() * 24}%`, width: `${22 * scale}px`, height: `${8 * scale}px`,
+          color: `rgba(16, 14, 18, ${0.4 + rng() * 0.2})`,
+          animationDuration: `${48 + rng() * 40}s`, animationDelay: `${-rng() * 80}s`,
+          ['--c-drift' as string]: `${(rng() - 0.5) * 10}vh`, ['--flap' as string]: `${0.45 + rng() * 0.2}s`,
+        };
+      }
+      return { key: i, kind, style };
+    });
+  switch (atmosphereId) {
+    case 'fuji': return make('crane', 2);
+    case 'fields': return make('butterfly', 5);
+    case 'wave': return make('koi', 3);
+    case 'snow': return make('crow', 2);
+    default: return [];
+  }
 }
 
 /** buildInkMotes — slow-drifting dark dust specks for atmospheric depth. */
