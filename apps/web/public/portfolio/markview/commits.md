@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-10
+
+- `22:06` **chore(portfolio): daily sync 2026-06-10** — +206 −199 — [`d3693ae`](https://github.com/abgnydn/markview/commit/d3693ae7080cb4ebeae8fab2e24c934d8db51914)
+
 ## 2026-06-09
 
 - `21:50` **chore(portfolio): daily sync 2026-06-09** — +2757 −2013 — [`e6e4909`](https://github.com/abgnydn/markview/commit/e6e4909047db5bae05c306152744c8778081d26e)
@@ -75,4 +79,3 @@
 - `09:20` **feat(world): readable pages, trails, sky dome, fly, water, wind, wild…** — +332 −99 — [`ba51ced`](https://github.com/abgnydn/markview/commit/ba51ced2d4ff0e2c5108edf5c5fea832a7472392)
 - `09:05` **feat(atmosphere): walkable painting world — "go inside" the painting** — +444 −1 — [`162cd81`](https://github.com/abgnydn/markview/commit/162cd81c6a195c8585b2c44e60094478ddf89545)
 - `08:30` **feat: AI co-author (Tab-to-ghost) + ink-dropper cursor** — +400 −0 — [`178c71b`](https://github.com/abgnydn/markview/commit/178c71b849cd694190c5a91b368b95b649b79491)
-- `08:30` **feat(projects): chronicle chat + manifest cleanup + prerender fix** — +947 −270 — [`078338c`](https://github.com/abgnydn/markview/commit/078338c90bc9e3097d7dc11d8c9eabbda70ed27f)
