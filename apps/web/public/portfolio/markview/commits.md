@@ -1,5 +1,43 @@
 # Commits — markview
 
+## 2026-06-12
+
+- `06:48` **fix(deps): bump vitest 2→4 to clear the critical UI-server advisory** — +31 −143 — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
+- `06:36` **ci: bump actions off deprecated Node 20 (checkout@v6, wrangler-action…** — +6 −6 — [`21e6e19`](https://github.com/abgnydn/markview/commit/21e6e19f0397eb736de11b1caddeba3ed3efb7da)
+- `06:04` **chore(brand): refresh OG card + README hero; drop image fossils** — +100 −5 — [`f1e7d2c`](https://github.com/abgnydn/markview/commit/f1e7d2c8a3fd7698c30776c960bcb23a6f2f4edc)
+- `05:55` **feat(projects): 3d constellation route + per-slug & OG prerender** — +2921 −0 — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
+- `05:42` **chore(repo): reconcile to web + desktop; drop monorepo-era fossils** — +417 −1424 — [`4bee0df`](https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d)
+- `05:42` **chore(atmosphere): shelve the non-functional WebGPU particle backend** — +11 −32 — [`d41847d`](https://github.com/abgnydn/markview/commit/d41847d30a6f204e2800b5d7d52e580b6625d4a8)
+- `05:42` **fix(webgpu): particles were fully transparent — read alpha as a verte…** — +6 −1 — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
+- `05:42` **fix(embeddings): batch model inputs to stop the ONNX integer-overflow…** — +29 −9 — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)
+- `05:42` **debug(webgpu): surface particle init result to the on-screen toast** — +10 −0 — [`9986472`](https://github.com/abgnydn/markview/commit/9986472f82a897727da178d72f5e55b19f08435e)
+- `05:42` **fix: vermillion lede drop-cap + graceful WebGPU-particle fallback** — +19 −5 — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
+- `05:42` **feat(world): aged-parchment page cards in the 3D world (not basic cards)** — +63 −16 — [`8bd448a`](https://github.com/abgnydn/markview/commit/8bd448a906b33402975340f1fa0fb888b6f028a4)
+- `05:42` **perf(viewer): kill file-change lag — skip view-transition over heavy …** — +13 −2 — [`02f1cda`](https://github.com/abgnydn/markview/commit/02f1cda9300a15539eed977d57ec5f21d169102f)
+- `05:42` **perf(atmosphere): cut the cost of the paper, ambient, and images** — +25 −23 — [`5fcb55d`](https://github.com/abgnydn/markview/commit/5fcb55dc3e81c78f87bdf1d548f2636144175cfd)
+- `05:42` **fix(atmosphere): the ghost-ink root cause — .markdown-content p force…** — +14 −4 — [`06df36f`](https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea)
+- `05:42` **fix(atmosphere): kill the embossed/ghosted ink — solid readable type …** — +18 −13 — [`e03e998`](https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9)
+- `05:42` **feat(atmosphere): aged parchment — darker, stained, uneven + readable…** — +28 −17 — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)
+- `05:42` **feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark** — +16 −12 — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)
+- `05:42` **feat(atmosphere): push the antique paper much further — 7-layer surfa…** — +30 −11 — [`030d703`](https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677)
+- `05:42` **feat(atmosphere): realistic antique paper — lit fibre + organic foxing** — +21 −13 — [`7e817ab`](https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb)
+- `05:42` **fix(atmosphere): entering a painting always works + never hangs** — +107 −29 — [`ea85e22`](https://github.com/abgnydn/markview/commit/ea85e225474c9bdc943736f27b475833e528376c)
+- `05:42` **fix(atmosphere): scroll-jump, unreliable v toggle, and toggle lag** — +23 −7 — [`7203613`](https://github.com/abgnydn/markview/commit/7203613350f48f1be0df322e24c65575b318b71c)
+- `05:42` **polish(atmosphere): harmonize the classical scroll — quieter, more in…** — +25 −32 — [`9204c20`](https://github.com/abgnydn/markview/commit/9204c2092e8564ba1ba08a073c3acf0fb4a97e90)
+- `05:42` **feat(atmosphere): per-appearance creatures — cranes, koi, butterflies…** — +171 −1 — [`9da3c9c`](https://github.com/abgnydn/markview/commit/9da3c9c2a021b1055a8a7e8d570a703978a4b516)
+- `05:42` **feat(atmosphere): deep visual-polish pass — paper light, texture, per…** — +87 −0 — [`54c399f`](https://github.com/abgnydn/markview/commit/54c399f19cbadf61f94b2c5ef0cae50d6b0a8ed0)
+- `05:42` **feat(atmosphere): 50 real-value refinements (#61–110)** — +174 −0 — [`7fbf710`](https://github.com/abgnydn/markview/commit/7fbf7106b36f7f2bd29ffb5693eefc453d895497)
+- `05:42` **feat(atmosphere): 20 more classical refinements (#41–60) — element fi…** — +125 −0 — [`fcdb112`](https://github.com/abgnydn/markview/commit/fcdb112e5610d98b35b879de3c19f14259b807ee)
+- `05:42` **feat(atmosphere): 20 more classical-scroll + ambient refinements (#21…** — +213 −1 — [`7e3d1ec`](https://github.com/abgnydn/markview/commit/7e3d1ecd12779fd5afed242eb0f3a09b20999087)
+- `05:42` **feat(atmosphere): 20 classical-scroll + ambient refinements** — +237 −5 — [`a5322a0`](https://github.com/abgnydn/markview/commit/a5322a09823aed88ecd0684d54af5a380535c606)
+- `05:42` **feat(atmosphere): classical rice-paper scroll reading surface** — +73 −0 — [`ccd0bef`](https://github.com/abgnydn/markview/commit/ccd0bef63dd700076573ab7c0a7bf05143c399f0)
+- `05:42` **feat(atmosphere): per-appearance ink palettes + classical CJK serifs** — +36 −1 — [`9a79364`](https://github.com/abgnydn/markview/commit/9a793647e473bf5db599cb08689a104742e239c4)
+- `05:42` **feat(atmosphere): readable text over any painting, visible cursor, dr…** — +128 −6 — [`3604531`](https://github.com/abgnydn/markview/commit/3604531abb9579b7cbbe3df2104041944dfdda02)
+
+## 2026-06-11
+
+- `22:05` **chore(portfolio): daily sync 2026-06-11** — +30 −27 — [`161d6ec`](https://github.com/abgnydn/markview/commit/161d6ecf670d66db57d5c540e18d9646bf1d10a6)
+
 ## 2026-06-10
 
 - `22:06` **chore(portfolio): daily sync 2026-06-10** — +206 −199 — [`d3693ae`](https://github.com/abgnydn/markview/commit/d3693ae7080cb4ebeae8fab2e24c934d8db51914)
@@ -23,59 +61,3 @@
 - `08:09` **style(zen): restyle overflow menu + logo-only brand mark in topbar an…** — +120 −9 — [`a2cb001`](https://github.com/abgnydn/markview/commit/a2cb0016ea5a05815b15440f3b76a9868dd6979a)
 - `08:09` **feat(desktop): restore file-open bridge, register associations, bump …** — +94 −12 — [`d5776bb`](https://github.com/abgnydn/markview/commit/d5776bb59d76fbee323d1be2c4b7982c1cde661f)
 - `08:09` **fix(pwa): match app colours, refresh offline shell, clearer description** — +15 −6 — [`ff227a5`](https://github.com/abgnydn/markview/commit/ff227a5e65c3896b597daf96cf0bf8bca5055f8a)
-- `08:09` **refactor(renderer): extract decodeHtmlEntities — was copy-pasted 4×** — +19 −36 — [`70b92b6`](https://github.com/abgnydn/markview/commit/70b92b661ab2936fc4e007ed4a6cc0116747c91c)
-- `08:09` **refactor(annotations): one store — toolbar/panel UI over re-anchoring…** — +179 −115 — [`d3d124c`](https://github.com/abgnydn/markview/commit/d3d124cf0947b7bf4cf1a95ff43dabfdeb756e19)
-- `08:09` **fix(export): preserve nested lists in DOCX and tables-with-text in PPTX** — +85 −18 — [`7df2ed4`](https://github.com/abgnydn/markview/commit/7df2ed48c61cb4618e334306ff2fa42ad2304ccd)
-- `08:09` **perf+fix: debounce preview, ref-ify graph hover, memoize processor; c…** — +150 −106 — [`8131d1f`](https://github.com/abgnydn/markview/commit/8131d1f27d7f101b63c70e0a6eacd58e9bc34c82)
-- `08:09` **fix(security): escape code-fence plugin output; close collab/reorder/…** — +208 −22 — [`6b4edb5`](https://github.com/abgnydn/markview/commit/6b4edb5c575b7ef27774643a0f4473fbc538a2e7)
-- `08:09` **refactor(atmosphere): share one gaussian-splat renderer + O(N) counti…** — +225 −220 — [`da72865`](https://github.com/abgnydn/markview/commit/da728653520397a7d86562013d05a38b1381790c)
-
-## 2026-06-08
-
-- `21:53` **chore(portfolio): daily sync 2026-06-08** — +1215 −1058 — [`617eff8`](https://github.com/abgnydn/markview/commit/617eff86053f5f0846bb4e70e203781dcd19d49c)
-
-## 2026-06-07
-
-- `21:18` **chore(portfolio): daily sync 2026-06-07** — +30 −26 — [`26ce51a`](https://github.com/abgnydn/markview/commit/26ce51ab051ce4e8f29d5c7a74e0070666014ec4)
-
-## 2026-06-06
-
-- `21:08` **chore(portfolio): daily sync 2026-06-06** — +31 −28 — [`267c917`](https://github.com/abgnydn/markview/commit/267c917aa5209fdd06998a644f8147dece3fd15c)
-
-## 2026-06-05
-
-- `21:28` **chore(portfolio): daily sync 2026-06-05** — +914 −762 — [`00c0817`](https://github.com/abgnydn/markview/commit/00c0817e813b45a83a6235223b7488868a6cb450)
-
-## 2026-06-04
-
-- `21:44` **chore(portfolio): daily sync 2026-06-04** — +327 −285 — [`839bf7d`](https://github.com/abgnydn/markview/commit/839bf7d4b69e90de36f21ec78966934f2e5e4c46)
-
-## 2026-06-03
-
-- `22:30` **chore(portfolio): daily sync 2026-06-03** — +255 −178 — [`21484c3`](https://github.com/abgnydn/markview/commit/21484c3dc8edfaefbd111c26495a7f44b6bad918)
-
-## 2026-06-02
-
-- `22:24` **chore(portfolio): daily sync 2026-06-02** — +1120 −944 — [`69d6987`](https://github.com/abgnydn/markview/commit/69d69871eb8549dc77b78881d4b26ed1ec32a15c)
-- `08:55` **perf(atmosphere): sharpen the splat world — more points, tighter foot…** — +11 −3 — [`f6bbbd7`](https://github.com/abgnydn/markview/commit/f6bbbd7508219f1550a4a8733031209023972d31)
-- `08:46` **feat(atmosphere): walk inside the painting as a splat cloud** — +552 −178 — [`d1b1294`](https://github.com/abgnydn/markview/commit/d1b12944ee42128ff504861d9ee5c79218d42bb4)
-- `08:14` **fix(atmosphere): make WebGPU particles safe — no auto-enable, low count** — +76 −94 — [`049af0f`](https://github.com/abgnydn/markview/commit/049af0face9a86a046c76da7c3bdab33da3690c0)
-- `06:07` **fix(atmosphere): WebGPU particles invisible under ortho camera** — +10 −2 — [`b86f76a`](https://github.com/abgnydn/markview/commit/b86f76a232c6513f3d00d76b3fbb4a7c0df2fbcd)
-- `05:59` **feat(atmosphere): TSL/WebGPU compute particle backend (opt-in, `b`)** — +377 −15 — [`96154b9`](https://github.com/abgnydn/markview/commit/96154b9672bfaaaa7c5084ee2450ac6ab4283636)
-- `05:50` **feat(atmosphere): LDI inpainting fills splat disocclusion gaps** — +131 −24 — [`8216486`](https://github.com/abgnydn/markview/commit/821648658258f1241dccb8f7d1a0aa3b3c981f2a)
-- `05:36` **feat(atmosphere): single-image → 3D gaussian-splat painting mode** — +467 −5 — [`d4c77e6`](https://github.com/abgnydn/markview/commit/d4c77e670ea92064f330a9f8567fa3a04f266bb3)
-- `05:20` **fix: soften DOF, remove ink-dropper, minimal colored-dot cursor** — +21 −227 — [`4079986`](https://github.com/abgnydn/markview/commit/40799866f75493d818630bddc49d461c273f33cd)
-
-## 2026-06-01
-
-- `22:35` **chore(portfolio): daily sync 2026-06-01** — +1118 −992 — [`87f7516`](https://github.com/abgnydn/markview/commit/87f75168a4bee27dbcba61227a7e588aadc1ac45)
-- `17:40` **feat(atmosphere): DOF + anaglyph + living light + dissolve-in (flat b…** — +97 −6 — [`47146bf`](https://github.com/abgnydn/markview/commit/47146bf7176586a8faf67425e7c3f9be6633472b)
-- `17:21` **fix(atmosphere): surface the whole pack — 31 paintings stopped feelin…** — +72 −14 — [`996a40b`](https://github.com/abgnydn/markview/commit/996a40bdeb41f77bbac705e4bbde326e84c3609f)
-- `16:50` **feat(atmosphere): 16 more CC0 paintings — packs now 8/7/9/6** — +112 −0 — [`52f4509`](https://github.com/abgnydn/markview/commit/52f4509091852d5795fa6562b3fb2ba4072bed54)
-- `12:13` **refactor: extract DOM enhancers + raf-loop helper** — +552 −521 — [`bf91da4`](https://github.com/abgnydn/markview/commit/bf91da48ee8fa85a0c53cb2193a42597a460c0f9)
-- `11:28` **chore: drop 3 dead files + 4 unused runtime deps** — +1 −453 — [`c9eb02c`](https://github.com/abgnydn/markview/commit/c9eb02c4ed366a1de004ad01c59533b82885760e)
-- `11:23` **perf(atmosphere): pause all render loops when the tab is hidden** — +50 −0 — [`c71aaa9`](https://github.com/abgnydn/markview/commit/c71aaa939fa02cbef246d2d816612deb377e0a2e)
-- `09:48` **fix(world): fly actually flies + WASD no longer switches files behind it** — +33 −15 — [`72ed3d5`](https://github.com/abgnydn/markview/commit/72ed3d529facafad42be2d6e0453117f04401ba4)
-- `09:20` **feat(world): readable pages, trails, sky dome, fly, water, wind, wild…** — +332 −99 — [`ba51ced`](https://github.com/abgnydn/markview/commit/ba51ced2d4ff0e2c5108edf5c5fea832a7472392)
-- `09:05` **feat(atmosphere): walkable painting world — "go inside" the painting** — +444 −1 — [`162cd81`](https://github.com/abgnydn/markview/commit/162cd81c6a195c8585b2c44e60094478ddf89545)
-- `08:30` **feat: AI co-author (Tab-to-ghost) + ink-dropper cursor** — +400 −0 — [`178c71b`](https://github.com/abgnydn/markview/commit/178c71b849cd694190c5a91b368b95b649b79491)
