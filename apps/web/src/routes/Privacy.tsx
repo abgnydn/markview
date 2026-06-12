@@ -47,7 +47,7 @@ export default function PrivacyPage() {
 
           <h2>4. Website Analytics</h2>
           <p>Our marketing website (markview.ai) uses <a href="https://plausible.io" target="_blank" rel="noopener noreferrer" style={{ color: '#a5b4fc' }}>Plausible Analytics</a>, a privacy-friendly, cookie-free analytics tool. Plausible does not use cookies, does not collect personal data, and is fully GDPR, CCPA, and PECR compliant. Analytics are limited to aggregate page view counts on our marketing pages only.</p>
-          <p><strong>Important:</strong> No analytics or telemetry of any kind runs inside the MarkView editor, desktop app, Chrome extension, or SDK packages.</p>
+          <p><strong>Important:</strong> No analytics or telemetry of any kind runs inside the MarkView editor or desktop app.</p>
 
           <h2>5. Peer-to-Peer Collaboration</h2>
           <p>MarkView&apos;s real-time collaboration feature uses WebRTC (via Yjs) for direct peer-to-peer connections. Document data is transmitted directly between collaborating browsers without passing through any intermediate server. Connection signaling uses temporary WebSocket connections that do not log or store document content.</p>
@@ -63,18 +63,15 @@ export default function PrivacyPage() {
           </ul>
 
           <h2>8. Desktop Application</h2>
-          <p>The MarkView for Mac desktop application operates entirely offline. It does not phone home, check for updates automatically, or transmit any data. Files are read from and written to your local file system only.</p>
+          <p>The MarkView desktop application (macOS, Windows, Linux) operates entirely offline. It does not phone home, check for updates automatically, or transmit any data. Files are read from and written to your local file system only.</p>
 
-          <h2>9. Chrome Extension</h2>
-          <p>The MarkView Chrome extension renders markdown files locally in your browser. It does not collect browsing history, page content, or any other data. It only activates on .md and .markdown file URLs.</p>
-
-          <h2>10. Children&apos;s Privacy</h2>
+          <h2>9. Children&apos;s Privacy</h2>
           <p>MarkView does not knowingly collect any personal information from children under 13. Since we do not collect personal data from anyone, this concern is inherently addressed by our architecture.</p>
 
-          <h2>11. Changes to This Policy</h2>
+          <h2>10. Changes to This Policy</h2>
           <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated revision date.</p>
 
-          <h2>12. Contact</h2>
+          <h2>11. Contact</h2>
           <p>For privacy-related questions, please contact us at <a href="mailto:privacy@markview.ai" style={{ color: '#a5b4fc' }}>privacy@markview.ai</a>.</p>
         </div>
       </div>
@@ -83,7 +80,7 @@ export default function PrivacyPage() {
       <footer className="landing-footer">
         <img src="/icon-192.png" alt="MarkView Logo" style={{ width: 44, height: 44, borderRadius: 10, margin: '0 auto 20px auto', display: 'block', opacity: 0.9 }} />
         <p><strong>MarkView</strong> — Open source markdown documentation viewer</p>
-        <p className="landing-footer-sub">Built with Next.js · WebRTC (Yjs) · Shiki · Mermaid · KaTeX · MCP</p>
+        <p className="landing-footer-sub">Built with Vite · React · WebRTC (Yjs) · Shiki · Mermaid · KaTeX</p>
         <p className="landing-footer-links">
           <span>·</span>
           <span>·</span>

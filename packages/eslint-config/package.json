@@ -4,14 +4,14 @@
   "description": "Shared ESLint configurations for the markview monorepo",
   "private": true,
   "license": "Apache-2.0",
+  "type": "module",
   "main": "index.js",
   "exports": {
     ".": "./index.js",
-    "./next": "./next.js",
     "./library": "./library.js"
   },
   "peerDependencies": {
-    "eslint": "^9"
+    "eslint": "^9 || ^10"
   },
   "devDependencies": {
     "eslint": "^10.4.0",

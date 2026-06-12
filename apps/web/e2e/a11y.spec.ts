@@ -8,16 +8,15 @@ import AxeBuilder from '@axe-core/playwright';
  *
  * Routes audited:
  *   - /         editor + landing
- *   - /docs     technical docs (markdown rendering)
- *   - /pricing  static marketing
+ *   - /projects portfolio index
  *   - /privacy, /terms  static marketing
  *
- * /vault, /vault/room, /brain, /agent are skipped because they render
- * inside a Canvas (R3F) and need a different a11y strategy (live regions
- * + keyboard alternatives) than DOM scans cover.
+ * /projects/3d is skipped because it renders inside a Canvas (three.js)
+ * and needs a different a11y strategy (live regions + keyboard
+ * alternatives) than DOM scans cover.
  */
 
-const ROUTES = ['/', '/docs', '/pricing', '/privacy', '/terms'] as const;
+const ROUTES = ['/', '/projects', '/privacy', '/terms'] as const;
 
 for (const route of ROUTES) {
   test(`a11y baseline: ${route}`, async ({ page }) => {

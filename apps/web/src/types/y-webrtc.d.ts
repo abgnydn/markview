@@ -1,6 +1,6 @@
 declare module 'y-webrtc' {
-  import { Doc } from 'yjs';
-  import { Awareness } from 'y-protocols/awareness';
+  import type { Doc } from 'yjs';
+  import type { Awareness } from 'y-protocols/awareness';
 
   interface WebrtcProviderOptions {
     signaling?: string[];
@@ -24,7 +24,7 @@ declare module 'y-webrtc' {
 }
 
 declare module 'y-protocols/awareness' {
-  import { Doc } from 'yjs';
+  import type { Doc } from 'yjs';
 
   export class Awareness {
     clientID: number;

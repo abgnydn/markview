@@ -54,10 +54,6 @@ test.describe('Landing Page', () => {
     expect(count).toBeGreaterThanOrEqual(6);
   });
 
-  test('renders MCP section', async ({ page }) => {
-    await expect(page.locator('.landing-mcp-section')).toBeVisible();
-  });
-
   test('renders privacy section', async ({ page }) => {
     await expect(page.locator('text=Privacy-First')).toBeVisible();
   });

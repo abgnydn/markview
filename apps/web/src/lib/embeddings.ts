@@ -28,7 +28,7 @@ const MODEL_ID = 'Xenova/all-MiniLM-L6-v2';
 const DIM = 384;
 
 let pipelinePromise: Promise<Pipeline> | null = null;
-let warmStatusCallbacks: Set<(s: ModelStatus) => void> = new Set();
+const warmStatusCallbacks: Set<(s: ModelStatus) => void> = new Set();
 
 export interface ModelStatus {
   state: 'idle' | 'loading' | 'ready' | 'failed';

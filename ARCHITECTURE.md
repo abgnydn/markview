@@ -1,172 +1,165 @@
 # Architecture
 
-This document is the contributor's map of markview. It explains where things live,
-which way dependencies flow, and what each surface is responsible for. Update it
-when the topology changes — stale architecture docs are worse than no architecture
-docs.
+The contributor's map of MarkView — where things live, which way dependencies
+flow, and what each surface owns. Update it when the topology changes; stale
+architecture docs are worse than none.
+
+MarkView is **one product: a local-first markdown editor, shipped as a web app
+and a native desktop mirror of it.** Everything below serves those two surfaces.
+
+> History: this was once a larger monorepo (an MCP server, a hub, two Chrome
+> extensions, a 3D vault/brain). Those were extracted into their own repos.
+> This repo is now web + desktop only.
 
 ## Top-level layout
 
 ```
 markview/
 ├── apps/
-│   ├── web                Next.js — editor, vault, brain, agent, docs, landing
-│   ├── mcp                Local MCP server (stdio + WebRTC transports)
-│   ├── extension          Chrome MV3 side-panel viewer (built from apps/web/out)
-│   ├── context-injector   Chrome MV3 — ChatGPT/Claude.ai → local files (WebRTC P2P)
-│   └── desktop            Tauri shell wrapping apps/web
+│   ├── web              Vite + React 19 SPA — the editor (builds to out/, static)
+│   ├── desktop          Tauri 2 shell wrapping apps/web (macOS / Windows / Linux)
+│   └── share-worker     Cloudflare Worker — public share renderer + Yjs signaling
 ├── packages/
-│   ├── core               @markview/core — framework-agnostic markdown pipeline
-│   ├── react              @markview/react — React bindings for the pipeline
-│   ├── webcomponent       @markview/webcomponent — `<markview-doc>` web component
-│   ├── eslint-config      shared ESLint config
-│   └── tsconfig           shared tsconfig presets (base / library / node / nextjs)
-└── mockups/               design artifacts (not shipped)
+│   ├── core             @markview/core — framework-agnostic markdown pipeline
+│   ├── eslint-config    shared ESLint flat config (typescript-eslint)
+│   └── tsconfig         shared tsconfig presets (base / library / node)
+└── mockups/             design artifacts (not shipped)
 ```
 
 ## Dependency direction
 
 ```
-                    ┌─────────────────────────────────────────┐
-                    │           apps/web (UI)                 │
-                    │  editor • vault • brain • agent demo    │
-                    └─────────┬───────────────────┬───────────┘
-                              │                   │
-                              │ HTTP/SSE          │ WebRTC datachannel
-                              ▼                   ▼
-                    ┌──────────────────┐ ┌──────────────────┐
-                    │ external hub     │ │ apps/mcp         │
-                    │ (github.com/     │ │ stdio + WebRTC   │
-                    │  abgnydn/hub)    │ │ MCP transports   │
-                    └──────────────────┘ └──────────────────┘
+   apps/desktop ─wraps─▶ apps/web (Tauri loads the static build)
+   apps/web ─renders with─▶ packages/core
+   apps/share-worker ─renders with─▶ packages/core (read-only public view)
 
-   apps/extension ─uses─▶ apps/web (built static export)
-   apps/context-injector ─peers with─▶ apps/mcp (over WebRTC)
-   apps/desktop ─wraps─▶ apps/web (Tauri shell)
-
-   packages/core ◀─uses─ apps/web, apps/mcp, packages/react, packages/webcomponent
+   packages/core ◀─used by─ apps/web, apps/share-worker
 ```
 
-**Invariant:** no app or package depends *back* on a sibling app. Packages don't
-depend on apps. apps depend on packages.
+**Invariant:** no app depends *back* on a sibling app. Packages never depend on
+apps. The desktop app is a thin shell — all product logic lives in `apps/web`.
 
 ## Responsibility map
 
 ### apps/web
 
-Next.js App Router + static export (`output: 'export'`). 12 routes prerendered.
+A **Vite + React 19 + React Router** single-page app. No server, no API routes —
+it builds to a static export (`output → out/`) served by Cloudflare Pages (web)
+or loaded from disk by the Tauri shell (desktop). Persistence is **IndexedDB**
+(Dexie), entirely on-device.
 
 | route | what it serves |
 |---|---|
-| `/` | landing atlas or editor, switched by `?surface=editor|app` |
-| `/vault`, `/vault/room` | 3D orbit visualizer (solo + WebRTC collab room) |
-| `/brain` | live 3D view of agent sessions (needs hub at :3100) |
-| `/agent` | WebRTC bridge demo (needs apps/mcp running with `--webrtc`) |
-| `/docs` | rendered markdown of `src/app/docs/technical_documentation.md` |
-| `/pricing`, `/privacy`, `/terms` | static marketing pages |
+| `/` | the editor + landing (first-run shows `LandingEditor`; returning users get their workspace) |
+| `/p/:slug` | a single rendered project/share page |
+| `/projects` | portfolio index |
+| `/projects/3d` | the projects constellation (three.js canvas) |
+| `/privacy`, `/terms` | static legal pages |
 
-**State:** Zustand stores under `src/stores/` —
-- `workspace-store` — current workspace + files
-- `theme-store` — dark/light + custom themes
-- `collab-store` — Yjs/WebRTC room state
+**State** — Zustand stores under `src/stores/`:
+- `workspace-store` — current workspace + open files
+- `theme-store` — light/dark, font size, color preset, **atmosphere**
+- `collab-store` — Yjs / WebRTC room state
 - `annotation-store` — selection-anchored annotations
-- `version-store` — per-doc version history
 - `license-store` — premium-feature gating
 
-**Components grouped by feature:** `components/{agent,collab,landing,ui,vault,viewer,workspace}/`.
+**Components** grouped by feature: `components/{atmosphere,collab,landing,ui,viewer,workspace}/`.
 
-**Lib:** `src/lib/{collab,export,import,markdown,mcp,plugins,sharing,storage,templates,themes}` —
-each subdirectory owns one concern.
+**Lib** — each subdirectory owns one concern:
+`src/lib/{markdown, export, sharing, collab, atmosphere, plugins, themes, storage, tauri}`
+plus standalone modules (`embeddings.ts`, `backlinks.ts`, `annotations.ts`, …).
 
-### apps/mcp
+#### The atmosphere system
 
-`@markview/mcp` — published to npm as the CLI `markview-mcp`. Two transports:
-- **stdio** — for Claude Desktop, Cursor, Zed (the standard MCP transport)
-- **WebRTC** — for browser tabs to talk to a local vault peer-to-peer
+A distinctive, optional reading layer (`src/components/atmosphere/`,
+`src/lib/atmosphere/`, `src/styles/zen*.css`). It paints a public-domain
+painting behind the page and turns the reading surface into an antique paper
+scroll. Four packs (Fuji / Wave / Snow / Fields — 30 CC0 works from The Met),
+each with its own particle system (petals / spray / snow / motes), ambient
+creatures, and ink palette. Pressing a key "enters" the painting: an ML/
+procedural depth map drives a Gaussian-splat point cloud (three.js) you can
+move through, with the documents rendered as aged-parchment cards. See
+`components/atmosphere/atmospheres.ts` for the registry and rotation logic.
 
-Tools are registered via `server.tool(name, schema, handler)` and exposed through
-both transports. See the README's "MCP tools" table for the current surface.
+### apps/desktop
+
+A **Tauri 2** (Rust + system WebView) shell. It builds `apps/web`, then bundles
+`apps/web/out` as its frontend. Produces native installers for macOS
+(arm64/x64), Windows (x64), and Linux (x64) via `.github/workflows/release-desktop.yml`.
+Product identifier `com.markview.desktop`.
+
+### apps/share-worker
+
+A Cloudflare Worker with two routes:
+- **share** (`src/share.ts`) — a read-only public renderer for a shared doc
+  (uses `@markview/core`); documents live in R2 + KV.
+- **yjs-room** (`src/yjs-room.ts`) — a Durable Object acting as the y-webrtc
+  signaling endpoint for real-time collaboration.
 
 ### packages/core
 
-Framework-agnostic markdown pipeline. Inputs: a markdown string + options.
-Outputs: HTML + structured frontmatter + extracted blocks (headings, links,
+Framework-agnostic markdown pipeline. Input: a markdown string + options.
+Output: HTML + structured frontmatter + extracted blocks (headings, links,
 code, math, tables, mermaid).
 
-**Pipeline:** `remark-parse` → `remark-gfm` → `remark-rehype` → `rehype-sanitize`
-(strict schema, see "Security" below) → `rehype-stringify`.
+**Pipeline:** `remark-parse` → `remark-gfm` → `remark-rehype` → `rehype-raw`
+→ `rehype-sanitize` (strict schema — see Security) → `rehype-stringify`.
 
-**Optional:** Shiki, Mermaid, KaTeX are peer-deps. The pipeline lazy-loads them
-only when the corresponding block type is present.
+**Optional:** Shiki, Mermaid, KaTeX are lazy-loaded only when the corresponding
+block type is present.
 
 ## Security model
 
 ### Sanitization (rehype-sanitize)
 
 The schema in `packages/core/src/pipeline.ts` is the **only** XSS defense for
-user-supplied markdown. Two deliberate restrictions:
+user-supplied markdown. Deliberate restrictions:
 
-- **`style` attribute is NOT allowed** on any element. Permitting it enables
-  CSS-overlay phishing (`position:fixed; inset:0` to spoof UI). If you need
-  styled markdown features (callouts, color tints), expose them via a typed
-  `className` allowlist + curated CSS — never raw `style=`.
-- **`data:` URIs are NOT allowed for `<img src>`.** SVG-as-data-URI can carry
-  inline JavaScript. Encoded images must be served via http(s).
+- **`style` is not in the allowlist** on any element — permitting it enables
+  CSS-overlay phishing (`position:fixed; inset:0` to spoof UI). Styled features
+  (callouts, tints) go through a typed `className` allowlist + curated CSS.
+- **`data:` URIs are not allowed for `<img src>`** — SVG-as-data-URI can carry
+  inline JavaScript. Encoded images must be served over http(s).
+- `script`, `style`, `iframe`, `object`, `embed`, `form`, `meta`, `link` are
+  stripped entirely.
 
-### Content-Security-Policy
+Any new `dangerouslySetInnerHTML` must take HTML that has already passed through
+this pipeline.
 
-`apps/web/middleware.ts` sets a strict CSP on every response:
-- `default-src 'self'` — third-party origins blocked by default
-- `script-src 'self'` — no inline or remote JS
-- `connect-src 'self' ws: wss: blob: https://stun.l.google.com:19302` — local
-  hub, Yjs signaling, STUN
-- `frame-ancestors 'none'` — clickjacking defense
+### Privacy
 
-### `dangerouslySetInnerHTML` audit
-
-Used in 5 places, each justified:
-- `app/layout.tsx` — JSON-LD `<script>` (safe; JSON.stringify escapes)
-- `ui/confirm-dialog.tsx` — static CSS template (author-controlled)
-- `viewer/presentation-mode.tsx` — receives pre-sanitized HTML from the pipeline
-- `viewer/markdown-renderer.tsx` — same; commented `// SECURITY: sanitized via rehype-sanitize`
-- `vault/vault-modal.tsx` — same
-
-Adding a new `dangerouslySetInnerHTML` requires proving the input passes through
-the sanitize pipeline first.
+No accounts, no telemetry, no remote logging. Documents live in the browser's
+IndexedDB. The only outbound features are **opt-in**: P2P collaboration over
+WebRTC (signaling via the worker; document data goes peer-to-peer, never through
+a server) and explicit share links.
 
 ## Build pipeline
 
 ```
 turbo run build
-  ├── packages/core build (tsc → dist/index.js + .d.ts)
-  ├── packages/react build (depends on core)
-  ├── packages/webcomponent build
-  ├── apps/web build (next build → out/, static export)
-  └── apps/mcp build (tsc → dist/, publishable)
+  ├── packages/core   (tsc → dist/)
+  └── apps/web        (vite build → out/, static export)
+
+apps/desktop build    depends on web#build, then tauri build → native installers
+apps/share-worker     wrangler deploy (independent)
 ```
 
-Husky pre-push runs `packages/core build` + `apps/web build` as a safety net.
-
-CI runs the full turbo pipeline plus extension-manifest validation.
-
-## Deferred / known debt
-
-| area | state | next step |
-|---|---|---|
-| Test coverage | ~12% of LOC | write store tests + per-MCP-tool tests → 50%+ |
-| Inline styles | 208 sites mid-migration to Tailwind | finish the migration |
-| `vault-orbit.tsx` | 1543-LOC monolith | split into Scene/Camera/Nodes/Edges/Hud |
-| `apps/mcp/src/index.ts` | 2732 LOC, 30 tools inline | split into `tools/<name>.ts` registered via manifest |
-| Non-null assertions | 60 `!.` sites | enable `@typescript-eslint/no-non-null-assertion` + fix or comment |
-| Accessibility | 9 aria, 6 roles, no axe-core in CI | add axe-core e2e suite |
-| Bundle code-splitting | several 1MB+ chunks ship eagerly | `next/dynamic` for vault visualizer + 3D primitives |
+`apps/web` deploys to Cloudflare Pages on push to `main`
+(`.github/workflows/deploy.yml`). Desktop installers ship on tags
+(`.github/workflows/release-desktop.yml`).
 
 ## Conventions
 
-- **Sub-project scopes:** if `apps/<x>/CLAUDE.md` exists, agents should `cd` there
-  for tasks scoped to that app.
-- **No commercial-license tooling.** The project is private + Apache-2.0; we don't
-  ship a paywall.
-- **No telemetry, no remote logging.** Per the privacy-first pitch — keep it true.
-- **Consume external services via env vars.** `NEXT_PUBLIC_BRAIN_HUB_URL` for the
-  hub, etc. No hard-coded production URLs in source.
+- **Vanilla CSS only.** No TailwindCSS. `.component-element` class convention +
+  semantic CSS custom properties.
+- **No telemetry, no remote logging.** Keep the privacy pitch true.
+- **Strict TypeScript** everywhere.
+
+## Known debt
+
+| area | state | next step |
+|---|---|---|
+| No CSP on the static build | the SPA ships without a Content-Security-Policy header | add one via Cloudflare Pages headers / a `_headers` file |
+| WebGPU particles | compute backend draws nothing on three 0.184; shelved behind a no-op `b` key | rewrite as `InstancedMesh`/`PointsNodeMaterial` and verify live |
+| `zen.css` size | the atmosphere/paper surface is a single large stylesheet | split per concern if it keeps growing |
+| Orphaned landing CSS | `.landing-mcp-*` rules in `landing.css` are no longer rendered | prune |

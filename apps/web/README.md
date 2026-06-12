@@ -20,9 +20,10 @@ Apps/desktop's Tauri shell consumes `apps/web/out` as its frontend.
 
 ## Deploy
 
-The web build deploys to Cloudflare Pages from
-`.github/workflows/release-desktop.yml`'s tagged matrix — there's no
-Vercel integration (deleted; was a v1 leftover).
+The web build deploys to Cloudflare Pages on every push to `main` via
+`.github/workflows/deploy.yml` (it builds `apps/web` and runs
+`pages deploy apps/web/out`). Desktop installers ship separately on tags
+via `.github/workflows/release-desktop.yml`.
 
 ## Editor surface
 

@@ -7,7 +7,8 @@
  * selection before the format applies.
  */
 
-import { ViewPlugin, EditorView, type ViewUpdate } from '@codemirror/view';
+import type { EditorView} from '@codemirror/view';
+import { ViewPlugin, type ViewUpdate } from '@codemirror/view';
 
 interface BubbleButton { label: string; kind: string; title: string; cls?: string; }
 

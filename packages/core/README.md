@@ -6,8 +6,7 @@
 
 Render GitHub-flavored markdown to HTML with optional Shiki syntax highlighting, Mermaid diagrams, and KaTeX math. Zero framework dependencies.
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-6366f1.svg)](../../LICENSE)
-[![npm](https://img.shields.io/npm/v/@markview/core)](https://www.npmjs.com/package/@markview/core)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-6366f1.svg)](../../LICENSE)
 
 </div>
 
@@ -15,8 +14,12 @@ Render GitHub-flavored markdown to HTML with optional Shiki syntax highlighting,
 
 ## Install
 
-```bash
-npm install @markview/core
+`@markview/core` is an internal workspace package — it powers the
+MarkView editor + desktop app and is consumed via `workspace:*`. It is
+not published to npm. To use it inside the monorepo:
+
+```typescript
+import { renderMarkdown } from '@markview/core';
 ```
 
 Optional peer dependencies (install only what you need):
@@ -128,6 +131,4 @@ Override CSS custom properties to match your design:
 
 ## License
 
-AGPL-3.0 — see [LICENSE](../../LICENSE).
-
-For commercial use without AGPL obligations, contact [hi@barisgunaydin.com](mailto:hi@barisgunaydin.com) for a commercial license.
+Apache-2.0 — see [LICENSE](../../LICENSE).

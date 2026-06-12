@@ -30,7 +30,7 @@ export default function TermsPage() {
 
         <div className="landing-legal-content">
           <h2>1. Acceptance of Terms</h2>
-          <p>By accessing or using MarkView (&quot;the Service&quot;), including the web application at markview.ai, the native desktop applications (macOS, Windows, Linux), Chrome extension, npm packages (@markview/core, @markview/react, @markview/webcomponent, @markview/mcp), and any related services, you agree to be bound by these Terms of Service.</p>
+          <p>By accessing or using MarkView (&quot;the Service&quot;), including the web application at markview.ai and the native desktop applications (macOS, Windows, Linux), and any related services, you agree to be bound by these Terms of Service.</p>
 
           <h2>2. Description of Service</h2>
           <p>MarkView is a markdown rendering and documentation viewing platform. The Service processes all data locally in your browser or on your device. MarkView does not transmit, store, or process your documents on any external server.</p>
@@ -67,7 +67,7 @@ export default function TermsPage() {
       <footer className="landing-footer">
         <img src="/icon-192.png" alt="MarkView Logo" style={{ width: 44, height: 44, borderRadius: 10, margin: '0 auto 20px auto', display: 'block', opacity: 0.9 }} />
         <p><strong>MarkView</strong> — Open source markdown documentation viewer</p>
-        <p className="landing-footer-sub">Built with Next.js · WebRTC (Yjs) · Shiki · Mermaid · KaTeX · MCP</p>
+        <p className="landing-footer-sub">Built with Vite · React · WebRTC (Yjs) · Shiki · Mermaid · KaTeX</p>
         <p className="landing-footer-links">
           <span>·</span>
           <span>·</span>

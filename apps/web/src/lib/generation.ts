@@ -33,7 +33,7 @@ export interface GenStatus {
 
 let pipelinePromise: Promise<unknown> | null = null;
 let currentStatus: GenStatus = { state: 'idle' };
-let statusListeners = new Set<(s: GenStatus) => void>();
+const statusListeners = new Set<(s: GenStatus) => void>();
 
 export function onGenStatus(cb: (s: GenStatus) => void): () => void {
   statusListeners.add(cb);
@@ -172,7 +172,7 @@ export async function generateChatCloud(options: GenerateOptions & { model?: str
   const decoder = new TextDecoder();
   let buffer = '';
   try {
-    // eslint-disable-next-line no-constant-condition
+     
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;

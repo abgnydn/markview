@@ -1,18 +1,16 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import markview from "@markview/eslint-config";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
+// The web app is a Vite + React SPA — it lints with the shared workspace
+// config (typescript-eslint recommended + the repo's rule overrides), NOT
+// eslint-config-next. There is no Next.js in this project.
+export default defineConfig([
+  ...markview,
   globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
     "out/**",
+    "dist/**",
     "build/**",
-    "next-env.d.ts",
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
-
-export default eslintConfig;

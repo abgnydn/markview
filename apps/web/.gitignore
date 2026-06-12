@@ -13,15 +13,12 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# vite build output
 /out/
+/build
 
 # pre-rendered project page (regenerated at build time from public/portfolio/index.json)
 /public/projects/index.html
-
-# production
-/build
 
 # misc
 .DS_Store
@@ -33,16 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
-!.env.example
-
-# vercel
-.vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
-
-# Sentry Config File
-.env.sentry-build-plugin

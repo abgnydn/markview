@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "out/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", "out/**"]
     },
     "test": {
       "dependsOn": ["^build"],
@@ -23,10 +23,6 @@
     "size": {
       "dependsOn": ["build"],
       "outputs": []
-    },
-    "apps-extension#build": {
-      "dependsOn": ["web#build"],
-      "outputs": ["app/**"]
     },
     "desktop#build": {
       "dependsOn": ["web#build"],

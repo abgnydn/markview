@@ -113,7 +113,7 @@ export function reanchor(root: Element, a: Annotation): Range | null {
   const fullText = normalizeWS(root.textContent ?? '');
   const needle = normalizeWS(a.contextBefore + a.anchorText + a.contextAfter);
   let idx = needle ? fullText.indexOf(needle) : -1;
-  let len = a.anchorText.length;
+  const len = a.anchorText.length;
   let offset = a.contextBefore.length;
   if (idx === -1) {
     idx = fullText.indexOf(normalizeWS(a.anchorText));
