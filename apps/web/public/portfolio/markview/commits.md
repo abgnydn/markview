@@ -2,6 +2,7 @@
 
 ## 2026-06-12
 
+- `21:50` **chore(portfolio): daily sync 2026-06-12** — +570 −673 — [`662580e`](https://github.com/abgnydn/markview/commit/662580e2d55b20939b8eb301c64ec25fe5777eb6)
 - `06:48` **fix(deps): bump vitest 2→4 to clear the critical UI-server advisory** — +31 −143 — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
 - `06:36` **ci: bump actions off deprecated Node 20 (checkout@v6, wrangler-action…** — +6 −6 — [`21e6e19`](https://github.com/abgnydn/markview/commit/21e6e19f0397eb736de11b1caddeba3ed3efb7da)
 - `06:04` **chore(brand): refresh OG card + README hero; drop image fossils** — +100 −5 — [`f1e7d2c`](https://github.com/abgnydn/markview/commit/f1e7d2c8a3fd7698c30776c960bcb23a6f2f4edc)
@@ -60,4 +61,3 @@
 - `10:36` **feat(web): CSP + security headers, lazy-load editor off landing, real…** — +2244 −75 — [`ba60dfb`](https://github.com/abgnydn/markview/commit/ba60dfb19d61b70d27f23c911473c8f48e391ab8)
 - `08:09` **style(zen): restyle overflow menu + logo-only brand mark in topbar an…** — +120 −9 — [`a2cb001`](https://github.com/abgnydn/markview/commit/a2cb0016ea5a05815b15440f3b76a9868dd6979a)
 - `08:09` **feat(desktop): restore file-open bridge, register associations, bump …** — +94 −12 — [`d5776bb`](https://github.com/abgnydn/markview/commit/d5776bb59d76fbee323d1be2c4b7982c1cde661f)
-- `08:09` **fix(pwa): match app colours, refresh offline shell, clearer description** — +15 −6 — [`ff227a5`](https://github.com/abgnydn/markview/commit/ff227a5e65c3896b597daf96cf0bf8bca5055f8a)

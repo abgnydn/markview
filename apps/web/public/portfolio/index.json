@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-12T21:50:52.442Z",
+  "generated_at": "2026-06-13T21:20:47.105Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1885,
+  "activity_90d_total": 1863,
   "activity_90d": {
-    "2026-03-15": 23,
     "2026-03-16": 7,
     "2026-03-17": 7,
     "2026-03-18": 40,
@@ -72,7 +71,7 @@
     "2026-06-09": 94,
     "2026-06-10": 10,
     "2026-06-11": 1,
-    "2026-06-12": 31
+    "2026-06-12": 32
   },
   "categories": {
     "llm-inference": {
@@ -210,7 +209,7 @@
       "pushed_at": "2026-06-02T07:29:17Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 29,
+      "commits_30d": 27,
       "commits_synced": 50,
       "last_commit": {
         "sha": "3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
@@ -319,20 +318,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-12T06:50:38Z",
+      "pushed_at": "2026-06-12T21:50:53Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "f80cf4ae512f85a7837bbb86c72bd9acb0712687",
-        "short_sha": "f80cf4a",
-        "message": "fix(deps): bump vitest 2→4 to clear the critical UI-server advisory",
-        "type": "fix",
-        "date": "2026-06-12T06:48:57Z",
-        "url": "https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687",
-        "additions": 31,
-        "deletions": 143
+        "sha": "662580e2d55b20939b8eb301c64ec25fe5777eb6",
+        "short_sha": "662580e",
+        "message": "chore(portfolio): daily sync 2026-06-12",
+        "type": "chore",
+        "date": "2026-06-12T21:50:52Z",
+        "url": "https://github.com/abgnydn/markview/commit/662580e2d55b20939b8eb301c64ec25fe5777eb6",
+        "additions": 570,
+        "deletions": 673
       }
     },
     {
@@ -463,7 +462,7 @@
       "pushed_at": "2026-05-15T03:40:13Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 3,
+      "commits_30d": 1,
       "commits_synced": 50,
       "last_commit": {
         "sha": "9c2d099bef976c25b763eab490704843e64247ac",
@@ -780,7 +779,7 @@
       "pushed_at": "2026-05-26T06:12:05Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 18,
+      "commits_30d": 15,
       "commits_synced": 38,
       "last_commit": {
         "sha": "d7bf288f9d1c356b9045db3e7076d45267d18143",
@@ -2054,6 +2053,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "662580e2d55b20939b8eb301c64ec25fe5777eb6",
+      "short_sha": "662580e",
+      "message": "chore(portfolio): daily sync 2026-06-12",
+      "type": "chore",
+      "date": "2026-06-12T21:50:52Z",
+      "url": "https://github.com/abgnydn/markview/commit/662580e2d55b20939b8eb301c64ec25fe5777eb6",
+      "additions": 570,
+      "deletions": 673
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -3405,19 +3417,6 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/d8fd1156a4144fe69e334ea0a1952005bad83e93",
       "additions": 45,
       "deletions": 14
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "ff227a5e65c3896b597daf96cf0bf8bca5055f8a",
-      "short_sha": "ff227a5",
-      "message": "fix(pwa): match app colours, refresh offline shell, clearer description",
-      "type": "fix",
-      "date": "2026-06-09T08:09:13Z",
-      "url": "https://github.com/abgnydn/markview/commit/ff227a5e65c3896b597daf96cf0bf8bca5055f8a",
-      "additions": 15,
-      "deletions": 6
     },
     {
       "slug": "markview",
