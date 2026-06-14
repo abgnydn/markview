@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-13
+
+- `21:20` **chore(portfolio): daily sync 2026-06-13** — +29 −30 — [`89c09bc`](https://github.com/abgnydn/markview/commit/89c09bcbd87e3bb6711c36e819ce292cfdee24ee)
+
 ## 2026-06-12
 
 - `21:50` **chore(portfolio): daily sync 2026-06-12** — +570 −673 — [`662580e`](https://github.com/abgnydn/markview/commit/662580e2d55b20939b8eb301c64ec25fe5777eb6)
@@ -60,4 +64,3 @@
 - `10:38` **feat(palette): jump to any file from ⌘P** — +10 −2 — [`b4831cb`](https://github.com/abgnydn/markview/commit/b4831cb5200090ccbdf3dd6b5b2ce04562958387)
 - `10:36` **feat(web): CSP + security headers, lazy-load editor off landing, real…** — +2244 −75 — [`ba60dfb`](https://github.com/abgnydn/markview/commit/ba60dfb19d61b70d27f23c911473c8f48e391ab8)
 - `08:09` **style(zen): restyle overflow menu + logo-only brand mark in topbar an…** — +120 −9 — [`a2cb001`](https://github.com/abgnydn/markview/commit/a2cb0016ea5a05815b15440f3b76a9868dd6979a)
-- `08:09` **feat(desktop): restore file-open bridge, register associations, bump …** — +94 −12 — [`d5776bb`](https://github.com/abgnydn/markview/commit/d5776bb59d76fbee323d1be2c4b7982c1cde661f)
