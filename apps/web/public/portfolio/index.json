@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-14T21:17:08.714Z",
+  "generated_at": "2026-06-15T22:22:38.988Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1857,
+  "activity_90d_total": 1859,
   "activity_90d": {
-    "2026-03-17": 7,
     "2026-03-18": 40,
     "2026-03-19": 49,
     "2026-03-20": 5,
@@ -71,7 +70,9 @@
     "2026-06-10": 10,
     "2026-06-11": 1,
     "2026-06-12": 32,
-    "2026-06-13": 1
+    "2026-06-13": 1,
+    "2026-06-14": 1,
+    "2026-06-15": 8
   },
   "categories": {
     "llm-inference": {
@@ -263,19 +264,19 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-06-10T11:57:56Z",
+      "pushed_at": "2026-06-15T09:43:14Z",
       "default_branch": "main",
-      "latest_tag": "v0.9.4",
+      "latest_tag": "v0.10.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "cff4c6c195a971f8f7325363555559f897bbfe98",
-        "short_sha": "cff4c6c",
-        "message": "feat(swarm): lever 3 — gzip-binary-f64 wire codec for RelayTransport …",
-        "type": "feat",
-        "date": "2026-06-10T06:40:23Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/cff4c6c195a971f8f7325363555559f897bbfe98",
-        "additions": 334,
+        "sha": "8dfd987ed5b7fa4ccfda2013b37397b0f9a22ba8",
+        "short_sha": "8dfd987",
+        "message": "docs(svg): refresh README diagrams for v0.10.0",
+        "type": "docs",
+        "date": "2026-06-15T09:43:12Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/8dfd987ed5b7fa4ccfda2013b37397b0f9a22ba8",
+        "additions": 13,
         "deletions": 13
       }
     },
@@ -318,20 +319,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-13T21:20:48Z",
+      "pushed_at": "2026-06-15T18:08:47Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "89c09bcbd87e3bb6711c36e819ce292cfdee24ee",
-        "short_sha": "89c09bc",
-        "message": "chore(portfolio): daily sync 2026-06-13",
-        "type": "chore",
-        "date": "2026-06-13T21:20:47Z",
-        "url": "https://github.com/abgnydn/markview/commit/89c09bcbd87e3bb6711c36e819ce292cfdee24ee",
-        "additions": 29,
-        "deletions": 30
+        "sha": "db45c35b7e29450c242977e871c2a277a10908ee",
+        "short_sha": "db45c35",
+        "message": "feat(presentation): rebuild presentation mode into a full deck engine",
+        "type": "feat",
+        "date": "2026-06-15T07:26:19Z",
+        "url": "https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee",
+        "additions": 1776,
+        "deletions": 84
       }
     },
     {
@@ -447,7 +448,7 @@
       "archived": false,
       "language": "WGSL",
       "language_color": "#1a5e9a",
-      "stars": 2,
+      "stars": 3,
       "topics": [
         "browser-llm",
         "compiler",
@@ -2054,6 +2055,123 @@
   ],
   "commits": [
     {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "8dfd987ed5b7fa4ccfda2013b37397b0f9a22ba8",
+      "short_sha": "8dfd987",
+      "message": "docs(svg): refresh README diagrams for v0.10.0",
+      "type": "docs",
+      "date": "2026-06-15T09:43:12Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/8dfd987ed5b7fa4ccfda2013b37397b0f9a22ba8",
+      "additions": 13,
+      "deletions": 13
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "02098d41e40fef86396f54dc89aed8056c1bb75b",
+      "short_sha": "02098d4",
+      "message": "chore(release): v0.10.0 — distributed chemistry across the crowd + si…",
+      "type": "chore",
+      "date": "2026-06-15T08:58:02Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/02098d41e40fef86396f54dc89aed8056c1bb75b",
+      "additions": 92,
+      "deletions": 12
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "ffe4df1b490ac8bbeaf8a61841fc78e5b0bf0f0f",
+      "short_sha": "ffe4df1",
+      "message": "fix(swarm): greedy-pull scheduler — balanced auto-distribution",
+      "type": "fix",
+      "date": "2026-06-15T08:25:28Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/ffe4df1b490ac8bbeaf8a61841fc78e5b0bf0f0f",
+      "additions": 164,
+      "deletions": 143
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "db45c35b7e29450c242977e871c2a277a10908ee",
+      "short_sha": "db45c35",
+      "message": "feat(presentation): rebuild presentation mode into a full deck engine",
+      "type": "feat",
+      "date": "2026-06-15T07:26:19Z",
+      "url": "https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee",
+      "additions": 1776,
+      "deletions": 84
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "0a3f5f0b3a8050d139db5adca625f9d4a08d30f7",
+      "short_sha": "0a3f5f0",
+      "message": "feat(swarm): honest multi-tab scaling curve + fix screening measurement",
+      "type": "feat",
+      "date": "2026-06-15T07:14:17Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/0a3f5f0b3a8050d139db5adca625f9d4a08d30f7",
+      "additions": 133,
+      "deletions": 7
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "de1412b36a4185da9f59d8e8f18d51b240c25087",
+      "short_sha": "de1412b",
+      "message": "feat(swarm): distributed molecule screening — rank a library by HOMO–…",
+      "type": "feat",
+      "date": "2026-06-15T07:01:01Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/de1412b36a4185da9f59d8e8f18d51b240c25087",
+      "additions": 141,
+      "deletions": 1
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "92132d80b8259f1dc7c4601ab6da9c57b175b710",
+      "short_sha": "92132d8",
+      "message": "test(swarm): measure distributed-MP2 single-molecule speedup — honest…",
+      "type": "test",
+      "date": "2026-06-15T06:51:05Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/92132d80b8259f1dc7c4601ab6da9c57b175b710",
+      "additions": 174,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "b4c1fc429b60ae7add3c99ccbfef562444c929f2",
+      "short_sha": "b4c1fc4",
+      "message": "feat(swarm): distributed DF-MP2 — collaborative single-molecule corre…",
+      "type": "feat",
+      "date": "2026-06-15T06:22:18Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/b4c1fc429b60ae7add3c99ccbfef562444c929f2",
+      "additions": 356,
+      "deletions": 2
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "125f5dee9ef332226b2354d361640c36be8fb4ef",
+      "short_sha": "125f5de",
+      "message": "chore(portfolio): daily sync 2026-06-14",
+      "type": "chore",
+      "date": "2026-06-14T21:17:08Z",
+      "url": "https://github.com/abgnydn/markview/commit/125f5dee9ef332226b2354d361640c36be8fb4ef",
+      "additions": 36,
+      "deletions": 33
+    },
+    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -3055,19 +3173,6 @@
       "deletions": 2
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "ba60dfb19d61b70d27f23c911473c8f48e391ab8",
-      "short_sha": "ba60dfb",
-      "message": "feat(web): CSP + security headers, lazy-load editor off landing, real…",
-      "type": "feat",
-      "date": "2026-06-09T10:36:52Z",
-      "url": "https://github.com/abgnydn/markview/commit/ba60dfb19d61b70d27f23c911473c8f48e391ab8",
-      "additions": 2244,
-      "deletions": 75
-    },
-    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -3430,19 +3535,6 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/d8fd1156a4144fe69e334ea0a1952005bad83e93",
       "additions": 45,
       "deletions": 14
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "a2cb0016ea5a05815b15440f3b76a9868dd6979a",
-      "short_sha": "a2cb001",
-      "message": "style(zen): restyle overflow menu + logo-only brand mark in topbar an…",
-      "type": "style",
-      "date": "2026-06-09T08:09:13Z",
-      "url": "https://github.com/abgnydn/markview/commit/a2cb0016ea5a05815b15440f3b76a9868dd6979a",
-      "additions": 120,
-      "deletions": 9
     },
     {
       "slug": "webgpu-dna",
@@ -4264,84 +4356,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "992e0e54426b652b4da9181af39a51cfd3badd19",
-      "short_sha": "992e0e5",
-      "message": "test(df): f32 feasibility probe — step 0 of the WebGPU integral build",
-      "type": "test",
-      "date": "2026-06-08T10:01:05Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/992e0e54426b652b4da9181af39a51cfd3badd19",
-      "additions": 60,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "1fdc487b68ea16232b5f02918ce0e82a1c71cb68",
-      "short_sha": "1fdc487",
-      "message": "feat(swarm): N-machine distributed HF — N=2 and N=4 across separate VMs",
-      "type": "feat",
-      "date": "2026-06-08T09:39:09Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/1fdc487b68ea16232b5f02918ce0e82a1c71cb68",
-      "additions": 117,
-      "deletions": 105
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "217c25184f05f8efdf7198e3e46692a05f2f4a5b",
-      "short_sha": "217c251",
-      "message": "docs(readme): cross-machine swarm now verified — N=2 distributed HF t…",
-      "type": "docs",
-      "date": "2026-06-08T09:35:34Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/217c25184f05f8efdf7198e3e46692a05f2f4a5b",
-      "additions": 1,
-      "deletions": 1
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "d900fc064d662d81c6bd61acc10b42e9a2ceb542",
-      "short_sha": "d900fc0",
-      "message": "feat(swarm): N=2 cross-machine distributed HF over a free relay — the…",
-      "type": "feat",
-      "date": "2026-06-08T09:31:32Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/d900fc064d662d81c6bd61acc10b42e9a2ceb542",
-      "additions": 302,
-      "deletions": 1
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "1450f5916e3962bb529d6dbb887414c3bd4f6515",
-      "short_sha": "1450f59",
-      "message": "feat(swarm): cross-machine proof via free public relay (WebRTC needs …",
-      "type": "feat",
-      "date": "2026-06-08T08:43:00Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/1450f5916e3962bb529d6dbb887414c3bd4f6515",
-      "additions": 103,
-      "deletions": 2
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "9b1a9213e92595f2d4d6bfb50e26e0ed4135926a",
-      "short_sha": "9b1a921",
-      "message": "feat(swarm): cross-machine WebRTC de-risk — 2 Actions VMs, free TURN",
-      "type": "feat",
-      "date": "2026-06-08T08:35:54Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/9b1a9213e92595f2d4d6bfb50e26e0ed4135926a",
-      "additions": 159,
-      "deletions": 2
-    },
-    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -4353,19 +4367,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/fd27a5ca448b7703b7089aada47673665f2a5237",
       "additions": 36,
       "deletions": 7
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "a6d1b6bb08d94a14150fb7c3a75b566551f738c4",
-      "short_sha": "a6d1b6b",
-      "message": "chore(release): v0.9.4 — the streaming swarm crosses the 2 GB single-…",
-      "type": "chore",
-      "date": "2026-06-08T07:51:14Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/a6d1b6bb08d94a14150fb7c3a75b566551f738c4",
-      "additions": 73,
-      "deletions": 16
     },
     {
       "slug": "postnet-cf",

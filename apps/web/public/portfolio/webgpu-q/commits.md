@@ -1,5 +1,15 @@
 # Commits — webgpu-q
 
+## 2026-06-15
+
+- `09:43` **docs(svg): refresh README diagrams for v0.10.0** — +13 −13 — [`8dfd987`](https://github.com/abgnydn/webgpu-q/commit/8dfd987ed5b7fa4ccfda2013b37397b0f9a22ba8)
+- `08:58` **chore(release): v0.10.0 — distributed chemistry across the crowd + si…** — +92 −12 — [`02098d4`](https://github.com/abgnydn/webgpu-q/commit/02098d41e40fef86396f54dc89aed8056c1bb75b)
+- `08:25` **fix(swarm): greedy-pull scheduler — balanced auto-distribution** — +164 −143 — [`ffe4df1`](https://github.com/abgnydn/webgpu-q/commit/ffe4df1b490ac8bbeaf8a61841fc78e5b0bf0f0f)
+- `07:14` **feat(swarm): honest multi-tab scaling curve + fix screening measurement** — +133 −7 — [`0a3f5f0`](https://github.com/abgnydn/webgpu-q/commit/0a3f5f0b3a8050d139db5adca625f9d4a08d30f7)
+- `07:01` **feat(swarm): distributed molecule screening — rank a library by HOMO–…** — +141 −1 — [`de1412b`](https://github.com/abgnydn/webgpu-q/commit/de1412b36a4185da9f59d8e8f18d51b240c25087)
+- `06:51` **test(swarm): measure distributed-MP2 single-molecule speedup — honest…** — +174 −0 — [`92132d8`](https://github.com/abgnydn/webgpu-q/commit/92132d80b8259f1dc7c4601ab6da9c57b175b710)
+- `06:22` **feat(swarm): distributed DF-MP2 — collaborative single-molecule corre…** — +356 −2 — [`b4c1fc4`](https://github.com/abgnydn/webgpu-q/commit/b4c1fc429b60ae7add3c99ccbfef562444c929f2)
+
 ## 2026-06-10
 
 - `06:40` **feat(swarm): lever 3 — gzip-binary-f64 wire codec for RelayTransport …** — +334 −13 — [`cff4c6c`](https://github.com/abgnydn/webgpu-q/commit/cff4c6c195a971f8f7325363555559f897bbfe98)
@@ -51,10 +61,3 @@
 - `11:04` **feat(gpu): WebGPU integral build #3 — s-only 3-index tensor, validate…** — +215 −0 — [`bb31240`](https://github.com/abgnydn/webgpu-q/commit/bb31240156d5951348cc4316e7d30bf1cf3fb76c)
 - `10:32` **feat(gpu): WebGPU integral build #2 — s/p/d 2-index metric in f32, va…** — +212 −110 — [`f61032b`](https://github.com/abgnydn/webgpu-q/commit/f61032bc7acfcf92489836590d421602bb388b5b)
 - `10:15` **feat(gpu): WebGPU integral build #1 — 2-index metric in f32, validate…** — +231 −0 — [`45f38f6`](https://github.com/abgnydn/webgpu-q/commit/45f38f61821ef4c398090253ce297fa46841fe06)
-- `10:01` **test(df): f32 feasibility probe — step 0 of the WebGPU integral build** — +60 −0 — [`992e0e5`](https://github.com/abgnydn/webgpu-q/commit/992e0e54426b652b4da9181af39a51cfd3badd19)
-- `09:39` **feat(swarm): N-machine distributed HF — N=2 and N=4 across separate VMs** — +117 −105 — [`1fdc487`](https://github.com/abgnydn/webgpu-q/commit/1fdc487b68ea16232b5f02918ce0e82a1c71cb68)
-- `09:35` **docs(readme): cross-machine swarm now verified — N=2 distributed HF t…** — +1 −1 — [`217c251`](https://github.com/abgnydn/webgpu-q/commit/217c25184f05f8efdf7198e3e46692a05f2f4a5b)
-- `09:31` **feat(swarm): N=2 cross-machine distributed HF over a free relay — the…** — +302 −1 — [`d900fc0`](https://github.com/abgnydn/webgpu-q/commit/d900fc064d662d81c6bd61acc10b42e9a2ceb542)
-- `08:43` **feat(swarm): cross-machine proof via free public relay (WebRTC needs …** — +103 −2 — [`1450f59`](https://github.com/abgnydn/webgpu-q/commit/1450f5916e3962bb529d6dbb887414c3bd4f6515)
-- `08:35` **feat(swarm): cross-machine WebRTC de-risk — 2 Actions VMs, free TURN** — +159 −2 — [`9b1a921`](https://github.com/abgnydn/webgpu-q/commit/9b1a9213e92595f2d4d6bfb50e26e0ed4135926a)
-- `07:51` **chore(release): v0.9.4 — the streaming swarm crosses the 2 GB single-…** — +73 −16 — [`a6d1b6b`](https://github.com/abgnydn/webgpu-q/commit/a6d1b6bb08d94a14150fb7c3a75b566551f738c4)

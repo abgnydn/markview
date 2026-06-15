@@ -1,5 +1,13 @@
 # Commits — markview
 
+## 2026-06-15
+
+- `07:26` **feat(presentation): rebuild presentation mode into a full deck engine** — +1776 −84 — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
+
+## 2026-06-14
+
+- `21:17` **chore(portfolio): daily sync 2026-06-14** — +36 −33 — [`125f5de`](https://github.com/abgnydn/markview/commit/125f5dee9ef332226b2354d361640c36be8fb4ef)
+
 ## 2026-06-13
 
 - `21:20` **chore(portfolio): daily sync 2026-06-13** — +29 −30 — [`89c09bc`](https://github.com/abgnydn/markview/commit/89c09bcbd87e3bb6711c36e819ce292cfdee24ee)
@@ -62,5 +70,3 @@
 - `11:36` **feat(markdown): interactive task lists — click to toggle, persists to…** — +59 −1 — [`6826591`](https://github.com/abgnydn/markview/commit/6826591f6c80ecccbc17eff2ef3cd6b558353d0f)
 - `11:32` **feat(markdown): ==highlight==, ^sup^, ~sub~, and :emoji: shortcodes** — +146 −1 — [`286c99d`](https://github.com/abgnydn/markview/commit/286c99df68ca9f4302d4249476b52d3d1b972868)
 - `10:38` **feat(palette): jump to any file from ⌘P** — +10 −2 — [`b4831cb`](https://github.com/abgnydn/markview/commit/b4831cb5200090ccbdf3dd6b5b2ce04562958387)
-- `10:36` **feat(web): CSP + security headers, lazy-load editor off landing, real…** — +2244 −75 — [`ba60dfb`](https://github.com/abgnydn/markview/commit/ba60dfb19d61b70d27f23c911473c8f48e391ab8)
-- `08:09` **style(zen): restyle overflow menu + logo-only brand mark in topbar an…** — +120 −9 — [`a2cb001`](https://github.com/abgnydn/markview/commit/a2cb0016ea5a05815b15440f3b76a9868dd6979a)

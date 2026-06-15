@@ -12,6 +12,7 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **feat**: feat(presentation): rebuild presentation mode into a full deck engine — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
 - **fix**: fix(deps): bump vitest 2→4 to clear the critical UI-server advisory — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
 - **feat**: feat(projects): 3d constellation route + per-slug & OG prerender — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
 - **fix**: fix(webgpu): particles were fully transparent — read alpha as a verte… — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
@@ -23,4 +24,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **feat**: feat(atmosphere): aged parchment — darker, stained, uneven + readable… — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)
 - **feat**: feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)
 - **feat**: feat(atmosphere): push the antique paper much further — 7-layer surfa… — [`030d703`](https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677)
-- **feat**: feat(atmosphere): realistic antique paper — lit fibre + organic foxing — [`7e817ab`](https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb)
