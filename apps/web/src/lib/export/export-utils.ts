@@ -85,28 +85,29 @@ function wrapWithInlineStyles(html: string): string {
 function buildSelfContainedHtml(title: string, bodyHtml: string, theme: 'dark' | 'light'): string {
   const isDark = theme === 'dark';
 
+  // MarkView's own identity — reading-dark + antique-cream, violet accent.
   const colors = isDark
     ? {
-        bg: '#0d1117', bgSec: '#161b22', bgEl: '#21262d',
-        text: '#e6edf3', textSec: '#8b949e', textMuted: '#6e7681', textLink: '#58a6ff',
-        border: '#30363d', borderMuted: '#21262d',
-        accent: '#58a6ff', hover: 'rgba(255,255,255,0.05)',
-        noteB: 'rgba(56,139,253,0.4)', noteBg: 'rgba(56,139,253,0.1)', noteT: '#58a6ff',
-        tipB: 'rgba(46,160,67,0.4)', tipBg: 'rgba(46,160,67,0.1)', tipT: '#3fb950',
-        impB: 'rgba(137,87,229,0.4)', impBg: 'rgba(137,87,229,0.1)', impT: '#bc8cff',
-        warnB: 'rgba(187,128,9,0.4)', warnBg: 'rgba(187,128,9,0.1)', warnT: '#d29922',
-        cautB: 'rgba(248,81,73,0.4)', cautBg: 'rgba(248,81,73,0.1)', cautT: '#f85149',
+        bg: '#0d0e13', bgSec: '#16181f', bgEl: '#1c1f27',
+        text: '#eef1f6', textSec: '#aeb6c4', textMuted: '#7d8595', textLink: '#9b7dff',
+        border: '#2a2d36', borderMuted: '#20232b',
+        accent: '#9b7dff', hover: 'rgba(255,255,255,0.04)',
+        noteB: 'rgba(155,125,255,0.45)', noteBg: 'rgba(155,125,255,0.1)', noteT: '#b9a3ff',
+        tipB: 'rgba(70,185,138,0.45)', tipBg: 'rgba(70,185,138,0.1)', tipT: '#5fd0a0',
+        impB: 'rgba(155,125,255,0.45)', impBg: 'rgba(155,125,255,0.1)', impT: '#b9a3ff',
+        warnB: 'rgba(224,137,74,0.45)', warnBg: 'rgba(224,137,74,0.1)', warnT: '#e0a05a',
+        cautB: 'rgba(214,90,90,0.45)', cautBg: 'rgba(214,90,90,0.1)', cautT: '#e07b7b',
       }
     : {
-        bg: '#ffffff', bgSec: '#f6f8fa', bgEl: '#ffffff',
-        text: '#1f2328', textSec: '#656d76', textMuted: '#8b949e', textLink: '#0969da',
-        border: '#d0d7de', borderMuted: '#d8dee4',
-        accent: '#0969da', hover: 'rgba(0,0,0,0.04)',
-        noteB: 'rgba(56,139,253,0.4)', noteBg: 'rgba(56,139,253,0.08)', noteT: '#0969da',
-        tipB: 'rgba(46,160,67,0.4)', tipBg: 'rgba(46,160,67,0.08)', tipT: '#1a7f37',
-        impB: 'rgba(137,87,229,0.4)', impBg: 'rgba(137,87,229,0.08)', impT: '#8250df',
-        warnB: 'rgba(187,128,9,0.4)', warnBg: 'rgba(187,128,9,0.08)', warnT: '#9a6700',
-        cautB: 'rgba(248,81,73,0.4)', cautBg: 'rgba(248,81,73,0.08)', cautT: '#d1242f',
+        bg: '#fbf8f1', bgSec: '#f1ece0', bgEl: '#f6f1e6',
+        text: '#2b2118', textSec: '#6b5d49', textMuted: '#9a8c74', textLink: '#6d3bd0',
+        border: '#e0d6c2', borderMuted: '#ebe3d2',
+        accent: '#6d3bd0', hover: 'rgba(70,50,25,0.04)',
+        noteB: 'rgba(109,59,208,0.4)', noteBg: 'rgba(109,59,208,0.07)', noteT: '#5b2bd6',
+        tipB: 'rgba(38,128,55,0.4)', tipBg: 'rgba(38,128,55,0.07)', tipT: '#1a7f37',
+        impB: 'rgba(109,59,208,0.4)', impBg: 'rgba(109,59,208,0.07)', impT: '#5b2bd6',
+        warnB: 'rgba(154,103,0,0.4)', warnBg: 'rgba(154,103,0,0.07)', warnT: '#9a6700',
+        cautB: 'rgba(192,56,58,0.4)', cautBg: 'rgba(192,56,58,0.07)', cautT: '#c0383a',
       };
 
   return `<!DOCTYPE html>
@@ -118,45 +119,49 @@ function buildSelfContainedHtml(title: string, bodyHtml: string, theme: 'dark' |
 <style>
   /* System font stack — no external dependencies. */
   :root {
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-serif: 'Iowan Old Style', 'Charter', 'Palatino', Georgia, 'Times New Roman', serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 16px;
-    line-height: 1.7;
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.75;
     color: ${colors.text};
     background: ${colors.bg};
-    max-width: 840px;
+    max-width: 720px;
     margin: 0 auto;
-    padding: 40px 32px;
+    padding: 72px 28px 96px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    margin-top: 1.5em; margin-bottom: 0.6em;
-    font-weight: 600; line-height: 1.3; color: ${colors.text};
+    font-family: var(--font-serif);
+    margin-top: 1.6em; margin-bottom: 0.5em;
+    font-weight: 700; line-height: 1.15; letter-spacing: -0.015em; color: ${colors.text};
   }
-  h1 { font-size: 2em; border-bottom: 1px solid ${colors.borderMuted}; padding-bottom: 0.3em; }
-  h2 { font-size: 1.5em; border-bottom: 1px solid ${colors.borderMuted}; padding-bottom: 0.3em; }
-  h3 { font-size: 1.25em; }
-  h4 { font-size: 1em; }
+  h1 { font-size: 2.4em; margin-top: 0; }
+  h1::after { content: ''; display: block; width: 64px; height: 3px; margin-top: 0.35em; border-radius: 2px; background: linear-gradient(90deg, ${colors.accent}, transparent); }
+  h2 { font-size: 1.7em; }
+  h3 { font-size: 1.32em; }
+  h4 { font-size: 1.08em; }
 
   p { margin-bottom: 1em; }
-  a { color: ${colors.textLink}; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  strong { font-weight: 600; }
+  a { color: ${colors.textLink}; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+  a:hover { border-bottom-color: ${colors.textLink}; }
+  strong { font-weight: 700; }
 
-  ul, ol { margin-bottom: 1em; padding-left: 2em; }
-  li { margin-bottom: 0.35em; }
+  ul, ol { margin-bottom: 1em; padding-left: 1.5em; }
+  li { margin-bottom: 0.4em; }
 
   blockquote {
-    margin: 1em 0; padding: 0.5em 1em;
-    border-left: 4px solid ${colors.border};
-    color: ${colors.textSec}; background: ${colors.hover};
-    border-radius: 0 6px 6px 0;
+    margin: 1.2em 0; padding: 0.3em 0 0.3em 1.1em;
+    border-left: 3px solid ${colors.accent};
+    color: ${colors.textSec}; font-style: italic;
   }
 
   code {

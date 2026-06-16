@@ -294,6 +294,15 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       )}
       <Toolbar
         onAddFiles={() => addFilesInputRef.current?.click()}
+        onNewFile={async () => {
+          const ws = useWorkspaceStore.getState();
+          const names = new Set(ws.files.map((f) => f.filename.toLowerCase()));
+          let name = 'untitled.md';
+          for (let n = 2; names.has(name.toLowerCase()); n++) name = `untitled-${n}.md`;
+          await ws.addFiles([{ filename: name, content: '# Untitled\n\n' }]);
+          const created = useWorkspaceStore.getState().files.slice(-1)[0];
+          if (created) { await ws.setActiveFile(created.id); setShowEditor(true); }
+        }}
         readingStats={readingStats}
         onTogglePresentation={() => setShowPresentation(true)}
         onToggleSplitView={() => setShowSplitView(!showSplitView)}

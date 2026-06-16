@@ -290,20 +290,21 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   // auto-fit
   useLayoutEffect(() => {
     const body = bodyRef.current; if (!body) return;
-    body.style.transform = ''; body.style.width = '';
-    if (!autofit) return;
-    // only shrink when content meaningfully overflows the slide height
-    const over = body.scrollHeight - body.clientHeight;
-    if (over > 6) {
-      const scale = Math.max(0.55, body.clientHeight / body.scrollHeight);
-      // pivot from the top-LEFT and re-widen by 1/scale so the scaled box
-      // still fills the column exactly (a center pivot shifts it right and
-      // overflows — that was the "content pushed right + stray scroll" bug)
-      body.style.transformOrigin = 'top left';
+    body.style.transform = ''; body.style.transformOrigin = ''; body.style.width = '';
+    const slide = slideRef.current;
+    if (!autofit || !slide || covers[currentSlide]) return;
+    // fit-to-FILL: scale content up or down (from the centre) so the slide
+    // uses the whole card height instead of floating in the top half.
+    const cs = getComputedStyle(slide);
+    const avail = slide.clientHeight - parseFloat(cs.paddingTop || '0') - parseFloat(cs.paddingBottom || '0');
+    const natural = body.scrollHeight;
+    if (natural < 1 || avail < 1) return;
+    const scale = Math.max(0.6, Math.min(1.45, avail / natural));
+    if (Math.abs(scale - 1) > 0.04) {
+      body.style.transformOrigin = 'center center';
       body.style.transform = `scale(${scale})`;
-      body.style.width = `${100 / scale}%`;
     }
-  }, [autofit, currentSlide, aspect, theme, frag, slides]);
+  }, [autofit, currentSlide, aspect, theme, frag, slides, covers]);
 
   // code copy buttons
   useEffect(() => {

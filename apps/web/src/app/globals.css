@@ -1866,16 +1866,17 @@
   position: relative;
 }
 
+/* Export dropdown — matches the zen theme-picker so the chrome is consistent. */
 .export-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
   margin-top: 6px;
   min-width: 240px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  background: var(--zen-bg-deep);
+  border: 1px solid var(--zen-fg-ghost);
+  border-radius: 6px;
+  box-shadow: var(--zen-shadow-card);
   z-index: 1000;
   padding: 6px;
   animation: dropdown-in 150ms ease;
@@ -1891,17 +1892,18 @@
 }
 
 .export-dropdown-label {
-  font-size: 10px;
-  font-weight: 600;
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  padding: 6px 10px 4px;
+  letter-spacing: 0.22em;
+  color: var(--zen-fg-faint);
+  padding: 9px 12px 7px;
 }
 
 .export-dropdown-divider {
   height: 1px;
-  background: var(--border-muted);
+  background: var(--zen-fg-ghost);
   margin: 4px 6px;
 }
 
@@ -1910,25 +1912,30 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 8px 10px;
-  font-size: 13px;
-  font-weight: 450;
-  color: var(--text-primary);
+  padding: 7px 12px;
+  font-family: var(--zen-serif);
+  font-size: 14px;
+  color: var(--zen-fg-soft);
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 3px;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: color 200ms var(--zen-ease), background 200ms var(--zen-ease);
   text-align: left;
 }
 
 .export-dropdown-item:hover {
-  background: var(--bg-hover);
+  background: var(--zen-paper-tint);
+  color: var(--zen-fg);
 }
 
 .export-dropdown-item svg {
-  color: var(--text-secondary);
+  color: var(--zen-fg-faint);
   flex-shrink: 0;
+}
+
+.export-dropdown-item:hover svg {
+  color: var(--zen-accent);
 }
 
 .export-dropdown-item span:nth-child(2) {
@@ -1936,23 +1943,26 @@
 }
 
 .export-kbd {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 2px 5px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-muted);
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  background: transparent;
+  border: 1px solid var(--zen-fg-ghost);
   border-radius: 4px;
-  color: var(--text-muted);
-  line-height: 1;
+  color: var(--zen-fg-faint);
+  line-height: 1.4;
 }
 
 .export-badge {
-  font-size: 10px;
-  background: var(--accent-blue);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 8px;
-  font-weight: 600;
+  font-family: var(--zen-mono);
+  font-size: 9.5px;
+  background: transparent;
+  color: var(--zen-accent);
+  border: 1px solid var(--zen-accent);
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
 }
 
 /* ============================================

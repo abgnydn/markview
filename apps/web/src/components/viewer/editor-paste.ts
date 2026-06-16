@@ -33,12 +33,21 @@ export function tsvToMarkdownTable(text: string): string | null {
   return rowsToMarkdownTable(rows);
 }
 
-/** An HTML clipboard fragment containing a <table> → markdown table, or null. */
+/** An HTML clipboard fragment that is *essentially just* a <table> → markdown
+ *  table, or null. Only fires when the table is the dominant content — pasting
+ *  a whole rendered document that merely contains a table must fall through to
+ *  a normal paste, not get collapsed to the single table. */
 export function htmlTableToMarkdown(html: string): string | null {
   if (typeof DOMParser === 'undefined' || !/<table/i.test(html)) return null;
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  const table = doc.querySelector('table');
-  if (!table) return null;
+  const tables = doc.querySelectorAll('table');
+  // More than one table, or a table embedded in lots of other prose, means the
+  // clipboard holds a real document — let the default paste handle it.
+  if (tables.length !== 1) return null;
+  const table = tables[0];
+  const tableText = (table.textContent || '').replace(/\s+/g, '').length;
+  const totalText = (doc.body.textContent || '').replace(/\s+/g, '').length;
+  if (totalText > 0 && tableText / totalText < 0.6) return null; // table isn't the point
   const rows = Array.from(table.querySelectorAll('tr')).map((tr) =>
     Array.from(tr.querySelectorAll('th,td')).map((cell) =>
       (cell.textContent || '').replace(/\s+/g, ' ').trim(),
