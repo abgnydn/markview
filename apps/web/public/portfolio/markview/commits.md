@@ -1,7 +1,12 @@
 # Commits — markview
 
+## 2026-06-16
+
+- `06:52` **fix(editor): paste, slide fill, html export, new-file menu, dropdown …** — +158 −97 — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
+
 ## 2026-06-15
 
+- `22:22` **chore(portfolio): daily sync 2026-06-15** — +240 −153 — [`cc2ac96`](https://github.com/abgnydn/markview/commit/cc2ac96dd8ae83cb89d00c46670a308484ec32e2)
 - `07:26` **feat(presentation): rebuild presentation mode into a full deck engine** — +1776 −84 — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
 
 ## 2026-06-14
@@ -68,5 +73,3 @@
 - `11:42` **feat(editor): slash-command menu for inserting blocks** — +76 −0 — [`c100dca`](https://github.com/abgnydn/markview/commit/c100dcaad5f8610b60745c864625f33ecd51c0a6)
 - `11:39` **feat(editor): smart-paste — spreadsheet→table, URL-over-selection→link** — +126 −17 — [`9caef34`](https://github.com/abgnydn/markview/commit/9caef349a9e9418cc753b48f745f05f409fdc4be)
 - `11:36` **feat(markdown): interactive task lists — click to toggle, persists to…** — +59 −1 — [`6826591`](https://github.com/abgnydn/markview/commit/6826591f6c80ecccbc17eff2ef3cd6b558353d0f)
-- `11:32` **feat(markdown): ==highlight==, ^sup^, ~sub~, and :emoji: shortcodes** — +146 −1 — [`286c99d`](https://github.com/abgnydn/markview/commit/286c99df68ca9f4302d4249476b52d3d1b972868)
-- `10:38` **feat(palette): jump to any file from ⌘P** — +10 −2 — [`b4831cb`](https://github.com/abgnydn/markview/commit/b4831cb5200090ccbdf3dd6b5b2ce04562958387)

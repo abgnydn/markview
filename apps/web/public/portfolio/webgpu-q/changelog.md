@@ -5,6 +5,97 @@ format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/) starting
 from `0.1.0`.
 
+## [0.11.2] — 2026-06-16
+
+The **EA-EOM-CCSD correctness** patch — the one real method gap the v0.11.1
+audit surfaced, now closed properly (no curve-fit).
+
+### Fixed
+
+- **EA-EOM-CCSD σ_2 is now a proper PySCF port, validated multi-electron.**
+  The prior implementation carried an empirical `+½·E_corr·R₂` σ_2 diagonal
+  patch (stage-32e) curve-fit to the H₂ brute-force, and used bare integrals
+  where PySCF `eom_gccsd.eaccsd_matvec` uses dressed `Wvvvo`/`Wvovv`. Because H₂
+  is 2-electron (T̂²≈0, EOM≡FCI trivially), it could never test σ_2 — the patch
+  looked exact there while being **~1 mHa wrong on multi-electron systems**.
+  - Added a **multi-electron oracle**, `ea-eom-ccsd-bruteforce-lih.test.ts`
+    (LiH STO-3G, NSO=6, 5-electron attachment sector, T̂²≠0): explicit
+    `H̄ = e^{−T̂}He^{T̂}` projection vs the production EA spectrum. It measured the
+    patched code at 9.9e-4 Ha error.
+  - Rewrote the EA σ as a faithful port of `eaccsd_matvec` onto the shared
+    `buildEOMIntermediates` (the same dressed intermediates EE/IP use) + the
+    proper `−½ Σ⟨kl‖cd⟩ r_l^{cd} t_{ki}^{ab}` term. The oracle now matches the
+    brute-force to **~5e-13 Ha** (machine precision). Davidson preconditioner
+    updated to the dressed diagonal.
+  - All three EOM variants (EE/IP/EA) are now patch-free PySCF ports with
+    asserting brute-force verifiers. (The EA/EE H₂ brute-force tests, which had
+    *no* `expect()` in v0.11.1, also assert now.)
+
+## [0.11.1] — 2026-06-16
+
+The **audit-honesty** patch. A full skeptical multi-agent audit of the repo
+(48 findings, 41 surviving adversarial re-check) surfaced a cluster of
+outward-facing overclaims and one real method gap; this release closes them.
+Nothing about the *internal* validation changed — the fixes are about making
+the public face match what the code actually does.
+
+### Fixed — overclaims
+
+- **Retired the bare "39×" GPU CCSD(T) headline.** The honest sustained number
+  is **~14× median** (5 warmup + 20 trials; 39× was a single best run, p10 28×,
+  std/median 42% — officially "noisy"). Corrected everywhere it led: the live
+  landing H1 + stat tile + all four metadata/OG/JSON-LD blocks, the README
+  prose/table/code-comment, and the `readme-hero/perf/matrix/numbers` +
+  `og-image` SVGs (PNG regenerated).
+- **Version strings were stale at the v0.11.0 tag** (`package.json` 0.10.0,
+  `.zenodo.json` 0.9.4, `CITATION.cff` title "v0.9.4") — the prior Zenodo
+  deposit was consequently minted as "0.9.4". All bumped to **0.11.1** so the
+  next deposit is labelled correctly.
+- Screening page (`/screening.html`): the azo-enrichment verdict no longer
+  asserts "not noise" — it now runs a **hypergeometric tail test** and reports
+  the p-value (curated mode correctly says "not significant, n too small"). The
+  RHF-instability call is hedged to "outlier to re-check with UHF" (no stability
+  analysis is actually run). The "winner" line now **excludes flagged-suspect**
+  molecules.
+
+### Fixed — validation integrity
+
+- **EA & EE EOM-CCSD brute-force "permanent verifiers" had no `expect()`** and
+  passed green regardless. They now assert: EE matches the brute-force spectrum
+  to <1e-7 (it is PySCF-ported and clean); EA asserts its derived R₁ sector to
+  machine precision + an H₂ eigenvalue regression guard.
+- **Documented an honest-negative the audit surfaced:** EA-EOM-CCSD σ_2 still
+  carries an empirical `+½·E_corr·R₂` patch (`ea-eom-ccsd.ts:198`) curve-fit to
+  the H₂ diagnostic — it was never PySCF-ported like EE/IP. EA-EOM eigenvalues
+  are validated for **2-electron systems only**; the proper fix (port σ_2 from
+  PySCF + a multi-electron reference) is now flagged in CLAUDE.md.
+
+## [0.11.0] — 2026-06-16
+
+The **live-screening** release. Everything the swarm/screening work proved was,
+until now, buried in test files and commit messages — invisible to anyone who
+visited the site. This release surfaces it as a page you can *click*:
+`/screening.html` runs a real Hartree–Fock screen in the browser tab and narrates
+it as it streams in.
+
+### Added
+
+- **`/screening.html` — a live molecular screen.** Press one button; an
+  isoelectronic aza-chain library (12 curated, or the full 42-isomer ≤3-N sweep)
+  is screened by HOMO–LUMO gap, each candidate run through a **real HF SCF** via
+  the PySCF-cross-checked `runChemEnergyTile` kernel (no server). The page draws
+  every molecule as a skeletal structure (N highlighted, azo N=N glowing),
+  self-sorts a ranked leaderboard as results land, plots an absorption-shift
+  spectrum, tracks azo-motif enrichment, and shows a live per-SCF compute log.
+- **Honest by construction.** Color is the *relative* red-shift within the
+  library (HF/STO-3G overestimates absolute λ — the trend is the validated part,
+  not the absolute number, and the page says so). Anomalously small gaps
+  (< 55% of the median) are flagged as **likely RHF instabilities, not leads** —
+  the same 2,3,5-/2,4,5-aza artifacts the e2e discovery sweep documents. Verified
+  live: curated winner 3,4-diaza azo at 7.61 eV and full-sweep azo enrichment
+  2.2× both match the committed e2e results exactly.
+- Linked from the landing page (now six live demos) and both nav strips.
+
 ## [0.10.0] — 2026-06-15
 
 The **distributed-chemistry** release. Since the streaming swarm (0.9.4), the

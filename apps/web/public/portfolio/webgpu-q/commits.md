@@ -1,7 +1,16 @@
 # Commits — webgpu-q
 
+## 2026-06-16
+
+- `11:37` **chore(honesty): close Tier-2 audit items — narrow paper novelty, drop…** — +32 −206 — [`2556641`](https://github.com/abgnydn/webgpu-q/commit/255664176b88538c53c0cc545e57c961c89812c6)
+- `11:27` **fix(ea-eom): replace empirical σ_2 patch with PySCF port — validated …** — +429 −120 — [`f90c519`](https://github.com/abgnydn/webgpu-q/commit/f90c519ccbb3fefe3268bc18d5d69d10af31ce85)
+- `11:03` **fix(honesty): close audit overclaims — retire bare 39×, fix stale ver…** — +173 −53 — [`a26a9c6`](https://github.com/abgnydn/webgpu-q/commit/a26a9c62103ad1eb670d3c47c9f2a374b43ae366)
+- `09:46` **feat(screening): live in-browser molecular screen page — v0.11.0** — +639 −7 — [`c99e6eb`](https://github.com/abgnydn/webgpu-q/commit/c99e6eb1bda0543f6ce61a3663149cba6432eb21)
+
 ## 2026-06-15
 
+- `12:52` **feat(screening): scaled discovery — exhaustive aza-chain sweep across…** — +140 −0 — [`845e0ca`](https://github.com/abgnydn/webgpu-q/commit/845e0cafd6c2659123f039db589ada951e1f1b00)
+- `12:18` **feat(screening): validation + discovery campaigns — first real screen…** — +181 −0 — [`1e9fa40`](https://github.com/abgnydn/webgpu-q/commit/1e9fa4069c47809fb31e3ab79c13714f644be0ec)
 - `09:43` **docs(svg): refresh README diagrams for v0.10.0** — +13 −13 — [`8dfd987`](https://github.com/abgnydn/webgpu-q/commit/8dfd987ed5b7fa4ccfda2013b37397b0f9a22ba8)
 - `08:58` **chore(release): v0.10.0 — distributed chemistry across the crowd + si…** — +92 −12 — [`02098d4`](https://github.com/abgnydn/webgpu-q/commit/02098d41e40fef86396f54dc89aed8056c1bb75b)
 - `08:25` **fix(swarm): greedy-pull scheduler — balanced auto-distribution** — +164 −143 — [`ffe4df1`](https://github.com/abgnydn/webgpu-q/commit/ffe4df1b490ac8bbeaf8a61841fc78e5b0bf0f0f)
@@ -55,9 +64,3 @@
 - `12:05` **test(gpu): d-regime scaling — GPU integral win GROWS with size (1.35×…** — +41 −0 — [`1ecdfcc`](https://github.com/abgnydn/webgpu-q/commit/1ecdfcc1ba787be112c662d6b62b529ccb88095e)
 - `12:00` **test(gpu): characterize the GPU integral win — it's angular-momentum-…** — +67 −0 — [`3207dbb`](https://github.com/abgnydn/webgpu-q/commit/3207dbb87898133a5b1414a08fa8b37728ab42b7)
 - `11:55` **perf(gpu): box-only R zeroing — GPU integral build now BEATS WASM (1.…** — +12 −3 — [`281d1c8`](https://github.com/abgnydn/webgpu-q/commit/281d1c8fc7a66e2d190e3a33482ed4af040f7a9a)
-- `11:37` **perf(gpu): 2-slab R-tensor in the 3-index kernel — 1.5× faster, corre…** — +19 −10 — [`2a4aba1`](https://github.com/abgnydn/webgpu-q/commit/2a4aba14831629ba6f86671548f6a27f1d9f2c08)
-- `11:28` **feat(gpu): WebGPU integral build #4 — measure the win (correct, but n…** — +151 −0 — [`f771e22`](https://github.com/abgnydn/webgpu-q/commit/f771e2213c7eaf1080a9bc84f7259673519f4bb8)
-- `11:19` **feat(gpu): WebGPU integral build #3b/#3c — full s/p/d 3-index, valida…** — +322 −41 — [`7d78b18`](https://github.com/abgnydn/webgpu-q/commit/7d78b1856f969ccf9c65825f8bdfe21f8dcb47f4)
-- `11:04` **feat(gpu): WebGPU integral build #3 — s-only 3-index tensor, validate…** — +215 −0 — [`bb31240`](https://github.com/abgnydn/webgpu-q/commit/bb31240156d5951348cc4316e7d30bf1cf3fb76c)
-- `10:32` **feat(gpu): WebGPU integral build #2 — s/p/d 2-index metric in f32, va…** — +212 −110 — [`f61032b`](https://github.com/abgnydn/webgpu-q/commit/f61032bc7acfcf92489836590d421602bb388b5b)
-- `10:15` **feat(gpu): WebGPU integral build #1 — 2-index metric in f32, validate…** — +231 −0 — [`45f38f6`](https://github.com/abgnydn/webgpu-q/commit/45f38f61821ef4c398090253ce297fa46841fe06)

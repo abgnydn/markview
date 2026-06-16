@@ -12,6 +12,7 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **fix**: fix(editor): paste, slide fill, html export, new-file menu, dropdown … — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
 - **feat**: feat(presentation): rebuild presentation mode into a full deck engine — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
 - **fix**: fix(deps): bump vitest 2→4 to clear the critical UI-server advisory — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
 - **feat**: feat(projects): 3d constellation route + per-slug & OG prerender — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
@@ -23,4 +24,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix(atmosphere): kill the embossed/ghosted ink — solid readable type … — [`e03e998`](https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9)
 - **feat**: feat(atmosphere): aged parchment — darker, stained, uneven + readable… — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)
 - **feat**: feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)
-- **feat**: feat(atmosphere): push the antique paper much further — 7-layer surfa… — [`030d703`](https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677)
