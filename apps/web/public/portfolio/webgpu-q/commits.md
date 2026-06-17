@@ -1,5 +1,20 @@
 # Commits — webgpu-q
 
+## 2026-06-17
+
+- `11:08` **chore(release): v0.12.0 — site redesign + corrected manuscripts → Zenodo** — +41 −8 — [`aad6fc7`](https://github.com/abgnydn/webgpu-q/commit/aad6fc7525488242b0665a7e0c5df019a1810b02)
+- `11:03` **chore(docs): sync the fusion headline to ground truth — 4.18× → 4.22×…** — +11 −11 — [`e2eb7a9`](https://github.com/abgnydn/webgpu-q/commit/e2eb7a9e556a640f1a64563a7d05c5fd1442684d)
+- `10:56` **fix(paper): restore the WebGPU-dispatch reference, now verified (Macz…** — +32 −4 — [`4ee9c6c`](https://github.com/abgnydn/webgpu-q/commit/4ee9c6cc582943a6e95b2b04e4c9835138484780)
+- `10:48` **fix(paper): correct the fusion manuscript — drop unverifiable ref, fi…** — +37 −218 — [`cd108da`](https://github.com/abgnydn/webgpu-q/commit/cd108dad527ea857326e30b5f97623a33b450685)
+- `10:41` **fix(paper): correct the chemistry manuscript — citations, numbers, on…** — +83 −451 — [`126e845`](https://github.com/abgnydn/webgpu-q/commit/126e8457af8290a2a54e7304f0b2897717cd38ae)
+- `10:24` **perf(landing): throttle, pause, and mobile-static the wavefunction field** — +35 −13 — [`dcc324e`](https://github.com/abgnydn/webgpu-q/commit/dcc324e4c36b8c8240167ab9442d51d49d3ed202)
+- `09:51` **docs(readme): rewrite for the new brand — shorter, current, consistent** — +128 −388 — [`3f5c76b`](https://github.com/abgnydn/webgpu-q/commit/3f5c76b592e9553190557a21e4414e15eca0dbed)
+- `09:19` **docs(readme): embed the live demo gif at the top** — +6 −0 — [`fbab7c8`](https://github.com/abgnydn/webgpu-q/commit/fbab7c8c9cb08d447260ede0c3e6d0bb5118e546)
+- `09:05` **chore(share): on-brand OG card + share kit** — +87 −0 — [`89b8fb2`](https://github.com/abgnydn/webgpu-q/commit/89b8fb22092b5f5c45a12a78d450d880325f7f7c)
+- `08:35` **feat(pages): extend the landing's design language to every sub-page** — +352 −89 — [`285712f`](https://github.com/abgnydn/webgpu-q/commit/285712f83fb9f829bec271e0f98ac45af0fee88b)
+- `08:12` **feat(landing): reimagine the landing as a living wavefunction** — +709 −300 — [`f31c8e8`](https://github.com/abgnydn/webgpu-q/commit/f31c8e8e569c51bb7556a3210d1cd23354c9b4bc)
+- `05:23` **chore(readme): scrub stale/overclaim numbers from README text + capab…** — +35 −35 — [`ff747cf`](https://github.com/abgnydn/webgpu-q/commit/ff747cf8deafb8dcba1155789afec3d4f1591861)
+
 ## 2026-06-16
 
 - `11:37` **chore(honesty): close Tier-2 audit items — narrow paper novelty, drop…** — +32 −206 — [`2556641`](https://github.com/abgnydn/webgpu-q/commit/255664176b88538c53c0cc545e57c961c89812c6)
@@ -52,15 +67,3 @@
 - `13:39` **docs(claude): record the hybrid chemistry-grade GPU DF + runRHFAuto** — +16 −5 — [`e87a3e8`](https://github.com/abgnydn/webgpu-q/commit/e87a3e85e7d94c8090715d42f211b60821377643)
 - `13:38` **test(chem): benchmark hybrid V-build — 1.31x over all-WASM at extraL=…** — +32 −0 — [`44b0def`](https://github.com/abgnydn/webgpu-q/commit/44b0def257bf4510ae5107c4152564f118e3170b)
 - `13:37` **feat(chem): hybrid GPU/WASM 3-index DF build — GPU-accelerated AND ch…** — +154 −57 — [`b0c0914`](https://github.com/abgnydn/webgpu-q/commit/b0c091445be17a7f507b812ffcb675d1548094b6)
-- `13:28` **feat(chem): runRHFAuto — size-gated exact/DF RHF with honest provenance** — +262 −0 — [`46ce49f`](https://github.com/abgnydn/webgpu-q/commit/46ce49f3632cc746587016badeebc8ad7bbe3d92)
-- `13:09` **docs(claude): bring DF/GPU current state up to date — aux-basis DF + …** — +13 −3 — [`a072737`](https://github.com/abgnydn/webgpu-q/commit/a07273763f75d76e6ce0fae553293f9f89e80930)
-- `13:08` **docs(chem): record the f32 GPU-JK floor is element precision, not sum…** — +6 −0 — [`cb3b604`](https://github.com/abgnydn/webgpu-q/commit/cb3b604632ebb62959b99f95c1fc9c75e064a5ba)
-- `13:05` **feat(chem): benchmark the fully-GPU DF-HF loop — 5-6x faster than WAS…** — +79 −0 — [`b8eb862`](https://github.com/abgnydn/webgpu-q/commit/b8eb862a3873ceb529846adc9dde4618b795aa80)
-- `13:02` **feat(chem): fully-GPU DF-HF SCF — GPU integrals + GPU JK, no 4-index ERI** — +111 −30 — [`c3c4a49`](https://github.com/abgnydn/webgpu-q/commit/c3c4a4975ac424c7c77a3f635b78ed1a0a945e01)
-- `12:53` **feat(gpu): GPU DF-JK — per-iteration Fock contraction from the B-tens…** — +189 −0 — [`53e3c4b`](https://github.com/abgnydn/webgpu-q/commit/53e3c4b6d11a63615cf245635a244bb45a45f3f1)
-- `12:48` **test(gpu): end-to-end DF build (buildDFAuto) wins ~1.25-1.3x in the d…** — +35 −0 — [`5dc76e0`](https://github.com/abgnydn/webgpu-q/commit/5dc76e0e885a0dbba31cf754d01d0840cca75a3d)
-- `12:45` **perf(gpu): buildBFromV projects in WASM SIMD — GPU DF build now wins …** — +32 −15 — [`da81ea6`](https://github.com/abgnydn/webgpu-q/commit/da81ea6a15907483140c38d1748776cc89cb0d17)
-- `12:38` **feat(gpu): buildDFAuto — auto-select the GPU integral path where it wins** — +105 −0 — [`f16c6cd`](https://github.com/abgnydn/webgpu-q/commit/f16c6cd76fce17da06b95648ee98d5234ef4805d)
-- `12:05` **test(gpu): d-regime scaling — GPU integral win GROWS with size (1.35×…** — +41 −0 — [`1ecdfcc`](https://github.com/abgnydn/webgpu-q/commit/1ecdfcc1ba787be112c662d6b62b529ccb88095e)
-- `12:00` **test(gpu): characterize the GPU integral win — it's angular-momentum-…** — +67 −0 — [`3207dbb`](https://github.com/abgnydn/webgpu-q/commit/3207dbb87898133a5b1414a08fa8b37728ab42b7)
-- `11:55` **perf(gpu): box-only R zeroing — GPU integral build now BEATS WASM (1.…** — +12 −3 — [`281d1c8`](https://github.com/abgnydn/webgpu-q/commit/281d1c8fc7a66e2d190e3a33482ed4af040f7a9a)

@@ -2,6 +2,7 @@
 
 ## 2026-06-16
 
+- `22:16` **chore(portfolio): daily sync 2026-06-16** — +243 −147 — [`017aa94`](https://github.com/abgnydn/markview/commit/017aa94ec3f4796f23c7dc24d28db0c3685de824)
 - `06:52` **fix(editor): paste, slide fill, html export, new-file menu, dropdown …** — +158 −97 — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
 
 ## 2026-06-15
@@ -72,4 +73,3 @@
 - `11:52` **feat(editor): paste/drop images — local-first asset storage** — +150 −1 — [`2e26266`](https://github.com/abgnydn/markview/commit/2e26266c7d4f0ab8649a0ea072e2a5a807b10eb8)
 - `11:42` **feat(editor): slash-command menu for inserting blocks** — +76 −0 — [`c100dca`](https://github.com/abgnydn/markview/commit/c100dcaad5f8610b60745c864625f33ecd51c0a6)
 - `11:39` **feat(editor): smart-paste — spreadsheet→table, URL-over-selection→link** — +126 −17 — [`9caef34`](https://github.com/abgnydn/markview/commit/9caef349a9e9418cc753b48f745f05f409fdc4be)
-- `11:36` **feat(markdown): interactive task lists — click to toggle, persists to…** — +59 −1 — [`6826591`](https://github.com/abgnydn/markview/commit/6826591f6c80ecccbc17eff2ef3cd6b558353d0f)

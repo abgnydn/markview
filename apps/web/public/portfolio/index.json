@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-16T22:16:00.929Z",
+  "generated_at": "2026-06-17T22:04:10.133Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1827,
+  "activity_90d_total": 1791,
   "activity_90d": {
-    "2026-03-19": 49,
     "2026-03-20": 5,
     "2026-03-21": 3,
     "2026-03-22": 8,
@@ -72,7 +71,8 @@
     "2026-06-13": 1,
     "2026-06-14": 1,
     "2026-06-15": 11,
-    "2026-06-16": 5
+    "2026-06-16": 6,
+    "2026-06-17": 12
   },
   "categories": {
     "llm-inference": {
@@ -210,7 +210,7 @@
       "pushed_at": "2026-06-02T07:29:17Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 25,
+      "commits_30d": 21,
       "commits_synced": 50,
       "last_commit": {
         "sha": "3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
@@ -264,20 +264,20 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-06-16T11:37:36Z",
+      "pushed_at": "2026-06-17T11:08:53Z",
       "default_branch": "main",
-      "latest_tag": "v0.11.2",
+      "latest_tag": "v0.12.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "255664176b88538c53c0cc545e57c961c89812c6",
-        "short_sha": "2556641",
-        "message": "chore(honesty): close Tier-2 audit items — narrow paper novelty, drop…",
+        "sha": "aad6fc7525488242b0665a7e0c5df019a1810b02",
+        "short_sha": "aad6fc7",
+        "message": "chore(release): v0.12.0 — site redesign + corrected manuscripts → Zenodo",
         "type": "chore",
-        "date": "2026-06-16T11:37:34Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/255664176b88538c53c0cc545e57c961c89812c6",
-        "additions": 32,
-        "deletions": 206
+        "date": "2026-06-17T11:08:49Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/aad6fc7525488242b0665a7e0c5df019a1810b02",
+        "additions": 41,
+        "deletions": 8
       }
     },
     {
@@ -319,20 +319,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-16T06:52:28Z",
+      "pushed_at": "2026-06-16T22:16:01Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "908c115dba77536a33a091e97d9d9c3b00b018b7",
-        "short_sha": "908c115",
-        "message": "fix(editor): paste, slide fill, html export, new-file menu, dropdown …",
-        "type": "fix",
-        "date": "2026-06-16T06:52:23Z",
-        "url": "https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7",
-        "additions": 158,
-        "deletions": 97
+        "sha": "017aa94ec3f4796f23c7dc24d28db0c3685de824",
+        "short_sha": "017aa94",
+        "message": "chore(portfolio): daily sync 2026-06-16",
+        "type": "chore",
+        "date": "2026-06-16T22:16:01Z",
+        "url": "https://github.com/abgnydn/markview/commit/017aa94ec3f4796f23c7dc24d28db0c3685de824",
+        "additions": 243,
+        "deletions": 147
       }
     },
     {
@@ -780,7 +780,7 @@
       "pushed_at": "2026-05-26T06:12:05Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 10,
+      "commits_30d": 6,
       "commits_synced": 38,
       "last_commit": {
         "sha": "d7bf288f9d1c356b9045db3e7076d45267d18143",
@@ -834,7 +834,7 @@
       "pushed_at": "2026-05-18T20:04:18Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 3,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "94fea2085827c68e8d89df474967fbdaf6bbd157",
@@ -879,7 +879,7 @@
       "pushed_at": "2026-06-10T05:34:14Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 29,
+      "commits_30d": 25,
       "commits_synced": 29,
       "last_commit": {
         "sha": "a7c07271b994221884dc22538353e642474f8779",
@@ -1225,7 +1225,7 @@
       "pushed_at": "2026-05-19T13:21:05Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 6,
+      "commits_30d": 2,
       "commits_synced": 6,
       "last_commit": {
         "sha": "c45411a976998a424ab625b06d90d4b0da27aa30",
@@ -1268,7 +1268,7 @@
       "pushed_at": "2026-05-19T13:21:00Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 6,
+      "commits_30d": 2,
       "commits_synced": 6,
       "last_commit": {
         "sha": "6e1b48127efbcde722aac5824052fe2b1b35ae5c",
@@ -1310,7 +1310,7 @@
       "pushed_at": "2026-05-19T13:20:57Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 5,
+      "commits_30d": 1,
       "commits_synced": 5,
       "last_commit": {
         "sha": "5d43885d3e0869c785e12c78cb59c8aa52e6fa93",
@@ -1354,7 +1354,7 @@
       "pushed_at": "2026-05-19T13:08:35Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 4,
+      "commits_30d": 1,
       "commits_synced": 4,
       "last_commit": {
         "sha": "bfb52dd48adc855c88bdca7cd1577de8e029ec29",
@@ -1682,7 +1682,7 @@
       "archived": false,
       "language": "JavaScript",
       "language_color": "#f1e05a",
-      "stars": 3,
+      "stars": 4,
       "topics": [],
       "pushed_at": "2026-05-04T10:47:04Z",
       "default_branch": "main",
@@ -2054,6 +2054,175 @@
     }
   ],
   "commits": [
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "aad6fc7525488242b0665a7e0c5df019a1810b02",
+      "short_sha": "aad6fc7",
+      "message": "chore(release): v0.12.0 — site redesign + corrected manuscripts → Zenodo",
+      "type": "chore",
+      "date": "2026-06-17T11:08:49Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/aad6fc7525488242b0665a7e0c5df019a1810b02",
+      "additions": 41,
+      "deletions": 8
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "e2eb7a9e556a640f1a64563a7d05c5fd1442684d",
+      "short_sha": "e2eb7a9",
+      "message": "chore(docs): sync the fusion headline to ground truth — 4.18× → 4.22×…",
+      "type": "chore",
+      "date": "2026-06-17T11:03:06Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/e2eb7a9e556a640f1a64563a7d05c5fd1442684d",
+      "additions": 11,
+      "deletions": 11
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "4ee9c6cc582943a6e95b2b04e4c9835138484780",
+      "short_sha": "4ee9c6c",
+      "message": "fix(paper): restore the WebGPU-dispatch reference, now verified (Macz…",
+      "type": "fix",
+      "date": "2026-06-17T10:56:00Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/4ee9c6cc582943a6e95b2b04e4c9835138484780",
+      "additions": 32,
+      "deletions": 4
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "cd108dad527ea857326e30b5f97623a33b450685",
+      "short_sha": "cd108da",
+      "message": "fix(paper): correct the fusion manuscript — drop unverifiable ref, fi…",
+      "type": "fix",
+      "date": "2026-06-17T10:48:26Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/cd108dad527ea857326e30b5f97623a33b450685",
+      "additions": 37,
+      "deletions": 218
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "126e8457af8290a2a54e7304f0b2897717cd38ae",
+      "short_sha": "126e845",
+      "message": "fix(paper): correct the chemistry manuscript — citations, numbers, on…",
+      "type": "fix",
+      "date": "2026-06-17T10:41:51Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/126e8457af8290a2a54e7304f0b2897717cd38ae",
+      "additions": 83,
+      "deletions": 451
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "dcc324e4c36b8c8240167ab9442d51d49d3ed202",
+      "short_sha": "dcc324e",
+      "message": "perf(landing): throttle, pause, and mobile-static the wavefunction field",
+      "type": "perf",
+      "date": "2026-06-17T10:24:04Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/dcc324e4c36b8c8240167ab9442d51d49d3ed202",
+      "additions": 35,
+      "deletions": 13
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "3f5c76b592e9553190557a21e4414e15eca0dbed",
+      "short_sha": "3f5c76b",
+      "message": "docs(readme): rewrite for the new brand — shorter, current, consistent",
+      "type": "docs",
+      "date": "2026-06-17T09:51:49Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/3f5c76b592e9553190557a21e4414e15eca0dbed",
+      "additions": 128,
+      "deletions": 388
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "fbab7c8c9cb08d447260ede0c3e6d0bb5118e546",
+      "short_sha": "fbab7c8",
+      "message": "docs(readme): embed the live demo gif at the top",
+      "type": "docs",
+      "date": "2026-06-17T09:19:49Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/fbab7c8c9cb08d447260ede0c3e6d0bb5118e546",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "89b8fb22092b5f5c45a12a78d450d880325f7f7c",
+      "short_sha": "89b8fb2",
+      "message": "chore(share): on-brand OG card + share kit",
+      "type": "chore",
+      "date": "2026-06-17T09:05:51Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/89b8fb22092b5f5c45a12a78d450d880325f7f7c",
+      "additions": 87,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "285712f83fb9f829bec271e0f98ac45af0fee88b",
+      "short_sha": "285712f",
+      "message": "feat(pages): extend the landing's design language to every sub-page",
+      "type": "feat",
+      "date": "2026-06-17T08:35:34Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/285712f83fb9f829bec271e0f98ac45af0fee88b",
+      "additions": 352,
+      "deletions": 89
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "f31c8e8e569c51bb7556a3210d1cd23354c9b4bc",
+      "short_sha": "f31c8e8",
+      "message": "feat(landing): reimagine the landing as a living wavefunction",
+      "type": "feat",
+      "date": "2026-06-17T08:12:34Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/f31c8e8e569c51bb7556a3210d1cd23354c9b4bc",
+      "additions": 709,
+      "deletions": 300
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "ff747cf8deafb8dcba1155789afec3d4f1591861",
+      "short_sha": "ff747cf",
+      "message": "chore(readme): scrub stale/overclaim numbers from README text + capab…",
+      "type": "chore",
+      "date": "2026-06-17T05:23:47Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/ff747cf8deafb8dcba1155789afec3d4f1591861",
+      "additions": 35,
+      "deletions": 35
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "017aa94ec3f4796f23c7dc24d28db0c3685de824",
+      "short_sha": "017aa94",
+      "message": "chore(portfolio): daily sync 2026-06-16",
+      "type": "chore",
+      "date": "2026-06-16T22:16:01Z",
+      "url": "https://github.com/abgnydn/markview/commit/017aa94ec3f4796f23c7dc24d28db0c3685de824",
+      "additions": 243,
+      "deletions": 147
+    },
     {
       "slug": "webgpu-q",
       "name": "webgpu-q",
@@ -3160,19 +3329,6 @@
       "deletions": 17
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "6826591f6c80ecccbc17eff2ef3cd6b558353d0f",
-      "short_sha": "6826591",
-      "message": "feat(markdown): interactive task lists — click to toggle, persists to…",
-      "type": "feat",
-      "date": "2026-06-09T11:36:31Z",
-      "url": "https://github.com/abgnydn/markview/commit/6826591f6c80ecccbc17eff2ef3cd6b558353d0f",
-      "additions": 59,
-      "deletions": 1
-    },
-    {
       "slug": "veil",
       "name": "veil",
       "language": "Rust",
@@ -4044,58 +4200,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "46ce49f3632cc746587016badeebc8ad7bbe3d92",
-      "short_sha": "46ce49f",
-      "message": "feat(chem): runRHFAuto — size-gated exact/DF RHF with honest provenance",
-      "type": "feat",
-      "date": "2026-06-08T13:28:37Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/46ce49f3632cc746587016badeebc8ad7bbe3d92",
-      "additions": 262,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "a07273763f75d76e6ce0fae553293f9f89e80930",
-      "short_sha": "a072737",
-      "message": "docs(claude): bring DF/GPU current state up to date — aux-basis DF + …",
-      "type": "docs",
-      "date": "2026-06-08T13:09:46Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/a07273763f75d76e6ce0fae553293f9f89e80930",
-      "additions": 13,
-      "deletions": 3
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "cb3b604632ebb62959b99f95c1fc9c75e064a5ba",
-      "short_sha": "cb3b604",
-      "message": "docs(chem): record the f32 GPU-JK floor is element precision, not sum…",
-      "type": "docs",
-      "date": "2026-06-08T13:08:30Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/cb3b604632ebb62959b99f95c1fc9c75e064a5ba",
-      "additions": 6,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "b8eb862a3873ceb529846adc9dde4618b795aa80",
-      "short_sha": "b8eb862",
-      "message": "feat(chem): benchmark the fully-GPU DF-HF loop — 5-6x faster than WAS…",
-      "type": "feat",
-      "date": "2026-06-08T13:05:39Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/b8eb862a3873ceb529846adc9dde4618b795aa80",
-      "additions": 79,
-      "deletions": 0
-    },
-    {
       "slug": "veil",
       "name": "veil",
       "language": "Rust",
@@ -4107,19 +4211,6 @@
       "url": "https://github.com/abgnydn/veil/commit/49e4b340ba1234a9a431510e9abddd44b9fc3340",
       "additions": 1,
       "deletions": 1
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "c3c4a4975ac424c7c77a3f635b78ed1a0a945e01",
-      "short_sha": "c3c4a49",
-      "message": "feat(chem): fully-GPU DF-HF SCF — GPU integrals + GPU JK, no 4-index ERI",
-      "type": "feat",
-      "date": "2026-06-08T13:02:40Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/c3c4a4975ac424c7c77a3f635b78ed1a0a945e01",
-      "additions": 111,
-      "deletions": 30
     },
     {
       "slug": "veil",
@@ -4135,19 +4226,6 @@
       "deletions": 6
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "53e3c4b6d11a63615cf245635a244bb45a45f3f1",
-      "short_sha": "53e3c4b",
-      "message": "feat(gpu): GPU DF-JK — per-iteration Fock contraction from the B-tens…",
-      "type": "feat",
-      "date": "2026-06-08T12:53:58Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/53e3c4b6d11a63615cf245635a244bb45a45f3f1",
-      "additions": 189,
-      "deletions": 0
-    },
-    {
       "slug": "veil",
       "name": "veil",
       "language": "Rust",
@@ -4159,32 +4237,6 @@
       "url": "https://github.com/abgnydn/veil/commit/9c4f80ab3d32933518c1002f156ad2ff79a4cafa",
       "additions": 190,
       "deletions": 17
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "5dc76e0e885a0dbba31cf754d01d0840cca75a3d",
-      "short_sha": "5dc76e0",
-      "message": "test(gpu): end-to-end DF build (buildDFAuto) wins ~1.25-1.3x in the d…",
-      "type": "test",
-      "date": "2026-06-08T12:48:04Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/5dc76e0e885a0dbba31cf754d01d0840cca75a3d",
-      "additions": 35,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "da81ea6a15907483140c38d1748776cc89cb0d17",
-      "short_sha": "da81ea6",
-      "message": "perf(gpu): buildBFromV projects in WASM SIMD — GPU DF build now wins …",
-      "type": "perf",
-      "date": "2026-06-08T12:45:29Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/da81ea6a15907483140c38d1748776cc89cb0d17",
-      "additions": 32,
-      "deletions": 15
     },
     {
       "slug": "veil",
@@ -4200,32 +4252,6 @@
       "deletions": 27
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "f16c6cd76fce17da06b95648ee98d5234ef4805d",
-      "short_sha": "f16c6cd",
-      "message": "feat(gpu): buildDFAuto — auto-select the GPU integral path where it wins",
-      "type": "feat",
-      "date": "2026-06-08T12:38:53Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/f16c6cd76fce17da06b95648ee98d5234ef4805d",
-      "additions": 105,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "1ecdfcc1ba787be112c662d6b62b529ccb88095e",
-      "short_sha": "1ecdfcc",
-      "message": "test(gpu): d-regime scaling — GPU integral win GROWS with size (1.35×…",
-      "type": "test",
-      "date": "2026-06-08T12:05:25Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/1ecdfcc1ba787be112c662d6b62b529ccb88095e",
-      "additions": 41,
-      "deletions": 0
-    },
-    {
       "slug": "veil",
       "name": "veil",
       "language": "Rust",
@@ -4239,19 +4265,6 @@
       "deletions": 2
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "3207dbb87898133a5b1414a08fa8b37728ab42b7",
-      "short_sha": "3207dbb",
-      "message": "test(gpu): characterize the GPU integral win — it's angular-momentum-…",
-      "type": "test",
-      "date": "2026-06-08T12:00:40Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/3207dbb87898133a5b1414a08fa8b37728ab42b7",
-      "additions": 67,
-      "deletions": 0
-    },
-    {
       "slug": "veil",
       "name": "veil",
       "language": "Rust",
@@ -4263,19 +4276,6 @@
       "url": "https://github.com/abgnydn/veil/commit/b22d912160bfa569523ecf7f1b7d8276bbffc8cb",
       "additions": 11,
       "deletions": 4
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "281d1c8fc7a66e2d190e3a33482ed4af040f7a9a",
-      "short_sha": "281d1c8",
-      "message": "perf(gpu): box-only R zeroing — GPU integral build now BEATS WASM (1.…",
-      "type": "perf",
-      "date": "2026-06-08T11:55:16Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/281d1c8fc7a66e2d190e3a33482ed4af040f7a9a",
-      "additions": 12,
-      "deletions": 3
     },
     {
       "slug": "veil",
