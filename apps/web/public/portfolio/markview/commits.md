@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-17
+
+- `22:04` **chore(portfolio): daily sync 2026-06-17** — +379 −597 — [`554447c`](https://github.com/abgnydn/markview/commit/554447c022968eb2d02ee78483a03c7f550de8d9)
+
 ## 2026-06-16
 
 - `22:16` **chore(portfolio): daily sync 2026-06-16** — +243 −147 — [`017aa94`](https://github.com/abgnydn/markview/commit/017aa94ec3f4796f23c7dc24d28db0c3685de824)
@@ -72,4 +76,3 @@
 - `11:56` **feat(pkm): transclusion — ![[note]] / ![[note#heading]] embeds inline** — +164 −3 — [`6c6e7ec`](https://github.com/abgnydn/markview/commit/6c6e7ecca28df928d4ce641757c4e888344a24da)
 - `11:52` **feat(editor): paste/drop images — local-first asset storage** — +150 −1 — [`2e26266`](https://github.com/abgnydn/markview/commit/2e26266c7d4f0ab8649a0ea072e2a5a807b10eb8)
 - `11:42` **feat(editor): slash-command menu for inserting blocks** — +76 −0 — [`c100dca`](https://github.com/abgnydn/markview/commit/c100dcaad5f8610b60745c864625f33ecd51c0a6)
-- `11:39` **feat(editor): smart-paste — spreadsheet→table, URL-over-selection→link** — +126 −17 — [`9caef34`](https://github.com/abgnydn/markview/commit/9caef349a9e9418cc753b48f745f05f409fdc4be)
