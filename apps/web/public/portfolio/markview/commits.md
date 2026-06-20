@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-19
+
+- `21:13` **chore(portfolio): daily sync 2026-06-19** — +32 −29 — [`c792008`](https://github.com/abgnydn/markview/commit/c792008412768c9210fd2d6408df3531ee539bc5)
+
 ## 2026-06-18
 
 - `22:14` **chore(portfolio): daily sync 2026-06-18** — +34 −32 — [`6cbb305`](https://github.com/abgnydn/markview/commit/6cbb305e2e3010077b009d8a0240a766353cf8f0)
@@ -78,4 +82,3 @@
 - `12:12` **feat(editor): list continuation + toggle formatting + fuller shortcuts** — +77 −28 — [`fe5fc84`](https://github.com/abgnydn/markview/commit/fe5fc8412e4ec3ce5188714065238ccd02e111ea)
 - `11:58` **feat(pkm): backlinks panel — "what links here" for the active note** — +169 −0 — [`056d8cf`](https://github.com/abgnydn/markview/commit/056d8cf72a1612b49186d793963fafb2e37ef45b)
 - `11:56` **feat(pkm): transclusion — ![[note]] / ![[note#heading]] embeds inline** — +164 −3 — [`6c6e7ec`](https://github.com/abgnydn/markview/commit/6c6e7ecca28df928d4ce641757c4e888344a24da)
-- `11:52` **feat(editor): paste/drop images — local-first asset storage** — +150 −1 — [`2e26266`](https://github.com/abgnydn/markview/commit/2e26266c7d4f0ab8649a0ea072e2a5a807b10eb8)
