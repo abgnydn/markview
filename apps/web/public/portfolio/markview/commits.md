@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-21
+
+- `21:19` **chore(portfolio): daily sync 2026-06-21** — +32 −28 — [`54f9c48`](https://github.com/abgnydn/markview/commit/54f9c48962bf0b29fca100c222df3e4413904305)
+
 ## 2026-06-20
 
 - `21:21` **chore(portfolio): daily sync 2026-06-20** — +34 −31 — [`574365b`](https://github.com/abgnydn/markview/commit/574365b2e60a1da15d6a205296431750861d2f83)
@@ -84,4 +88,3 @@
 - `12:18` **feat(editor): selection format bubble** — +111 −0 — [`70123a7`](https://github.com/abgnydn/markview/commit/70123a7a7dae1b3b180fc1dbc334d9d32098e3ea)
 - `12:14` **feat(editor): smart typography — curly quotes, em dash, ellipsis, arrow** — +109 −0 — [`fc2defc`](https://github.com/abgnydn/markview/commit/fc2defcacd80ecb31a2326d104ff7873ab3d6f12)
 - `12:12` **feat(editor): list continuation + toggle formatting + fuller shortcuts** — +77 −28 — [`fe5fc84`](https://github.com/abgnydn/markview/commit/fe5fc8412e4ec3ce5188714065238ccd02e111ea)
-- `11:58` **feat(pkm): backlinks panel — "what links here" for the active note** — +169 −0 — [`056d8cf`](https://github.com/abgnydn/markview/commit/056d8cf72a1612b49186d793963fafb2e37ef45b)
