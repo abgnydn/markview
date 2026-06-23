@@ -840,14 +840,17 @@ nav.toc a.active {
   word-wrap: break-word;
   position: relative;
   z-index: 2;
-  /* Soft halo so glyph edges stay legible over any painting, independent of
-     the reading band above (belt-and-braces). A dark glow under cream ink. */
-  text-shadow: 0 1px 2px rgba(5, 4, 6, 0.6), 0 0 16px rgba(5, 4, 6, 0.4);
+  /* A subtle 1px edge shadow for legibility. The old version also had a
+     `0 0 16px` blur-glow on EVERY glyph — blur cost scales with radius², so
+     that one decoration made all body text expensive to (re)paint, taxing
+     every scroll / hover / panel-reveal. The reading column is opaque paper,
+     so the glow was redundant belt-and-braces; dropped it. */
+  text-shadow: 0 1px 2px rgba(5, 4, 6, 0.55);
 }
-/* Light theme: a pale halo under dark ink. */
+/* Light theme: a pale 1px edge under dark ink (glow likewise dropped). */
 .light .markdown-content,
 [data-theme='light'] .markdown-content {
-  text-shadow: 0 1px 2px rgba(251, 248, 243, 0.85), 0 0 16px rgba(251, 248, 243, 0.6);
+  text-shadow: 0 1px 2px rgba(251, 248, 243, 0.8);
 }
 
 /* ════════════════════════════════════════════════════════════════════════

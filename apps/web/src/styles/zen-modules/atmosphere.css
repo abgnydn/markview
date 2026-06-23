@@ -517,3 +517,21 @@ html[data-atmosphere]:not([data-atmosphere='none']) .editor-overlay {
    (y-codemirror.next supports this via the data-yjs-* attributes). */
 .cm-ySelectionInfo:hover { opacity: 1 !important; }
 
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Lite mode (.atmosphere-lite, set by PaintingAtmosphere) — the WebGL depth
+ * shader + particle sim are already skipped in the TSX. Here we also drop
+ * the continuous CSS ambient motion (birds, leaves, mist, ink-motes,
+ * creatures) and the costliest paint so the scene is FULLY static and cheap:
+ * a still painting + the reading column, nothing animating, nothing forcing
+ * per-frame compositing. This is the "guaranteed smooth, like a normal site"
+ * tier — full motion lives in the non-lite mode behind the ⚡ toggle.
+ * ──────────────────────────────────────────────────────────────────────── */
+.atmosphere-lite .atmosphere-birds,
+.atmosphere-lite .atmosphere-leaves,
+.atmosphere-lite .atmosphere-mist,
+.atmosphere-lite .atmosphere-inkmotes,
+.atmosphere-lite .atmosphere-creatures,
+.atmosphere-lite .atmosphere-particles {
+  display: none !important;
+}
