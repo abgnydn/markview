@@ -3511,19 +3511,28 @@ html { transition: background-color 4s ease; }
 .viewer-main::after {
   content: '';
   position: fixed;
-  left: var(--cursor-x);
-  top: var(--cursor-y);
+  /* Follow the cursor with a GPU transform, not left/top. Animating
+     left/top repaints this element every mouse-move; a translate on a
+     promoted layer is a pure compositor op. Centred via the negative
+     margins, then translated to the cursor. */
+  left: 0;
+  top: 0;
   width: 280px;
   height: 280px;
   margin-left: -140px;
   margin-top: -140px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 220, 165, 0.06) 0%, rgba(255, 220, 165, 0) 65%);
+  background: radial-gradient(circle, rgba(255, 220, 165, 0.07) 0%, rgba(255, 220, 165, 0) 65%);
   pointer-events: none;
   z-index: 1;
-  mix-blend-mode: screen;
+  /* NO mix-blend-mode. A blended layer that MOVES forces the browser to
+     re-blend it against the backdrop every frame — cheap over a flat page,
+     but brutal over an atmosphere (painting + paper + text-halos), which is
+     exactly why a "simple hover" lagged with an atmosphere on. A plain
+     translucent overlay composites without touching the backdrop. */
   opacity: 0;
   transition: opacity 480ms ease;
+  transform: translate(var(--cursor-x), var(--cursor-y));
   will-change: transform;
 }
 .viewer-main:hover::after { opacity: 1; }
