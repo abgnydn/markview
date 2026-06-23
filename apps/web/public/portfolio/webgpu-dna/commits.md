@@ -1,5 +1,23 @@
 # Commits — webgpu-dna
 
+## 2026-06-23
+
+- `08:34` **Merge pull request #1 from abgnydn/claude/nice-gauss-ssp1c4** — +1167 −154 — [`2135979`](https://github.com/abgnydn/webgpu-dna/commit/2135979189ae01957cc8eee8efba4588011542f7)
+- `07:47` **colab(phase-a): self-contained Vulkan install (loader + tools + produ…** — +8 −0 — [`411d298`](https://github.com/abgnydn/webgpu-dna/commit/411d298fc10e4c8f233699b3eb4a091a42f365f2)
+- `07:40` **colab: force WGPU_BACKEND_TYPE=Vulkan (GL backend can't do compute st…** — +17 −4 — [`c42be78`](https://github.com/abgnydn/webgpu-dna/commit/c42be785d82b2c63471a3c96b8f9ad7668c30a87)
+- `06:43` **colab: Phase A host port (wgpu-py) — real primaries on the T4** — +200 −0 — [`6d61662`](https://github.com/abgnydn/webgpu-dna/commit/6d61662cea906f148bbf44d9b2349791f8e998a0)
+- `06:30` **finding(B2): Colab/Kaggle T4 RUNS WebGPU — FREE_COMPUTE.md §3 overturned** — +88 −22 — [`338e658`](https://github.com/abgnydn/webgpu-dna/commit/338e65891104e85843a725be5b9eba587dab2fd8)
+- `06:19` **colab: fix wgpu compute typecode (u32->I), make shader-validate the P…** — +18 −7 — [`94a5612`](https://github.com/abgnydn/webgpu-dna/commit/94a56127249ae9fc52df9830a6bbb74e08c368b0)
+- `03:27` **chore: gitignore __pycache__ + drop accidentally committed .pyc** — +4 −0 — [`5670805`](https://github.com/abgnydn/webgpu-dna/commit/5670805bac09a8b3027d7453b08e16a666b1c4e4)
+- `03:27` **colab: real-GPU WebGPU attempt + shader validation via wgpu-py** — +213 −0 — [`1a066e5`](https://github.com/abgnydn/webgpu-dna/commit/1a066e5e59306e64bebad5a46dbe3c7367fe14d3)
+- `03:15` **ci: stage webgpu-smoke workflow under ci/ (token lacks workflow scope)** — +87 −1 — [`2b1ab11`](https://github.com/abgnydn/webgpu-dna/commit/2b1ab1186567edd89b8d15589ee2a919ce827b30)
+- `03:12` **ci: headless WebGPU smoke — run the real WGSL shaders on a software a…** — +143 −1 — [`1a7783f`](https://github.com/abgnydn/webgpu-dna/commit/1a7783f8d6017669c50f41626a7c387a6a73fcbb)
+- `03:03` **docs: close the remaining critique items (tunables, L5, perf, chem6, …** — +81 −13 — [`d43a618`](https://github.com/abgnydn/webgpu-dna/commit/d43a6181841d1840ef98035cced92b228e95ef5b)
+- `02:13` **test: add three CI guardrails against the recurring failure classes** — +219 −11 — [`1c9563b`](https://github.com/abgnydn/webgpu-dna/commit/1c9563bc8f34d0ee0d2c79007406a14651ebccae)
+- `01:47` **chore: apply the README + .gitignore Vercel removals** — +1 −7 — [`4d70594`](https://github.com/abgnydn/webgpu-dna/commit/4d705947582ba49be110d53e447f584a1ed52142)
+- `01:45` **chore: remove leftover Vercel config (production is Cloudflare Pages)** — +0 −11 — [`c43e796`](https://github.com/abgnydn/webgpu-dna/commit/c43e79606b19c3ec53f315faa288bfe55692ac2c)
+- `01:10` **docs: correct overstated claims, reconcile versions, add reproducibil…** — +107 −96 — [`71a9194`](https://github.com/abgnydn/webgpu-dna/commit/71a9194038ecf2a69b7573735a4d780f7e69bfeb)
+
 ## 2026-06-10
 
 - `05:04` **experiment(E37): 100 keV proton ranges 2x too far (2.65 vs G4 1.2 / P…** — +16 −0 — [`d0921b7`](https://github.com/abgnydn/webgpu-dna/commit/d0921b767ba58e3f7ba57e636b0e504b70f5d94f)
@@ -40,21 +58,3 @@
 - `08:29` **docs: sweep remaining v0.5.0 numbers -> v0.6.0 (CLAUDE L2/L4, README …** — +14 −6 — [`6c25d8f`](https://github.com/abgnydn/webgpu-dna/commit/6c25d8ff85eac5a7ec91d71ff22222ce6e1c93be)
 - `08:20` **paper(v0.6.0): update numbers + narrative for the full electron cascade** — +48 −37 — [`ec068ec`](https://github.com/abgnydn/webgpu-dna/commit/ec068ecfc234d3e5803a5e07f9fe2a605e453806)
 - `08:13` **site(v0.6.0): full-cascade numbers on the live fidelity line (0.931×,…** — +1 −1 — [`4bd047d`](https://github.com/abgnydn/webgpu-dna/commit/4bd047d0fd10705ef7577e8c803230d864a0dd59)
-- `08:13` **docs: wire in the v0.6.0 Zenodo version DOI (10.5281/zenodo.20606566)** — +3 −3 — [`4aec91f`](https://github.com/abgnydn/webgpu-dna/commit/4aec91fe9d8d4015fb029cee6b02146af71a8695)
-- `08:11` **docs(v0.6.0): cascade the full-electron-cascade numbers through READM…** — +45 −14 — [`d8fd115`](https://github.com/abgnydn/webgpu-dna/commit/d8fd1156a4144fe69e334ea0a1952005bad83e93)
-- `08:06` **merge(v0.6.0): full electron cascade — closes the chem6 gap** — +305 −66 — [`a47fc59`](https://github.com/abgnydn/webgpu-dna/commit/a47fc590473ae3dba225b8bbc42218d6b630644e)
-- `07:57` **experiment(E25+): SSB holds in band (2.53) — tertiary cascade clears …** — +59 −10 — [`96b06d5`](https://github.com/abgnydn/webgpu-dna/commit/96b06d50bd2ad51a0b96f17c245d9d28a6149996)
-- `07:52` **experiment(E25): tertiary cascade is a CLEAN WIN — E22-E24 'crash' wa…** — +22 −0 — [`a765251`](https://github.com/abgnydn/webgpu-dna/commit/a765251384983d59096980fe9f0a4e9744be69be)
-- `06:56` **experiment(E24+): IRT algorithm is faithful too — over-recombination …** — +7 −0 — [`489e13c`](https://github.com/abgnydn/webgpu-dna/commit/489e13c31cdf931dabad9957c90acd89926329a8)
-- `06:49` **experiment(E24): MEASURED — over-recombination is IRT dynamics, NOT p…** — +16 −0 — [`e502c0d`](https://github.com/abgnydn/webgpu-dna/commit/e502c0d2a6211d8362b457d7d02156da430a7452)
-- `06:43` **fix(E23): RETRACT the anti-correlated-placement claim — it was wrong,…** — +5 −4 — [`680455d`](https://github.com/abgnydn/webgpu-dna/commit/680455dd025a543fcf949b459eb9784f3aa94942)
-- `06:40` **experiment(E23): over-recombination root cause VERIFIED — dissociatio…** — +21 −0 — [`6705661`](https://github.com/abgnydn/webgpu-dna/commit/67056610971d9651603a00500b63e798c1e29f8d)
-- `05:46` **experiment(E22): tertiary cascade implemented — fixes cascade ions (0…** — +189 −66 — [`d73467a`](https://github.com/abgnydn/webgpu-dna/commit/d73467a145e119175abcf4c43036b3e8bdea46f2)
-- `05:22` **experiment(E21): cascade deficit MECHANISM — 80% is the untracked ter…** — +39 −0 — [`13e0cf8`](https://github.com/abgnydn/webgpu-dna/commit/13e0cf842e43fe85280ee35082dfcc486d24ab8b)
-
-## 2026-06-08
-
-- `13:50` **experiment(E20): cascade deficit RESOLVED to the secondary cascade — …** — +61 −0 — [`49d3cf7`](https://github.com/abgnydn/webgpu-dna/commit/49d3cf79a62c9045e257fe2623a87d58036c9b75)
-- `13:43` **experiment(E19): energy partition is healthy — the cascade deficit is…** — +60 −0 — [`18cf87d`](https://github.com/abgnydn/webgpu-dna/commit/18cf87dea9d2cf62d8ff11018ad3347ce3bb48fd)
-- `13:31` **docs(native): reconcile README next-steps with E17/E18 findings** — +9 −4 — [`7fc84a2`](https://github.com/abgnydn/webgpu-dna/commit/7fc84a220b349f3b20e50ab81632247c0b6eef16)
-- `13:30` **research(cascade): rule out excitation as the energy sink — Geant4 is…** — +28 −0 — [`bb12f4b`](https://github.com/abgnydn/webgpu-dna/commit/bb12f4beb376a49de453a19e7dc3cf3f080a9963)

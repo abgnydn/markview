@@ -1,5 +1,23 @@
 # Commits — markview
 
+## 2026-06-23
+
+- `07:45` **fix(presentation): hide next-slide peek on laptop/middle screens** — +10 −0 — [`8961b01`](https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9)
+- `07:28` **perf(atmosphere): lite = minimal tier — strip decorative layers (weak…** — +17 −0 — [`466665b`](https://github.com/abgnydn/markview/commit/466665bb2337feaa9d324122cfd9750ca3d7fc82)
+- `07:18` **perf(viewer): drop the full-screen grain blend (weak-GPU compositor r…** — +4 −1 — [`f21b06e`](https://github.com/abgnydn/markview/commit/f21b06e444a073268d8363451b136b5d38864249)
+- `06:54` **perf(atmosphere): cheap text paint + truly-static lite mode** — +27 −6 — [`4e899a2`](https://github.com/abgnydn/markview/commit/4e899a2c87bf40d23e81c7681aa5c5812d1c1acd)
+- `06:36` **perf(viewer): isolate reveal-chrome on its own GPU layer (sidebar slide)** — +11 −0 — [`32f2c4d`](https://github.com/abgnydn/markview/commit/32f2c4d440f36a3800cffa840cb1dae0fb6c66bc)
+- `06:26` **perf(viewer): make the cursor-glow compositor-only (kill hover lag)** — +13 −4 — [`4bd39fc`](https://github.com/abgnydn/markview/commit/4bd39fcd1a579e949169deb1689dd67f92c64cb4)
+- `06:15` **feat(atmosphere): lite mode — static painting, zero WebGL** — +72 −12 — [`bb9a9dd`](https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0)
+- `03:51` **perf(atmosphere): cap particle loop to 30fps + lower render DPR to 1.5** — +16 −6 — [`10eeb08`](https://github.com/abgnydn/markview/commit/10eeb0876fb793f2e6e83be4aa2d1be9c5debcf5)
+- `03:32` **perf(atmosphere): render the depth shader on-demand, not 60fps forever** — +23 −4 — [`ca94ad1`](https://github.com/abgnydn/markview/commit/ca94ad1109480aad352b6c29a46798b4e83c5c40)
+- `03:08` **perf(atmosphere): stop scroll jank from per-frame reflow + fixed-bg r…** — +77 −33 — [`ad71864`](https://github.com/abgnydn/markview/commit/ad7186403a48e86f91391daea3879f1ffec9df67)
+- `01:27` **feat(presentation): responsive deck layout for narrow + touch screens** — +199 −0 — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
+
+## 2026-06-22
+
+- `22:07` **chore(portfolio): daily sync 2026-06-22** — +29 −25 — [`f9d9acf`](https://github.com/abgnydn/markview/commit/f9d9acf4b3be774144d37f29e4fb23b8c857b767)
+
 ## 2026-06-21
 
 - `21:19` **chore(portfolio): daily sync 2026-06-21** — +32 −28 — [`54f9c48`](https://github.com/abgnydn/markview/commit/54f9c48962bf0b29fca100c222df3e4413904305)
@@ -67,24 +85,3 @@
 - `05:42` **feat(atmosphere): deep visual-polish pass — paper light, texture, per…** — +87 −0 — [`54c399f`](https://github.com/abgnydn/markview/commit/54c399f19cbadf61f94b2c5ef0cae50d6b0a8ed0)
 - `05:42` **feat(atmosphere): 50 real-value refinements (#61–110)** — +174 −0 — [`7fbf710`](https://github.com/abgnydn/markview/commit/7fbf7106b36f7f2bd29ffb5693eefc453d895497)
 - `05:42` **feat(atmosphere): 20 more classical refinements (#41–60) — element fi…** — +125 −0 — [`fcdb112`](https://github.com/abgnydn/markview/commit/fcdb112e5610d98b35b879de3c19f14259b807ee)
-- `05:42` **feat(atmosphere): 20 more classical-scroll + ambient refinements (#21…** — +213 −1 — [`7e3d1ec`](https://github.com/abgnydn/markview/commit/7e3d1ecd12779fd5afed242eb0f3a09b20999087)
-- `05:42` **feat(atmosphere): 20 classical-scroll + ambient refinements** — +237 −5 — [`a5322a0`](https://github.com/abgnydn/markview/commit/a5322a09823aed88ecd0684d54af5a380535c606)
-- `05:42` **feat(atmosphere): classical rice-paper scroll reading surface** — +73 −0 — [`ccd0bef`](https://github.com/abgnydn/markview/commit/ccd0bef63dd700076573ab7c0a7bf05143c399f0)
-- `05:42` **feat(atmosphere): per-appearance ink palettes + classical CJK serifs** — +36 −1 — [`9a79364`](https://github.com/abgnydn/markview/commit/9a793647e473bf5db599cb08689a104742e239c4)
-- `05:42` **feat(atmosphere): readable text over any painting, visible cursor, dr…** — +128 −6 — [`3604531`](https://github.com/abgnydn/markview/commit/3604531abb9579b7cbbe3df2104041944dfdda02)
-
-## 2026-06-11
-
-- `22:05` **chore(portfolio): daily sync 2026-06-11** — +30 −27 — [`161d6ec`](https://github.com/abgnydn/markview/commit/161d6ecf670d66db57d5c540e18d9646bf1d10a6)
-
-## 2026-06-10
-
-- `22:06` **chore(portfolio): daily sync 2026-06-10** — +206 −199 — [`d3693ae`](https://github.com/abgnydn/markview/commit/d3693ae7080cb4ebeae8fab2e24c934d8db51914)
-
-## 2026-06-09
-
-- `21:50` **chore(portfolio): daily sync 2026-06-09** — +2757 −2013 — [`e6e4909`](https://github.com/abgnydn/markview/commit/e6e4909047db5bae05c306152744c8778081d26e)
-- `12:39` **chore(release): desktop 0.3.0** — +8 −8 — [`5dc04d8`](https://github.com/abgnydn/markview/commit/5dc04d8afdc01e15ee8c9a068cbe690245c06209)
-- `12:18` **feat(editor): selection format bubble** — +111 −0 — [`70123a7`](https://github.com/abgnydn/markview/commit/70123a7a7dae1b3b180fc1dbc334d9d32098e3ea)
-- `12:14` **feat(editor): smart typography — curly quotes, em dash, ellipsis, arrow** — +109 −0 — [`fc2defc`](https://github.com/abgnydn/markview/commit/fc2defcacd80ecb31a2326d104ff7873ab3d6f12)
-- `12:12` **feat(editor): list continuation + toggle formatting + fuller shortcuts** — +77 −28 — [`fe5fc84`](https://github.com/abgnydn/markview/commit/fe5fc8412e4ec3ce5188714065238ccd02e111ea)

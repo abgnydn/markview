@@ -12,6 +12,9 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **fix**: fix(presentation): hide next-slide peek on laptop/middle screens — [`8961b01`](https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9)
+- **feat**: feat(atmosphere): lite mode — static painting, zero WebGL — [`bb9a9dd`](https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0)
+- **feat**: feat(presentation): responsive deck layout for narrow + touch screens — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
 - **fix**: fix(editor): paste, slide fill, html export, new-file menu, dropdown … — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
 - **feat**: feat(presentation): rebuild presentation mode into a full deck engine — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
 - **fix**: fix(deps): bump vitest 2→4 to clear the critical UI-server advisory — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
@@ -21,6 +24,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix: vermillion lede drop-cap + graceful WebGPU-particle fallback — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
 - **feat**: feat(world): aged-parchment page cards in the 3D world (not basic cards) — [`8bd448a`](https://github.com/abgnydn/markview/commit/8bd448a906b33402975340f1fa0fb888b6f028a4)
 - **fix**: fix(atmosphere): the ghost-ink root cause — .markdown-content p force… — [`06df36f`](https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea)
-- **fix**: fix(atmosphere): kill the embossed/ghosted ink — solid readable type … — [`e03e998`](https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9)
-- **feat**: feat(atmosphere): aged parchment — darker, stained, uneven + readable… — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)
-- **feat**: feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)

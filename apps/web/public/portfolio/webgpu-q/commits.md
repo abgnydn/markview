@@ -1,5 +1,25 @@
 # Commits — webgpu-q
 
+## 2026-06-23
+
+- `06:51` **Federated CCSD(T) foundation + first cross-vendor GPU validation + EO…** — +1375 −15 — [`cae5f1b`](https://github.com/abgnydn/webgpu-q/commit/cae5f1b8db8e6d8fb1d5f907d0a8a2e84319aea8)
+- `06:25` **docs(swarm): measure (T) C/S scaling — it's flat, not ∝N (correct again)** — +33 −15 — [`7ff551a`](https://github.com/abgnydn/webgpu-q/commit/7ff551a89cc07e652ad087fc5b76ad053c238ef5)
+- `06:21` **chore(gitignore): ignore _zzz-*.test.ts throwaway benchmark scratch** — +3 −0 — [`9ea267d`](https://github.com/abgnydn/webgpu-q/commit/9ea267d6bd9357cd1201c62a58ec24ab4de8dc69)
+- `06:14` **docs(swarm): measure federated (T) regime — partial negative, correct…** — +94 −16 — [`60c1e1a`](https://github.com/abgnydn/webgpu-q/commit/60c1e1acca9b92e734e9e4cc3365f8f68c24dc97)
+- `03:22` **test(e2e): federated CCSD(T) speedup crossover spec (swarm-ccsdt-spee…** — +143 −0 — [`c6c6c8e`](https://github.com/abgnydn/webgpu-q/commit/c6c6c8e625f01fe6de8f903202d6435e250333bf)
+- `03:17` **feat(swarm): federated CCSD(T) — sliceable (T) + distributed kernel +…** — +228 −2 — [`1d7e8e0`](https://github.com/abgnydn/webgpu-q/commit/1d7e8e0f12494911089b1cdfcbc72310106e3ef2)
+- `03:17` **docs(honesty): correct the IP-EOM record — clean, not patched** — +13 −5 — [`009cde5`](https://github.com/abgnydn/webgpu-q/commit/009cde56e10f23435583de5d6401c86d0b007367)
+- `02:38` **feat(e2e): opt-in NVIDIA validation lane (WEBGPU_Q_NVIDIA) + hard non…** — +72 −19 — [`d99f3df`](https://github.com/abgnydn/webgpu-q/commit/d99f3df1e6b4ae9a15b282b75cb0ce77d14eedd9)
+- `02:32` **docs(results): record first cross-vendor GPU validation — NVIDIA T4** — +64 −0 — [`bd83af7`](https://github.com/abgnydn/webgpu-q/commit/bd83af74a41661aae1e52e16f3cee88e9cdcb4f5)
+- `02:11` **feat(colab): save + auto-download full L1/L3 artifacts, report worst-F** — +2 −2 — [`4537287`](https://github.com/abgnydn/webgpu-q/commit/4537287c8556c7b468201aeb6877ad25555bdfd1)
+- `02:07` **feat(e2): add NVIDIA datacenter/Turing peak-BW entries; Colab probe u…** — +18 −1 — [`b9342ed`](https://github.com/abgnydn/webgpu-q/commit/b9342ed73b48eeb3a291c88e13eeb354436f66bd)
+- `01:48` **feat(colab): report per-protocol status + failing rows instead of tru…** — +3 −3 — [`815ca5c`](https://github.com/abgnydn/webgpu-q/commit/815ca5ca07d0d6281bb101e586a2ed402395b9b1)
+- `01:42` **fix(colab): install Chromium OS deps (--with-deps) + strip swiftshade…** — +2 −2 — [`b8f6306`](https://github.com/abgnydn/webgpu-q/commit/b8f6306c0e997e9627fb018d98f0a519421ed0ca)
+- `01:32` **fix(colab): use async Playwright API — Colab runs an asyncio loop** — +1 −1 — [`43c4d08`](https://github.com/abgnydn/webgpu-q/commit/43c4d08aa3c00ccdad45b9898a387beeae5b15ea)
+- `01:24` **docs(colab): add one-click Colab notebook for the real-GPU T4 probe** — +40 −0 — [`f757e88`](https://github.com/abgnydn/webgpu-q/commit/f757e88ea17753afdc74f9e8e07215e2c47b60c6)
+- `01:18` **docs(ci): WebGPU CI/cloud-GPU provider survey + Modal T4 probe** — +408 −0 — [`8b90b83`](https://github.com/abgnydn/webgpu-q/commit/8b90b836b447c44f09d293e4e7b79bc564e2cc3f)
+- `00:51` **test(ip-eom): add multi-electron LiH brute-force oracle** — +302 −0 — [`8e540a7`](https://github.com/abgnydn/webgpu-q/commit/8e540a74eaf3ad762241ed5aea6438e8d1d5c7c6)
+
 ## 2026-06-17
 
 - `11:08` **chore(release): v0.12.0 — site redesign + corrected manuscripts → Zenodo** — +41 −8 — [`aad6fc7`](https://github.com/abgnydn/webgpu-q/commit/aad6fc7525488242b0665a7e0c5df019a1810b02)
@@ -47,23 +67,3 @@
 - `09:44` **feat(chem): runUMP2Auto — DF-UMP2 completes the {R,U}×{HF,DFT,MP2} ma…** — +189 −0 — [`08479da`](https://github.com/abgnydn/webgpu-q/commit/08479da033265dc9b1503ed7bad5db65eb5ebe0a)
 - `09:31` **feat(chem): runMP2Auto — size-gated DF-MP2, correlation energy at any…** — +122 −1 — [`50ad6de`](https://github.com/abgnydn/webgpu-q/commit/50ad6de14c30438a6bc8ec0faabc7883f8cde26a)
 - `09:19` **feat(swarm): generalize chem kernel to RHF/UHF/RKS/UKS — radical & DF…** — +139 −20 — [`c951944`](https://github.com/abgnydn/webgpu-q/commit/c951944b70ceff24522583d63ac406923eb3e43f)
-- `09:05` **feat(chem): open-shell DFT via DF — runUKSAuto completes the {R,U}×{H…** — +114 −3 — [`e6133cd`](https://github.com/abgnydn/webgpu-q/commit/e6133cd20ad348fcd2d2c188226b7aeac3c85449)
-- `09:02` **feat(chem): open-shell UHF via DF — runUHFAuto, radicals get the GPU-…** — +139 −4 — [`d358ddc`](https://github.com/abgnydn/webgpu-q/commit/d358ddc27b5353c1060082e06efccdc7e4656374)
-- `08:13` **feat(swarm): cross-machine GPU-DF batch over relay — CI on real Actio…** — +144 −7 — [`c7fec00`](https://github.com/abgnydn/webgpu-q/commit/c7fec00c43d8f09040eefa395d3f582c953d06ef)
-- `07:58` **feat(swarm): GPU batch over the cross-machine relay + fix swarmMap-ov…** — +105 −2 — [`4e1f44d`](https://github.com/abgnydn/webgpu-q/commit/4e1f44d43a456f4ad94614dff3d23a54b3a3e242)
-- `07:35` **docs(claude): record swarm × GPU step 4 (GPU-accelerated chem kernel)** — +10 −4 — [`1f84abf`](https://github.com/abgnydn/webgpu-q/commit/1f84abfea622500077cbbfbe51aa13db1984ec6e)
-- `07:34` **feat(swarm): GPU-accelerated chemistry kernel — the crowd × the GPU** — +117 −18 — [`b3eea31`](https://github.com/abgnydn/webgpu-q/commit/b3eea3194bc2b79fdb7df7e469aeae605b82a526)
-- `06:58` **docs(claude): note WASM merge kernel as the lever to scale GPU DF pas…** — +7 −0 — [`25e8f93`](https://github.com/abgnydn/webgpu-q/commit/25e8f93eb16ecc96983251de6b4b7185d4805492)
-- `06:58` **perf(chem): gate hybrid DF by merge cost — WASM streaming wins at PAH…** — +17 −17 — [`fe54163`](https://github.com/abgnydn/webgpu-q/commit/fe54163f6b8fb99bbe318b75458231baa8911e07)
-- `06:35` **feat(chem): streaming hybrid DF build — let the GPU win scale past PA…** — +77 −21 — [`acc660a`](https://github.com/abgnydn/webgpu-q/commit/acc660a5cc5499f2ee20ad414fd35ed04ba96278)
-- `06:19` **fix(chem): size-gate the hybrid DF path off at PAH scale — streaming …** — +20 −7 — [`444df0c`](https://github.com/abgnydn/webgpu-q/commit/444df0c3378751c6f1456d759ae009d2f353baca)
-- `05:51` **fix(chem): raise requiredLimits on GPU DF devices — handle V output p…** — +86 −4 — [`fd7db12`](https://github.com/abgnydn/webgpu-q/commit/fd7db12bb5a471bb97540646880b7984df12d68f)
-- `05:47` **test(chem): capstone — naphthalene cc-pVDZ HF in a tab, 9.7 GB ERI sk…** — +82 −0 — [`2fe9703`](https://github.com/abgnydn/webgpu-q/commit/2fe97036ba680176da43449d932802796abdef1d)
-
-## 2026-06-08
-
-- `13:52` **docs(claude): note runRKSAuto / DFT-via-DF in the entry-point row** — +1 −1 — [`2811483`](https://github.com/abgnydn/webgpu-q/commit/2811483fa7aea6fde68f2978630e299761ed1e8a)
-- `13:52` **feat(chem): GPU-accelerated DFT via DF — runRKSAuto, size-gated exact…** — +150 −11 — [`4aa4858`](https://github.com/abgnydn/webgpu-q/commit/4aa485882d49fc27aada97b98f914975d0b4e68e)
-- `13:39` **docs(claude): record the hybrid chemistry-grade GPU DF + runRHFAuto** — +16 −5 — [`e87a3e8`](https://github.com/abgnydn/webgpu-q/commit/e87a3e85e7d94c8090715d42f211b60821377643)
-- `13:38` **test(chem): benchmark hybrid V-build — 1.31x over all-WASM at extraL=…** — +32 −0 — [`44b0def`](https://github.com/abgnydn/webgpu-q/commit/44b0def257bf4510ae5107c4152564f118e3170b)
-- `13:37` **feat(chem): hybrid GPU/WASM 3-index DF build — GPU-accelerated AND ch…** — +154 −57 — [`b0c0914`](https://github.com/abgnydn/webgpu-q/commit/b0c091445be17a7f507b812ffcb675d1548094b6)

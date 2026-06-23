@@ -1,5 +1,16 @@
 # Commits — zero-tvm
 
+## 2026-06-23
+
+- `07:47` **fix(bench): WebGPU adapter on T4 — disable Dawn adapter blocklist (#8)** — +22 −14 — [`35955bd`](https://github.com/abgnydn/zero-tvm/commit/35955bd3e2ff50a6cca69bf42c774aae73613300)
+- `07:06` **fix(bench): instrument boot to pinpoint the hang (#7)** — +53 −11 — [`4b8f833`](https://github.com/abgnydn/zero-tvm/commit/4b8f8334e1ade0f64c917b6ac56c6ece933443b2)
+- `03:49` **fix(bench): bind dev server to 127.0.0.1 — Colab localhost/IPv6 timeo…** — +12 −4 — [`95e7e03`](https://github.com/abgnydn/zero-tvm/commit/95e7e0386d67657fcc51294e211fc027577502a7)
+- `03:28` **fix(bench): clean Colab re-run — fresh clone + T4-only (#5)** — +2 −2 — [`d7dc57d`](https://github.com/abgnydn/zero-tvm/commit/d7dc57d648dedf2862472849fb5913a3baa44937)
+- `03:08` **fix(bench): get the real T4 on Colab — libnvidia-gl + ANGLE/Vulkan fl…** — +12 −4 — [`2a9dd1e`](https://github.com/abgnydn/zero-tvm/commit/2a9dd1e3f1ec3f833b0d066392ce2d0f8ba5a1a0)
+- `03:01` **fix(bench): abort on software GPU, use hf instead of huggingface-cli …** — +22 −7 — [`be8dacf`](https://github.com/abgnydn/zero-tvm/commit/be8dacf1999fc51e7787c05957305fa5f6c70d84)
+- `02:49` **Add one-click Colab notebook for the GPU bench (#2)** — +36 −0 — [`6a32c63`](https://github.com/abgnydn/zero-tvm/commit/6a32c638033e73872a2f031730c5a6238a532c8b)
+- `02:23` **Critique fixes: prune dead code, headless WebGPU kernel tests, bench …** — +1108 −1142 — [`2d8c839`](https://github.com/abgnydn/zero-tvm/commit/2d8c839e11986b7ac196328ccfd8cce444a241df)
+
 ## 2026-05-15
 
 - `03:40` **chore: update contact email to hi@barisgunaydin.com** — +1 −1 — [`9c2d099`](https://github.com/abgnydn/zero-tvm/commit/9c2d099bef976c25b763eab490704843e64247ac)
@@ -71,11 +82,3 @@
 ## 2026-04-07
 
 - `17:15` **Polish landing page: card accents, comparison wrapper, link hierarchy** — +170 −97 — [`481b8e5`](https://github.com/abgnydn/zero-tvm/commit/481b8e5068e555f08929e73c182f463f7e85b676)
-- `16:05` **Remove live demo from demo.html, unify UI across all pages** — +33 −149 — [`06188c4`](https://github.com/abgnydn/zero-tvm/commit/06188c4b6bd6e1d167f084a0b8706a4895513798)
-- `15:34` **Add share modal with pre-filled messages for X, LinkedIn, HN, Reddit** — +107 −0 — [`fcf601f`](https://github.com/abgnydn/zero-tvm/commit/fcf601fbba24f273c7ccb150578a9c2297b6d942)
-- `15:22` **Update README with image and project description** — +2 −0 — [`4a603e1`](https://github.com/abgnydn/zero-tvm/commit/4a603e1d297986c0d1636ecf7ec215d1cb4c28f3)
-- `15:13` **Clarify browser requirement: explain enable f16 is the blocker** — +2 −1 — [`33808bb`](https://github.com/abgnydn/zero-tvm/commit/33808bbafe876489efed8cdcb229334eade7cdb0)
-- `15:06` **Gate model download behind "Download & Start" button** — +64 −9 — [`8e68677`](https://github.com/abgnydn/zero-tvm/commit/8e68677a72f6adf11bb25171501df051b1fb278f)
-- `15:02` **Fix demo.html: correct stats, we→I, unify nav/footer with landing page** — +16 −11 — [`e95d013`](https://github.com/abgnydn/zero-tvm/commit/e95d013ca78635d738db4bf9eebebb8e78b24568)
-- `14:53` **Add GitHub star link + related projects to landing page footer** — +5 −0 — [`b6d047c`](https://github.com/abgnydn/zero-tvm/commit/b6d047c698038dc0d394a8b3a2b3a1bc4f83d0e0)
-- `14:47` **Landing page: thesis + numbers + Try It button** — +136 −31 — [`8b7f2e9`](https://github.com/abgnydn/zero-tvm/commit/8b7f2e973a231ee5abd3d248f119c63cae39cf47)
