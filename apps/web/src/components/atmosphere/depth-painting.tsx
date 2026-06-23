@@ -466,8 +466,29 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       // (sky) zone, bottom focuses the near (foreground), so the
       // tilt-shift sweet spot drifts as you read. Eased toward target.
       let rafId = 0;
-      const draw = () => {
+      // Frame governor. When nobody's interacting, the *only* thing changing
+      // is the slow (~39s) light orbit — yet we were re-rendering a
+      // full-screen shader at 60fps to inch it along. That's what makes the
+      // whole UI feel heavy: the atmosphere spends the frame's GPU budget
+      // before a hover or scroll ever gets a turn. So render every frame only
+      // while something is genuinely moving (the dissolve-in, scroll-driven
+      // focal easing, or a click ripple); otherwise throttle to ~15fps, which
+      // is imperceptible for a 39s orbit and frees ~4× of the idle GPU for
+      // the actual UI.
+      let lastRender = -1;
+      const IDLE_FRAME_MS = 1000 / 15;
+      const reveal = material.uniforms.uReveal as { value: number };
+      const draw = (now: number) => {
+        rafId = requestAnimationFrame(draw);
         const tNow = (performance.now() - start) / 1000;
+
+        const active =
+          reveal.value < 1 ||                            // dissolve-in on mount
+          Math.abs(focalTarget - focalCur) > 0.0008 ||   // scroll-focal still easing
+          tNow - (material.uniforms.uPulseTime as { value: number }).value < 2.0; // click ripple
+        if (!active && lastRender >= 0 && now - lastRender < IDLE_FRAME_MS) return;
+        lastRender = now;
+
         (material.uniforms.uTime as { value: number }).value = tNow;
 
         // Living relief — the key light slowly orbits in azimuth so
@@ -478,8 +499,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
           .set(Math.cos(az) * 0.7, 0.55, Math.sin(az) * 0.5 + 0.6).normalize();
 
         // Dissolve-in over 1.3s on mount.
-        const u = material.uniforms.uReveal as { value: number };
-        if (u.value < 1) u.value = Math.min(1, tNow / 1.3);
+        if (reveal.value < 1) reveal.value = Math.min(1, tNow / 1.3);
 
         // Focal plane eased toward the scroll-derived target (computed off
         // the hot path by updateFocalTarget). No layout reads happen here, so
@@ -492,7 +512,6 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         (material.uniforms.uSunUv.value as InstanceType<typeof THREE.Vector2>).set(sun.uv[0], sun.uv[1]);
         (material.uniforms.uSunOn as { value: number }).value = sun.on;
         renderer.render(scene, camera);
-        rafId = requestAnimationFrame(draw);
       };
       rafId = requestAnimationFrame(draw);
 
