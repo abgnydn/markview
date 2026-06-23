@@ -2671,6 +2671,16 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 }
 .presentation-peek .presentation-slide.is-thumb { box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.8); }
 
+/* ---- laptop / middle screens: hide the next-slide peek ----
+   The slide is min(1120px, 92vw); the peek (210px wide, pinned bottom-right)
+   only clears it when the side margin is wide — roughly a ≥1600px viewport.
+   On smaller screens (e.g. a 1280px laptop) the slide fills the width and the
+   peek lands ON the current slide. Hide it there; the dots, Filmstrip (,),
+   Overview (O) and Presenter view (V) still preview what's next. */
+@media (max-width: 1600px) {
+  .presentation-peek { display: none !important; }
+}
+
 /* ---- running footer ---- */
 .presentation-footer {
   position: absolute; bottom: 11px; left: 24px; right: 24px;
