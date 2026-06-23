@@ -385,12 +385,38 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       };
       fitMesh();
 
+      // Focal plane follows scroll — but the per-frame draw loop must stay
+      // free of layout reads. Reading document.scrollHeight forces a reflow,
+      // and doing it 60×/sec inside the loop stalled the main thread (and
+      // starved every other atmosphere rAF loop — particles visibly hitched)
+      // whenever the page scrolled. So: cache the scroll range, recompute the
+      // focal *target* from a passive scroll listener (scrollY is cheap, no
+      // reflow), and let the loop merely ease toward it.
+      let focalCur = 0.62;
+      let focalTarget = 0.62;
+      let docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const updateFocalTarget = () => {
+        const sp = Math.min(1, Math.max(0, window.scrollY / docMax));
+        focalTarget = 0.30 + sp * 0.55; // 0.30 (far/sky) → 0.85 (near/foreground)
+      };
+      updateFocalTarget();
+      window.addEventListener('scroll', updateFocalTarget, { passive: true });
+      // Content height changes (doc switch, image/font load) move the scroll
+      // range; refresh the cached max off the hot path, not in the loop.
+      const focalRO = new ResizeObserver(() => {
+        docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        updateFocalTarget();
+      });
+      focalRO.observe(document.body);
+
       const resize = () => {
         renderer.setSize(window.innerWidth, window.innerHeight, false);
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         (material.uniforms.uAspect as { value: number }).value = window.innerWidth / window.innerHeight;
         fitMesh();
+        docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        updateFocalTarget();
       };
       (material.uniforms.uAspect as { value: number }).value = window.innerWidth / window.innerHeight;
       window.addEventListener('resize', resize);
@@ -439,7 +465,6 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       // Focal plane follows scroll — top of the doc focuses the far
       // (sky) zone, bottom focuses the near (foreground), so the
       // tilt-shift sweet spot drifts as you read. Eased toward target.
-      let focalCur = 0.62;
       let rafId = 0;
       const draw = () => {
         const tNow = (performance.now() - start) / 1000;
@@ -456,12 +481,10 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
         const u = material.uniforms.uReveal as { value: number };
         if (u.value < 1) u.value = Math.min(1, tNow / 1.3);
 
-        // Focal plane from scroll position (0 at top → far/sky in
-        // focus, 1 at bottom → near/foreground in focus).
-        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-        const sp = Math.min(1, Math.max(0, window.scrollY / max));
-        const focalTarget = 0.30 + sp * 0.55; // 0.30 (far) → 0.85 (near)
-        focalCur += (focalTarget - focalCur) * Math.min(1, 0.05);
+        // Focal plane eased toward the scroll-derived target (computed off
+        // the hot path by updateFocalTarget). No layout reads happen here, so
+        // the loop never forces a reflow mid-scroll.
+        focalCur += (focalTarget - focalCur) * 0.05;
         (material.uniforms.uFocal as { value: number }).value = focalCur;
 
         const phase = document.documentElement.getAttribute('data-time-phase') || 'day';
@@ -486,6 +509,8 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
 
       cleanup = () => {
         window.removeEventListener('resize', resize);
+        window.removeEventListener('scroll', updateFocalTarget);
+        focalRO.disconnect();
         window.removeEventListener('click', onClick);
         window.removeEventListener('keydown', onAnaglyphKey);
         document.removeEventListener('visibilitychange', onVis);

@@ -149,17 +149,27 @@ html[data-atmosphere='fields'] {     /* golden fields · harvest gold */
  * ──────────────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
-  /* Paint the gradient ON html only, viewport-fixed, so a tall document
-     doesn't accumulate visible "seams" where body's gradient ends and
-     html's begins. Identical look from top to bottom of any-length doc. */
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      var(--zen-bg) 0%,
-      var(--zen-bg-deep) 100%
-    ) !important;
-  background-attachment: fixed !important;
+  /* Deep solid base. The seamless, viewport-locked radial gradient is
+     painted on a GPU-composited fixed layer (html::before) instead of via
+     background-attachment: fixed. `fixed` forced a full-viewport REPAINT on
+     every scroll frame — a major scroll-jank source, worst when an
+     atmosphere's WebGL canvas is already competing for the GPU. A fixed
+     pseudo-element simply composites and stays put; nothing repaints as the
+     document scrolls, and the look is identical (no seams on tall docs). */
+  background: var(--zen-bg-deep) !important;
   min-height: 100vh;
+}
+html::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    var(--zen-bg) 0%,
+    var(--zen-bg-deep) 100%
+  );
 }
 body {
   background: transparent !important;
