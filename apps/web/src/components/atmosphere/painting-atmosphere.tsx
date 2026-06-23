@@ -149,6 +149,26 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     return () => window.removeEventListener('keydown', onKey);
   }, [flashHint]);
 
+  // ── Lite / performance mode — skip ALL WebGL (the depth shader AND the
+  // particle sim) and show the painting as a static image. Same smoothness
+  // as turning the atmosphere off, but you keep the art. Persisted across
+  // sessions; toggled from the atmosphere dots and synced via a custom
+  // event (+ the storage event for other tabs).
+  const [lite, setLite] = useState(() => {
+    try { return localStorage.getItem('mv-atmosphere-lite') === '1'; } catch { return false; }
+  });
+  useEffect(() => {
+    const sync = () => {
+      try { setLite(localStorage.getItem('mv-atmosphere-lite') === '1'); } catch { /* ignore */ }
+    };
+    window.addEventListener('markview:atmosphere-lite', sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener('markview:atmosphere-lite', sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
   // ── Particle backend — 'webgl' (CPU sim, universal) or 'webgpu'
   // (TSL compute sim, opt-in). Toggled with `b`; requires navigator.gpu.
   // Any WebGPU init failure flips back to WebGL via onFallback.
@@ -195,7 +215,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
 
   return (
     <div
-      className={`atmosphere atmosphere-painting atmosphere-${displayedCfg.id}${imageReady ? '' : ' atmosphere-swapping'}`}
+      className={`atmosphere atmosphere-painting atmosphere-${displayedCfg.id}${imageReady ? '' : ' atmosphere-swapping'}${lite ? ' atmosphere-lite' : ''}`}
       style={style}
       aria-hidden="true"
     >
@@ -206,7 +226,15 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
           put while the sky drifts; the painting subtly tilts toward the
           cursor. Falls back to a plain <img> while depth is computing or
           when WebGL isn't available. */}
-      {splatMode ? (
+      {lite ? (
+        /* Lite mode — static painting, zero WebGL. Smoothest path. */
+        <DepthPainting
+          className="atmosphere-image"
+          src={displayed.painting.imageSrc}
+          paintingKey={displayed.painting.key}
+          forceStatic
+        />
+      ) : splatMode ? (
         /* Volumetric mode — the painting lifted into a 3D Gaussian-splat
            cloud from its depth map. Orbits gently to show real parallax;
            soft pigment gaussians fuse where a triangle mesh would tear. */
@@ -262,7 +290,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         ))}
       </div>
 
-      {displayedCfg.particles !== 'none' && (
+      {!lite && displayedCfg.particles !== 'none' && (
         /* GPU-rendered, CPU-simulated particle field — curl-noise wind,
            cursor force, gravity, life/respawn, per-atmosphere sprite. The
            WebGPU-compute variant is shelved (see the `b` handler above). */

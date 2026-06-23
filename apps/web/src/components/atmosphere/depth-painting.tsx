@@ -12,6 +12,11 @@ interface DepthPaintingProps {
   className?: string;
   /** Inline style passthrough (used for filter, mask, etc.). */
   style?: React.CSSProperties;
+  /** Lite / performance mode — skip ALL WebGL (depth shader, render loop)
+   *  and show only the static painting <img>. The same code path as the
+   *  WebGL-unavailable fallback, so weak GPUs aren't asked to run a
+   *  full-screen shader every frame. */
+  forceStatic?: boolean;
 }
 
 /**
@@ -35,7 +40,7 @@ interface DepthPaintingProps {
  * Falls back to a plain <img> while depth computes / when WebGL2 is
  * unavailable / when the GPU initialization fails.
  */
-export function DepthPainting({ src, paintingKey, opacity = 1, className, style }: DepthPaintingProps) {
+export function DepthPainting({ src, paintingKey, opacity = 1, className, style, forceStatic = false }: DepthPaintingProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [ready, setReady] = useState(false);
   const [fallback, setFallback] = useState(true);
@@ -43,7 +48,8 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
   useEffect(() => {
     setReady(false);
     setFallback(true);
-    if (!isWebGLSupported()) return;
+    // Lite mode (or no WebGL) → keep the static <img>, never boot Three.js.
+    if (!isWebGLSupported() || forceStatic) return;
     let cancelled = false;
     let cleanup: (() => void) | null = null;
 
@@ -549,7 +555,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       cancelled = true;
       cleanup?.();
     };
-  }, [src, paintingKey]);
+  }, [src, paintingKey, forceStatic]);
 
   return (
     <>

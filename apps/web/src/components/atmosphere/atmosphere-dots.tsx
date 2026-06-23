@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { Volume2, VolumeX, RefreshCw, Shuffle, Sun, Footprints } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw, Shuffle, Sun, Footprints, Zap } from 'lucide-react';
 import { useThemeStore, type Atmosphere } from '@/stores/theme-store';
 import {
   isAtmosphereMuted, setAtmosphereMuted,
@@ -38,6 +38,12 @@ export function AtmosphereDots() {
 
   const [muted, setMuted] = useState(() => isAtmosphereMuted());
   const [tintOn, setTintOn] = useState(() => getTimeTintMode() !== 'off');
+  // Lite / performance mode — render the painting as a static image with no
+  // WebGL depth shader or particle loop. Persisted; PaintingAtmosphere
+  // reacts to the 'markview:atmosphere-lite' event.
+  const [lite, setLite] = useState(() => {
+    try { return localStorage.getItem('mv-atmosphere-lite') === '1'; } catch { return false; }
+  });
 
   // "k / n" gallery position — shows how deep the current pack is and
   // which painting you're on. Refreshes on cycle events + atmosphere
@@ -73,6 +79,13 @@ export function AtmosphereDots() {
     const next = !tintOn;
     setTintOn(next);
     setTimeTintMode(next ? 'auto' : 'off');
+  };
+
+  const toggleLite = () => {
+    const next = !lite;
+    setLite(next);
+    try { localStorage.setItem('mv-atmosphere-lite', next ? '1' : '0'); } catch { /* ignore */ }
+    window.dispatchEvent(new Event('markview:atmosphere-lite'));
   };
 
   const cycleNext = () => {
@@ -145,13 +158,26 @@ export function AtmosphereDots() {
           )}
           <button
             type="button"
-            className="mv-atm-enter"
-            onClick={() => window.dispatchEvent(new CustomEvent('markview:enter-painting'))}
-            title="Go inside the painting — walk through it (WASD)"
-            aria-label="Go inside the painting"
+            className={`mv-atm-icon${lite ? ' is-on' : ''}`}
+            onClick={() => { toggleLite(); playTick(); }}
+            title={lite ? 'Lite graphics · on — static painting, smoothest' : 'Lite graphics · off — full depth + particles'}
+            aria-label="Toggle lite graphics (performance mode)"
           >
-            <Footprints size={13} />
+            <Zap size={12} />
           </button>
+          {/* Walking into the painting spins up the heaviest renderer of
+              all (a 100k-splat cloud) — pointless in lite mode, so hide it. */}
+          {!lite && (
+            <button
+              type="button"
+              className="mv-atm-enter"
+              onClick={() => window.dispatchEvent(new CustomEvent('markview:enter-painting'))}
+              title="Go inside the painting — walk through it (WASD)"
+              aria-label="Go inside the painting"
+            >
+              <Footprints size={13} />
+            </button>
+          )}
         </>
       )}
 
