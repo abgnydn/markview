@@ -169,6 +169,15 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     };
   }, []);
 
+  // Lite also flips a body class so we can strip the remaining decorative
+  // composited layers (the grain overlay + the cursor-glow) globally — on an
+  // integrated GPU, every full-viewport layer you remove is budget the
+  // compositor gets back for animating a panel without dropping frames.
+  useEffect(() => {
+    document.body.classList.toggle('mv-lite', lite);
+    return () => document.body.classList.remove('mv-lite');
+  }, [lite]);
+
   // ── Particle backend — 'webgl' (CPU sim, universal) or 'webgpu'
   // (TSL compute sim, opt-in). Toggled with `b`; requires navigator.gpu.
   // Any WebGPU init failure flips back to WebGL via onFallback.
