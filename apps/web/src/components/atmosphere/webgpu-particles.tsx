@@ -66,7 +66,7 @@ export function WebGPUParticles({ kind, onFallback }: WebGPUParticlesProps) {
         const isBottom = cfg.spawnFrom === 'bottom-band';
 
         // ── Renderer (WebGPU backend) ────────────────────────────────
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
         const renderer = new THREE.WebGPURenderer({ canvas, antialias: false, alpha: true });
         renderer.setPixelRatio(dpr);
         renderer.setSize(window.innerWidth, window.innerHeight, false);

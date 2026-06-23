@@ -57,7 +57,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style 
       const THREE = await import('three');
       if (cancelled) return;
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       renderer.setPixelRatio(dpr);
       renderer.setSize(window.innerWidth, window.innerHeight, false);

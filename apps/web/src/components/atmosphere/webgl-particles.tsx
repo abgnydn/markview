@@ -318,7 +318,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       if (cancelled) return;
 
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       renderer.setPixelRatio(dpr);
       renderer.setSize(window.innerWidth, window.innerHeight, false);
 
@@ -467,7 +467,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         zIndex: '1',
       });
       const setAccumSize = () => {
-        const dprA = Math.min(window.devicePixelRatio || 1, 2);
+        const dprA = Math.min(window.devicePixelRatio || 1, 1.5);
         accumCanvas.width = window.innerWidth * dprA;
         accumCanvas.height = window.innerHeight * dprA;
         accumCanvas.style.width = `${window.innerWidth}px`;
@@ -476,7 +476,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       setAccumSize();
       canvas.parentElement?.insertBefore(accumCanvas, canvas);
       const accumCtx = accumCanvas.getContext('2d')!;
-      const accumDpr = Math.min(window.devicePixelRatio || 1, 2);
+      const accumDpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const accumOn = cfg.accumulate > 0;
 
       // ── Inputs ────────────────────────────────────────────────────
@@ -505,8 +505,18 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const wind = makeWindField();
       let last = performance.now();
       let raf = 0;
+      // Cap the particle simulation to ~30fps. Each tick runs a full CPU
+      // physics pass, a full-screen accumulation fade, AND re-uploads every
+      // particle buffer to the GPU — at 60fps that alone can swamp an
+      // integrated GPU and make the whole UI (scroll, hover) feel laggy.
+      // Ambient snow/dust reads fine at 30fps — motion is dt-based so the
+      // speed is identical — and this halves the cost, handing the frame
+      // budget back to the actual interface.
+      const MIN_FRAME_MS = 30;
       const tick = () => {
+        raf = requestAnimationFrame(tick);
         const now = performance.now();
+        if (now - last < MIN_FRAME_MS) return;
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
         const tSec = now / 1000;
