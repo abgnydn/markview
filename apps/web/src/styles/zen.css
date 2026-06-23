@@ -273,6 +273,9 @@ body::before {
     opacity var(--zen-duration) var(--zen-ease),
     transform var(--zen-duration) var(--zen-ease);
   pointer-events: none;
+  /* Same isolation as the sidebar — keep the reveal a compositor-only
+     fade+slide so it never repaints the content underneath. */
+  will-change: transform, opacity;
 }
 
 /* Reveal only when the top edge zone OR the toolbar itself is hovered.
@@ -567,6 +570,13 @@ body::before {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  /* Isolate the panel on its own GPU layer. It's opaque, so once promoted
+     the slide is a pure compositor translate over the content — without
+     this the browser re-rasterizes a 240px strip of the (text-shadowed,
+     paper-textured) page every frame the panel moves, which is what made
+     the slide-in/out judder with an atmosphere on. */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .zen-zone-left:hover ~ .viewer-layout .sidebar,
@@ -807,6 +817,7 @@ nav.toc a.active {
   transition:
     opacity 280ms var(--zen-ease),
     transform 280ms var(--zen-ease);
+  will-change: transform, opacity;
 }
 .zen-zone-top:hover ~ .workspace-tabs,
 .toolbar:hover ~ .workspace-tabs,
