@@ -2223,6 +2223,11 @@
   align-items: center;
   gap: 10px;
   z-index: 12;
+  /* Never let the ~18-button bar run off-screen on a narrow window — wrap
+     into stacked rows from the right edge instead of overflowing. */
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: calc(100vw - 36px);
 }
 .presentation-counter {
   font-family: var(--font-mono);
@@ -2387,7 +2392,13 @@
   display: flex;
   align-items: center;
   gap: 9px;
+  /* A dot per slide blows the dock out on long decks — cap the run and let
+     it scroll within the dock rather than stretch it across the stage. */
+  max-width: min(46vw, 520px);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.presentation-dots::-webkit-scrollbar { display: none; }
 .presentation-dot {
   width: 8px; height: 8px;
   padding: 0;

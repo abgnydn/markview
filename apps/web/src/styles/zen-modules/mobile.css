@@ -348,3 +348,191 @@
     margin: -6px -4px;
   }
 }
+
+/* ────────────────────────────────────────────────────────────────────────
+ * Presentation / deck mode — responsive layer.
+ *
+ * The deck (globals.css) is authored for a wide stage: an 18-button control
+ * bar pinned top-right, a centred nav dock carrying one dot per slide, a
+ * running footer, a next-slide peek, and a forced 16:9 card. None of that
+ * survives a phone — the controls spill off-screen, the dots blow out the
+ * dock, and a 16:9 card at 92vw is a thin letterbox stranded in portrait.
+ *
+ * This block reshapes the deck for narrow / touch surfaces:
+ *   - controls collapse to one scrollable, safe-area-aware strip pinned top,
+ *     with the Exit button fixed to the corner so it's always one tap away
+ *   - the slide fills the screen (drops the forced aspect in portrait) and
+ *     sheds the wide deck padding so prose isn't squeezed into a sliver
+ *   - the nav dock keeps arrows only — swipe (already wired in the TSX) and
+ *     the counter cover the rest; per-slide dots are hidden
+ *   - decorative chrome (peek, hint, footer, ambient orbs / grain / dots)
+ *     is dropped: it overlaps on a small screen and the heavy blur filters
+ *     are the most expensive thing to paint on a phone GPU
+ *   - every panel (notes / search / draw / filmstrip / help / TOC / stats)
+ *     becomes a full-width, safe-area-aware sheet
+ *   - tap targets hit the 44px Apple-HIG floor; 100dvh dodges iOS chrome
+ * ──────────────────────────────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse), (max-width: 768px) {
+  /* Stage — clear the top strip + bottom dock, drop the big desktop
+     gutters, and lean on the dynamic viewport so iOS Safari's bottom bar
+     doesn't crop the slide. */
+  .presentation-stage {
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 60px)
+      max(10px, env(safe-area-inset-right, 0px))
+      calc(env(safe-area-inset-bottom, 0px) + 78px)
+      max(10px, env(safe-area-inset-left, 0px)) !important;
+  }
+
+  /* Slide card — fit width-first, fill the available height, and trim the
+     generous deck padding so the body isn't crushed into a column. */
+  .presentation-slide:not(.is-thumb) {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 150px) !important;
+    padding: clamp(20px, 5.5vw, 40px) clamp(18px, 5vw, 36px) !important;
+    border-radius: 14px !important;
+  }
+  /* Scale the slide ornaments down so they don't crowd a small card. */
+  .presentation-slide-watermark { font-size: clamp(90px, 22vh, 150px) !important; }
+  .presentation-kicker {
+    top: 16px !important;
+    left: clamp(18px, 5vw, 36px) !important;
+    font-size: 10px !important;
+    letter-spacing: 2px !important;
+  }
+  .presentation-slide-no { bottom: 12px !important; right: 16px !important; }
+
+  /* Portrait — a 16:9 (or 4:3 / 16:10) card is a tiny letterbox here, so
+     drop the forced ratio and let the card own the screen. !important +
+     the matching descendant depth beat the .aspect-* variants. */
+  @media (orientation: portrait) {
+    .presentation-overlay .presentation-slide:not(.is-thumb) {
+      aspect-ratio: auto !important;
+      height: 100% !important;
+    }
+  }
+
+  /* Controls — one scrollable strip across the (notch-safe) top edge so all
+     actions stay reachable rather than spilling off-screen. Right padding
+     leaves a lane for the fixed Exit button. */
+  .presentation-controls {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    gap: 4px !important;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 6px)
+      calc(52px + env(safe-area-inset-right, 0px))
+      6px
+      max(8px, env(safe-area-inset-left, 0px)) !important;
+    border-radius: 0 !important;
+    max-width: 100vw !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none;
+  }
+  .presentation-controls::-webkit-scrollbar { display: none; }
+  /* Exit is last in the bar — pin it to the corner so it never scrolls away
+     (no Esc key to fall back on with touch). */
+  .presentation-controls > .presentation-btn:last-child {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 6px);
+    right: max(8px, env(safe-area-inset-right, 0px));
+    z-index: 13;
+  }
+  /* Progress slips just below the strip so it stays visible. */
+  .presentation-progress { top: calc(env(safe-area-inset-top, 0px) + 50px) !important; }
+
+  /* Tap targets — 40px+ on every deck button (≥44px on the nav arrows),
+     with visible :active feedback since there's no hover on touch. The
+     counter / timer pills shouldn't be squeezed by the flex row. */
+  .presentation-btn { width: 40px !important; height: 40px !important; flex: 0 0 auto; }
+  .presentation-counter, .presentation-timer { flex: 0 0 auto; }
+  .presentation-btn:active,
+  .presentation-nav-btn:active:not(:disabled),
+  .presentation-opts button:active,
+  .presentation-toc li button:active { opacity: 0.6; }
+
+  /* Nav dock — arrows + edges only. The per-slide dots overflow a phone and
+     swipe already covers free navigation. Bigger, safe-area-aware. */
+  .presentation-nav {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+    gap: 10px !important;
+  }
+  .presentation-dots { display: none !important; }
+  .presentation-nav-btn { width: 46px !important; height: 46px !important; }
+  .presentation-nav-btn.is-edge { width: 40px !important; height: 40px !important; }
+
+  /* Drop decorative chrome that overlaps or just clutters a small screen. */
+  .presentation-peek,
+  .presentation-hint,
+  .presentation-firsthint,
+  .presentation-footer { display: none !important; }
+
+  /* Kill the heavy ambient effects — the big blurred orbs, the tiled noise
+     overlay and the drifting dot-field are the costliest paints on a phone. */
+  .presentation-orb,
+  .presentation-overlay::after,
+  .presentation-overlay.theme-midnight .presentation-stage::before,
+  .presentation-overlay.theme-aurora .presentation-stage::before,
+  .presentation-overlay.theme-forest .presentation-stage::before,
+  .presentation-overlay.theme-noir .presentation-stage::before { display: none !important; }
+
+  /* Overview grid — smaller cells + safe-area so thumbnails fit two-up. */
+  .presentation-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    gap: 12px !important;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 62px)
+      max(12px, env(safe-area-inset-right, 0px))
+      calc(env(safe-area-inset-bottom, 0px) + 24px)
+      max(12px, env(safe-area-inset-left, 0px)) !important;
+  }
+
+  /* Panels → full-width, safe-area-aware sheets. */
+  .presentation-notes {
+    left: max(12px, env(safe-area-inset-left, 0px)) !important;
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    width: auto !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 76px) !important;
+    max-height: 38dvh !important;
+  }
+  .presentation-search {
+    top: calc(env(safe-area-inset-top, 0px) + 60px) !important;
+    left: max(12px, env(safe-area-inset-left, 0px)) !important;
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    transform: none !important;
+    width: auto !important;
+  }
+  /* 16px+ stops iOS auto-zooming the field on focus; let it fill the sheet. */
+  .presentation-search input { font-size: 16px !important; width: 100% !important; flex: 1; }
+  .presentation-drawbar,
+  .presentation-filmstrip { bottom: calc(env(safe-area-inset-bottom, 0px) + 76px) !important; }
+  .presentation-drawbar {
+    max-width: calc(100vw - 24px);
+    flex-wrap: wrap !important;
+    justify-content: center;
+  }
+  .presentation-caption {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 78px) !important;
+    font-size: 13px !important;
+  }
+
+  /* Help / TOC / stats cards — wide sheet, single-column shortcut list,
+     two-up stat grid, scrollable within the dynamic viewport. */
+  .presentation-help-card {
+    width: 92vw !important;
+    max-height: 84dvh !important;
+    overflow-y: auto !important;
+    padding: 22px 20px !important;
+  }
+  .presentation-help-card dl { grid-template-columns: 1fr !important; gap: 8px 16px !important; }
+  .presentation-stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Number-jump readout shrinks to clear the top strip. */
+  .presentation-numbuf { font-size: 34px !important; padding: 12px 22px !important; }
+}
