@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-23T21:45:14.550Z",
+  "generated_at": "2026-06-24T21:26:27.466Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1832,
+  "activity_90d_total": 1833,
   "activity_90d": {
     "2026-03-27": 1,
     "2026-03-28": 20,
@@ -75,7 +75,7 @@
     "2026-06-20": 1,
     "2026-06-21": 1,
     "2026-06-22": 1,
-    "2026-06-23": 51
+    "2026-06-23": 52
   },
   "categories": {
     "llm-inference": {
@@ -322,20 +322,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-23T07:45:32Z",
+      "pushed_at": "2026-06-23T21:45:15Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "8961b0103597623f9bcf95eb45ebb3f83e824cb9",
-        "short_sha": "8961b01",
-        "message": "fix(presentation): hide next-slide peek on laptop/middle screens",
-        "type": "fix",
-        "date": "2026-06-23T07:45:29Z",
-        "url": "https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9",
-        "additions": 10,
-        "deletions": 0
+        "sha": "53e03563c27effb8847ce703a713c6f7214825a1",
+        "short_sha": "53e0356",
+        "message": "chore(portfolio): daily sync 2026-06-23",
+        "type": "chore",
+        "date": "2026-06-23T21:45:14Z",
+        "url": "https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1",
+        "additions": 1076,
+        "deletions": 1067
       }
     },
     {
@@ -2058,6 +2058,19 @@
   ],
   "commits": [
     {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "53e03563c27effb8847ce703a713c6f7214825a1",
+      "short_sha": "53e0356",
+      "message": "chore(portfolio): daily sync 2026-06-23",
+      "type": "chore",
+      "date": "2026-06-23T21:45:14Z",
+      "url": "https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1",
+      "additions": 1076,
+      "deletions": 1067
+    },
+    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -3460,19 +3473,6 @@
       "url": "https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d",
       "additions": 417,
       "deletions": 1424
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "fcdb112e5610d98b35b879de3c19f14259b807ee",
-      "short_sha": "fcdb112",
-      "message": "feat(atmosphere): 20 more classical refinements (#41–60) — element fi…",
-      "type": "feat",
-      "date": "2026-06-12T05:42:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/fcdb112e5610d98b35b879de3c19f14259b807ee",
-      "additions": 125,
-      "deletions": 0
     },
     {
       "slug": "markview",
