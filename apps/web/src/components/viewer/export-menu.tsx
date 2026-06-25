@@ -27,7 +27,14 @@ import {
   printDocument,
 } from '@/lib/export/export-utils';
 
-export function ExportMenu() {
+interface ExportMenuProps {
+  /** `button` (default) renders the standalone toolbar icon. `menu-item`
+   *  renders a full-width row for use inside the toolbar's "More" menu, with
+   *  the export panel opening as a flyout. */
+  variant?: 'button' | 'menu-item';
+}
+
+export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
@@ -232,15 +239,31 @@ export function ExportMenu() {
 
   if (!activeFile) return null;
 
+  const isMenuItem = variant === 'menu-item';
+
   return (
-    <div className="export-menu-container" ref={menuRef}>
-      <button
-        className="toolbar-btn"
-        onClick={() => setIsOpen((v) => !v)}
-        title="Copy & Export"
-      >
-        <Download size={18} />
-      </button>
+    <div
+      className={`export-menu-container${isMenuItem ? ' export-menu-container--inline' : ''}`}
+      ref={menuRef}
+    >
+      {isMenuItem ? (
+        <button
+          className="toolbar-overflow-item"
+          onClick={() => setIsOpen((v) => !v)}
+          aria-haspopup="menu"
+          aria-expanded={isOpen}
+        >
+          <Download size={16} /> Export…
+        </button>
+      ) : (
+        <button
+          className="toolbar-btn"
+          onClick={() => setIsOpen((v) => !v)}
+          title="Copy & Export"
+        >
+          <Download size={18} />
+        </button>
+      )}
 
       {isOpen && (
         <div className="export-dropdown">

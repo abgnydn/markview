@@ -123,15 +123,15 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
               <Search size={18} />
             </button>
             <button
-              className="toolbar-btn toolbar-secondary"
+              className="toolbar-btn toolbar-desktop-only"
               onClick={onTogglePresentation}
               title="Presentation mode (P)"
             >
               <Presentation size={18} />
             </button>
-            <div className="toolbar-theme-picker-container toolbar-secondary" ref={addMenuRef}>
+            <div className="toolbar-theme-picker-container toolbar-desktop-only" ref={addMenuRef}>
               <button
-                className="toolbar-btn toolbar-secondary"
+                className="toolbar-btn"
                 onClick={() => setShowAddMenu((v) => !v)}
                 title="Add a document"
               >
@@ -157,50 +157,6 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                 </div>
               )}
             </div>
-
-            {/* Graph view — flips workspace into the 3D vault overlay. */}
-            {onToggleVault && (
-              <button
-                className="toolbar-btn toolbar-secondary"
-                onClick={onToggleVault}
-                title="Graph view (\\)"
-              >
-                <Network size={18} />
-              </button>
-            )}
-
-            {/* Secondary actions — hidden on mobile, shown in overflow menu */}
-            <button
-              className="toolbar-btn toolbar-secondary"
-              onClick={onToggleEditor}
-              title="Edit markdown (E)"
-            >
-              <Edit3 size={18} />
-            </button>
-            <button
-              className="toolbar-btn toolbar-secondary"
-              onClick={onToggleSplitView}
-              title="Split view"
-            >
-              <Columns2 size={18} />
-            </button>
-            <button
-              className="toolbar-btn toolbar-secondary"
-              onClick={onToggleDiffView}
-              title="Compare files"
-            >
-              <FileCode2 size={18} />
-            </button>
-            <span className="toolbar-secondary">
-              <ExportMenu />
-            </span>
-            <button
-              className="toolbar-btn toolbar-secondary"
-              onClick={onOpenFileBrowser}
-              title="Browse all workspaces & files"
-            >
-              <FolderOpen size={18} />
-            </button>
             {onOpenAiChat && (
               <button
                 className="toolbar-btn toolbar-ai-btn"
@@ -210,51 +166,58 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                 <Sparkles size={18} />
               </button>
             )}
-            <button
-              className="toolbar-btn toolbar-secondary"
-              onClick={handleClearAll}
-              title="Clear all workspaces"
-              style={{ color: '#f87171' }}
-            >
-              <Trash2 size={18} />
-            </button>
 
-            {/* Overflow menu button — mobile only */}
+            {/* "More" menu — secondary actions live here on every screen. On
+                mobile, the primary actions above fold in too (mobile-group). */}
             <div className="toolbar-overflow-container" ref={overflowRef}>
               <button
                 className="toolbar-btn toolbar-overflow-btn"
                 onClick={() => setShowOverflow(!showOverflow)}
                 title="More actions"
                 aria-label="More actions"
+                aria-haspopup="menu"
+                aria-expanded={showOverflow}
               >
                 <MoreVertical size={18} />
               </button>
               {showOverflow && (
                 <div className="toolbar-overflow-menu">
-                  <button className="toolbar-overflow-item" onClick={() => { onAddFiles?.(); setShowOverflow(false); }}>
-                    <Plus size={16} /> Add Workspace
-                  </button>
-                  <button className="toolbar-overflow-item" onClick={() => { onTogglePresentation?.(); setShowOverflow(false); }}>
-                    <Presentation size={16} /> Presentation Base
-                  </button>
+                  {/* Primary actions are standalone buttons on desktop; they
+                      collapse into the menu on mobile. */}
+                  <div className="toolbar-mobile-group">
+                    <button className="toolbar-overflow-item" onClick={() => { onTogglePresentation?.(); setShowOverflow(false); }}>
+                      <Presentation size={16} /> Presentation
+                    </button>
+                    <button className="toolbar-overflow-item" onClick={() => { onNewFile?.(); setShowOverflow(false); }}>
+                      <FilePlus size={16} /> New file
+                    </button>
+                    <button className="toolbar-overflow-item" onClick={() => { onAddFiles?.(); setShowOverflow(false); }}>
+                      <Upload size={16} /> Upload .md…
+                    </button>
+                    <hr className="toolbar-overflow-sep" />
+                  </div>
+
                   <button className="toolbar-overflow-item" onClick={() => { onToggleEditor?.(); setShowOverflow(false); }}>
-                    <Edit3 size={16} /> Edit File
+                    <Edit3 size={16} /> Edit file
                   </button>
                   <button className="toolbar-overflow-item" onClick={() => { onToggleSplitView?.(); setShowOverflow(false); }}>
-                    <Columns2 size={16} /> Split View
+                    <Columns2 size={16} /> Split view
                   </button>
                   <button className="toolbar-overflow-item" onClick={() => { onToggleDiffView?.(); setShowOverflow(false); }}>
-                    <FileCode2 size={16} /> Compare Git Diff
+                    <FileCode2 size={16} /> Compare diff
                   </button>
-                  <hr className="toolbar-overflow-sep" />
+                  <ExportMenu variant="menu-item" />
                   <button className="toolbar-overflow-item" onClick={() => { onOpenFileBrowser?.(); setShowOverflow(false); }}>
-                    <FolderOpen size={16} /> Browse all files
+                    <FolderOpen size={16} /> Browse files
                   </button>
-                  <button className="toolbar-overflow-item" onClick={() => { onGoHome?.(); setShowOverflow(false); }}>
-                    <Plus size={16} style={{ transform: 'rotate(45deg)' }} /> Go to landing
-                  </button>
+                  {onToggleVault && (
+                    <button className="toolbar-overflow-item" onClick={() => { onToggleVault?.(); setShowOverflow(false); }}>
+                      <Network size={16} /> Graph view
+                    </button>
+                  )}
+                  <hr className="toolbar-overflow-sep" />
                   <button className="toolbar-overflow-item toolbar-overflow-item-danger" onClick={() => { handleClearAll(); setShowOverflow(false); }}>
-                    <Trash2 size={16} /> Clear All Workspaces
+                    <Trash2 size={16} /> Clear all
                   </button>
                 </div>
               )}
@@ -263,7 +226,7 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
         )}
 
         {/* Theme picker */}
-        <div className="toolbar-theme-picker-container toolbar-secondary" ref={themePickerRef}>
+        <div className="toolbar-theme-picker-container toolbar-desktop-only" ref={themePickerRef}>
           <button
             className="toolbar-btn toolbar-theme-picker-btn"
             onClick={() => setShowThemePicker(!showThemePicker)}
@@ -294,9 +257,9 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
           )}
         </div>
 
-        <span className="toolbar-font-size toolbar-secondary">{fontSize}px</span>
-        
-        <div className="toolbar-theme-picker-container toolbar-secondary" ref={modePickerRef}>
+        <span className="toolbar-font-size toolbar-desktop-only">{fontSize}px</span>
+
+        <div className="toolbar-theme-picker-container toolbar-desktop-only" ref={modePickerRef}>
           <button
             className="toolbar-btn toolbar-theme-btn"
             onClick={() => setShowModePicker(!showModePicker)}

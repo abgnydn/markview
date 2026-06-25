@@ -1529,10 +1529,34 @@
    RESPONSIVE
    ============================================ */
 
-/* Hamburger + overflow: hidden on desktop */
-.toolbar-hamburger,
-.toolbar-overflow-container {
+/* Hamburger: hidden on desktop (the sidebar is hover-revealed there). */
+.toolbar-hamburger {
   display: none;
+}
+
+/* The "More" (⋮) menu is available on every screen size now. */
+.toolbar-overflow-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Wrapper for menu rows that only apply on mobile (where the matching
+   standalone toolbar buttons are hidden). `display: contents` lets the rows
+   sit in the menu's flow without adding a box. */
+.toolbar-mobile-group {
+  display: none;
+}
+
+/* `.toolbar-desktop-only` keeps its element's natural display on desktop and
+   folds into the ⋮ More menu on mobile. `.toolbar-mobile-group` is the inverse. */
+@media (max-width: 768px) {
+  .toolbar-desktop-only {
+    display: none !important;
+  }
+  .toolbar-mobile-group {
+    display: contents;
+  }
 }
 
 /* --- Tablet (≤1024px) --- */
@@ -1864,6 +1888,35 @@
    ============================================ */
 .export-menu-container {
   position: relative;
+}
+
+/* Export rendered as a row inside the toolbar "More" menu. */
+.export-menu-container--inline {
+  position: relative;
+  width: 100%;
+}
+
+/* Desktop: open the export panel as a flyout to the left of the More menu,
+   so it never collides with the menu rows or runs off the right edge. */
+.export-menu-container--inline .export-dropdown {
+  top: -6px;
+  right: calc(100% + 8px);
+  left: auto;
+  margin-top: 0;
+  max-height: min(78vh, 600px);
+  overflow-y: auto;
+}
+
+/* Mobile: the More menu hugs the right edge, so drop the panel below the row. */
+@media (max-width: 768px) {
+  .export-menu-container--inline .export-dropdown {
+    top: 100%;
+    right: 0;
+    left: auto;
+    margin-top: 6px;
+    max-width: 82vw;
+    max-height: 60vh;
+  }
 }
 
 /* Export dropdown — matches the zen theme-picker so the chrome is consistent. */
