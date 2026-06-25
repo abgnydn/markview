@@ -1,4 +1,4 @@
-<img width="1707" height="992" alt="image" src="https://github.com/user-attachments/assets/045c4815-3c6c-4c6b-b0d3-d227da7e2e96" />
+<img alt="Zero-TVM — run Phi-3 in the browser on 10 hand-written WGSL kernels (zerotvm.com)" src="docs/hero.png" />
 
 # Zero-TVM
 
@@ -6,30 +6,27 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Live](https://img.shields.io/badge/live-zerotvm.com-6ea8ff)](https://zerotvm.com)
 [![Bench](https://img.shields.io/badge/bench-vs%20WebLLM-orange)](./BENCH.md)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20838918.svg)](https://doi.org/10.5281/zenodo.20838918)
 
 **[zerotvm.com](https://zerotvm.com)**
 
-**Phi-3-mini running in a browser on hand-written WGSL shaders. No TVM. No WebLLM runtime. No compiler.**
-
-The standard way to run a modern LLM in a browser is [WebLLM / MLC-LLM](https://webllm.mlc.ai/), which ships an Apache-TVM compiler pipeline that emits 85 autotuned WGSL kernels and drives them from a WASM scheduler. This repo replaces that entire stack with **10 kernel roles (27 WGSL implementations, counting subgroup/tiled/int8 variants) and about 2,000 lines of TypeScript** (engine + tokenizer + weight loader), using the same model and the same quantized weights.
-
-The whole forward pass — 32 transformer layers, paged KV cache, int4-dequant matmul, RoPE, fused FFN, RMSNorm, paged attention, argmax sampling — is readable end-to-end in a single sitting. That is the point.
-
-## What's actually in the box
-
-All numbers below are measured from the source and the build output in this repo. Performance varies by GPU — throughput is displayed live in the chat UI. A head-to-head vs WebLLM on identical hardware/weights is recorded in [BENCH.md](BENCH.md).
+**Phi-3-mini (3.8B) running in the browser on 10 hand-written WGSL kernels — ~80% of WebLLM's decode speed, with no TVM, no compiler, and no WASM runtime.**
 
 | | WebLLM (TVM) | Zero-TVM (this repo) |
 |---|---|---|
-| Unique WGSL kernels | **85** | **10 roles / 27 files** |
-| Total WGSL lines | **12,962** (generated) | **3,078** (hand-written, incl. A/B variants) |
+| Decode speed (M2 Pro, same weights) | **~51 tok/s** | **~40 tok/s** |
+| Unique WGSL kernels | **85** (autotuned) | **10 roles / 27 files** |
+| Total WGSL lines | **12,962** (generated) | **3,078** (hand-written) |
 | Dispatches per decode step | **342** | **228** (f16 KV) / **260** (int8 KV) |
-| Runtime | TVM → WASM scheduler | Plain TypeScript, no runtime |
+| Runtime | TVM → WASM scheduler | Plain TypeScript, none |
 | Tokenizer | bundled from WebLLM | BPE from scratch (`tokenizer.ts`) |
-| Weight loader | MLC's | Direct HuggingFace fetch + OPFS cache |
-| JS bundle (chat page, excl. model weights) | **5.9 MB** / 2.1 MB gz (`compiler-chat.html`) | **157 kB** / 33 kB gz (`zero-tvm.html`) |
+| JS bundle (chat page, excl. weights) | **5.9 MB** / 2.1 MB gz | **157 kB** / 33 kB gz |
 
-Zero-TVM issues **fewer** dispatches than TVM because it fuses operations TVM's default pipeline doesn't:
+Same model, same quantized weights. [WebLLM / MLC-LLM](https://webllm.mlc.ai/) — the standard way to run a browser LLM — ships an Apache-TVM pipeline that emits 85 autotuned WGSL kernels driven from a WASM scheduler. This repo replaces that whole stack with **10 kernel roles (27 WGSL files, counting subgroup/tiled/int8 variants) and ~2,000 lines of TypeScript** (engine + tokenizer + weight loader) — and lands within ~20% of it. The whole forward pass — 32 transformer layers, paged KV cache, int4-dequant matmul, RoPE, fused FFN, RMSNorm, paged attention, argmax sampling — is readable end-to-end in a single sitting. That is the point.
+
+## What's actually in the box
+
+Numbers above are measured from the source and build output in this repo; throughput varies by GPU, shows live in the chat UI, and the full head-to-head (methodology + raw runs) is in [BENCH.md](BENCH.md). Zero-TVM issues **fewer** dispatches than TVM because it fuses operations TVM's default pipeline doesn't:
 
 - `qkv_fused.wgsl` — Q/K/V projection + RoPE + paged-KV append, one dispatch per layer (was 3 in earlier revisions and in TVM's emission).
 - `attention.wgsl` — paged attention combined with the page-table read.
@@ -84,15 +81,15 @@ Open DevTools and `window.specSim(160, 3, 3)` runs the CPU-side prompt-lookup sp
 The directory layout is the narrative arc of the project. Each page is a milestone.
 
 ```
-index.html              → src/main.ts              (1) Baseline: WebLLM, untouched
-compiler-chat.html      → src/compiler/chat-v2.ts  (2) Intermediate: WebLLM captures
+index.html              (landing page — essay, shader catalog, compare table)
+compiler-chat.html      → src/compiler/chat-v2.ts  (1) WebLLM reference: captures
                                                        dispatches, our shaders replay
                                                        279 of 342 of them
-zero-tvm.html           → src/zero-tvm/chat.ts     (3) The result: all dispatches
+zero-tvm.html           → src/zero-tvm/chat.ts     (2) The result: all dispatches
                                                        replaced, WebLLM never touched
 validate.html           → src/zero-tvm/validate.ts Multi-prompt smoke test driving
                                                        src/zero-tvm/engine-core.ts
-webllm-bench.html       → src/webllm-bench/main.ts (4) Honesty check: WebLLM driven
+webllm-bench.html       → src/webllm-bench/main.ts (3) Honesty check: WebLLM driven
                                                        against the same local weights
                                                        for a fair head-to-head
 
@@ -173,7 +170,7 @@ src/
 
 ## How it's tested
 
-Two layers, intentionally separate:
+Three layers, intentionally separate:
 
 1. **Per-shader correctness vs TVM** — `test-shaders.html` (`src/compiler/test-harness.ts`).
    Loads WebLLM, intercepts the WGSL device to capture every TVM dispatch from a real
@@ -190,6 +187,13 @@ Two layers, intentionally separate:
    continuation. A reader can scroll through the page and verify the model behaves
    like Phi-3 on inputs that were never in the per-shader test set.
 
+3. **Automated kernel correctness (headless, CI-ready)** — `npm run test:kernels`
+   (`tests/kernels/`). Runs the real WGSL kernels from `src/compiler/shaders/`
+   against independent CPU references — 8 of the 10 roles, exact or within f16
+   tolerance. Uses the Dawn-native WebGPU binding on Mesa lavapipe, so it needs
+   no GPU and runs in CI; on a machine with a GPU it uses the real adapter. This
+   is the automated net the per-shader browser harness (layer 1) never had.
+
 `zero-tvm.html` currently runs a parallel decode implementation in `chat.ts` with
 the progressive-streaming / fused-QKV / int8-KV work layered on top. Its correctness
 is covered by the per-shader tests (same kernels) and by the subjective chat UX,
@@ -204,6 +208,11 @@ Measured on M2 Pro, Chrome 120+, Phi-3-mini-4k-instruct q4f16_1, steady-state de
 |---|---|
 | WebLLM v0.2.80 (MLC-LLM, same weights) | **~51** |
 | Zero-TVM (this repo, f16 KV, default shaders) | **~40** |
+
+Reproduce on any WebGPU GPU with `npm run bench` — it drives both engines on
+identical weights and regenerates the numbers in BENCH.md. It also runs headless
+on a cloud GPU (Colab notebook + Docker image in [`bench/`](bench/)) for machines
+without a local one.
 
 That's ~22% behind the autotuned compiler on an identical workload. See
 [BENCH.md](BENCH.md) for the full protocol, the raw numbers, and three optimization
@@ -243,9 +252,13 @@ MIT. See [LICENSE](LICENSE).
 
 ## Citation
 
-If this repo is useful to your research or writing, cite it as:
+This repo ships a [`CITATION.cff`](CITATION.cff), so GitHub's "Cite this
+repository" button renders APA / BibTeX automatically. Each release is archived
+to [Zenodo](https://zenodo.org) — cite the concept DOI
+[10.5281/zenodo.20838918](https://doi.org/10.5281/zenodo.20838918) for all
+versions.
 
 ```
-Gunaydin, A. B. (2026). Zero-TVM: Phi-3 in a browser on hand-written WGSL shaders.
-https://zerotvm.com | https://github.com/abgnydn/zero-tvm
+Gunaydin, A. B. (2026). Zero-TVM: Phi-3-mini in the browser on hand-written
+WGSL kernels. https://zerotvm.com | https://github.com/abgnydn/zero-tvm
 ```

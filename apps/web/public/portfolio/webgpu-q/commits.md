@@ -1,5 +1,9 @@
 # Commits — webgpu-q
 
+## 2026-06-25
+
+- `03:24` **Cost-aware (LPT) swarm scheduling — throughput's first clear win (#3)** — +380 −0 — [`5f6c436`](https://github.com/abgnydn/webgpu-q/commit/5f6c436dbc262ee966dcc02c35d37cd2f2e8295b)
+
 ## 2026-06-23
 
 - `06:51` **Federated CCSD(T) foundation + first cross-vendor GPU validation + EO…** — +1375 −15 — [`cae5f1b`](https://github.com/abgnydn/webgpu-q/commit/cae5f1b8db8e6d8fb1d5f907d0a8a2e84319aea8)
@@ -66,4 +70,3 @@
 - `10:27` **Merge pull request #1 from abgnydn/cross-machine-gpu-batch** — +2064 −87 — [`d79299c`](https://github.com/abgnydn/webgpu-q/commit/d79299cf9b2544466d406fa26c51fa013099789b)
 - `09:44` **feat(chem): runUMP2Auto — DF-UMP2 completes the {R,U}×{HF,DFT,MP2} ma…** — +189 −0 — [`08479da`](https://github.com/abgnydn/webgpu-q/commit/08479da033265dc9b1503ed7bad5db65eb5ebe0a)
 - `09:31` **feat(chem): runMP2Auto — size-gated DF-MP2, correlation energy at any…** — +122 −1 — [`50ad6de`](https://github.com/abgnydn/webgpu-q/commit/50ad6de14c30438a6bc8ec0faabc7883f8cde26a)
-- `09:19` **feat(swarm): generalize chem kernel to RHF/UHF/RKS/UKS — radical & DF…** — +139 −20 — [`c951944`](https://github.com/abgnydn/webgpu-q/commit/c951944b70ceff24522583d63ac406923eb3e43f)

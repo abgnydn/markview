@@ -1,5 +1,15 @@
 # Commits — zero-tvm
 
+## 2026-06-25
+
+- `03:44` **docs: add Zenodo DOI badge + CITATION.cff identifier (#15)** — +9 −9 — [`32406c8`](https://github.com/abgnydn/zero-tvm/commit/32406c88acc201694df83a4e22df64bf4391d380)
+- `03:14` **docs(zenodo): tighten deposit metadata for a clean DOI record (#14)** — +2 −4 — [`1c8ce0f`](https://github.com/abgnydn/zero-tvm/commit/1c8ce0f03d6c8b7ad63fff508f2aeb91514a1eb4)
+- `03:05` **chore: bump to 0.2.0 for a fresh release (#13)** — +37 −2 — [`7f2d6f2`](https://github.com/abgnydn/zero-tvm/commit/7f2d6f2c65524448a46a9c96208dc28e3907b94b)
+- `03:02` **docs: add Zenodo .zenodo.json + CITATION.cff for a citable DOI (#12)** — +64 −3 — [`bda3f67`](https://github.com/abgnydn/zero-tvm/commit/bda3f6777a3180bbeb20a7d6c48d67af789f0361)
+- `02:58` **docs(readme): replace stale v1 screenshot with current hero (#11)** — +1 −1 — [`9bf9fef`](https://github.com/abgnydn/zero-tvm/commit/9bf9fef60d2fd55fd8a2d40a9eef2a9c285e6ffe)
+- `02:47` **docs(readme): lead with the comparison table + headline number (#10)** — +11 −15 — [`dc21078`](https://github.com/abgnydn/zero-tvm/commit/dc21078010d280becd6f694d454a74f750383169)
+- `02:40` **docs(readme): fix stale main.ts ref, document test suite + bench (#9)** — +17 −5 — [`9661b9b`](https://github.com/abgnydn/zero-tvm/commit/9661b9ba351347c2c555ae569f6fdf20f0ee0b25)
+
 ## 2026-06-23
 
 - `07:47` **fix(bench): WebGPU adapter on T4 — disable Dawn adapter blocklist (#8)** — +22 −14 — [`35955bd`](https://github.com/abgnydn/zero-tvm/commit/35955bd3e2ff50a6cca69bf42c774aae73613300)
@@ -72,13 +82,3 @@
 - `11:33` **Add zerotvm.com link to README** — +3 −1 — [`10f3a6b`](https://github.com/abgnydn/zero-tvm/commit/10f3a6b8ab6088afefea2b24dc8de7f439b8c386)
 - `11:29` **Replace image in README.md** — +1 −1 — [`2870fe9`](https://github.com/abgnydn/zero-tvm/commit/2870fe9e2d250ea5967180478d7ff6581e1aa4f9)
 - `11:29` **Update OG meta tags to use zerotvm.com domain** — +11 −6 — [`6d95de3`](https://github.com/abgnydn/zero-tvm/commit/6d95de348d4edb4b3e34fbc948f05628ce980770)
-- `11:21` **Fix tokenizer decode: convert SentencePiece hex byte tokens to actual…** — +5 −1 — [`9dc7373`](https://github.com/abgnydn/zero-tvm/commit/9dc7373711b39dd6a862bb92eb34b23f6c01d9eb)
-- `10:58` **Add helpful error message for WebLLM Cache.add() failures; gitignore …** — +9 −1 — [`f5887b4`](https://github.com/abgnydn/zero-tvm/commit/f5887b44d3c4e53cc7a87592ae9ea044104dc712)
-- `10:54` **Cache downloaded shards to Cache API for download resumption** — +11 −2 — [`854080f`](https://github.com/abgnydn/zero-tvm/commit/854080f2afa6241b3fece1c84b242fe9eb309267)
-- `10:49` **Fix download progress: show cumulative bytes across all shards** — +44 −21 — [`2896a3d`](https://github.com/abgnydn/zero-tvm/commit/2896a3dc50d5fbfa1d0138fe842c73fcce79e581)
-- `10:45` **Redesign chat UI: progress bar, byte-level download, unified layout** — +441 −134 — [`789be41`](https://github.com/abgnydn/zero-tvm/commit/789be41d8cfd26039e5eaace7c2f9d5b26c15a37)
-- `09:57` **Add OG image, favicon, meta tags; switch accent to emerald (#10b981)** — +124 −31 — [`8a32582`](https://github.com/abgnydn/zero-tvm/commit/8a3258267703537ae71e697e5252803b49cac4af)
-
-## 2026-04-07
-
-- `17:15` **Polish landing page: card accents, comparison wrapper, link hierarchy** — +170 −97 — [`481b8e5`](https://github.com/abgnydn/zero-tvm/commit/481b8e5068e555f08929e73c182f463f7e85b676)

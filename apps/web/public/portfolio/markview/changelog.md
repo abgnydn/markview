@@ -12,6 +12,7 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **feat**: feat(toolbar): consolidate secondary actions into a "More" menu (#105) — [`1d229c7`](https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96)
 - **fix**: fix(presentation): hide next-slide peek on laptop/middle screens — [`8961b01`](https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9)
 - **feat**: feat(atmosphere): lite mode — static painting, zero WebGL — [`bb9a9dd`](https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0)
 - **feat**: feat(presentation): responsive deck layout for narrow + touch screens — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
@@ -23,4 +24,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix(embeddings): batch model inputs to stop the ONNX integer-overflow… — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)
 - **fix**: fix: vermillion lede drop-cap + graceful WebGPU-particle fallback — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
 - **feat**: feat(world): aged-parchment page cards in the 3D world (not basic cards) — [`8bd448a`](https://github.com/abgnydn/markview/commit/8bd448a906b33402975340f1fa0fb888b6f028a4)
-- **fix**: fix(atmosphere): the ghost-ink root cause — .markdown-content p force… — [`06df36f`](https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea)

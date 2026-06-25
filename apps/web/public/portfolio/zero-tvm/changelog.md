@@ -5,6 +5,40 @@ format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/) starting
 from `0.1.0`.
 
+## [0.2.0] — 2026-06-25
+
+Tooling, tests, and docs pass. Engine behavior is unchanged; this release adds
+what makes it auditable, reproducible, and citable.
+
+### Added
+
+- **Headless WebGPU kernel-correctness suite** (`npm run test:kernels`) — runs
+  the real WGSL kernels against independent CPU references, 8 of the 10 roles,
+  via the Dawn-native binding on Mesa lavapipe (no GPU; CI-ready).
+- **Auto-bench + doc-sync** (`npm run bench`) — drives both engines on a WebGPU
+  GPU, writes `bench/results.json`, propagates numbers into the docs. Ships a
+  Docker image + a Colab notebook for cloud GPUs.
+- **Citable DOI scaffolding** — `CITATION.cff` + `.zenodo.json`.
+
+### Changed
+
+- README leads with the comparison table and the "~80% of WebLLM's decode
+  speed" framing; refreshed the hero screenshot to the current site.
+- Engine requests its WebGPU adapter with `powerPreference: 'high-performance'`.
+- Migrated hosting from Vercel to Cloudflare Pages (`public/_headers` carries
+  the COOP/COEP cross-origin-isolation headers).
+
+### Fixed
+
+- CI was red — the workflow called the renamed-away `lint` script; restored as
+  an alias to `typecheck`.
+- Corrected CLAUDE.md's architecture map (kernels live in
+  `src/compiler/shaders/`, not `src/shaders/`).
+
+### Removed
+
+- 1,078 lines of provably-dead code (5 superseded prototype modules).
+
 ## [0.1.0] — 2026-05-04
 
 First public release. **Phi-3-mini running in a browser on hand-written
@@ -45,4 +79,5 @@ attention + page-table read combined).
   to the same model size.
 - [kernelfusion.dev](https://kernelfusion.dev) — research umbrella.
 
+[0.2.0]: https://github.com/abgnydn/zero-tvm/releases/tag/v0.2.0
 [0.1.0]: https://github.com/abgnydn/zero-tvm/releases/tag/v0.1.0

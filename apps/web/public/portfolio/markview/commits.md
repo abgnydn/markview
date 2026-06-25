@@ -1,5 +1,13 @@
 # Commits — markview
 
+## 2026-06-25
+
+- `03:34` **feat(toolbar): consolidate secondary actions into a "More" menu (#105)** — +125 −86 — [`1d229c7`](https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96)
+
+## 2026-06-24
+
+- `21:26` **chore(portfolio): daily sync 2026-06-24** — +26 −26 — [`d5ebdc8`](https://github.com/abgnydn/markview/commit/d5ebdc88cd52ae82ea1f8a0c5e4d94d8e01e862c)
+
 ## 2026-06-23
 
 - `21:45` **chore(portfolio): daily sync 2026-06-23** — +1076 −1067 — [`53e0356`](https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1)
@@ -83,5 +91,3 @@
 - `05:42` **fix(atmosphere): scroll-jump, unreliable v toggle, and toggle lag** — +23 −7 — [`7203613`](https://github.com/abgnydn/markview/commit/7203613350f48f1be0df322e24c65575b318b71c)
 - `05:42` **polish(atmosphere): harmonize the classical scroll — quieter, more in…** — +25 −32 — [`9204c20`](https://github.com/abgnydn/markview/commit/9204c2092e8564ba1ba08a073c3acf0fb4a97e90)
 - `05:42` **feat(atmosphere): per-appearance creatures — cranes, koi, butterflies…** — +171 −1 — [`9da3c9c`](https://github.com/abgnydn/markview/commit/9da3c9c2a021b1055a8a7e8d570a703978a4b516)
-- `05:42` **feat(atmosphere): deep visual-polish pass — paper light, texture, per…** — +87 −0 — [`54c399f`](https://github.com/abgnydn/markview/commit/54c399f19cbadf61f94b2c5ef0cae50d6b0a8ed0)
-- `05:42` **feat(atmosphere): 50 real-value refinements (#61–110)** — +174 −0 — [`7fbf710`](https://github.com/abgnydn/markview/commit/7fbf7106b36f7f2bd29ffb5693eefc453d895497)

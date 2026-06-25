@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-24T21:26:27.466Z",
+  "generated_at": "2026-06-25T21:47:36.294Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1833,
+  "activity_90d_total": 1842,
   "activity_90d": {
-    "2026-03-27": 1,
     "2026-03-28": 20,
     "2026-03-30": 11,
     "2026-03-31": 46,
@@ -75,7 +74,9 @@
     "2026-06-20": 1,
     "2026-06-21": 1,
     "2026-06-22": 1,
-    "2026-06-23": 52
+    "2026-06-23": 52,
+    "2026-06-24": 1,
+    "2026-06-25": 9
   },
   "categories": {
     "llm-inference": {
@@ -209,11 +210,24 @@
       "language": "TypeScript",
       "language_color": "#3178c6",
       "stars": 0,
-      "topics": [],
-      "pushed_at": "2026-06-02T07:29:17Z",
+      "topics": [
+        "in-browser",
+        "inference",
+        "interpretability",
+        "llm",
+        "machine-learning",
+        "phi-3",
+        "threejs",
+        "transformers",
+        "typescript",
+        "visualization",
+        "webgpu",
+        "wgsl"
+      ],
+      "pushed_at": "2026-06-25T03:27:24Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 12,
+      "commits_30d": 6,
       "commits_synced": 50,
       "last_commit": {
         "sha": "3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
@@ -267,20 +281,20 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-06-23T07:43:02Z",
+      "pushed_at": "2026-06-25T04:02:34Z",
       "default_branch": "main",
       "latest_tag": "v0.12.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "cae5f1b8db8e6d8fb1d5f907d0a8a2e84319aea8",
-        "short_sha": "cae5f1b",
-        "message": "Federated CCSD(T) foundation + first cross-vendor GPU validation + EO…",
+        "sha": "5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
+        "short_sha": "5f6c436",
+        "message": "Cost-aware (LPT) swarm scheduling — throughput's first clear win (#3)",
         "type": "other",
-        "date": "2026-06-23T06:51:31Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/cae5f1b8db8e6d8fb1d5f907d0a8a2e84319aea8",
-        "additions": 1375,
-        "deletions": 15
+        "date": "2026-06-25T03:24:20Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
+        "additions": 380,
+        "deletions": 0
       }
     },
     {
@@ -322,20 +336,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-23T21:45:15Z",
+      "pushed_at": "2026-06-25T03:34:42Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "53e03563c27effb8847ce703a713c6f7214825a1",
-        "short_sha": "53e0356",
-        "message": "chore(portfolio): daily sync 2026-06-23",
-        "type": "chore",
-        "date": "2026-06-23T21:45:14Z",
-        "url": "https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1",
-        "additions": 1076,
-        "deletions": 1067
+        "sha": "1d229c7707c67d23f15552bdd9fd1dfbc520fa96",
+        "short_sha": "1d229c7",
+        "message": "feat(toolbar): consolidate secondary actions into a \"More\" menu (#105)",
+        "type": "feat",
+        "date": "2026-06-25T03:34:42Z",
+        "url": "https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96",
+        "additions": 125,
+        "deletions": 86
       }
     },
     {
@@ -368,7 +382,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 50,
+      "commits_30d": 43,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -412,7 +426,7 @@
       "pushed_at": "2026-06-02T08:13:17Z",
       "default_branch": "master",
       "latest_tag": "v0.3.1",
-      "commits_30d": 47,
+      "commits_30d": 44,
       "commits_synced": 50,
       "last_commit": {
         "sha": "73d551ac57281e75d4565478ec1273a2f87411f2",
@@ -463,20 +477,20 @@
         "webllm",
         "wgsl"
       ],
-      "pushed_at": "2026-06-23T07:47:30Z",
+      "pushed_at": "2026-06-25T03:44:30Z",
       "default_branch": "main",
-      "latest_tag": "v0.1.0",
-      "commits_30d": 8,
+      "latest_tag": "v0.2.0",
+      "commits_30d": 15,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "35955bd3e2ff50a6cca69bf42c774aae73613300",
-        "short_sha": "35955bd",
-        "message": "fix(bench): WebGPU adapter on T4 — disable Dawn adapter blocklist (#8)",
-        "type": "fix",
-        "date": "2026-06-23T07:47:30Z",
-        "url": "https://github.com/abgnydn/zero-tvm/commit/35955bd3e2ff50a6cca69bf42c774aae73613300",
-        "additions": 22,
-        "deletions": 14
+        "sha": "32406c88acc201694df83a4e22df64bf4391d380",
+        "short_sha": "32406c8",
+        "message": "docs: add Zenodo DOI badge + CITATION.cff identifier (#15)",
+        "type": "docs",
+        "date": "2026-06-25T03:44:30Z",
+        "url": "https://github.com/abgnydn/zero-tvm/commit/32406c88acc201694df83a4e22df64bf4391d380",
+        "additions": 9,
+        "deletions": 9
       }
     },
     {
@@ -652,7 +666,7 @@
       "pushed_at": "2026-05-26T07:15:44Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 2,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f110e4223c137254cdf5b054758ab24af09ef6ec",
@@ -683,7 +697,7 @@
         "ternary"
       ],
       "repo": "abgnydn/quill",
-      "repo_url": "https://github.com/abgnydn/quill",
+      "repo_url": "https://github.com/abgnydn/nib",
       "live_url": null,
       "featured": true,
       "order": 11,
@@ -693,10 +707,10 @@
       "language_color": "#dea584",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-06-23T08:30:23Z",
+      "pushed_at": "2026-06-25T03:12:27Z",
       "default_branch": "master",
       "latest_tag": "v2.0.0",
-      "commits_30d": 46,
+      "commits_30d": 42,
       "commits_synced": 50,
       "last_commit": {
         "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
@@ -704,7 +718,7 @@
         "message": "v2.3 negative control: pure self-resampling plateaus (88.9% -> 87.8%)",
         "type": "other",
         "date": "2026-06-03T06:03:44Z",
-        "url": "https://github.com/abgnydn/quill/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
+        "url": "https://github.com/abgnydn/nib/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
         "additions": 1093,
         "deletions": 69
       }
@@ -783,7 +797,7 @@
       "pushed_at": "2026-05-26T06:12:05Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 2,
+      "commits_30d": 0,
       "commits_synced": 38,
       "last_commit": {
         "sha": "d7bf288f9d1c356b9045db3e7076d45267d18143",
@@ -1007,7 +1021,7 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-06-23T07:39:40Z",
+      "pushed_at": "2026-06-25T03:47:33Z",
       "default_branch": "master",
       "latest_tag": null,
       "commits_30d": 1,
@@ -1020,6 +1034,50 @@
         "date": "2026-05-28T13:54:51Z",
         "url": "https://github.com/abgnydn/draw-instant/commit/87df7c5e9a6d136c20afc01cc239fe9d35955628",
         "additions": 12054,
+        "deletions": 0
+      }
+    },
+    {
+      "slug": "mycosim",
+      "name": "mycosim",
+      "tagline": "Directed-evolution engine for dual-function enzymes — PETase + metallothionein fusion for a Chiang Mai water filter.",
+      "impact": "Evolves a two-in-one enzyme design aimed at a low-cost water filter for Chiang Mai.",
+      "proof": "",
+      "doi": null,
+      "npm": null,
+      "related": [
+        "swarm-bio",
+        "the-swarm"
+      ],
+      "tags": [
+        "biology",
+        "simulation",
+        "evolutionary"
+      ],
+      "repo": "abgnydn/mycosim",
+      "repo_url": "https://github.com/abgnydn/mycosim",
+      "live_url": null,
+      "featured": false,
+      "order": null,
+      "private": false,
+      "archived": false,
+      "language": "JavaScript",
+      "language_color": "#f1e05a",
+      "stars": 0,
+      "topics": [],
+      "pushed_at": "2026-06-25T03:45:06Z",
+      "default_branch": "main",
+      "latest_tag": null,
+      "commits_30d": 0,
+      "commits_synced": 1,
+      "last_commit": {
+        "sha": "fdd7c20c85a91bcc08ee6d109f69b79283796582",
+        "short_sha": "fdd7c20",
+        "message": "Initial commit: MycoSim — 3D mycelium growth simulator",
+        "type": "other",
+        "date": "2026-03-28T06:56:40Z",
+        "url": "https://github.com/abgnydn/mycosim/commit/fdd7c20c85a91bcc08ee6d109f69b79283796582",
+        "additions": 3067,
         "deletions": 0
       }
     },
@@ -1967,50 +2025,6 @@
       }
     },
     {
-      "slug": "mycosim",
-      "name": "mycosim",
-      "tagline": "Directed-evolution engine for dual-function enzymes — PETase + metallothionein fusion for a Chiang Mai water filter.",
-      "impact": "Evolves a two-in-one enzyme design aimed at a low-cost water filter for Chiang Mai.",
-      "proof": "",
-      "doi": null,
-      "npm": null,
-      "related": [
-        "swarm-bio",
-        "the-swarm"
-      ],
-      "tags": [
-        "biology",
-        "simulation",
-        "evolutionary"
-      ],
-      "repo": "abgnydn/mycosim",
-      "repo_url": "https://github.com/abgnydn/mycosim",
-      "live_url": null,
-      "featured": false,
-      "order": null,
-      "private": false,
-      "archived": false,
-      "language": "JavaScript",
-      "language_color": "#f1e05a",
-      "stars": 0,
-      "topics": [],
-      "pushed_at": "2026-03-28T06:56:49Z",
-      "default_branch": "main",
-      "latest_tag": null,
-      "commits_30d": 0,
-      "commits_synced": 1,
-      "last_commit": {
-        "sha": "fdd7c20c85a91bcc08ee6d109f69b79283796582",
-        "short_sha": "fdd7c20",
-        "message": "Initial commit: MycoSim — 3D mycelium growth simulator",
-        "type": "other",
-        "date": "2026-03-28T06:56:40Z",
-        "url": "https://github.com/abgnydn/mycosim/commit/fdd7c20c85a91bcc08ee6d109f69b79283796582",
-        "additions": 3067,
-        "deletions": 0
-      }
-    },
-    {
       "slug": "zero-burn-lab",
       "name": "zero-burn-lab",
       "tagline": "Chiang Mai burning-season simulation — the project that triggered the kernel-fusion line.",
@@ -2057,6 +2071,136 @@
     }
   ],
   "commits": [
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "32406c88acc201694df83a4e22df64bf4391d380",
+      "short_sha": "32406c8",
+      "message": "docs: add Zenodo DOI badge + CITATION.cff identifier (#15)",
+      "type": "docs",
+      "date": "2026-06-25T03:44:30Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/32406c88acc201694df83a4e22df64bf4391d380",
+      "additions": 9,
+      "deletions": 9
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "1d229c7707c67d23f15552bdd9fd1dfbc520fa96",
+      "short_sha": "1d229c7",
+      "message": "feat(toolbar): consolidate secondary actions into a \"More\" menu (#105)",
+      "type": "feat",
+      "date": "2026-06-25T03:34:42Z",
+      "url": "https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96",
+      "additions": 125,
+      "deletions": 86
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
+      "short_sha": "5f6c436",
+      "message": "Cost-aware (LPT) swarm scheduling — throughput's first clear win (#3)",
+      "type": "other",
+      "date": "2026-06-25T03:24:20Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
+      "additions": 380,
+      "deletions": 0
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "1c8ce0f03d6c8b7ad63fff508f2aeb91514a1eb4",
+      "short_sha": "1c8ce0f",
+      "message": "docs(zenodo): tighten deposit metadata for a clean DOI record (#14)",
+      "type": "docs",
+      "date": "2026-06-25T03:14:55Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/1c8ce0f03d6c8b7ad63fff508f2aeb91514a1eb4",
+      "additions": 2,
+      "deletions": 4
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "7f2d6f2c65524448a46a9c96208dc28e3907b94b",
+      "short_sha": "7f2d6f2",
+      "message": "chore: bump to 0.2.0 for a fresh release (#13)",
+      "type": "chore",
+      "date": "2026-06-25T03:05:44Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/7f2d6f2c65524448a46a9c96208dc28e3907b94b",
+      "additions": 37,
+      "deletions": 2
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "bda3f6777a3180bbeb20a7d6c48d67af789f0361",
+      "short_sha": "bda3f67",
+      "message": "docs: add Zenodo .zenodo.json + CITATION.cff for a citable DOI (#12)",
+      "type": "docs",
+      "date": "2026-06-25T03:02:29Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/bda3f6777a3180bbeb20a7d6c48d67af789f0361",
+      "additions": 64,
+      "deletions": 3
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "9bf9fef60d2fd55fd8a2d40a9eef2a9c285e6ffe",
+      "short_sha": "9bf9fef",
+      "message": "docs(readme): replace stale v1 screenshot with current hero (#11)",
+      "type": "docs",
+      "date": "2026-06-25T02:58:19Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/9bf9fef60d2fd55fd8a2d40a9eef2a9c285e6ffe",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "dc21078010d280becd6f694d454a74f750383169",
+      "short_sha": "dc21078",
+      "message": "docs(readme): lead with the comparison table + headline number (#10)",
+      "type": "docs",
+      "date": "2026-06-25T02:47:06Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/dc21078010d280becd6f694d454a74f750383169",
+      "additions": 11,
+      "deletions": 15
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "9661b9ba351347c2c555ae569f6fdf20f0ee0b25",
+      "short_sha": "9661b9b",
+      "message": "docs(readme): fix stale main.ts ref, document test suite + bench (#9)",
+      "type": "docs",
+      "date": "2026-06-25T02:40:31Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/9661b9ba351347c2c555ae569f6fdf20f0ee0b25",
+      "additions": 17,
+      "deletions": 5
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "d5ebdc88cd52ae82ea1f8a0c5e4d94d8e01e862c",
+      "short_sha": "d5ebdc8",
+      "message": "chore(portfolio): daily sync 2026-06-24",
+      "type": "chore",
+      "date": "2026-06-24T21:26:27Z",
+      "url": "https://github.com/abgnydn/markview/commit/d5ebdc88cd52ae82ea1f8a0c5e4d94d8e01e862c",
+      "additions": 26,
+      "deletions": 26
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -3478,32 +3622,6 @@
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
-      "sha": "7fbf7106b36f7f2bd29ffb5693eefc453d895497",
-      "short_sha": "7fbf710",
-      "message": "feat(atmosphere): 50 real-value refinements (#61–110)",
-      "type": "feat",
-      "date": "2026-06-12T05:42:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/7fbf7106b36f7f2bd29ffb5693eefc453d895497",
-      "additions": 174,
-      "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "54c399f19cbadf61f94b2c5ef0cae50d6b0a8ed0",
-      "short_sha": "54c399f",
-      "message": "feat(atmosphere): deep visual-polish pass — paper light, texture, per…",
-      "type": "feat",
-      "date": "2026-06-12T05:42:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/54c399f19cbadf61f94b2c5ef0cae50d6b0a8ed0",
-      "additions": 87,
-      "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
       "sha": "9da3c9c2a021b1055a8a7e8d570a703978a4b516",
       "short_sha": "9da3c9c",
       "message": "feat(atmosphere): per-appearance creatures — cranes, koi, butterflies…",
@@ -4045,19 +4163,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/50ad6de14c30438a6bc8ec0faabc7883f8cde26a",
       "additions": 122,
       "deletions": 1
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "c951944b70ceff24522583d63ac406923eb3e43f",
-      "short_sha": "c951944",
-      "message": "feat(swarm): generalize chem kernel to RHF/UHF/RKS/UKS — radical & DF…",
-      "type": "feat",
-      "date": "2026-06-09T09:19:52Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/c951944b70ceff24522583d63ac406923eb3e43f",
-      "additions": 139,
-      "deletions": 20
     },
     {
       "slug": "webgpu-dna",
@@ -4653,7 +4758,7 @@
       "message": "v2.3 negative control: pure self-resampling plateaus (88.9% -> 87.8%)",
       "type": "other",
       "date": "2026-06-03T06:03:44Z",
-      "url": "https://github.com/abgnydn/quill/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
+      "url": "https://github.com/abgnydn/nib/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
       "additions": 1093,
       "deletions": 69
     },
@@ -4692,7 +4797,7 @@
       "message": "colab: name adapter output by dataset stem to kill download collisions",
       "type": "other",
       "date": "2026-06-02T08:12:53Z",
-      "url": "https://github.com/abgnydn/quill/commit/12aa93c52bb989b0b2093fc6f238860dd4bb1d06",
+      "url": "https://github.com/abgnydn/nib/commit/12aa93c52bb989b0b2093fc6f238860dd4bb1d06",
       "additions": 10,
       "deletions": 3
     },
@@ -4900,7 +5005,7 @@
       "message": "90-case held-out + no-filter ablation dataset",
       "type": "other",
       "date": "2026-06-01T17:17:17Z",
-      "url": "https://github.com/abgnydn/quill/commit/4e5d72c7a423c3a497510451db593dc9a43484f9",
+      "url": "https://github.com/abgnydn/nib/commit/4e5d72c7a423c3a497510451db593dc9a43484f9",
       "additions": 3964,
       "deletions": 1
     },
@@ -4991,7 +5096,7 @@
       "message": "v2.3 dataset: 780 samples — pure self-bootstrap, no new targeted seeds",
       "type": "other",
       "date": "2026-06-01T12:12:49Z",
-      "url": "https://github.com/abgnydn/quill/commit/27c25c6214652743113e2f90a9c3a38c83af0d0c",
+      "url": "https://github.com/abgnydn/nib/commit/27c25c6214652743113e2f90a9c3a38c83af0d0c",
       "additions": 1560,
       "deletions": 0
     },
@@ -5004,7 +5109,7 @@
       "message": "writeup: $0 self-improving RSFT loop on Qwen 2.5-1.5B",
       "type": "other",
       "date": "2026-06-01T12:02:56Z",
-      "url": "https://github.com/abgnydn/quill/commit/0686ebd1b04a53f8609ff7beb6f18bd370036f81",
+      "url": "https://github.com/abgnydn/nib/commit/0686ebd1b04a53f8609ff7beb6f18bd370036f81",
       "additions": 217,
       "deletions": 0
     },
@@ -5043,7 +5148,7 @@
       "message": "v2.2 verified: 93.3% on 60-case held-out, +5pp over v2.1, strict domi…",
       "type": "other",
       "date": "2026-06-01T11:22:28Z",
-      "url": "https://github.com/abgnydn/quill/commit/35805c4b13d93b4e31c3a385242712bbf1ac4843",
+      "url": "https://github.com/abgnydn/nib/commit/35805c4b13d93b4e31c3a385242712bbf1ac4843",
       "additions": 1145,
       "deletions": 0
     },
@@ -5264,7 +5369,7 @@
       "message": "v2.2 dataset: 827 samples — self-bootstrap from v2.1 + targeted hard-…",
       "type": "other",
       "date": "2026-05-29T08:00:24Z",
-      "url": "https://github.com/abgnydn/quill/commit/4a8ae7879caa9af362cf094007febe8cda65d225",
+      "url": "https://github.com/abgnydn/nib/commit/4a8ae7879caa9af362cf094007febe8cda65d225",
       "additions": 1664,
       "deletions": 0
     },
@@ -5277,7 +5382,7 @@
       "message": "held-out benchmark + harness v2 + bootstrap plumbing",
       "type": "other",
       "date": "2026-05-29T07:53:59Z",
-      "url": "https://github.com/abgnydn/quill/commit/7bfea6d3e885f43b03a0d1caf1471b33d6662f18",
+      "url": "https://github.com/abgnydn/nib/commit/7bfea6d3e885f43b03a0d1caf1471b33d6662f18",
       "additions": 3973,
       "deletions": 4
     },
@@ -5355,7 +5460,7 @@
       "message": "v2.1 eval result: Qwen + 551-sample LoRA = 48/50 (96%)",
       "type": "other",
       "date": "2026-05-29T07:35:51Z",
-      "url": "https://github.com/abgnydn/quill/commit/74984079641868844ba62617fcbd93431c424469",
+      "url": "https://github.com/abgnydn/nib/commit/74984079641868844ba62617fcbd93431c424469",
       "additions": 521,
       "deletions": 0
     },
@@ -5394,7 +5499,7 @@
       "message": "adapter-only architecture + 4× RSFT dataset + Colab one-click flow",
       "type": "other",
       "date": "2026-05-29T06:42:32Z",
-      "url": "https://github.com/abgnydn/quill/commit/b93a91ebe79347ebcf8784c32358eabb4a6bcbc6",
+      "url": "https://github.com/abgnydn/nib/commit/b93a91ebe79347ebcf8784c32358eabb4a6bcbc6",
       "additions": 1659,
       "deletions": 71
     },
@@ -5433,7 +5538,7 @@
       "message": "v2.0: ship faithful-rewrite LoRA on Qwen 2.5-1.5B (34% → 70%)",
       "type": "other",
       "date": "2026-05-28T16:00:18Z",
-      "url": "https://github.com/abgnydn/quill/commit/207c34cd2ea4dfcc96133492503b62f68a29c839",
+      "url": "https://github.com/abgnydn/nib/commit/207c34cd2ea4dfcc96133492503b62f68a29c839",
       "additions": 922,
       "deletions": 18
     },
@@ -5589,7 +5694,7 @@
       "message": "v2.0 step 2: rejection-sampling data-gen script",
       "type": "other",
       "date": "2026-05-28T13:28:33Z",
-      "url": "https://github.com/abgnydn/quill/commit/703e7ea28d962775c2b2e2b36337d254325f491c",
+      "url": "https://github.com/abgnydn/nib/commit/703e7ea28d962775c2b2e2b36337d254325f491c",
       "additions": 233,
       "deletions": 0
     },
@@ -5615,7 +5720,7 @@
       "message": "v1.4.1: ship the +16pp template fix to users",
       "type": "other",
       "date": "2026-05-28T13:24:09Z",
-      "url": "https://github.com/abgnydn/quill/commit/66f2c4ad789ca569c5ddaf6b4c228ff797a741af",
+      "url": "https://github.com/abgnydn/nib/commit/66f2c4ad789ca569c5ddaf6b4c228ff797a741af",
       "additions": 8,
       "deletions": 3
     },
@@ -5641,7 +5746,7 @@
       "message": "v1.4.1: ChatML system+user split — 18% → 34% on eval, zero training",
       "type": "other",
       "date": "2026-05-28T12:51:04Z",
-      "url": "https://github.com/abgnydn/quill/commit/149bd7607a8f0fab9bc691cb81c869c3560ad7c0",
+      "url": "https://github.com/abgnydn/nib/commit/149bd7607a8f0fab9bc691cb81c869c3560ad7c0",
       "additions": 79,
       "deletions": 15
     },
@@ -5667,7 +5772,7 @@
       "message": "v2.0 step 1: eval harness for faithful-rewrite training",
       "type": "other",
       "date": "2026-05-28T11:16:14Z",
-      "url": "https://github.com/abgnydn/quill/commit/5ba9f51224e18a605a78eb91be1c29868534d46b",
+      "url": "https://github.com/abgnydn/nib/commit/5ba9f51224e18a605a78eb91be1c29868534d46b",
       "additions": 365,
       "deletions": 0
     },
@@ -5758,7 +5863,7 @@
       "message": "v1.4.0: refactor pass before training sprint",
       "type": "other",
       "date": "2026-05-27T11:19:28Z",
-      "url": "https://github.com/abgnydn/quill/commit/76b4cf5b608e311e7e490b45345e5c77b2f6917e",
+      "url": "https://github.com/abgnydn/nib/commit/76b4cf5b608e311e7e490b45345e5c77b2f6917e",
       "additions": 16,
       "deletions": 266
     },
@@ -5797,7 +5902,7 @@
       "message": "v1.3.4: popover stickiness + stricter rewrite instruction",
       "type": "other",
       "date": "2026-05-27T09:16:23Z",
-      "url": "https://github.com/abgnydn/quill/commit/0ac88736c8a34c7bb0e420b19de34eb947103bbc",
+      "url": "https://github.com/abgnydn/nib/commit/0ac88736c8a34c7bb0e420b19de34eb947103bbc",
       "additions": 39,
       "deletions": 11
     },
@@ -5810,7 +5915,7 @@
       "message": "v1.3.3: stop main from collapsing — page scrolls instead",
       "type": "other",
       "date": "2026-05-27T09:02:45Z",
-      "url": "https://github.com/abgnydn/quill/commit/5c10cda75728219731092e8f2888592333e50bf4",
+      "url": "https://github.com/abgnydn/nib/commit/5c10cda75728219731092e8f2888592333e50bf4",
       "additions": 8,
       "deletions": 7
     },
@@ -5836,7 +5941,7 @@
       "message": "v1.3.2: tray icon + branding leak + training explainer + textarea min…",
       "type": "other",
       "date": "2026-05-27T08:35:04Z",
-      "url": "https://github.com/abgnydn/quill/commit/18cf8d29e2628cb0dc800c28b07cfd4d35d099d2",
+      "url": "https://github.com/abgnydn/nib/commit/18cf8d29e2628cb0dc800c28b07cfd4d35d099d2",
       "additions": 120,
       "deletions": 9
     },
@@ -5875,7 +5980,7 @@
       "message": "v1.3.1: Full installer variant — both models pre-bundled",
       "type": "other",
       "date": "2026-05-27T08:16:12Z",
-      "url": "https://github.com/abgnydn/quill/commit/f2907a15be578860d0c8719edc835cded76f667e",
+      "url": "https://github.com/abgnydn/nib/commit/f2907a15be578860d0c8719edc835cded76f667e",
       "additions": 127,
       "deletions": 31
     },
@@ -5888,7 +5993,7 @@
       "message": "v1.3.0: multi-model picker — LFM2.5-1.2B-Instruct as premium download",
       "type": "other",
       "date": "2026-05-27T08:05:28Z",
-      "url": "https://github.com/abgnydn/quill/commit/83c92a7d94a193c40e85cafeebb7378dae7555f4",
+      "url": "https://github.com/abgnydn/nib/commit/83c92a7d94a193c40e85cafeebb7378dae7555f4",
       "additions": 593,
       "deletions": 10
     },
@@ -5940,7 +6045,7 @@
       "message": "v1.2.1: instruction quality fixes for the rewrite panel",
       "type": "other",
       "date": "2026-05-27T07:38:15Z",
-      "url": "https://github.com/abgnydn/quill/commit/151cb077437a5c579cd6f1a4b941591f2e71d480",
+      "url": "https://github.com/abgnydn/nib/commit/151cb077437a5c579cd6f1a4b941591f2e71d480",
       "additions": 83,
       "deletions": 4
     },
@@ -5953,7 +6058,7 @@
       "message": "v1.2.0: color-coded categories + tone chips + pause presets",
       "type": "other",
       "date": "2026-05-27T07:24:09Z",
-      "url": "https://github.com/abgnydn/quill/commit/893a8c77960ef9aa1c405a6520d46fd54be03c50",
+      "url": "https://github.com/abgnydn/nib/commit/893a8c77960ef9aa1c405a6520d46fd54be03c50",
       "additions": 313,
       "deletions": 16
     },
@@ -5979,7 +6084,7 @@
       "message": "v1.1.2: 300ms hide + 18px trigger + popover is word-only",
       "type": "other",
       "date": "2026-05-27T07:13:19Z",
-      "url": "https://github.com/abgnydn/quill/commit/81015e817799e525386a7d802064f921616cd738",
+      "url": "https://github.com/abgnydn/nib/commit/81015e817799e525386a7d802064f921616cd738",
       "additions": 29,
       "deletions": 38
     },
@@ -6005,7 +6110,7 @@
       "message": "v1.1.1: selection-update fires on every tick",
       "type": "other",
       "date": "2026-05-27T07:06:11Z",
-      "url": "https://github.com/abgnydn/quill/commit/12a455ce03f3dab310c0046fe284606a4c928816",
+      "url": "https://github.com/abgnydn/nib/commit/12a455ce03f3dab310c0046fe284606a4c928816",
       "additions": 40,
       "deletions": 30
     },
@@ -6018,7 +6123,7 @@
       "message": "v1.1.0: Grammarly-style selection trigger + dedicated rewrite panel",
       "type": "other",
       "date": "2026-05-27T07:00:30Z",
-      "url": "https://github.com/abgnydn/quill/commit/3a9aafb638799bf4aa4ee9960953f9cbcd583387",
+      "url": "https://github.com/abgnydn/nib/commit/3a9aafb638799bf4aa4ee9960953f9cbcd583387",
       "additions": 418,
       "deletions": 4
     },
@@ -6044,7 +6149,7 @@
       "message": "v1.0.9: stale-underlines fix + context-aware hide + sentence-scoped r…",
       "type": "other",
       "date": "2026-05-27T06:42:08Z",
-      "url": "https://github.com/abgnydn/quill/commit/ec207528d0923f57c4f6fd37a4826c4af27a94f1",
+      "url": "https://github.com/abgnydn/nib/commit/ec207528d0923f57c4f6fd37a4826c4af27a94f1",
       "additions": 101,
       "deletions": 32
     },
@@ -6057,7 +6162,7 @@
       "message": "v1.0.8: clamp popover to screen.availHeight, not window.innerHeight",
       "type": "other",
       "date": "2026-05-27T06:37:37Z",
-      "url": "https://github.com/abgnydn/quill/commit/0e481c5809e4641439c8864b67696171ba4c7c6e",
+      "url": "https://github.com/abgnydn/nib/commit/0e481c5809e4641439c8864b67696171ba4c7c6e",
       "additions": 30,
       "deletions": 14
     },
@@ -6070,7 +6175,7 @@
       "message": "v1.0.7: popover doesn't overflow + sticks 3s instead of 600ms",
       "type": "other",
       "date": "2026-05-27T06:31:42Z",
-      "url": "https://github.com/abgnydn/quill/commit/28b22129e72dce0c0866dd0cf4ddc1facb5df803",
+      "url": "https://github.com/abgnydn/nib/commit/28b22129e72dce0c0866dd0cf4ddc1facb5df803",
       "additions": 35,
       "deletions": 18
     },
@@ -6096,7 +6201,7 @@
       "message": "v1.0.6: ignore focus-steal events so buttons actually apply",
       "type": "other",
       "date": "2026-05-27T06:25:57Z",
-      "url": "https://github.com/abgnydn/quill/commit/7eafefff9f8a99413e67a139414473eed926d272",
+      "url": "https://github.com/abgnydn/nib/commit/7eafefff9f8a99413e67a139414473eed926d272",
       "additions": 21,
       "deletions": 4
     },
@@ -6109,7 +6214,7 @@
       "message": "v1.0.5: remove desktop chip + sweep remaining 'Quill' strings",
       "type": "other",
       "date": "2026-05-27T06:16:05Z",
-      "url": "https://github.com/abgnydn/quill/commit/1a12c1392d36cffb3a2dc6441603e113c0674c35",
+      "url": "https://github.com/abgnydn/nib/commit/1a12c1392d36cffb3a2dc6441603e113c0674c35",
       "additions": 27,
       "deletions": 40
     },
@@ -6122,7 +6227,7 @@
       "message": "chore(install): auto-cleanup old versions on every build",
       "type": "chore",
       "date": "2026-05-27T06:07:44Z",
-      "url": "https://github.com/abgnydn/quill/commit/466be3311f8e07e073c750e90a92d33c08fa7ef6",
+      "url": "https://github.com/abgnydn/nib/commit/466be3311f8e07e073c750e90a92d33c08fa7ef6",
       "additions": 37,
       "deletions": 0
     },
@@ -6148,7 +6253,7 @@
       "message": "v1.0.4: popover bottom-right of word + rewrite diagnostics",
       "type": "other",
       "date": "2026-05-27T06:01:00Z",
-      "url": "https://github.com/abgnydn/quill/commit/f5d630131767d89bf2153188bc18ca8be89ded72",
+      "url": "https://github.com/abgnydn/nib/commit/f5d630131767d89bf2153188bc18ca8be89ded72",
       "additions": 28,
       "deletions": 5
     },
@@ -6200,7 +6305,7 @@
       "message": "v1.0.3: fix apply target + popover stickiness + tray labels",
       "type": "other",
       "date": "2026-05-27T05:43:11Z",
-      "url": "https://github.com/abgnydn/quill/commit/30517955c22f902bdf83b7d7b208a34982e4acd1",
+      "url": "https://github.com/abgnydn/nib/commit/30517955c22f902bdf83b7d7b208a34982e4acd1",
       "additions": 154,
       "deletions": 17
     },
@@ -6213,7 +6318,7 @@
       "message": "v1.0.2: real app icon — pen-nib silhouette",
       "type": "other",
       "date": "2026-05-27T05:04:53Z",
-      "url": "https://github.com/abgnydn/quill/commit/0cd2c00fe4f57047b32f42fc49634c0ee36d2122",
+      "url": "https://github.com/abgnydn/nib/commit/0cd2c00fe4f57047b32f42fc49634c0ee36d2122",
       "additions": 51,
       "deletions": 0
     },
@@ -6239,7 +6344,7 @@
       "message": "v1.0.1: rename Quill → Nib in the .app surface",
       "type": "other",
       "date": "2026-05-27T04:53:33Z",
-      "url": "https://github.com/abgnydn/quill/commit/a96c170c1fb1ef29ee15317da9f8f6fff9f643bc",
+      "url": "https://github.com/abgnydn/nib/commit/a96c170c1fb1ef29ee15317da9f8f6fff9f643bc",
       "additions": 16,
       "deletions": 13
     },
@@ -6278,7 +6383,7 @@
       "message": "feat(lints): enable Harper style + clarity rules (BoringWords, Posses…",
       "type": "feat",
       "date": "2026-05-27T03:58:47Z",
-      "url": "https://github.com/abgnydn/quill/commit/be4519e0467e74879c96e9faccbcb3832a13e9da",
+      "url": "https://github.com/abgnydn/nib/commit/be4519e0467e74879c96e9faccbcb3832a13e9da",
       "additions": 89,
       "deletions": 10
     },
@@ -6291,7 +6396,7 @@
       "message": "feat(inference): multi-variant AI rewrite (3 alternatives)",
       "type": "feat",
       "date": "2026-05-27T03:58:41Z",
-      "url": "https://github.com/abgnydn/quill/commit/9ca8ec79b3663ef4623c49b0baa31baae040607d",
+      "url": "https://github.com/abgnydn/nib/commit/9ca8ec79b3663ef4623c49b0baa31baae040607d",
       "additions": 363,
       "deletions": 0
     },
@@ -6304,7 +6409,7 @@
       "message": "feat(ui): Settings panel — dictionary + pause + per-app overrides",
       "type": "feat",
       "date": "2026-05-27T03:58:31Z",
-      "url": "https://github.com/abgnydn/quill/commit/700e3e20b24a2a5c030134ffcf0a935aba043e03",
+      "url": "https://github.com/abgnydn/nib/commit/700e3e20b24a2a5c030134ffcf0a935aba043e03",
       "additions": 462,
       "deletions": 0
     },
@@ -6317,7 +6422,7 @@
       "message": "feat(overlay): Why-expansion + Accept all / Dismiss all in popover",
       "type": "feat",
       "date": "2026-05-27T03:58:25Z",
-      "url": "https://github.com/abgnydn/quill/commit/7df887dd7fb8513669a8e80b76cbf14fcf54c7fe",
+      "url": "https://github.com/abgnydn/nib/commit/7df887dd7fb8513669a8e80b76cbf14fcf54c7fe",
       "additions": 208,
       "deletions": 0
     },
@@ -6330,7 +6435,7 @@
       "message": "feat(tray): Pause/Resume + Open Settings menu items",
       "type": "feat",
       "date": "2026-05-27T03:58:16Z",
-      "url": "https://github.com/abgnydn/quill/commit/77a43b649902d9b204783ac1afce625a1c2f4598",
+      "url": "https://github.com/abgnydn/nib/commit/77a43b649902d9b204783ac1afce625a1c2f4598",
       "additions": 82,
       "deletions": 27
     },
@@ -6343,7 +6448,7 @@
       "message": "feat(tier-a-backend): personal dictionary + pause + per-app overrides",
       "type": "feat",
       "date": "2026-05-27T03:34:40Z",
-      "url": "https://github.com/abgnydn/quill/commit/6c07083cd1f4d310a4528fef95e2477fea69cae2",
+      "url": "https://github.com/abgnydn/nib/commit/6c07083cd1f4d310a4528fef95e2477fea69cae2",
       "additions": 297,
       "deletions": 26
     },
@@ -6369,7 +6474,7 @@
       "message": "feat(overlay): block URL bars by denying AXTextField in browser bundles",
       "type": "feat",
       "date": "2026-05-26T13:36:32Z",
-      "url": "https://github.com/abgnydn/quill/commit/880fcdb65b9a12c63e8712680d23116a67e4621f",
+      "url": "https://github.com/abgnydn/nib/commit/880fcdb65b9a12c63e8712680d23116a67e4621f",
       "additions": 71,
       "deletions": 0
     },
@@ -6382,7 +6487,7 @@
       "message": "feat(overlay): engagement filter — only engage where Grammarly engages",
       "type": "feat",
       "date": "2026-05-26T13:35:49Z",
-      "url": "https://github.com/abgnydn/quill/commit/f47bc7cc262671d102a45a9eda311b13f426f2fc",
+      "url": "https://github.com/abgnydn/nib/commit/f47bc7cc262671d102a45a9eda311b13f426f2fc",
       "additions": 329,
       "deletions": 15
     },
@@ -6395,7 +6500,7 @@
       "message": "v1.0: swap base model to LFM2.5-350M + ChatML template",
       "type": "other",
       "date": "2026-05-26T13:34:27Z",
-      "url": "https://github.com/abgnydn/quill/commit/674e785f3bc275a20aa66a0404704811bc16a639",
+      "url": "https://github.com/abgnydn/nib/commit/674e785f3bc275a20aa66a0404704811bc16a639",
       "additions": 13,
       "deletions": 9
     },
@@ -6408,7 +6513,7 @@
       "message": "chore(build): add release-dev profile + install-dev.sh --fast flag",
       "type": "chore",
       "date": "2026-05-26T13:34:12Z",
-      "url": "https://github.com/abgnydn/quill/commit/3b21ba2502f71b1599d74bab8ebfc41dff1d9ecb",
+      "url": "https://github.com/abgnydn/nib/commit/3b21ba2502f71b1599d74bab8ebfc41dff1d9ecb",
       "additions": 40,
       "deletions": 3
     },
@@ -6876,7 +6981,7 @@
       "message": "v0.9 phase 2: local LoRA training via bundled llama-finetune-lora",
       "type": "other",
       "date": "2026-05-22T07:33:47Z",
-      "url": "https://github.com/abgnydn/quill/commit/7fbcaf1d360603276402f8b65c500591048f6f1e",
+      "url": "https://github.com/abgnydn/nib/commit/7fbcaf1d360603276402f8b65c500591048f6f1e",
       "additions": 444,
       "deletions": 15
     },
@@ -6889,7 +6994,7 @@
       "message": "docs: refresh CLAUDE.md Resume block for v0.9 direction",
       "type": "docs",
       "date": "2026-05-22T07:23:18Z",
-      "url": "https://github.com/abgnydn/quill/commit/9ccf3cea259759ef21535535564529b783c95d65",
+      "url": "https://github.com/abgnydn/nib/commit/9ccf3cea259759ef21535535564529b783c95d65",
       "additions": 35,
       "deletions": 22
     },
@@ -6902,7 +7007,7 @@
       "message": "v0.9 phase 1: bundle QVAC Fabric binaries inside Quill.app",
       "type": "other",
       "date": "2026-05-22T07:18:39Z",
-      "url": "https://github.com/abgnydn/quill/commit/8ddf0a3a87c0912d89197eb01e23ab13dff17f89",
+      "url": "https://github.com/abgnydn/nib/commit/8ddf0a3a87c0912d89197eb01e23ab13dff17f89",
       "additions": 159,
       "deletions": 8
     },
@@ -6993,7 +7098,7 @@
       "message": "v0.7 (C+E): menubar mode + background auto-retrain",
       "type": "other",
       "date": "2026-05-21T12:44:46Z",
-      "url": "https://github.com/abgnydn/quill/commit/500ced33bc62ab1973ea4ad414ae599198d124ad",
+      "url": "https://github.com/abgnydn/nib/commit/500ced33bc62ab1973ea4ad414ae599198d124ad",
       "additions": 658,
       "deletions": 5
     },
@@ -8465,97 +8570,6 @@
       "url": "https://github.com/abgnydn/wonderlab/commit/45be85f05a155eef11610385d5ba8398a0968131",
       "additions": 29,
       "deletions": 2
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "e374965eeafb00595f0fa3702872e2628a1a5264",
-      "short_sha": "e374965",
-      "message": "Mobile layout — clear the bottom band, stack chrome on the right",
-      "type": "other",
-      "date": "2026-05-09T07:19:18Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/e374965eeafb00595f0fa3702872e2628a1a5264",
-      "additions": 56,
-      "deletions": 12
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "7df6b62e06696974bfd7eea7ac1985c661b486a1",
-      "short_sha": "7df6b62",
-      "message": "chore: initial commit — markview-brain v2 baseline",
-      "type": "chore",
-      "date": "2026-05-09T04:21:30Z",
-      "url": "https://github.com/abgnydn/tether/commit/7df6b62e06696974bfd7eea7ac1985c661b486a1",
-      "additions": 83390,
-      "deletions": 0
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "e1684e336e944a47ac29e64c26f434bf731f47f1",
-      "short_sha": "e1684e3",
-      "message": "LM Studio: model picker + /no_think directive",
-      "type": "other",
-      "date": "2026-05-08T06:46:45Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/e1684e336e944a47ac29e64c26f434bf731f47f1",
-      "additions": 239,
-      "deletions": 18
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "a8c389028f339e7730eb8adff5dd2c1e9f72c1d8",
-      "short_sha": "a8c3890",
-      "message": "Slim system prompt — 17.5 KB → 4.9 KB",
-      "type": "other",
-      "date": "2026-05-08T06:46:33Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/a8c389028f339e7730eb8adff5dd2c1e9f72c1d8",
-      "additions": 39,
-      "deletions": 256
-    },
-    {
-      "slug": "kernelfusion",
-      "name": "kernelfusion",
-      "language": "TypeScript",
-      "sha": "de73203591ec0db07753779f691f1b4a44424704",
-      "short_sha": "de73203",
-      "message": "ci: remove CF Pages workflow — using local cf-deploy script instead",
-      "type": "ci",
-      "date": "2026-05-07T11:38:53Z",
-      "url": "https://github.com/abgnydn/kernelfusion/commit/de73203591ec0db07753779f691f1b4a44424704",
-      "additions": 0,
-      "deletions": 39
-    },
-    {
-      "slug": "kernelfusion",
-      "name": "kernelfusion",
-      "language": "TypeScript",
-      "sha": "1fa16eee7e89b5d9f3e354a159f254fa2b39beea",
-      "short_sha": "1fa16ee",
-      "message": "ci: add CF Pages deploy workflow (replaces broken dashboard integration)",
-      "type": "ci",
-      "date": "2026-05-07T11:06:15Z",
-      "url": "https://github.com/abgnydn/kernelfusion/commit/1fa16eee7e89b5d9f3e354a159f254fa2b39beea",
-      "additions": 39,
-      "deletions": 0
-    },
-    {
-      "slug": "kernelfusion",
-      "name": "kernelfusion",
-      "language": "TypeScript",
-      "sha": "cd51c41ef28cfe047acfe46a3a562f6dc921e6da",
-      "short_sha": "cd51c41",
-      "message": "copy: update site-wide title + og:title metadata",
-      "type": "other",
-      "date": "2026-05-07T11:02:17Z",
-      "url": "https://github.com/abgnydn/kernelfusion/commit/cd51c41ef28cfe047acfe46a3a562f6dc921e6da",
-      "additions": 7,
-      "deletions": 7
     }
   ],
   "errors": []
