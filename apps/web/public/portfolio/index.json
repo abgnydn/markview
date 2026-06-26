@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-25T21:47:36.294Z",
+  "generated_at": "2026-06-26T21:23:02.659Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1842,
+  "activity_90d_total": 1823,
   "activity_90d": {
-    "2026-03-28": 20,
     "2026-03-30": 11,
     "2026-03-31": 46,
     "2026-04-01": 16,
@@ -76,7 +75,7 @@
     "2026-06-22": 1,
     "2026-06-23": 52,
     "2026-06-24": 1,
-    "2026-06-25": 9
+    "2026-06-25": 10
   },
   "categories": {
     "llm-inference": {
@@ -227,7 +226,7 @@
       "pushed_at": "2026-06-25T03:27:24Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 6,
+      "commits_30d": 4,
       "commits_synced": 50,
       "last_commit": {
         "sha": "3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
@@ -336,20 +335,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-25T03:34:42Z",
+      "pushed_at": "2026-06-25T21:47:37Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "1d229c7707c67d23f15552bdd9fd1dfbc520fa96",
-        "short_sha": "1d229c7",
-        "message": "feat(toolbar): consolidate secondary actions into a \"More\" menu (#105)",
-        "type": "feat",
-        "date": "2026-06-25T03:34:42Z",
-        "url": "https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96",
-        "additions": 125,
-        "deletions": 86
+        "sha": "76bd0143fea1d84285d55b5bc2e422bc2ed5c39a",
+        "short_sha": "76bd014",
+        "message": "chore(portfolio): daily sync 2026-06-25",
+        "type": "chore",
+        "date": "2026-06-25T21:47:36Z",
+        "url": "https://github.com/abgnydn/markview/commit/76bd0143fea1d84285d55b5bc2e422bc2ed5c39a",
+        "additions": 435,
+        "deletions": 364
       }
     },
     {
@@ -382,7 +381,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 43,
+      "commits_30d": 40,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -426,7 +425,7 @@
       "pushed_at": "2026-06-02T08:13:17Z",
       "default_branch": "master",
       "latest_tag": "v0.3.1",
-      "commits_30d": 44,
+      "commits_30d": 29,
       "commits_synced": 50,
       "last_commit": {
         "sha": "73d551ac57281e75d4565478ec1273a2f87411f2",
@@ -710,7 +709,7 @@
       "pushed_at": "2026-06-25T03:12:27Z",
       "default_branch": "master",
       "latest_tag": "v2.0.0",
-      "commits_30d": 42,
+      "commits_30d": 15,
       "commits_synced": 50,
       "last_commit": {
         "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
@@ -2071,6 +2070,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "76bd0143fea1d84285d55b5bc2e422bc2ed5c39a",
+      "short_sha": "76bd014",
+      "message": "chore(portfolio): daily sync 2026-06-25",
+      "type": "chore",
+      "date": "2026-06-25T21:47:36Z",
+      "url": "https://github.com/abgnydn/markview/commit/76bd0143fea1d84285d55b5bc2e422bc2ed5c39a",
+      "additions": 435,
+      "deletions": 364
+    },
     {
       "slug": "zero-tvm",
       "name": "zero-tvm",
@@ -3617,19 +3629,6 @@
       "url": "https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d",
       "additions": 417,
       "deletions": 1424
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "9da3c9c2a021b1055a8a7e8d570a703978a4b516",
-      "short_sha": "9da3c9c",
-      "message": "feat(atmosphere): per-appearance creatures — cranes, koi, butterflies…",
-      "type": "feat",
-      "date": "2026-06-12T05:42:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/9da3c9c2a021b1055a8a7e8d570a703978a4b516",
-      "additions": 171,
-      "deletions": 1
     },
     {
       "slug": "markview",
