@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-26T21:23:02.659Z",
+  "generated_at": "2026-06-27T21:08:55.950Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1823,
+  "activity_90d_total": 1824,
   "activity_90d": {
     "2026-03-30": 11,
     "2026-03-31": 46,
@@ -75,7 +75,8 @@
     "2026-06-22": 1,
     "2026-06-23": 52,
     "2026-06-24": 1,
-    "2026-06-25": 10
+    "2026-06-25": 10,
+    "2026-06-26": 1
   },
   "categories": {
     "llm-inference": {
@@ -335,20 +336,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-25T21:47:37Z",
+      "pushed_at": "2026-06-26T21:23:03Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "76bd0143fea1d84285d55b5bc2e422bc2ed5c39a",
-        "short_sha": "76bd014",
-        "message": "chore(portfolio): daily sync 2026-06-25",
+        "sha": "832037deda5be1583e62803cb119868af6764d86",
+        "short_sha": "832037d",
+        "message": "chore(portfolio): daily sync 2026-06-26",
         "type": "chore",
-        "date": "2026-06-25T21:47:36Z",
-        "url": "https://github.com/abgnydn/markview/commit/76bd0143fea1d84285d55b5bc2e422bc2ed5c39a",
-        "additions": 435,
-        "deletions": 364
+        "date": "2026-06-26T21:23:02Z",
+        "url": "https://github.com/abgnydn/markview/commit/832037deda5be1583e62803cb119868af6764d86",
+        "additions": 30,
+        "deletions": 31
       }
     },
     {
@@ -381,7 +382,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 40,
+      "commits_30d": 24,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -425,7 +426,7 @@
       "pushed_at": "2026-06-02T08:13:17Z",
       "default_branch": "master",
       "latest_tag": "v0.3.1",
-      "commits_30d": 29,
+      "commits_30d": 25,
       "commits_synced": 50,
       "last_commit": {
         "sha": "73d551ac57281e75d4565478ec1273a2f87411f2",
@@ -709,7 +710,7 @@
       "pushed_at": "2026-06-25T03:12:27Z",
       "default_branch": "master",
       "latest_tag": "v2.0.0",
-      "commits_30d": 15,
+      "commits_30d": 10,
       "commits_synced": 50,
       "last_commit": {
         "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
@@ -1023,7 +1024,7 @@
       "pushed_at": "2026-06-25T03:47:33Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 1,
       "last_commit": {
         "sha": "87df7c5e9a6d136c20afc01cc239fe9d35955628",
@@ -2070,6 +2071,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "832037deda5be1583e62803cb119868af6764d86",
+      "short_sha": "832037d",
+      "message": "chore(portfolio): daily sync 2026-06-26",
+      "type": "chore",
+      "date": "2026-06-26T21:23:02Z",
+      "url": "https://github.com/abgnydn/markview/commit/832037deda5be1583e62803cb119868af6764d86",
+      "additions": 30,
+      "deletions": 31
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -3629,19 +3643,6 @@
       "url": "https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d",
       "additions": 417,
       "deletions": 1424
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "9204c2092e8564ba1ba08a073c3acf0fb4a97e90",
-      "short_sha": "9204c20",
-      "message": "polish(atmosphere): harmonize the classical scroll — quieter, more in…",
-      "type": "other",
-      "date": "2026-06-12T05:42:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/9204c2092e8564ba1ba08a073c3acf0fb4a97e90",
-      "additions": 25,
-      "deletions": 32
     },
     {
       "slug": "markview",
