@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-27T21:08:55.950Z",
+  "generated_at": "2026-06-28T21:06:10.081Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1824,
+  "activity_90d_total": 1814,
   "activity_90d": {
-    "2026-03-30": 11,
     "2026-03-31": 46,
     "2026-04-01": 16,
     "2026-04-02": 62,
@@ -76,7 +75,8 @@
     "2026-06-23": 52,
     "2026-06-24": 1,
     "2026-06-25": 10,
-    "2026-06-26": 1
+    "2026-06-26": 1,
+    "2026-06-27": 1
   },
   "categories": {
     "llm-inference": {
@@ -336,20 +336,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-26T21:23:03Z",
+      "pushed_at": "2026-06-27T21:08:57Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "832037deda5be1583e62803cb119868af6764d86",
-        "short_sha": "832037d",
-        "message": "chore(portfolio): daily sync 2026-06-26",
+        "sha": "d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
+        "short_sha": "d136a5b",
+        "message": "chore(portfolio): daily sync 2026-06-27",
         "type": "chore",
-        "date": "2026-06-26T21:23:02Z",
-        "url": "https://github.com/abgnydn/markview/commit/832037deda5be1583e62803cb119868af6764d86",
-        "additions": 30,
-        "deletions": 31
+        "date": "2026-06-27T21:08:56Z",
+        "url": "https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
+        "additions": 33,
+        "deletions": 29
       }
     },
     {
@@ -382,7 +382,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 24,
+      "commits_30d": 18,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -426,7 +426,7 @@
       "pushed_at": "2026-06-02T08:13:17Z",
       "default_branch": "master",
       "latest_tag": "v0.3.1",
-      "commits_30d": 25,
+      "commits_30d": 21,
       "commits_synced": 50,
       "last_commit": {
         "sha": "73d551ac57281e75d4565478ec1273a2f87411f2",
@@ -615,7 +615,7 @@
       "pushed_at": "2026-05-29T07:28:18Z",
       "default_branch": "fused-lora-phase1",
       "latest_tag": null,
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "cbfa5d35658684ee772ecd4e05a9f52d085de717",
@@ -710,7 +710,7 @@
       "pushed_at": "2026-06-25T03:12:27Z",
       "default_branch": "master",
       "latest_tag": "v2.0.0",
-      "commits_30d": 10,
+      "commits_30d": 6,
       "commits_synced": 50,
       "last_commit": {
         "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
@@ -1112,7 +1112,7 @@
       "pushed_at": "2026-05-29T07:41:46Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 2,
       "last_commit": {
         "sha": "f8639fc48e134c9cf02592b14b21f0a21f92b490",
@@ -1155,7 +1155,7 @@
       "pushed_at": "2026-05-29T07:36:00Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 1,
       "last_commit": {
         "sha": "cc4acbdf3305b4372dfbdb9d772f3f34ff83a0c8",
@@ -2071,6 +2071,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
+      "short_sha": "d136a5b",
+      "message": "chore(portfolio): daily sync 2026-06-27",
+      "type": "chore",
+      "date": "2026-06-27T21:08:56Z",
+      "url": "https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
+      "additions": 33,
+      "deletions": 29
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -3643,19 +3656,6 @@
       "url": "https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d",
       "additions": 417,
       "deletions": 1424
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "7203613350f48f1be0df322e24c65575b318b71c",
-      "short_sha": "7203613",
-      "message": "fix(atmosphere): scroll-jump, unreliable v toggle, and toggle lag",
-      "type": "fix",
-      "date": "2026-06-12T05:42:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/7203613350f48f1be0df322e24c65575b318b71c",
-      "additions": 23,
-      "deletions": 7
     },
     {
       "slug": "markview",

@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-27
+
+- `21:08` **chore(portfolio): daily sync 2026-06-27** — +33 −29 — [`d136a5b`](https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d)
+
 ## 2026-06-26
 
 - `21:23` **chore(portfolio): daily sync 2026-06-26** — +30 −31 — [`832037d`](https://github.com/abgnydn/markview/commit/832037deda5be1583e62803cb119868af6764d86)
@@ -93,4 +97,3 @@
 - `05:42` **feat(atmosphere): push the antique paper much further — 7-layer surfa…** — +30 −11 — [`030d703`](https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677)
 - `05:42` **feat(atmosphere): realistic antique paper — lit fibre + organic foxing** — +21 −13 — [`7e817ab`](https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb)
 - `05:42` **fix(atmosphere): entering a painting always works + never hangs** — +107 −29 — [`ea85e22`](https://github.com/abgnydn/markview/commit/ea85e225474c9bdc943736f27b475833e528376c)
-- `05:42` **fix(atmosphere): scroll-jump, unreliable v toggle, and toggle lag** — +23 −7 — [`7203613`](https://github.com/abgnydn/markview/commit/7203613350f48f1be0df322e24c65575b318b71c)
