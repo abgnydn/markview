@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-28
+
+- `21:06` **chore(portfolio): daily sync 2026-06-28** — +35 −32 — [`a9558ff`](https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe)
+
 ## 2026-06-27
 
 - `21:08` **chore(portfolio): daily sync 2026-06-27** — +33 −29 — [`d136a5b`](https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d)
@@ -96,4 +100,3 @@
 - `05:42` **feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark** — +16 −12 — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)
 - `05:42` **feat(atmosphere): push the antique paper much further — 7-layer surfa…** — +30 −11 — [`030d703`](https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677)
 - `05:42` **feat(atmosphere): realistic antique paper — lit fibre + organic foxing** — +21 −13 — [`7e817ab`](https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb)
-- `05:42` **fix(atmosphere): entering a painting always works + never hangs** — +107 −29 — [`ea85e22`](https://github.com/abgnydn/markview/commit/ea85e225474c9bdc943736f27b475833e528376c)

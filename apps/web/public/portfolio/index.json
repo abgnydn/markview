@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-28T21:06:10.081Z",
+  "generated_at": "2026-06-29T21:38:28.068Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1814,
+  "activity_90d_total": 1769,
   "activity_90d": {
-    "2026-03-31": 46,
     "2026-04-01": 16,
     "2026-04-02": 62,
     "2026-04-03": 27,
@@ -76,7 +75,8 @@
     "2026-06-24": 1,
     "2026-06-25": 10,
     "2026-06-26": 1,
-    "2026-06-27": 1
+    "2026-06-27": 1,
+    "2026-06-28": 1
   },
   "categories": {
     "llm-inference": {
@@ -336,20 +336,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-27T21:08:57Z",
+      "pushed_at": "2026-06-29T18:06:07Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
-        "short_sha": "d136a5b",
-        "message": "chore(portfolio): daily sync 2026-06-27",
+        "sha": "a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
+        "short_sha": "a9558ff",
+        "message": "chore(portfolio): daily sync 2026-06-28",
         "type": "chore",
-        "date": "2026-06-27T21:08:56Z",
-        "url": "https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
-        "additions": 33,
-        "deletions": 29
+        "date": "2026-06-28T21:06:10Z",
+        "url": "https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
+        "additions": 35,
+        "deletions": 32
       }
     },
     {
@@ -2075,6 +2075,19 @@
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
+      "sha": "a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
+      "short_sha": "a9558ff",
+      "message": "chore(portfolio): daily sync 2026-06-28",
+      "type": "chore",
+      "date": "2026-06-28T21:06:10Z",
+      "url": "https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
+      "additions": 35,
+      "deletions": 32
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
       "sha": "d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
       "short_sha": "d136a5b",
       "message": "chore(portfolio): daily sync 2026-06-27",
@@ -3656,19 +3669,6 @@
       "url": "https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d",
       "additions": 417,
       "deletions": 1424
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "ea85e225474c9bdc943736f27b475833e528376c",
-      "short_sha": "ea85e22",
-      "message": "fix(atmosphere): entering a painting always works + never hangs",
-      "type": "fix",
-      "date": "2026-06-12T05:42:46Z",
-      "url": "https://github.com/abgnydn/markview/commit/ea85e225474c9bdc943736f27b475833e528376c",
-      "additions": 107,
-      "deletions": 29
     },
     {
       "slug": "webgpu-q",
