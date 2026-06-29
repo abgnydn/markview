@@ -96,7 +96,7 @@ jobs:
         run: bun --filter @markview/web build
 
       - name: Build + bundle Tauri + attach to Release
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # When signing keys land in repo secrets, uncomment:
