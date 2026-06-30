@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-06-29
+
+- `21:38` **chore(portfolio): daily sync 2026-06-29** — +29 −26 — [`b9b1325`](https://github.com/abgnydn/markview/commit/b9b13251740c54edbd3d78e3a57f84be41e437fc)
+
 ## 2026-06-28
 
 - `21:06` **chore(portfolio): daily sync 2026-06-28** — +35 −32 — [`a9558ff`](https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe)
@@ -99,4 +103,3 @@
 - `05:42` **feat(atmosphere): aged parchment — darker, stained, uneven + readable…** — +28 −17 — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)
 - `05:42` **feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark** — +16 −12 — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)
 - `05:42` **feat(atmosphere): push the antique paper much further — 7-layer surfa…** — +30 −11 — [`030d703`](https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677)
-- `05:42` **feat(atmosphere): realistic antique paper — lit fibre + organic foxing** — +21 −13 — [`7e817ab`](https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb)

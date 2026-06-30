@@ -69,6 +69,10 @@ query Project($owner: String!, $name: String!) {
     changelog: object(expression: "HEAD:CHANGELOG.md") {
       ... on Blob { text isTruncated }
     }
+    issues(states: OPEN) { totalCount }
+    citation: object(expression: "HEAD:CITATION.cff") {
+      ... on Blob { text }
+    }
     tags: refs(refPrefix: "refs/tags/", first: 5, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
       nodes { name }
     }
@@ -202,6 +206,35 @@ function commitsLast30d(commits) {
   return commits.filter((c) => new Date(c.date).getTime() >= cutoff).length;
 }
 
+// Days since the last push — drives the "stale" radar.
+function staleDays(iso) {
+  if (!iso) return null;
+  return Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
+}
+
+// First DOI found in a CITATION.cff (researchers put the concept DOI here).
+function citationDoi(text) {
+  if (!text) return null;
+  return (text.match(/10\.\d{4,9}\/[A-Za-z0-9._;()\/:-]+/) || [])[0] ?? null;
+}
+
+// Liveness ping for deployed projects. null = unknown (timeout/blocked HEAD).
+// Non-fatal: a flaky deploy must never fail the whole sync.
+async function pingLive(url) {
+  if (!url) return null;
+  try {
+    const res = await fetch(url, {
+      method: "HEAD",
+      redirect: "follow",
+      signal: AbortSignal.timeout(8000),
+      headers: { "user-agent": "barisgunaydin-portfolio-sync" },
+    });
+    return res.status < 400;
+  } catch {
+    return null;
+  }
+}
+
 // ── per-project sync ──────────────────────────────────────────────────────
 async function syncProject(entry) {
   const [owner, name] = entry.repo.split("/");
@@ -240,6 +273,10 @@ async function syncProject(entry) {
   // commits.md — day-grouped markdown.
   await writeFile(resolve(bundleDir, "commits.md"), renderCommitsMd(slug, commits));
 
+  // Health + citation signals for the maintenance radar.
+  const citationText = repo.citation?.text ?? null;
+  const live_ok = await pingLive(entry.url);
+
   // Per-project summary for the grid.
   const summary = {
     slug,
@@ -268,6 +305,13 @@ async function syncProject(entry) {
     commits_30d:    commitsLast30d(commits),
     commits_synced: commits.length,
     last_commit:    commits[0] ?? null,
+    // ── maintenance radar ──
+    status:         entry.status ?? null,        // flagship|library|paper-artifact|experiment|derivative
+    open_issues:    repo.issues?.totalCount ?? 0,
+    stale_days:     staleDays(repo.pushedAt),
+    live_ok,                                      // true|false|null(unknown) — only meaningful if live_url set
+    has_citation:   Boolean(citationText),
+    citation_doi:   citationDoi(citationText),
   };
   return { summary, commits };
 }
@@ -338,6 +382,15 @@ async function main() {
   );
   const activityTotal = Object.values(activity).reduce((a, n) => a + n, 0);
 
+  // Maintenance radar — quick rollup of what needs attention.
+  const health = {
+    stale_60d:       summaries.filter((s) => (s.stale_days ?? 0) > 60).map((s) => s.slug),
+    open_issues:     summaries.filter((s) => s.open_issues > 0).map((s) => ({ slug: s.slug, n: s.open_issues })),
+    live_down:       summaries.filter((s) => s.live_url && s.live_ok === false).map((s) => s.slug),
+    doi_no_citation: summaries.filter((s) => s.doi && !s.has_citation).map((s) => s.slug),
+    untagged:        summaries.filter((s) => !s.tags || s.tags.length === 0).map((s) => s.slug),
+  };
+
   const index = {
     generated_at: new Date().toISOString(),
     project_count: summaries.length,
@@ -346,6 +399,7 @@ async function main() {
     activity_90d: activity,        // { "YYYY-MM-DD": count, ... }
     categories: manifest.categories ?? null,  // controlled vocab: { slug → { label, color } }
     tour: manifest.tour ?? [],     // curated "start here" slug order
+    health,                        // maintenance radar rollup
     projects: summaries,
     commits: river,
     errors,
