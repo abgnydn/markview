@@ -1,5 +1,9 @@
 # Commits — webgpu-kernel-fusion
 
+## 2026-06-30
+
+- `10:24` **docs: add CITATION.cff with Zenodo concept DOI** — +15 −0 — [`d1fa87b`](https://github.com/abgnydn/webgpu-kernel-fusion/commit/d1fa87b1be1b94b0acbae01170451f4db179d5b3)
+
 ## 2026-05-04
 
 - `10:47` **Add LICENSE, CI, CHANGELOG, README badges; bump v0.1.0** — +125 −1 — [`5c5974c`](https://github.com/abgnydn/webgpu-kernel-fusion/commit/5c5974cb937bc37a493d42b87f7347f1510a3f74)

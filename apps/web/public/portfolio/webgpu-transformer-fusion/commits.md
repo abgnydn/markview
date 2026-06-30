@@ -1,5 +1,9 @@
 # Commits — webgpu-transformer-fusion
 
+## 2026-06-30
+
+- `10:24` **docs: add CITATION.cff with Zenodo concept DOI** — +15 −0 — [`2ad1d8f`](https://github.com/abgnydn/webgpu-transformer-fusion/commit/2ad1d8f50e03dab009e08e34563b9f8eba3a42d7)
+
 ## 2026-05-04
 
 - `11:04` **Add CI, CHANGELOG, README badges** — +83 −0 — [`11373b9`](https://github.com/abgnydn/webgpu-transformer-fusion/commit/11373b9c4062f9894762a32937e24c87e4eac07b)

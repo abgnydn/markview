@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-29T21:38:28.068Z",
+  "generated_at": "2026-06-30T21:41:15.478Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1769,
+  "activity_90d_total": 1757,
   "activity_90d": {
-    "2026-04-01": 16,
     "2026-04-02": 62,
     "2026-04-03": 27,
     "2026-04-05": 6,
@@ -76,7 +75,9 @@
     "2026-06-25": 10,
     "2026-06-26": 1,
     "2026-06-27": 1,
-    "2026-06-28": 1
+    "2026-06-28": 1,
+    "2026-06-29": 1,
+    "2026-06-30": 3
   },
   "categories": {
     "llm-inference": {
@@ -336,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-29T18:06:07Z",
+      "pushed_at": "2026-06-30T10:44:04Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
-        "short_sha": "a9558ff",
-        "message": "chore(portfolio): daily sync 2026-06-28",
+        "sha": "b9b13251740c54edbd3d78e3a57f84be41e437fc",
+        "short_sha": "b9b1325",
+        "message": "chore(portfolio): daily sync 2026-06-29",
         "type": "chore",
-        "date": "2026-06-28T21:06:10Z",
-        "url": "https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
-        "additions": 35,
-        "deletions": 32
+        "date": "2026-06-29T21:38:28Z",
+        "url": "https://github.com/abgnydn/markview/commit/b9b13251740c54edbd3d78e3a57f84be41e437fc",
+        "additions": 29,
+        "deletions": 26
       }
     },
     {
@@ -426,7 +427,7 @@
       "pushed_at": "2026-06-02T08:13:17Z",
       "default_branch": "master",
       "latest_tag": "v0.3.1",
-      "commits_30d": 21,
+      "commits_30d": 20,
       "commits_synced": 50,
       "last_commit": {
         "sha": "73d551ac57281e75d4565478ec1273a2f87411f2",
@@ -522,20 +523,20 @@
       "language_color": "#3178c6",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-05-15T03:39:56Z",
+      "pushed_at": "2026-06-30T10:24:03Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 0,
-      "commits_synced": 33,
+      "commits_30d": 1,
+      "commits_synced": 34,
       "last_commit": {
-        "sha": "c7a71480b59cb09d3a56ad5dfa4a06577492a4eb",
-        "short_sha": "c7a7148",
-        "message": "chore: update contact email to hi@barisgunaydin.com",
-        "type": "chore",
-        "date": "2026-05-15T03:39:54Z",
-        "url": "https://github.com/abgnydn/kernelfusion/commit/c7a71480b59cb09d3a56ad5dfa4a06577492a4eb",
-        "additions": 1,
-        "deletions": 1
+        "sha": "701bf49fd0c51d56e3472c43a80325ab5717144e",
+        "short_sha": "701bf49",
+        "message": "docs: add CITATION.cff with Zenodo concept DOI",
+        "type": "docs",
+        "date": "2026-06-30T10:23:59Z",
+        "url": "https://github.com/abgnydn/kernelfusion/commit/701bf49fd0c51d56e3472c43a80325ab5717144e",
+        "additions": 15,
+        "deletions": 0
       }
     },
     {
@@ -990,6 +991,97 @@
         "url": "https://github.com/abgnydn/butterfly/commit/54663c18252945c7930502cf7a7914bce5f87814",
         "additions": 18,
         "deletions": 1
+      }
+    },
+    {
+      "slug": "webgpu-transformer-fusion",
+      "name": "webgpu-transformer-fusion",
+      "tagline": "Single-kernel fusion for autoregressive transformer decoding via WebGPU",
+      "impact": "Shows that collapsing an AI model's entire inner loop into one GPU call removes the overhead that dominates small-model speed in the browser.",
+      "proof": "",
+      "doi": null,
+      "npm": null,
+      "related": [
+        "kernelfusion",
+        "webgpu-fusion-sdk",
+        "webgpu-fusion-max",
+        "zero-tvm"
+      ],
+      "tags": [
+        "kernel-fusion",
+        "llm-inference",
+        "research-paper"
+      ],
+      "repo": "abgnydn/webgpu-transformer-fusion",
+      "repo_url": "https://github.com/abgnydn/webgpu-transformer-fusion",
+      "live_url": "https://doi.org/10.5281/zenodo.19344277",
+      "featured": false,
+      "order": null,
+      "private": false,
+      "archived": false,
+      "language": "JavaScript",
+      "language_color": "#f1e05a",
+      "stars": 1,
+      "topics": [],
+      "pushed_at": "2026-06-30T10:24:39Z",
+      "default_branch": "master",
+      "latest_tag": "v0.1.0",
+      "commits_30d": 1,
+      "commits_synced": 13,
+      "last_commit": {
+        "sha": "2ad1d8f50e03dab009e08e34563b9f8eba3a42d7",
+        "short_sha": "2ad1d8f",
+        "message": "docs: add CITATION.cff with Zenodo concept DOI",
+        "type": "docs",
+        "date": "2026-06-30T10:24:36Z",
+        "url": "https://github.com/abgnydn/webgpu-transformer-fusion/commit/2ad1d8f50e03dab009e08e34563b9f8eba3a42d7",
+        "additions": 15,
+        "deletions": 0
+      }
+    },
+    {
+      "slug": "webgpu-kernel-fusion",
+      "name": "webgpu-kernel-fusion",
+      "tagline": "Research umbrella for GPU kernel fusion — eliminating per-dispatch overhead in sequential GPU workloads, from RL to transformer inference.",
+      "impact": "The first paper of the series, showing one fused GPU call beats many small ones for evolutionary search.",
+      "proof": "",
+      "doi": "10.5281/zenodo.19342888",
+      "npm": null,
+      "related": [
+        "kernelfusion",
+        "webgpu-q",
+        "webgpu-dna",
+        "gpubench"
+      ],
+      "tags": [
+        "kernel-fusion",
+        "research-paper"
+      ],
+      "repo": "abgnydn/webgpu-kernel-fusion",
+      "repo_url": "https://github.com/abgnydn/webgpu-kernel-fusion",
+      "live_url": "https://doi.org/10.5281/zenodo.19343570",
+      "featured": false,
+      "order": null,
+      "private": false,
+      "archived": false,
+      "language": "JavaScript",
+      "language_color": "#f1e05a",
+      "stars": 4,
+      "topics": [],
+      "pushed_at": "2026-06-30T10:24:15Z",
+      "default_branch": "main",
+      "latest_tag": "v0.1.0",
+      "commits_30d": 1,
+      "commits_synced": 23,
+      "last_commit": {
+        "sha": "d1fa87b1be1b94b0acbae01170451f4db179d5b3",
+        "short_sha": "d1fa87b",
+        "message": "docs: add CITATION.cff with Zenodo concept DOI",
+        "type": "docs",
+        "date": "2026-06-30T10:24:12Z",
+        "url": "https://github.com/abgnydn/webgpu-kernel-fusion/commit/d1fa87b1be1b94b0acbae01170451f4db179d5b3",
+        "additions": 15,
+        "deletions": 0
       }
     },
     {
@@ -1516,52 +1608,6 @@
       }
     },
     {
-      "slug": "webgpu-transformer-fusion",
-      "name": "webgpu-transformer-fusion",
-      "tagline": "Single-kernel fusion for autoregressive transformer decoding via WebGPU",
-      "impact": "Shows that collapsing an AI model's entire inner loop into one GPU call removes the overhead that dominates small-model speed in the browser.",
-      "proof": "",
-      "doi": null,
-      "npm": null,
-      "related": [
-        "kernelfusion",
-        "webgpu-fusion-sdk",
-        "webgpu-fusion-max",
-        "zero-tvm"
-      ],
-      "tags": [
-        "kernel-fusion",
-        "llm-inference",
-        "research-paper"
-      ],
-      "repo": "abgnydn/webgpu-transformer-fusion",
-      "repo_url": "https://github.com/abgnydn/webgpu-transformer-fusion",
-      "live_url": "https://doi.org/10.5281/zenodo.19344277",
-      "featured": false,
-      "order": null,
-      "private": false,
-      "archived": false,
-      "language": "JavaScript",
-      "language_color": "#f1e05a",
-      "stars": 1,
-      "topics": [],
-      "pushed_at": "2026-05-04T11:04:12Z",
-      "default_branch": "master",
-      "latest_tag": "v0.1.0",
-      "commits_30d": 0,
-      "commits_synced": 12,
-      "last_commit": {
-        "sha": "11373b9c4062f9894762a32937e24c87e4eac07b",
-        "short_sha": "11373b9",
-        "message": "Add CI, CHANGELOG, README badges",
-        "type": "other",
-        "date": "2026-05-04T11:04:08Z",
-        "url": "https://github.com/abgnydn/webgpu-transformer-fusion/commit/11373b9c4062f9894762a32937e24c87e4eac07b",
-        "additions": 83,
-        "deletions": 0
-      }
-    },
-    {
       "slug": "wgpu-adas-bench",
       "name": "wgpu-adas-bench",
       "tagline": "ADAS sensor fusion benchmark — 11-stage fused wgpu-native vs multi-kernel PyTorch. 12-15x faster on same GPU.",
@@ -1714,51 +1760,6 @@
         "url": "https://github.com/abgnydn/wgpu-native-bench/commit/55b03e1afcfd856db9ae68283fbc77804062b34c",
         "additions": 2,
         "deletions": 2
-      }
-    },
-    {
-      "slug": "webgpu-kernel-fusion",
-      "name": "webgpu-kernel-fusion",
-      "tagline": "Research umbrella for GPU kernel fusion — eliminating per-dispatch overhead in sequential GPU workloads, from RL to transformer inference.",
-      "impact": "The first paper of the series, showing one fused GPU call beats many small ones for evolutionary search.",
-      "proof": "",
-      "doi": "10.5281/zenodo.19342888",
-      "npm": null,
-      "related": [
-        "kernelfusion",
-        "webgpu-q",
-        "webgpu-dna",
-        "gpubench"
-      ],
-      "tags": [
-        "kernel-fusion",
-        "research-paper"
-      ],
-      "repo": "abgnydn/webgpu-kernel-fusion",
-      "repo_url": "https://github.com/abgnydn/webgpu-kernel-fusion",
-      "live_url": "https://doi.org/10.5281/zenodo.19343570",
-      "featured": false,
-      "order": null,
-      "private": false,
-      "archived": false,
-      "language": "JavaScript",
-      "language_color": "#f1e05a",
-      "stars": 4,
-      "topics": [],
-      "pushed_at": "2026-05-04T10:47:04Z",
-      "default_branch": "main",
-      "latest_tag": "v0.1.0",
-      "commits_30d": 0,
-      "commits_synced": 22,
-      "last_commit": {
-        "sha": "5c5974cb937bc37a493d42b87f7347f1510a3f74",
-        "short_sha": "5c5974c",
-        "message": "Add LICENSE, CI, CHANGELOG, README badges; bump v0.1.0",
-        "type": "other",
-        "date": "2026-05-04T10:47:01Z",
-        "url": "https://github.com/abgnydn/webgpu-kernel-fusion/commit/5c5974cb937bc37a493d42b87f7347f1510a3f74",
-        "additions": 125,
-        "deletions": 1
       }
     },
     {
@@ -2071,6 +2072,58 @@
     }
   ],
   "commits": [
+    {
+      "slug": "webgpu-transformer-fusion",
+      "name": "webgpu-transformer-fusion",
+      "language": "JavaScript",
+      "sha": "2ad1d8f50e03dab009e08e34563b9f8eba3a42d7",
+      "short_sha": "2ad1d8f",
+      "message": "docs: add CITATION.cff with Zenodo concept DOI",
+      "type": "docs",
+      "date": "2026-06-30T10:24:36Z",
+      "url": "https://github.com/abgnydn/webgpu-transformer-fusion/commit/2ad1d8f50e03dab009e08e34563b9f8eba3a42d7",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-kernel-fusion",
+      "name": "webgpu-kernel-fusion",
+      "language": "JavaScript",
+      "sha": "d1fa87b1be1b94b0acbae01170451f4db179d5b3",
+      "short_sha": "d1fa87b",
+      "message": "docs: add CITATION.cff with Zenodo concept DOI",
+      "type": "docs",
+      "date": "2026-06-30T10:24:12Z",
+      "url": "https://github.com/abgnydn/webgpu-kernel-fusion/commit/d1fa87b1be1b94b0acbae01170451f4db179d5b3",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "slug": "kernelfusion",
+      "name": "kernelfusion",
+      "language": "TypeScript",
+      "sha": "701bf49fd0c51d56e3472c43a80325ab5717144e",
+      "short_sha": "701bf49",
+      "message": "docs: add CITATION.cff with Zenodo concept DOI",
+      "type": "docs",
+      "date": "2026-06-30T10:23:59Z",
+      "url": "https://github.com/abgnydn/kernelfusion/commit/701bf49fd0c51d56e3472c43a80325ab5717144e",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "b9b13251740c54edbd3d78e3a57f84be41e437fc",
+      "short_sha": "b9b1325",
+      "message": "chore(portfolio): daily sync 2026-06-29",
+      "type": "chore",
+      "date": "2026-06-29T21:38:28Z",
+      "url": "https://github.com/abgnydn/markview/commit/b9b13251740c54edbd3d78e3a57f84be41e437fc",
+      "additions": 29,
+      "deletions": 26
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -3474,19 +3527,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "7e817ab9c952a6221b706be19774dde524d143bb",
-      "short_sha": "7e817ab",
-      "message": "feat(atmosphere): realistic antique paper — lit fibre + organic foxing",
-      "type": "feat",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb",
-      "additions": 21,
-      "deletions": 13
     },
     {
       "slug": "markview",
@@ -8531,45 +8571,6 @@
       "url": "https://github.com/abgnydn/tether/commit/7c4571acd43bbeb0d3e6946ed797080a0771c324",
       "additions": 15,
       "deletions": 11
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "9a954bf90bd8502b8f2f5104da1cc45ef96bc6db",
-      "short_sha": "9a954bf",
-      "message": "D-pad — revert to bottom-left, original 48px cells",
-      "type": "other",
-      "date": "2026-05-09T08:10:15Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/9a954bf90bd8502b8f2f5104da1cc45ef96bc6db",
-      "additions": 8,
-      "deletions": 15
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "24e6014cca4ee1041ff5f3f1e96a1aff928682cd",
-      "short_sha": "24e6014",
-      "message": "feat(lab): empirical-lab gates, fingerprint footer, storage modal, au…",
-      "type": "feat",
-      "date": "2026-05-09T07:28:45Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/24e6014cca4ee1041ff5f3f1e96a1aff928682cd",
-      "additions": 1761,
-      "deletions": 62
-    },
-    {
-      "slug": "wonderlab",
-      "name": "wonderlab",
-      "language": "JavaScript",
-      "sha": "45be85f05a155eef11610385d5ba8398a0968131",
-      "short_sha": "45be85f",
-      "message": "Voice — surface SpeechRecognition errors to the visitor",
-      "type": "other",
-      "date": "2026-05-09T07:19:26Z",
-      "url": "https://github.com/abgnydn/wonderlab/commit/45be85f05a155eef11610385d5ba8398a0968131",
-      "additions": 29,
-      "deletions": 2
     }
   ],
   "errors": []
