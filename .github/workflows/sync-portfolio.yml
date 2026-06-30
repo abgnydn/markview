@@ -32,6 +32,23 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node apps/web/scripts/sync-portfolio.mjs
 
+      - name: Maintenance radar → job summary
+        run: |
+          F=apps/web/public/portfolio/index.json
+          {
+            echo "## 🚦 Portfolio maintenance radar"
+            echo ""
+            echo "_$(jq -r .generated_at "$F") · $(jq -r .project_count "$F") projects_"
+            echo ""
+            echo "| signal | projects |"
+            echo "|---|---|"
+            echo "| 🔴 live URL down | $(jq -rc '.health.live_down' "$F") |"
+            echo "| 🟡 open issues | $(jq -rc '.health.open_issues' "$F") |"
+            echo "| 📄 DOI, no CITATION.cff | $(jq -rc '.health.doi_no_citation' "$F") |"
+            echo "| 💤 stale > 60d | $(jq -rc '.health.stale_60d' "$F") |"
+            echo "| 🏷️ untagged | $(jq -rc '.health.untagged' "$F") |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Commit changes if any
         run: |
           git config user.name  "github-actions[bot]"
