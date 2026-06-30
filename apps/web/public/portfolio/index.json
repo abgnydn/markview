@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-06-29T21:38:28.068Z",
+  "generated_at": "2026-06-30T07:29:08.721Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1769,
+  "activity_90d_total": 1768,
   "activity_90d": {
-    "2026-04-01": 16,
+    "2026-04-01": 14,
     "2026-04-02": 62,
     "2026-04-03": 27,
     "2026-04-05": 6,
@@ -76,7 +76,8 @@
     "2026-06-25": 10,
     "2026-06-26": 1,
     "2026-06-27": 1,
-    "2026-06-28": 1
+    "2026-06-28": 1,
+    "2026-06-29": 1
   },
   "categories": {
     "llm-inference": {
@@ -183,6 +184,31 @@
     "veil",
     "iz"
   ],
+  "health": {
+    "stale_60d": [
+      "teklifci",
+      "deps0",
+      "swarm-bio",
+      "swarm-ensemble",
+      "the-swarm",
+      "zero-burn-lab"
+    ],
+    "open_issues": [
+      {
+        "slug": "webgpu-fusion-sdk",
+        "n": 1
+      }
+    ],
+    "live_down": [
+      "panel"
+    ],
+    "doi_no_citation": [
+      "kernelfusion",
+      "webgpu-transformer-fusion",
+      "webgpu-kernel-fusion"
+    ],
+    "untagged": []
+  },
   "projects": [
     {
       "slug": "neuropulse",
@@ -238,7 +264,13 @@
         "url": "https://github.com/abgnydn/neuropulse/commit/3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
         "additions": 7,
         "deletions": 2
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 5,
+      "live_ok": true,
+      "has_citation": true,
+      "citation_doi": "10.5281/zenodo.20505470"
     },
     {
       "slug": "webgpu-q",
@@ -246,7 +278,7 @@
       "tagline": "WebGPU quantum many-body + chemistry simulator. Brute-force verified element-wise against PySCF, with WebGPU acceleration on the CCSD(T) bottleneck.",
       "impact": "Does research-grade quantum chemistry inside a browser tab, and checks its own answers against the field's reference tool, number for number.",
       "proof": "verified vs PySCF",
-      "doi": "10.5281/zenodo.20494383",
+      "doi": "10.5281/zenodo.20494382",
       "npm": null,
       "related": [
         "webgpu-kernel-fusion",
@@ -295,7 +327,13 @@
         "url": "https://github.com/abgnydn/webgpu-q/commit/5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
         "additions": 380,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 5,
+      "live_ok": true,
+      "has_citation": true,
+      "citation_doi": "10.5281/zenodo.20494382"
     },
     {
       "slug": "markview",
@@ -336,21 +374,27 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-29T18:06:07Z",
+      "pushed_at": "2026-06-29T21:38:29Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
-        "short_sha": "a9558ff",
-        "message": "chore(portfolio): daily sync 2026-06-28",
+        "sha": "b9b13251740c54edbd3d78e3a57f84be41e437fc",
+        "short_sha": "b9b1325",
+        "message": "chore(portfolio): daily sync 2026-06-29",
         "type": "chore",
-        "date": "2026-06-28T21:06:10Z",
-        "url": "https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
-        "additions": 35,
-        "deletions": 32
-      }
+        "date": "2026-06-29T21:38:28Z",
+        "url": "https://github.com/abgnydn/markview/commit/b9b13251740c54edbd3d78e3a57f84be41e437fc",
+        "additions": 29,
+        "deletions": 26
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 0,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "postnet-cf",
@@ -393,7 +437,13 @@
         "url": "https://github.com/abgnydn/postnet-cf/commit/f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
         "additions": 377,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 20,
+      "live_ok": true,
+      "has_citation": true,
+      "citation_doi": "10.5281/zenodo.20506887"
     },
     {
       "slug": "iz",
@@ -426,7 +476,7 @@
       "pushed_at": "2026-06-02T08:13:17Z",
       "default_branch": "master",
       "latest_tag": "v0.3.1",
-      "commits_30d": 21,
+      "commits_30d": 20,
       "commits_synced": 50,
       "last_commit": {
         "sha": "73d551ac57281e75d4565478ec1273a2f87411f2",
@@ -437,7 +487,13 @@
         "url": "https://github.com/abgnydn/iz/commit/73d551ac57281e75d4565478ec1273a2f87411f2",
         "additions": 189,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 27,
+      "live_ok": true,
+      "has_citation": true,
+      "citation_doi": "10.5281/zenodo.20496086"
     },
     {
       "slug": "zero-tvm",
@@ -491,7 +547,13 @@
         "url": "https://github.com/abgnydn/zero-tvm/commit/32406c88acc201694df83a4e22df64bf4391d380",
         "additions": 9,
         "deletions": 9
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 5,
+      "live_ok": true,
+      "has_citation": true,
+      "citation_doi": "10.5281/zenodo.20838918"
     },
     {
       "slug": "kernelfusion",
@@ -499,7 +561,7 @@
       "tagline": "Research umbrella for GPU kernel fusion — eliminating per-dispatch overhead across evolutionary computation and transformer inference. Two preprints.",
       "impact": "The umbrella research program — two papers — behind making GPUs faster by fusing many small steps into one.",
       "proof": "",
-      "doi": "10.5281/zenodo.19342888",
+      "doi": "10.5281/zenodo.19331833",
       "npm": null,
       "related": [
         "webgpu-kernel-fusion",
@@ -536,7 +598,13 @@
         "url": "https://github.com/abgnydn/kernelfusion/commit/c7a71480b59cb09d3a56ad5dfa4a06577492a4eb",
         "additions": 1,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 46,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "gpubench",
@@ -580,7 +648,13 @@
         "url": "https://github.com/abgnydn/gpubench/commit/9e1238b0993130c38e824ac43b6552779e38abf8",
         "additions": 1,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 46,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "fused-lora",
@@ -626,7 +700,13 @@
         "url": "https://github.com/abgnydn/fused-lora/commit/cbfa5d35658684ee772ecd4e05a9f52d085de717",
         "additions": 71,
         "deletions": 197
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 32,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "safenpm",
@@ -677,7 +757,13 @@
         "url": "https://github.com/abgnydn/safenpm/commit/f110e4223c137254cdf5b054758ab24af09ef6ec",
         "additions": 221,
         "deletions": 38
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 35,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "quill",
@@ -721,7 +807,13 @@
         "url": "https://github.com/abgnydn/nib/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
         "additions": 1093,
         "deletions": 69
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 5,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "webgpu-dna",
@@ -766,7 +858,13 @@
         "url": "https://github.com/abgnydn/webgpu-dna/commit/2135979189ae01957cc8eee8efba4588011542f7",
         "additions": 1167,
         "deletions": 154
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 6,
+      "live_ok": true,
+      "has_citation": true,
+      "citation_doi": "10.5281/zenodo.20506339"
     },
     {
       "slug": "panel",
@@ -808,7 +906,13 @@
         "url": "https://github.com/abgnydn/panel/commit/d7bf288f9d1c356b9045db3e7076d45267d18143",
         "additions": 1,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 35,
+      "live_ok": false,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "wonderlab",
@@ -862,7 +966,13 @@
         "url": "https://github.com/abgnydn/wonderlab/commit/94fea2085827c68e8d89df474967fbdaf6bbd157",
         "additions": 6,
         "deletions": 6
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 42,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "veil",
@@ -907,7 +1017,13 @@
         "url": "https://github.com/abgnydn/veil/commit/a7c07271b994221884dc22538353e642474f8779",
         "additions": 289,
         "deletions": 26
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 20,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "webgpu-fly",
@@ -948,7 +1064,13 @@
         "url": "https://github.com/abgnydn/webgpu-fly/commit/cc56ec37b3cd79a4cba0de3d95a2975f7a2b4352",
         "additions": 333,
         "deletions": 2
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 25,
+      "live_ok": true,
+      "has_citation": true,
+      "citation_doi": null
     },
     {
       "slug": "butterfly",
@@ -990,7 +1112,13 @@
         "url": "https://github.com/abgnydn/butterfly/commit/54663c18252945c7930502cf7a7914bce5f87814",
         "additions": 18,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 27,
+      "live_ok": null,
+      "has_citation": true,
+      "citation_doi": "10.5281/zenodo.20505472"
     },
     {
       "slug": "draw-instant",
@@ -1035,7 +1163,13 @@
         "url": "https://github.com/abgnydn/draw-instant/commit/87df7c5e9a6d136c20afc01cc239fe9d35955628",
         "additions": 12054,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 5,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "mycosim",
@@ -1079,7 +1213,13 @@
         "url": "https://github.com/abgnydn/mycosim/commit/fdd7c20c85a91bcc08ee6d109f69b79283796582",
         "additions": 3067,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 5,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "davakasasi",
@@ -1123,7 +1263,13 @@
         "url": "https://github.com/abgnydn/davakasasi/commit/f8639fc48e134c9cf02592b14b21f0a21f92b490",
         "additions": 30,
         "deletions": 12
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 31,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "founder-lab",
@@ -1166,7 +1312,13 @@
         "url": "https://github.com/abgnydn/founder-lab/commit/cc4acbdf3305b4372dfbdb9d772f3f34ff83a0c8",
         "additions": 6466,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 31,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "tether",
@@ -1209,7 +1361,13 @@
         "url": "https://github.com/abgnydn/tether/commit/2c6fe17328f8aea173cf6e27701b36dc74783642",
         "additions": 12,
         "deletions": 13
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 39,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "fusedx",
@@ -1253,7 +1411,13 @@
         "url": "https://github.com/abgnydn/fusedx/commit/ce6198e1a00a269718495ffb803dcb79653f5ae9",
         "additions": 53912,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 40,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "hub",
@@ -1297,7 +1461,13 @@
         "url": "https://github.com/abgnydn/hub/commit/c45411a976998a424ab625b06d90d4b0da27aa30",
         "additions": 7,
         "deletions": 5
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 41,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "vault",
@@ -1340,7 +1510,13 @@
         "url": "https://github.com/abgnydn/vault/commit/6e1b48127efbcde722aac5824052fe2b1b35ae5c",
         "additions": 269,
         "deletions": 459
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 41,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "temple",
@@ -1382,7 +1558,13 @@
         "url": "https://github.com/abgnydn/temple/commit/5d43885d3e0869c785e12c78cb59c8aa52e6fa93",
         "additions": 22,
         "deletions": 9
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 41,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "context-vault",
@@ -1426,7 +1608,13 @@
         "url": "https://github.com/abgnydn/context-vault/commit/bfb52dd48adc855c88bdca7cd1577de8e029ec29",
         "additions": 1357,
         "deletions": 2646
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 41,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "webgpu-fusion-sdk",
@@ -1470,7 +1658,13 @@
         "url": "https://github.com/abgnydn/webgpu-fusion-sdk/commit/ebdb5b42b37705c25e5ab288a4d0bdbbbb7e3a67",
         "additions": 1,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 1,
+      "stale_days": 46,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "webgpu-p2p-evolution",
@@ -1513,7 +1707,13 @@
         "url": "https://github.com/abgnydn/webgpu-p2p-evolution/commit/c2a23fcb26f49b8b8bf3980d9bbf14e25cc3c57f",
         "additions": 1,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 56,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "webgpu-transformer-fusion",
@@ -1521,7 +1721,7 @@
       "tagline": "Single-kernel fusion for autoregressive transformer decoding via WebGPU",
       "impact": "Shows that collapsing an AI model's entire inner loop into one GPU call removes the overhead that dominates small-model speed in the browser.",
       "proof": "",
-      "doi": null,
+      "doi": "10.5281/zenodo.19344276",
       "npm": null,
       "related": [
         "kernelfusion",
@@ -1536,7 +1736,7 @@
       ],
       "repo": "abgnydn/webgpu-transformer-fusion",
       "repo_url": "https://github.com/abgnydn/webgpu-transformer-fusion",
-      "live_url": "https://doi.org/10.5281/zenodo.19344277",
+      "live_url": "https://doi.org/10.5281/zenodo.19344276",
       "featured": false,
       "order": null,
       "private": false,
@@ -1559,7 +1759,13 @@
         "url": "https://github.com/abgnydn/webgpu-transformer-fusion/commit/11373b9c4062f9894762a32937e24c87e4eac07b",
         "additions": 83,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 56,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "wgpu-adas-bench",
@@ -1617,7 +1823,13 @@
         "url": "https://github.com/abgnydn/wgpu-adas-bench/commit/7088ed6bc388731b0d75f92e0150dec61716939d",
         "additions": 82,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 56,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "webgpu-fusion-max",
@@ -1670,7 +1882,13 @@
         "url": "https://github.com/abgnydn/webgpu-fusion-max/commit/e08be45ce5d82a53421a88ee25b1f36c86dd393c",
         "additions": 79,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 56,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "wgpu-native-bench",
@@ -1714,7 +1932,13 @@
         "url": "https://github.com/abgnydn/wgpu-native-bench/commit/55b03e1afcfd856db9ae68283fbc77804062b34c",
         "additions": 2,
         "deletions": 2
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 56,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "webgpu-kernel-fusion",
@@ -1722,7 +1946,7 @@
       "tagline": "Research umbrella for GPU kernel fusion — eliminating per-dispatch overhead in sequential GPU workloads, from RL to transformer inference.",
       "impact": "The first paper of the series, showing one fused GPU call beats many small ones for evolutionary search.",
       "proof": "",
-      "doi": "10.5281/zenodo.19342888",
+      "doi": "10.5281/zenodo.19331833",
       "npm": null,
       "related": [
         "kernelfusion",
@@ -1736,7 +1960,7 @@
       ],
       "repo": "abgnydn/webgpu-kernel-fusion",
       "repo_url": "https://github.com/abgnydn/webgpu-kernel-fusion",
-      "live_url": "https://doi.org/10.5281/zenodo.19343570",
+      "live_url": "https://doi.org/10.5281/zenodo.19331833",
       "featured": false,
       "order": null,
       "private": false,
@@ -1759,7 +1983,13 @@
         "url": "https://github.com/abgnydn/webgpu-kernel-fusion/commit/5c5974cb937bc37a493d42b87f7347f1510a3f74",
         "additions": 125,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 56,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "the-town",
@@ -1803,7 +2033,13 @@
         "url": "https://github.com/abgnydn/the-town/commit/4af96de5d8ee41dddf3a9b163c04e33a9ebc6399",
         "additions": 4513,
         "deletions": 0
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 57,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "teklifci",
@@ -1847,7 +2083,13 @@
         "url": "https://github.com/abgnydn/teklifci/commit/e84170f4cfe8a14a4e36ba39afebc05655af5273",
         "additions": 107,
         "deletions": 15
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 64,
+      "live_ok": true,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "deps0",
@@ -1888,7 +2130,13 @@
         "url": "https://github.com/abgnydn/deps0/commit/7eee2f576c00fa0a8e21ad77565d1d491cf30ac5",
         "additions": 15,
         "deletions": 15
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 89,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "swarm-bio",
@@ -1933,7 +2181,13 @@
         "url": "https://github.com/abgnydn/swarm-bio/commit/210b8347c58137021d73f66b9b74b8db367ad035",
         "additions": 1,
         "deletions": 1
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 93,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "swarm-ensemble",
@@ -1976,7 +2230,13 @@
         "url": "https://github.com/abgnydn/swarm-ensemble/commit/840bdf4601571d3f8f0306f81239aa216c4a14b1",
         "additions": 14,
         "deletions": 2
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 93,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "the-swarm",
@@ -2022,7 +2282,13 @@
         "url": "https://github.com/abgnydn/the-swarm/commit/4701f6988e188f8e3c43734beabc4b10b5c2b437",
         "additions": 420,
         "deletions": 12
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 93,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     },
     {
       "slug": "zero-burn-lab",
@@ -2067,10 +2333,29 @@
         "url": "https://github.com/abgnydn/zero-burn-lab/commit/55531ab7d02d12f3401365e3f9e7b249f15d2a07",
         "additions": 2501,
         "deletions": 319
-      }
+      },
+      "status": null,
+      "open_issues": 0,
+      "stale_days": 102,
+      "live_ok": null,
+      "has_citation": false,
+      "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "b9b13251740c54edbd3d78e3a57f84be41e437fc",
+      "short_sha": "b9b1325",
+      "message": "chore(portfolio): daily sync 2026-06-29",
+      "type": "chore",
+      "date": "2026-06-29T21:38:28Z",
+      "url": "https://github.com/abgnydn/markview/commit/b9b13251740c54edbd3d78e3a57f84be41e437fc",
+      "additions": 29,
+      "deletions": 26
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -3474,19 +3759,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "7e817ab9c952a6221b706be19774dde524d143bb",
-      "short_sha": "7e817ab",
-      "message": "feat(atmosphere): realistic antique paper — lit fibre + organic foxing",
-      "type": "feat",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb",
-      "additions": 21,
-      "deletions": 13
     },
     {
       "slug": "markview",
