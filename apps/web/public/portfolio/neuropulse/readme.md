@@ -43,7 +43,7 @@ No server. No API key. No fakery.
 <br>
 
 > [!NOTE]
-> **Strict 1:1.** Every pixel on screen is a function of a real GPU tensor. The brightness of each point **is** the activation value. The lines between attention heads **are** the real attention weights. The token probabilities rolling across the screen **are** the actual logits from the final layer.
+> **Strict 1:1.** Every mark on screen is a function of a real GPU tensor. The brightness of each point **is** the activation value. The lines between attention heads **are** the real attention weights. The token probabilities rolling across the screen **are** the actual logits from the final layer.
 
 <br>
 
@@ -66,7 +66,7 @@ Every "AI visualization" you've seen online is **decoration**.
 
 Animated dots pulsing to a fake rhythm. Particle systems that aren't connected to anything real. A beautiful metaphor with no model behind the curtain. You walk away thinking you saw how an LLM works. You didn't — you saw how a designer *imagines* it works.
 
-Neuropulse is the opposite. Type a prompt. Watch 3.8 billion parameters process it. Nothing is interpolated. Nothing is smoothed. Nothing is made up.
+Neuropulse is the opposite. Type a prompt. Watch 3.8 billion parameters process it. Every value on screen is read straight from a live GPU tensor — not interpolated, not pre-baked, not made up. The visual encoding is a designer's (position, brightness, soft sprites); the *numbers* driving it never are.
 
 <br>
 
@@ -165,7 +165,7 @@ The nine annotated rows are the parity checkpoints — `VALIDATE_LAYERS = {0, 4,
 
 Expected result: tiny deltas at hidden-state level (int4 quantization cost, not implementation drift) and identical top-1 tokens vs the fp16 reference. That last bit is the bar that matters.
 
-A second layer of validation runs in CI: `npm run verify` cross-checks documented claims (layer count, kernel count, dispatch counts, keyboard shortcuts) against the actual source. If the README drifts from the code, the build fails.
+A second layer runs in CI on every push ([`.github/workflows/check.yml`](.github/workflows/check.yml) → `npm run check`): it cross-checks documented claims (layer count, kernel count, dispatch counts, keyboard shortcuts) against the actual source, typechecks, and builds. If the README drifts from the code, CI fails. The numerical-parity suite above is deliberately **not** in CI — it needs the ~2 GB weights and a WebGPU device, which stock runners lack, so it runs in *your* browser on *your* GPU instead.
 
 <br>
 
@@ -281,360 +281,45 @@ src/
 
 <br>
 
-## Experiments
-
-> **The Butterfly investigation now has its own home and DOI:
-> [github.com/abgnydn/butterfly](https://github.com/abgnydn/butterfly).** The
-> compaction harness, the trained taggers, and the full writeup
-> ([`PAPER.md`](https://github.com/abgnydn/butterfly/blob/main/PAPER.md)) moved
-> there; neuropulse keeps the in-app demo (`src/butterfly-mode.ts`) and the
-> git-timestamped pre-registrations ([`PREDICTIONS.md`](PREDICTIONS.md)). The
-> reproduce commands below name scripts that now live in the butterfly repo —
-> drop the `tools/` prefix and run them from a butterfly checkout.
-
-This section is an honest log of a multi-round exploration, not a finished feature claim. Butterfly started as one of the overlays and became a pre-registered probe of a context-compaction mechanism. We refuted our first prediction, confirmed a harder one, layered on supervised training, then ran a downstream QA evaluation that narrowed what we can actually claim. Pre-registrations live in [`PREDICTIONS.md`](PREDICTIONS.md); the full post-mortem with self-critique lives in a private research vault.
-
-The question: at a fixed token budget, does **tag-and-rebuild** preserve load-bearing information better than naive `lastN` truncation?
-
-### Two regimes, two outcomes
-
-| pre-registration | regime | result |
-|---|---|---|
-| [P-20260512-05](PREDICTIONS.md#p-20260512-05--butterfly-compaction-beats-lastn-at-the-same-token-budget) | 1 generation · 400-token budget · ~12-message transcripts | **REFUTED.** LastN tied on 2 of 4 transcripts, beat butterfly on the other 2. At a generous budget on short transcripts, lastN already preserves the needle — butterfly has nothing to do. |
-| [P-20260515-06](PREDICTIONS.md#p-20260515-06--butterfly-beats-lastn-under-multi-gen-noise-pressure-pure-code-variant--confirmed) | **3 generations · 100-token budget · ~38-message transcripts** with fresh noise injected each round | **CONFIRMED.** All 4 transcripts: butterfly preserves 100% of needle keywords, lastN preserves 0%. Mean delta = 100 percentage points. |
-
-The transgenerational survival claim — keep-tagged content carries through each cocoon while noise pushes the original out of lastN's window — is observable end-to-end in the per-generation trace.
-
-### Where the mechanism actually matters — phase diagram
-
-Two binary outcomes don't tell you *where* butterfly stops mattering. So we swept the cube: 8 budgets × 6 transcript lengths × 5 generation counts × 4 transcripts = 960 configurations. Total runtime: 82 ms. The mean delta (butterfly_frac − lastn_frac) across the 4 transcripts, per `(length × budget)` cell, at three generation depths:
-
-```
-─── gens = 1 ─────────────────────────────────────────────────
-len ↓ \ budget →   50   75  100  150  200  300  400  600
-  12               ██   ██   ▸▸    ·    ·    ·    ·    ·
-  20               ██   ██   ██    ·    ·    ·    ·    ·
-  30               ██   ██   ██   ▸▸    ·    ·    ·    ·
-  50               ██   ██   ██   ██   ██    ·    ·    ·
-  80               ██   ██   ██   ██   ██   ██   ▸▸    ·
- 120               ▸▸   ██   ██   ██   ██   ██   ██   ██
-
-─── gens = 3 ─────────────────────────────────────────────────
-  12               ▸▸   ██   ██   ██   ▸▸    ·    ·    ·
-  20               ▸▸   ██   ██   ██   ██    ·    ·    ·
-  30               ▸▸   ██   ██   ██   ██    ·    ·    ·
-  50               ▸▸   ██   ██   ██   ██   ██    ·    ·
-  80               ▸▸   ██   ██   ██   ██   ██   ██    ·
- 120               ▸▸   ██   ██   ██   ██   ██   ██   ██
-
-─── gens = 5 ─────────────────────────────────────────────────
-  12               ▸▸   ██   ██   ██   ██   ▸▸    ·    ·
-  20               ▸▸   ██   ██   ██   ██   ██    ·    ·
-  30               ▸▸   ██   ██   ██   ██   ██    ·    ·
-  50               ▸▸   ██   ██   ██   ██   ██   ██    ·
-  80                ▸   ██   ██   ██   ██   ██   ██   ▸▸
- 120                ·   ▸▸   ██   ██   ██   ██   ██   ██
-
-  ██ Δ≥0.60   ▸▸ 0.30..0.60   ▸ 0.10..0.30   · -0.10..0.10   ◀ -0.30..-0.10   ◀◀ ≤-0.30
-```
-
-Three observations:
-
-1. **The boundary is roughly diagonal.** Butterfly stops mattering once budget grows past ~30-40% of the original transcript size — `lastN` already captures the needle.
-2. **More generations expand the win region.** Each metamorphosis pushes more original content out of `lastN`'s window via noise injection. By gens=5 even a 12-message transcript wins at budget=300.
-3. **The two pre-registered points land where the heatmap says they should.** P-20260512-05 (len=12, budget=400, gens=1) sits in the `·` tie zone — REFUTED. P-20260515-06 (len≈30, budget=100, gens=3) sits deep in the `██` zone — CONFIRMED.
-
-Reproduce: `node tools/butterfly-sweep-phasediagram.mjs`. Custom grid: `GENS=3 BUDGETS=50,100,200,400 LENGTHS=20,50,100 node tools/...`.
-
-### Replication with a learned tagger — partial refutation, hardened
-
-The natural objection to the regex tagger: *"butterfly only wins because the regex happens to fit your 4 transcripts' shapes."* To check, we swapped the regex for an LLM tagger and re-ran the two pre-registered points across multiple models and prompt strategies.
-
-```
-tagger configuration                                regime      result
-─────────────────────────────────────────────────────────────────────────────
-regex (rule-based, ~8% keep rate)                   hard        100% / 0%  Δ=100pp  ✓
-qwen3-14b-mlx · JSON batch, no cap                  hard          0% / 0%  Δ=0pp
-gemma-4-e4b · one-char output, cap=5                hard         25pp avg (1/4 win via regex fallback)
-qwen3-14b-mlx · one-char output, cap=5              hard          0% / 0%  Δ=0pp
-qwen3-14b-mlx · one-char output, cap=3 (strictest)  hard          0% / 0%  Δ=0pp
-(any tagger)                                        easy        100% / 100%  Δ=0pp  (regime doesn't differentiate)
-```
-
-**Three LLM configurations all fail to replicate the regex win at the hard regime.**
-
-What we tried in the one-char strategy:
-- One character per message (`k` / `s` / `m`) — no JSON, no parse failures
-- Hard cap on `keep` count enforced in code (excess keeps get demoted to summarize, dropping later-position keeps first)
-- Identifier-first prompt — "only `keep` if the message contains a unique identifier an engineer must act on: file path, line range, ticket ID, code call, decision marker, named owner + channel"
-
-The cap is respected in the trace (gen 1: 26 melt / 9 summarize / 3 keep when `MAX_KEEPS=3`), but the 3 keeps the LLM picks are **not the needle-carrying messages**. Qwen3 prioritizes decision-language and emphatic statements ("Decision:", "Confirmed:", "Let's do X") — but the regex prioritizes literal shapes (`lib/jwt.ts`, `#auth-platform`, `Date.now()`). On our 4 transcripts the needle keywords ARE literal shapes, not just emphatic decisions. The LLM's prior misses by a different axis than its selectivity.
-
-**The hardened finding.** Tag-and-rebuild beats `lastN` *only when the tagger's prior matches the needle's shape distribution.* This is a stronger claim than "selectivity matters" — selectivity alone wasn't enough (we tested it). The tagger has to be biased toward the *specific kind* of content the needle takes (literal identifiers vs decision language vs entity mentions). The regex's bias is hard-coded to match `file:line` / `#channel` / `Decision:` / `@org/pkg` shapes, which happen to be exactly what our 4 transcripts plant as needles. A frontier-instruction-tuned model with generic "find what's important" semantics misses the needle even with a strict selectivity cap.
-
-What this means in practice: butterfly's mechanism is **domain-dependent**. The "right tagger" for software-engineering chat transcripts is one that fires on identifier-shaped content. The "right tagger" for legal/medical/financial transcripts would be different. **There is no universal butterfly.** Building a working butterfly for a domain means designing or training a domain-specific tagger first.
-
-Reproduce: `MODEL=qwen3-14b-mlx STRATEGY=onechar MAX_KEEPS=3 CONFIGS=len38-bud100-gens3 node tools/butterfly-llm-tagger.mjs`. Results in `test-results/butterfly-sweep/butterfly-llmtagger-*.json`.
-
-### Train a tagger from scratch — can a tiny learned classifier replicate regex?
-
-Two more taggers, both trained on the regex's own labels:
-
-| tagger | params | size | needle preservation @ hard regime |
-|---|---|---|---|
-| Regex (hand-tuned thresholds) | ~14 hard rules | source code | **100% / 0%  Δ=100pp** |
-| **14-feature softmax** (gradient descent on regex labels) | 45 | 1.2 KB | **100% / 0%  Δ=100pp** |
-| **768-dim embed + linear head** (nomic-embed-text + softmax) | 2,307 | 45 KB | **100% / 0%  Δ=100pp** |
-| qwen3-14b-mlx · onechar prompt · cap=3 | (frontier) | — | 0% / 0%  Δ=0pp |
-
-Both learned classifiers reach 100% training accuracy in seconds and reproduce the regex's mechanism win exactly. This is partly tautological (training labels come from the regex) but it confirms: **gradient descent over either hand features OR raw text embeddings recovers the same boundary the hand-tuned thresholds picked**. The mechanism isn't hiding in some pathological piece of regex code — it's in the *shape distribution of the features the regex weighs*.
-
-Reproduce: `node tools/butterfly-train-classifier.mjs && STRATEGY=trained node tools/butterfly-llm-tagger.mjs` for the 1.2 KB version. Or `tools/butterfly-train-embed.mjs && STRATEGY=embed node tools/butterfly-llm-tagger.mjs` for the embedding version.
-
-### Adversarial transcripts — testing the shape claim directly
-
-Four new transcripts where the needle is real, load-bearing content but does **NOT** take any of the shapes the regex catches:
-
-| transcript | needle (load-bearing fact) | needle shape |
-|---|---|---|
-| `numeric-threshold` | "we agreed on a hard cap of **47 concurrent connections per pod**" | a number in prose, no `req/min` suffix |
-| `implicit-deadline` | "**cooper said end of next week, friday the 24th**" | lowercase name + relative date phrasing |
-| `preference-statement` | "i **don't want to go with postgres** for this — too heavy for our write pattern" | stated preference, no `Decision:` marker |
-| `buried-causation` | "the **rollback brought back the version-pinned dependencies that were the actual blocker**" | causation in prose, no `Root cause:` marker |
-
-Results on these 4, same hard regime (38 msgs, 100 tok, 3 gens), 4 taggers:
-
-```
-tagger              mean Δ across 4 adversarial transcripts
-─────────────────────────────────────────────────────────
-regex                0pp   (all messages → melt, including the needles)
-trained (14-feat)    0pp   (inherits regex's blind spots)
-embed (768-dim)      0pp   (trained on regex labels — same blind spots)
-qwen3-14b · onechar  0pp   (picks 5 messages with cap, but
-                            still 0% on the needle keywords)
-```
-
-**Every tagger we tested fails on adversarial.** The regex and its learned descendants tag everything as `melt` (no signal fires). Qwen3 picks 5 messages it considers important, but they're not the needle-carrying ones — *and* the chrysalis bloats with the 5 keeps + 13-19 summarizes, blowing the 100-token budget so even useful content gets truncated.
-
-There's a worse twist: across all 4 adversarial transcripts, the qwen3 tagger's gen-3 chrysalis output is **identical** — just a noise message from gen 2 injection (`"did anyone actually try the new prod metrics dashboard?"`). The original conversation is gone entirely by gen 3.
-
-**That's a new finding the original confirmation didn't show:** the multi-generation noise injection acts as a feedback loop that amplifies any tagger's gen-1 weakness. Once the needle gets dropped in the first cocoon, no later generation can recover it — the only thing surviving across generations is whatever the tagger consistently labels as keep, and if that's noise, the protocol locks in on noise.
-
-Reproduce: `node tools/butterfly-adversarial.mjs`.
-
-### External benchmark — LongMemEval oracle (500 real conversations)
-
-The natural next test: does the regex-tagger win replicate on an independent dataset? [LongMemEval](https://github.com/xiaowu0162/LongMemEval) (Wu et al., ICLR 2025; arXiv:2410.10813) is the canonical long-term-conversational-memory benchmark, alongside MemoryAgentBench (arXiv:2507.05257, 2025). Each example is a list of `{role, content, has_answer: bool}` sessions; ground truth is the set of evidence turns flagged `has_answer: true`.
-
-Direct score: "what fraction of evidence turns survive in the compacted memory" — no LLM judge needed.
-
-```
-tagger         params   in-domain  ──── LongMemEval (500 examples) ────
-                                   bud=256   bud=512   bud=1024  bud=2048
-─────────────────────────────────────────────────────────────────────────
-Regex            ~14      100/0    21.4%     22.6%     26.3%     29.0%
-Trained 14-feat   45      100/0     4.6%      4.6%      4.7%      4.7%
-Embed 768-d    2,307      100/0     0.0%      0.0%      0.0%      0.0%
-LastN baseline      -       —       3.3%      5.2%     12.3%     23.4%
-```
-
-Three real findings:
-
-1. **The regex tagger wins on independent data**, by +5 to +18pp across all tested budgets. Not just our 4 hand-written transcripts — the win replicates on 500 real conversations from a peer-reviewed benchmark.
-2. **More parameters → worse generalization** when training data is small. The 14-feature classifier (45 params) flat at 4.7% on LongMemEval despite hitting 100% on the in-domain set. The 768-dim embedding classifier (2,307 params) is *worse still* — 0% turn rate at every budget. Both overfit to the 100-message in-domain training set.
-3. **Different metrics, different winners — and a hybrid that wins both.** Regex wins evidence-turn preservation. LastN wins *answer-string-in-memory* at high budgets (116/479 vs 63/479 at bud=2048) — because LongMemEval answers often appear in recent context, where lastN keeps everything. We tested a hybrid that splits the budget 60/40 between butterfly chrysalis (selectivity) and a lastN window (recency); it matches or beats regex on turn-rate at all budgets ≥ 512 AND boosts answer-recall from 63/479 to 99/479 at bud=2048, closing most of the gap to lastN. Best-of-both-worlds.
-
-### Even harder regime — LongMemEval s (~121K tokens, 550 turns, only 2 evidence turns per example)
-
-The `longmemeval_s` split adds ~38 filler sessions between evidence sessions per example. 500 examples × ~121K tokens avg = an honestly adversarial benchmark. Even at budget=4096 (≈3.4% of original) the absolute numbers are low — only 7% of evidence turns survive — but the directional finding stays:
-
-```
-budget    regex turn  hybrid turn  lastN turn   regex ans  hybrid ans  lastN ans
-─────────────────────────────────────────────────────────────────────────────────
- 512        1.1%        0.8%         0.0%          16          25          14
-1024        1.8%        1.1%         0.2%          26          29          20
-2048        3.4%        2.6%         0.7%          38          36          29
-4096        7.0%        4.6%         3.5%          60          52          45
-```
-
-Butterfly's regex tagger beats lastN at every budget on both metrics. Margins are smaller than on oracle because the needle-to-haystack ratio (2 in 550) is much worse — but the direction is consistent across two independent peer-reviewed datasets. The mechanism is real on diverse external data, not just our 4 hand-written transcripts.
-
-### Train the classifier on the right distribution — it triples the regex baseline
-
-The natural objection: our trained classifier failed on LongMemEval because we trained it on 100 messages from 4 unrelated hand-written transcripts. Train it on LongMemEval's *own* labeled data and see if it generalizes.
-
-Each turn in `longmemeval_oracle` has a `has_answer: true/false` flag — direct supervision. 500 examples × ~22 turns = ~11K labeled training examples. We trained a 14-parameter binary softmax classifier (same features) on the oracle's has_answer labels, then evaluated on `longmemeval_s` (different examples, never seen during training, much more filler).
-
-```
-longmemeval_s, 500 held-out examples, turn-rate evidence preservation:
-
-budget    regex      longmem-trained   hybrid    lastN
-                                                  
- 512       1.1%         2.5%    +1.4pp   0.8%     0.0%
-1024       1.8%         4.4%    +2.6pp   1.1%     0.2%
-2048       3.4%         9.2%    +5.8pp   2.6%     0.7%
-4096       7.0%        20.6%   +13.6pp   4.6%     3.5%      ← 3× regex baseline
-```
-
-A 14-parameter classifier trained on LongMemEval's own labels **nearly triples** the regex baseline at the most useful budget and **6× the lastN baseline**. The "trained classifiers don't generalize" finding from earlier reverses — they generalize fine *if you train them on a representative distribution*. The previous trained classifier failed because the training set was 100 messages from 4 unrelated transcripts.
-
-And on the *easier* oracle benchmark — same trained classifier, no retraining — the win is dramatic:
-
-```
-longmemeval_oracle, 500 examples, turn-rate evidence preservation:
-
-budget    regex      longmem-trained   longmem-hybrid   lastN
-                                                         
- 512      22.6%        69.7%   ↑↑↑      54.1%           5.2%
-1024      26.3%        83.7%   ↑↑↑      77.6%          12.3%
-2048      29.0%        86.1%   ↑↑↑      87.2%          23.4%   ← +63.8pp vs lastN
-```
-
-**86% of evidence turns preserved at a 2K-token budget** on ~6.6K-token contexts (3× compression). The longmem-trained classifier alone hits 86.1%. Adding the lastN window (longmem-hybrid) pushes to 87.2% AND boosts answer-in-memory from 125/479 → 145/479 — also beating lastN's previously-dominant 116/479 on that metric.
-
-What works where:
-
-| dataset | best tagger | best budget result | vs lastN |
-|---|---|---|---|
-| oracle (~6.6K tok) | longmem-hybrid | 87% turn-rate @ 2K | +64pp |
-| longmemeval_s (~121K tok) | longmem-trained | 20% turn-rate @ 4K | +17pp |
-
-On short/medium contexts, the lastN window in the hybrid adds value because answers tend to live in recent turns. On 121K-token contexts, the last-N window is mostly filler — the trained classifier alone wins.
-
-### Per-question-type — where the classifier wins and where it doesn't
-
-The 86% headline aggregates across six LongMemEval question types. Broken out (oracle, budget=2048, longmem-trained classifier):
-
-```
-question_type                  n    bfly%   lastN%   Δ
-─────────────────────────────────────────────────────────
-single-session-preference     30    100%      7%   +93pp
-multi-session                125     91%      8%   +83pp
-knowledge-update              72     90%     11%   +79pp
-temporal-reasoning           132     83%     11%   +72pp
-single-session-user           64     92%     39%   +53pp
-single-session-assistant      56     64%     93%   -29pp   ← LASTN WINS
-```
-
-The classifier wins 5/6 question types by 50-93pp — and *loses* on `single-session-assistant` by 29pp. The reason is in the learned weights: `log_length: -3.25` heavily down-weights long messages. On most question types the evidence is short user statements, where this prior is correct. But on `single-session-assistant` the evidence is in long assistant responses — exactly what the classifier learned to ignore.
-
-Production implication: **question-type routing or a richer feature set is needed** to handle every case. The 1.2 KB classifier alone won't get you there; a hybrid (route some types to lastN, others to the classifier) gets you 100% coverage with the right router.
-
-### Cross-domain test — does the trained classifier work outside its training distribution?
-
-The longmem-trained classifier crushes LongMemEval at 87% turn-rate. But its learned weights are negative on identifier features (`file_path`, `decision_kw`, `proper_name`) — exactly opposite of what the regex tagger needed to win on our engineering chat transcripts. So: does it still work on engineering chat?
-
-Tested on the original 4 engineering transcripts at the hard regime (38 msgs, 100-token budget, 3 gens):
-
-```
-transcript                regex    in-domain trained    longmem-trained
-jwt-clock-race            100%        100%                 0%
-auth-owner-pto            100%        100%                 0%
-rate-limit-decision       100%        100%                 0%
-cache-race-fileline       100%        100%                20%
-```
-
-**The classifier is domain-locked.** It works at 87% on LongMemEval and at ~5% on engineering chat. Same architecture, same 14 features — but training on personal conversation data makes it predict "shorter = evidence," which is exactly wrong for engineering chat where evidence is "long assistant messages with file paths."
-
-So production butterfly is **one classifier per deployment domain**. Not "train one universal compaction tagger." Either:
-- Multiple classifiers, each trained on its own domain's labeled data, and a domain-router on top, OR
-- A richer multi-domain training set that covers all your deployment surfaces.
-
-Either way, the engineering cost is in collecting labeled examples from the actual domain you'll deploy in. The classifier itself is cheap (45 parameters, training in seconds).
-
-### Stress test — longmemeval_m (1.25M tokens, 5,057 turns per example)
-
-The largest LongMemEval split. Each example has 501 sessions, 5,057 turns, ~1.25M tokens of context — and **only 1 evidence turn**. A 1:5,057 needle. We ran the full 500-example sweep at budgets from 4K to 32K tokens (the 32K budget represents ~2.5% of original, a 39× compression):
-
-```
-longmemeval_m, 500 examples, ~1.25M tokens, 5057 turns per example:
-
-budget    regex   longmem-trained   longmem-hybrid   lastN
- 4096      0.5%      1.8%             1.1%            0.1%
- 8192      0.9%      5.1%             2.9%            0.7%
-16384      2.6%      9.8%             6.6%            1.2%
-32768      5.5%     18.8%            12.5%            2.8%   ← 7× lastN, 3.4× regex
-```
-
-At budget=32K (2.5% of original context size), the trained classifier preserves **19% of evidence turns** — finding 1 needle in 5,057 turns at 7× lastN's rate. The direction is consistent with the smaller splits: longmem-trained > longmem-hybrid > regex > lastN at every budget.
-
-**The pattern holds across three orders of magnitude of context size:**
-
-| split | avg context | longmem-trained @ best budget | vs lastN |
-|---|---|---|---|
-| oracle | 6.6K tokens | 86.1% @ 2K (3× compression) | +63pp |
-| s | 121K tokens | 20.6% @ 4K (30× compression) | +17pp |
-| m | 1.25M tokens | 18.8% @ 32K (39× compression) | +16pp |
-
-Same 1.2 KB classifier file, three benchmarks, consistent direction. The mechanism scales.
-
-The learned weights look completely different from the in-domain version:
-
-```
-                    in-domain trained    longmem trained
-file_path           +2.98 (keep)         -0.04   (flipped)
-decision_kw         +2.41 (keep)         -0.52   (flipped!)
-proper_name         +1.34 (keep)         -0.43   (flipped!)
-log_length          +0.21                -3.25   (DOMINANT: shorter = evidence)
-bias                -1.74                +3.13   (default keep, modulated by length)
-```
-
-The model learned that on LongMemEval, **evidence is short user statements** ("I graduated with Business Administration"), not long assistant explanations. Identifier features are *anti-correlated* with evidence here because they appear in the long assistant responses that AREN'T evidence. Reversed prior, reversed weights. The 14-feature template was rich enough to encode either prior.
-
-**The full story:** the mechanism is real, the tagger does the work, and a tiny domain-trained classifier substantially outperforms hand-coded rules — provided you train it on data representative of where you'll deploy it. The engineering recipe is "label a few hundred examples from your target, train a 14-parameter classifier, ship a 1.2 KB model." Not "build a smart LLM tagger." Not "tune a hand-coded regex forever."
-
-### Downstream QA — the harder test
-
-Substring preservation is necessary but not sufficient. The question that actually matters: when you feed the compacted memory + the question to an LLM, does it answer correctly? We ran the full pipeline on N=100 LongMemEval-oracle examples (answerer: qwen3-4b-mlx; judges: qwen3-4b and gemma-4-e4b, two independent passes to control same-model bias).
-
-| Strategy | qwen3-4b judge | gemma-4 judge | inter-judge agreement |
-|---|---|---|---|
-| longmem-trained | 38% | 29% | 87% |
-| longmem-hybrid | 36% | 25% | 87% |
-| lastN | 15% | 7% | 90% |
-| regex | 12% | 9% | 93% |
-
-The trained tagger holds a 22-23 pp gap over lastN under both judges. Inter-judge agreement is high (87-93%), so the ranking isn't a same-model artifact. The 38% absolute number is much lower than the 87% substring-preservation number — substring preservation overstates downstream usefulness by ~2×.
-
-**Then it breaks.** Running the same eval on `longmemeval_s` (50 sessions per question, ~50-100K-token haystacks) at budget=2048: every strategy collapses to 0-5%. Butterfly's tag-by-message approach can't surface the right session out of 50; lastN can't either. The mechanism works in the "modest haystack, evidence is local" regime (oracle) and fails in the "large haystack, retrieval needed" regime (_s).
-
-### What we learned
-
-Honest scope, not a hardened claim:
-
-- **On modest haystacks (oracle):** a 14-parameter softmax classifier trained on ~11K has_answer-labeled turns delivers 38% downstream QA accuracy vs lastN's 15% — a real 2.5× lift on the metric that matters (LLM-judged answer correctness, not substring preservation).
-- **On large multi-session haystacks (_s, _m):** butterfly's tag-by-message strategy underperforms or ties the trivial baseline. This regime needs session-level retrieval (vector DB / BM25) as a pre-step before compaction can help.
-- **Domain-lock is real.** The classifier trained on LongMemEval has *negative* weights on identifier features (file paths, decision keywords). On engineering chat, where the needles ARE identifier-shaped, it preserves 0% of evidence vs regex's 100%. A production deployment would need per-domain labeled data or a multi-domain training corpus.
-- **The chrysalis loop — butterfly's actual novel claim — was never validated downstream.** The QA eval used single-pass tag-and-rebuild. Whether iterated multi-generation compaction with noise beats single-pass at downstream QA is still an open question.
-- **The lastN baseline is weak.** Production memory systems (mem0, Letta) use vector retrieval + LLM summarization. Beating lastN is necessary but not sufficient to claim production relevance.
-
-### Reproduce in 4 ms
-
-The harder-regime experiment runs in **pure code, no LLM, no GPU**:
-
-```bash
-node tools/butterfly-purecode-hard.mjs           # all 4 transcripts
-DEBUG=1 node tools/butterfly-purecode-hard.mjs   # full per-generation trace
-TRANSCRIPTS=jwt-clock-race node tools/butterfly-purecode-hard.mjs
-```
-
-Output is deterministic. Same input → same answer. The regex tagger is rule-based (file paths, ticket IDs, Slack channels, package mentions, line ranges, decision markers → keep; bare acks + short tangents → melt). The chrysalis is mechanical concatenation truncated to budget. The scoring is keyword-coverage against the load-bearing identifiers in each transcript's expected fact.
-
-### What this proves — and what it doesn't
-
-What we can defend:
-
-> *On in-distribution conversational memory with modest haystacks (one or a few sessions), a learned per-message classifier outperforms zero-shot truncation baselines at downstream QA — by a factor of ~2.5× at a 2K-token budget.*
-
-What this does **not** claim:
-
-- **Not a long-term memory system.** Fails on multi-session haystacks (LongMemEval _s, _m) where retrieval — not compaction — is the bottleneck.
-- **Not a tagger-agnostic claim.** The classifier inherits whatever the training labels prioritize. Cross-domain test: 0% needle preservation on engineering chat with the LongMemEval-trained classifier. Per-domain labels or a multi-domain training set required for deployment.
-- **Not a chrysalis-loop validation.** The QA eval ran single-pass tag-and-rebuild. The multi-generation noise-compounding mechanism — butterfly's original novel claim — was never measured downstream.
-- **Not a comparison against a real production baseline.** lastN-at-fixed-budget is a weak baseline. mem0 / Letta / vector-retrieval + LLM-summary systems are the actual prior art and were not benchmarked.
-- **Not a substitute for `/compact`.** Frontier-model summarization is cheaper and better when you have access to one. The "small local classifier + small local answerer" lane is for the local-first niche.
-
-Methodology and pre-registered thresholds: [`PREDICTIONS.md`](PREDICTIONS.md). Compaction implementation: [`tools/butterfly-purecode-hard.mjs`](tools/butterfly-purecode-hard.mjs) (~340 lines, no dependencies). QA evaluator: [`tools/butterfly-qa-eval.mjs`](tools/butterfly-qa-eval.mjs).
+## Experiments — the Butterfly investigation
+
+> **Butterfly has moved to its own repo and DOI: [github.com/abgnydn/butterfly](https://github.com/abgnydn/butterfly).**
+> The compaction harness, the trained taggers, the sweep scripts, and the full
+> writeup ([`PAPER.md`](https://github.com/abgnydn/butterfly/blob/main/PAPER.md))
+> now live there. Neuropulse keeps only the in-app demo
+> (`src/butterfly-mode.ts`) and the git-timestamped pre-registrations
+> ([`PREDICTIONS.md`](PREDICTIONS.md)). This repo no longer ships the
+> `tools/butterfly-*.mjs` scripts — all reproduce commands are in the butterfly
+> repo.
+
+Butterfly started as one of the demo overlays and became a pre-registered probe
+of a context-compaction mechanism. The question: *at a fixed token budget, does
+tag-and-rebuild preserve load-bearing information better than naive `lastN`
+truncation?* After several rounds of self-refutation, the honest answer:
+
+- **The mechanism is real on modest haystacks.** A 14-parameter softmax
+  classifier trained on ~11K `has_answer`-labeled turns delivers ~38% downstream
+  QA accuracy vs lastN's ~15% on LongMemEval-oracle — a ~2.5× lift on the metric
+  that matters (LLM-judged answer correctness, not substring preservation).
+  Inter-judge agreement 87–93%, so the ranking isn't a same-model artifact.
+- **It replicates on independent data.** The regex tagger and its learned
+  descendants beat lastN on evidence-turn preservation across all three
+  LongMemEval splits — oracle (~6.6K tok), _s (~121K tok), _m (~1.25M tok) —
+  a consistent direction over three orders of magnitude of context size.
+- **It is domain-locked.** A classifier trained on LongMemEval preserves 0% of
+  the needle on engineering-chat transcripts (where evidence is
+  identifier-shaped), and the reverse holds too. There is no universal butterfly:
+  production means one classifier per deployment domain.
+
+What this does **not** claim: not a long-term memory system (it fails on large
+multi-session haystacks where retrieval, not compaction, is the bottleneck);
+not a validation of the multi-generation chrysalis loop downstream (the QA eval
+was single-pass); not a comparison against real production baselines
+(mem0 / Letta / vector-retrieval + LLM-summary were not benchmarked); not a
+substitute for a frontier model's `/compact`. The two pre-registered predictions
+([P-20260512-05](PREDICTIONS.md) — refuted; [P-20260515-06](PREDICTIONS.md) —
+confirmed) and the full post-mortem with self-critique live in the
+[butterfly repo](https://github.com/abgnydn/butterfly).
 
 <br>
 

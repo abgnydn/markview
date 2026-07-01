@@ -1,5 +1,15 @@
 # Commits — neuropulse
 
+## 2026-07-01
+
+- `11:39` **fix(ui): tile expanded panels into side gutters, never over the answe…** — +50 −36 — [`2ba4072`](https://github.com/abgnydn/neuropulse/commit/2ba4072c2027888fcf52f242b68a28e003f82b9b)
+- `11:16` **feat(panels): wire every panel "i" caption to the Glossary via "Learn…** — +40 −18 — [`71cd5ed`](https://github.com/abgnydn/neuropulse/commit/71cd5ed98365125ee1121ada12231cd68c127066)
+- `11:12` **Ablation explainability: info button + Glossary entries + deep-link (#5)** — +79 −0 — [`df800c2`](https://github.com/abgnydn/neuropulse/commit/df800c2e19eae8b3704795e0ca096cde73806109)
+- `09:57` **fix(ablation): use the real prompt, and keep the head strip inside th…** — +9 −3 — [`49bef53`](https://github.com/abgnydn/neuropulse/commit/49bef53464d3c347961cd584882a160ea5aa246b)
+- `08:51` **Cancellable inference + stop double-caching weights (~4GB→~2GB) (#3)** — +66 −13 — [`f64fcb5`](https://github.com/abgnydn/neuropulse/commit/f64fcb50180ad76def08249147fee07c3eb0c6d0)
+- `08:28` **fix(ui): tile expanded panels so they never overlap each other or the…** — +82 −2 — [`800c2c4`](https://github.com/abgnydn/neuropulse/commit/800c2c4ce38f291c0ca3d499d3f15353d14ff2e7)
+- `07:20` **Consistency + research-grade pass on docs and CI (#1)** — +718 −393 — [`2e0c7f0`](https://github.com/abgnydn/neuropulse/commit/2e0c7f0c45ba3e88963cffb247c5ad6b38e08b69)
+
 ## 2026-06-02
 
 - `07:29` **docs: wire Zenodo DOI 10.5281/zenodo.20505470 into CITATION.cff + REA…** — +7 −2 — [`3a1d6cf`](https://github.com/abgnydn/neuropulse/commit/3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e)
@@ -78,22 +88,3 @@
 ## 2026-05-05
 
 - `07:04` **feat(footer): add Star CTA + LinkedIn + personal-site links** — +8 −1 — [`9c1444a`](https://github.com/abgnydn/neuropulse/commit/9c1444ad75f0f2dbdb663d35b8c4d54c78a11b8c)
-
-## 2026-05-04
-
-- `09:37` **fix(ui): byte-fallback decode, draggable panels, working speed slider** — +203 −55 — [`7276913`](https://github.com/abgnydn/neuropulse/commit/7276913d3f3bea194181b43faa05e2dd1d9d6b35)
-
-## 2026-04-27
-
-- `07:22` **feat(butterfly-mode): wire ablation panel into tagger / chrysalis / a…** — +95 −9 — [`6d4520a`](https://github.com/abgnydn/neuropulse/commit/6d4520a78488173c15a3f29bc84b1b133afb434d)
-
-## 2026-04-26
-
-- `04:01` **feat(butterfly-mode): tier B — editable, pausable, accumulative (v2.3)** — +6 −0 — [`3b78f0c`](https://github.com/abgnydn/neuropulse/commit/3b78f0cfb316913e904aba6f4b8e487a7c2dbae9)
-- `03:29` **feat(edu): Phi the Storyteller — kid-mode narration overlay** — +451 −12 — [`8c5632d`](https://github.com/abgnydn/neuropulse/commit/8c5632d3f72e2d38bbbc1ab4e70f94ca104fc056)
-- `03:22` **feat(butterfly-mode): tier A — make the WHY visible (v2.2)** — +129 −17 — [`e197021`](https://github.com/abgnydn/neuropulse/commit/e19702137fb59db83e1c038a4040b9e0b5e2054d)
-
-## 2026-04-25
-
-- `10:31` **feat(ui): top-anchored input + answer card · bottom orb rail · color-…** — +247 −65 — [`66c8399`](https://github.com/abgnydn/neuropulse/commit/66c8399712411fa1512a9c991b895570cfab1401)
-- `10:10` **feat(butterfly-mode): rubric self-judge + tighter tagger + sharper qu…** — +41 −19 — [`951bcfc`](https://github.com/abgnydn/neuropulse/commit/951bcfc84ee49ce2d3179acb98cada77c9b45118)

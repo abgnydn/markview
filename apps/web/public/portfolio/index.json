@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-06-30T21:41:15.478Z",
+  "generated_at": "2026-07-01T21:40:47.329Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1757,
+  "activity_90d_total": 1720,
   "activity_90d": {
-    "2026-04-02": 62,
     "2026-04-03": 27,
     "2026-04-05": 6,
     "2026-04-06": 28,
@@ -77,7 +76,8 @@
     "2026-06-27": 1,
     "2026-06-28": 1,
     "2026-06-29": 1,
-    "2026-06-30": 3
+    "2026-06-30": 4,
+    "2026-07-01": 24
   },
   "categories": {
     "llm-inference": {
@@ -225,20 +225,20 @@
         "webgpu",
         "wgsl"
       ],
-      "pushed_at": "2026-06-25T03:27:24Z",
+      "pushed_at": "2026-07-01T11:58:22Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 4,
+      "commits_30d": 11,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
-        "short_sha": "3a1d6cf",
-        "message": "docs: wire Zenodo DOI 10.5281/zenodo.20505470 into CITATION.cff + REA…",
-        "type": "docs",
-        "date": "2026-06-02T07:29:15Z",
-        "url": "https://github.com/abgnydn/neuropulse/commit/3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e",
-        "additions": 7,
-        "deletions": 2
+        "sha": "2ba4072c2027888fcf52f242b68a28e003f82b9b",
+        "short_sha": "2ba4072",
+        "message": "fix(ui): tile expanded panels into side gutters, never over the answe…",
+        "type": "fix",
+        "date": "2026-07-01T11:39:26Z",
+        "url": "https://github.com/abgnydn/neuropulse/commit/2ba4072c2027888fcf52f242b68a28e003f82b9b",
+        "additions": 50,
+        "deletions": 36
       }
     },
     {
@@ -282,7 +282,7 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-06-25T04:02:34Z",
+      "pushed_at": "2026-07-01T12:27:11Z",
       "default_branch": "main",
       "latest_tag": "v0.12.0",
       "commits_30d": 50,
@@ -337,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-30T10:44:04Z",
+      "pushed_at": "2026-06-30T21:41:16Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "b9b13251740c54edbd3d78e3a57f84be41e437fc",
-        "short_sha": "b9b1325",
-        "message": "chore(portfolio): daily sync 2026-06-29",
+        "sha": "26761c8bee41aa1d32686b808ac0b288684b02a0",
+        "short_sha": "26761c8",
+        "message": "chore(portfolio): daily sync 2026-06-30",
         "type": "chore",
-        "date": "2026-06-29T21:38:28Z",
-        "url": "https://github.com/abgnydn/markview/commit/b9b13251740c54edbd3d78e3a57f84be41e437fc",
-        "additions": 29,
-        "deletions": 26
+        "date": "2026-06-30T21:41:15Z",
+        "url": "https://github.com/abgnydn/markview/commit/26761c8bee41aa1d32686b808ac0b288684b02a0",
+        "additions": 184,
+        "deletions": 168
       }
     },
     {
@@ -383,7 +383,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 18,
+      "commits_30d": 14,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -424,20 +424,20 @@
       "language_color": "#e34c26",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-06-02T08:13:17Z",
+      "pushed_at": "2026-07-01T11:42:09Z",
       "default_branch": "master",
-      "latest_tag": "v0.3.1",
-      "commits_30d": 20,
+      "latest_tag": "v0.4.1",
+      "commits_30d": 19,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "73d551ac57281e75d4565478ec1273a2f87411f2",
-        "short_sha": "73d551a",
-        "message": "policy: add prior-art/differentiation section + co-signer outreach kit",
+        "sha": "651fcb52ac8264d93913610a855ad8a52bc1bcd1",
+        "short_sha": "651fcb5",
+        "message": "Bump to v0.4.1 (audit-corrections patch); CHANGELOG entry",
         "type": "other",
-        "date": "2026-06-02T08:13:15Z",
-        "url": "https://github.com/abgnydn/iz/commit/73d551ac57281e75d4565478ec1273a2f87411f2",
-        "additions": 189,
-        "deletions": 0
+        "date": "2026-07-01T11:41:44Z",
+        "url": "https://github.com/abgnydn/iz/commit/651fcb52ac8264d93913610a855ad8a52bc1bcd1",
+        "additions": 19,
+        "deletions": 1
       }
     },
     {
@@ -711,7 +711,7 @@
       "pushed_at": "2026-06-25T03:12:27Z",
       "default_branch": "master",
       "latest_tag": "v2.0.0",
-      "commits_30d": 6,
+      "commits_30d": 2,
       "commits_synced": 50,
       "last_commit": {
         "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
@@ -753,7 +753,7 @@
       "language_color": "#1a5e9a",
       "stars": 3,
       "topics": [],
-      "pushed_at": "2026-06-23T08:34:04Z",
+      "pushed_at": "2026-07-01T12:31:06Z",
       "default_branch": "main",
       "latest_tag": "v0.7.0",
       "commits_30d": 50,
@@ -2072,6 +2072,331 @@
     }
   ],
   "commits": [
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "1386a3d09eb71c2c99212ce8684d24b6d3949d11",
+      "short_sha": "1386a3d",
+      "message": "Simplify home page: cut marketing slop + redundancy (EN + TR)",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/1386a3d09eb71c2c99212ce8684d24b6d3949d11",
+      "additions": 7,
+      "deletions": 119
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "f0086dafe489b15ac0d1dc3877bfa196798e7385",
+      "short_sha": "f0086da",
+      "message": "Honest hero: lead with the result, demote the €700M hook",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/f0086dafe489b15ac0d1dc3877bfa196798e7385",
+      "additions": 9,
+      "deletions": 9
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "411552bc5d934028551d335fa2e50f84f21d5759",
+      "short_sha": "411552b",
+      "message": "Policy page: fix mislabeled log-MAE + label in-sample ratios honestly",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/411552bc5d934028551d335fa2e50f84f21d5759",
+      "additions": 3,
+      "deletions": 3
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "d33ff034b09d4088e8566320eee7e248c2fcd7d8",
+      "short_sha": "d33ff03",
+      "message": "Comprehensive per-page audit: fix real data/number errors across the …",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/d33ff034b09d4088e8566320eee7e248c2fcd7d8",
+      "additions": 267,
+      "deletions": 989
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "c59b9189b334082c61a412c7252ce1957fe7ccba",
+      "short_sha": "c59b918",
+      "message": "Policy: soften 2x-to-50x to 2x-to-30x; disclaimer now covers benchmar…",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/c59b9189b334082c61a412c7252ce1957fe7ccba",
+      "additions": 2,
+      "deletions": 2
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "817fbb34c00e2ecaa288e7799cb1f554c88bff39",
+      "short_sha": "817fbb3",
+      "message": "Round-2 audit: fix conformal source, Nuh duplicate, og image, stale m…",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/817fbb34c00e2ecaa288e7799cb1f554c88bff39",
+      "additions": 542,
+      "deletions": 1548
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "b957acbd731b9a0842477aaa14386f2a417ab866",
+      "short_sha": "b957acb",
+      "message": "Round-3 audit: fix baselines.py SyntaxError, Climate-TRACE count, ISO…",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/b957acbd731b9a0842477aaa14386f2a417ab866",
+      "additions": 194,
+      "deletions": 289
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "98c7f0888634c6ccf283c1fa6f1c3080c6ea960d",
+      "short_sha": "98c7f08",
+      "message": "Cut redundancy: delete dead/duplicate/superseded surfaces (repo + site)",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/98c7f0888634c6ccf283c1fa6f1c3080c6ea960d",
+      "additions": 116,
+      "deletions": 14644
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "651fcb52ac8264d93913610a855ad8a52bc1bcd1",
+      "short_sha": "651fcb5",
+      "message": "Bump to v0.4.1 (audit-corrections patch); CHANGELOG entry",
+      "type": "other",
+      "date": "2026-07-01T11:41:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/651fcb52ac8264d93913610a855ad8a52bc1bcd1",
+      "additions": 19,
+      "deletions": 1
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "2ba4072c2027888fcf52f242b68a28e003f82b9b",
+      "short_sha": "2ba4072",
+      "message": "fix(ui): tile expanded panels into side gutters, never over the answe…",
+      "type": "fix",
+      "date": "2026-07-01T11:39:26Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/2ba4072c2027888fcf52f242b68a28e003f82b9b",
+      "additions": 50,
+      "deletions": 36
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "71cd5ed98365125ee1121ada12231cd68c127066",
+      "short_sha": "71cd5ed",
+      "message": "feat(panels): wire every panel \"i\" caption to the Glossary via \"Learn…",
+      "type": "feat",
+      "date": "2026-07-01T11:16:44Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/71cd5ed98365125ee1121ada12231cd68c127066",
+      "additions": 40,
+      "deletions": 18
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "df800c2e19eae8b3704795e0ca096cde73806109",
+      "short_sha": "df800c2",
+      "message": "Ablation explainability: info button + Glossary entries + deep-link (#5)",
+      "type": "other",
+      "date": "2026-07-01T11:12:50Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/df800c2e19eae8b3704795e0ca096cde73806109",
+      "additions": 79,
+      "deletions": 0
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "49bef53464d3c347961cd584882a160ea5aa246b",
+      "short_sha": "49bef53",
+      "message": "fix(ablation): use the real prompt, and keep the head strip inside th…",
+      "type": "fix",
+      "date": "2026-07-01T09:57:55Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/49bef53464d3c347961cd584882a160ea5aa246b",
+      "additions": 9,
+      "deletions": 3
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "5c1d668dc40f4887c1ee389abf5c3234e4ba98e0",
+      "short_sha": "5c1d668",
+      "message": "Consistency sweep: leave-one-plant-out terminology + corrected counts",
+      "type": "other",
+      "date": "2026-07-01T09:51:59Z",
+      "url": "https://github.com/abgnydn/iz/commit/5c1d668dc40f4887c1ee389abf5c3234e4ba98e0",
+      "additions": 109,
+      "deletions": 104
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "739e96f16c75bb4eb837a2ec55fac58e5c629b2d",
+      "short_sha": "739e96f",
+      "message": "Regenerate figures from honest data; drop stale SVGs",
+      "type": "other",
+      "date": "2026-07-01T09:51:59Z",
+      "url": "https://github.com/abgnydn/iz/commit/739e96f16c75bb4eb837a2ec55fac58e5c629b2d",
+      "additions": 2914,
+      "deletions": 261
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "f64fcb50180ad76def08249147fee07c3eb0c6d0",
+      "short_sha": "f64fcb5",
+      "message": "Cancellable inference + stop double-caching weights (~4GB→~2GB) (#3)",
+      "type": "other",
+      "date": "2026-07-01T08:51:45Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/f64fcb50180ad76def08249147fee07c3eb0c6d0",
+      "additions": 66,
+      "deletions": 13
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "800c2c4ce38f291c0ca3d499d3f15353d14ff2e7",
+      "short_sha": "800c2c4",
+      "message": "fix(ui): tile expanded panels so they never overlap each other or the…",
+      "type": "fix",
+      "date": "2026-07-01T08:28:38Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/800c2c4ce38f291c0ca3d499d3f15353d14ff2e7",
+      "additions": 82,
+      "deletions": 2
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "35bdda092fdf2fe81d837379b8997284f73ef147",
+      "short_sha": "35bdda0",
+      "message": "Commit external EUTL data + one-shot fetch script for offline reprodu…",
+      "type": "other",
+      "date": "2026-07-01T07:50:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/35bdda092fdf2fe81d837379b8997284f73ef147",
+      "additions": 40,
+      "deletions": 1
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "f5b438b704acc9653ce3476c47d257fa9346463b",
+      "short_sha": "f5b438b",
+      "message": "Add honest leave-one-plant-out EF evaluation (bin/lopo_ef_eval.py)",
+      "type": "other",
+      "date": "2026-07-01T07:50:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/f5b438b704acc9653ce3476c47d257fa9346463b",
+      "additions": 484,
+      "deletions": 0
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "d6c0a8bcc5056760988ccda9ec5e0c8f60b4fa93",
+      "short_sha": "d6c0a8b",
+      "message": "Correct headline to honest LOPO, demote+extract the NN demo, simplify…",
+      "type": "other",
+      "date": "2026-07-01T07:50:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/d6c0a8bcc5056760988ccda9ec5e0c8f60b4fa93",
+      "additions": 2338,
+      "deletions": 16870
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "b49fbc7ba89d545565319418d7bdc3e7c8df692f",
+      "short_sha": "b49fbc7",
+      "message": "Add CHANGELOG documenting the v0.3 → v0.4 correction",
+      "type": "other",
+      "date": "2026-07-01T07:50:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/b49fbc7ba89d545565319418d7bdc3e7c8df692f",
+      "additions": 55,
+      "deletions": 0
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "0ac20faf455f19869dd14e08af9cb5a5f901ae29",
+      "short_sha": "0ac20fa",
+      "message": "Add justfile + README Deploy section",
+      "type": "other",
+      "date": "2026-07-01T07:50:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/0ac20faf455f19869dd14e08af9cb5a5f901ae29",
+      "additions": 52,
+      "deletions": 0
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "26a25505bfadda9342919e62891bb5820afda3b2",
+      "short_sha": "26a2550",
+      "message": "Clean up justfile deploy recipe doc-comment",
+      "type": "other",
+      "date": "2026-07-01T07:50:44Z",
+      "url": "https://github.com/abgnydn/iz/commit/26a25505bfadda9342919e62891bb5820afda3b2",
+      "additions": 1,
+      "deletions": 4
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "2e0c7f0c45ba3e88963cffb247c5ad6b38e08b69",
+      "short_sha": "2e0c7f0",
+      "message": "Consistency + research-grade pass on docs and CI (#1)",
+      "type": "other",
+      "date": "2026-07-01T07:20:47Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/2e0c7f0c45ba3e88963cffb247c5ad6b38e08b69",
+      "additions": 718,
+      "deletions": 393
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "26761c8bee41aa1d32686b808ac0b288684b02a0",
+      "short_sha": "26761c8",
+      "message": "chore(portfolio): daily sync 2026-06-30",
+      "type": "chore",
+      "date": "2026-06-30T21:41:15Z",
+      "url": "https://github.com/abgnydn/markview/commit/26761c8bee41aa1d32686b808ac0b288684b02a0",
+      "additions": 184,
+      "deletions": 168
+    },
     {
       "slug": "webgpu-transformer-fusion",
       "name": "webgpu-transformer-fusion",
@@ -3527,19 +3852,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "030d7034a45856191b3b2ce0abeb27a274db3677",
-      "short_sha": "030d703",
-      "message": "feat(atmosphere): push the antique paper much further — 7-layer surfa…",
-      "type": "feat",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677",
-      "additions": 30,
-      "deletions": 11
     },
     {
       "slug": "markview",
@@ -6038,19 +6350,6 @@
       "deletions": 10
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "da4d525f041e699e6f73e976934cb490d3047974",
-      "short_sha": "da4d525",
-      "message": "feat: facility map + downloadable CSV + CITATION.cff + GH Actions deploy",
-      "type": "feat",
-      "date": "2026-05-27T08:05:28Z",
-      "url": "https://github.com/abgnydn/iz/commit/da4d525f041e699e6f73e976934cb490d3047974",
-      "additions": 446,
-      "deletions": 3
-    },
-    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -6062,19 +6361,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/0a7829cc272aae3b190fb5f8ceaf3cd0914f3124",
       "additions": 3041,
       "deletions": 19
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "36958e191ae2d08b763b820972a944eed8624e39",
-      "short_sha": "36958e1",
-      "message": "final sync: capacity-corrected n=20 → +86.3% NN / +87.0% formula",
-      "type": "other",
-      "date": "2026-05-27T07:56:22Z",
-      "url": "https://github.com/abgnydn/iz/commit/36958e191ae2d08b763b820972a944eed8624e39",
-      "additions": 689,
-      "deletions": 582
     },
     {
       "slug": "quill",
@@ -6103,19 +6389,6 @@
       "deletions": 16
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "19ef1e134533e5c918bfb807bfcae700c662c5f3",
-      "short_sha": "19ef1e1",
-      "message": "data: 15 capacity corrections from operator-source audit + matched cf…",
-      "type": "other",
-      "date": "2026-05-27T07:16:46Z",
-      "url": "https://github.com/abgnydn/iz/commit/19ef1e134533e5c918bfb807bfcae700c662c5f3",
-      "additions": 201,
-      "deletions": 204
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -6127,19 +6400,6 @@
       "url": "https://github.com/abgnydn/nib/commit/81015e817799e525386a7d802064f921616cd738",
       "additions": 29,
       "deletions": 38
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "83615474408ae4c61142ca2ee5b03a67b9d1bd2d",
-      "short_sha": "8361547",
-      "message": "verify+fix: close 3 more critique items (bootstrap CI, CT n=5, Habaş …",
-      "type": "other",
-      "date": "2026-05-27T07:06:21Z",
-      "url": "https://github.com/abgnydn/iz/commit/83615474408ae4c61142ca2ee5b03a67b9d1bd2d",
-      "additions": 211,
-      "deletions": 81
     },
     {
       "slug": "quill",
@@ -6166,19 +6426,6 @@
       "url": "https://github.com/abgnydn/nib/commit/3a9aafb638799bf4aa4ee9960953f9cbcd583387",
       "additions": 418,
       "deletions": 4
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "ff321deb25432e6b891cd4717a3e471d3908fa89",
-      "short_sha": "ff321de",
-      "message": "verify+fix: sync per-facility tables to 5-outer aggregated medians",
-      "type": "other",
-      "date": "2026-05-27T06:59:23Z",
-      "url": "https://github.com/abgnydn/iz/commit/ff321deb25432e6b891cd4717a3e471d3908fa89",
-      "additions": 577,
-      "deletions": 291
     },
     {
       "slug": "quill",
@@ -6220,19 +6467,6 @@
       "deletions": 18
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "a8cba1363de4b33a5a97dfe1d1db80ef7e1066c8",
-      "short_sha": "a8cba13",
-      "message": "verify+fix: address critique items 5-22 (assurance tiers, tests, copy)",
-      "type": "other",
-      "date": "2026-05-27T06:28:52Z",
-      "url": "https://github.com/abgnydn/iz/commit/a8cba1363de4b33a5a97dfe1d1db80ef7e1066c8",
-      "additions": 813,
-      "deletions": 175
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -6272,19 +6506,6 @@
       "deletions": 0
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "c3317ccaf7cca8925566d4de87da190b06a4eb1e",
-      "short_sha": "c3317cc",
-      "message": "license: Apache-2.0",
-      "type": "other",
-      "date": "2026-05-27T06:01:49Z",
-      "url": "https://github.com/abgnydn/iz/commit/c3317ccaf7cca8925566d4de87da190b06a4eb1e",
-      "additions": 202,
-      "deletions": 0
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -6296,45 +6517,6 @@
       "url": "https://github.com/abgnydn/nib/commit/f5d630131767d89bf2153188bc18ca8be89ded72",
       "additions": 28,
       "deletions": 5
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "37b520650fbbd6c8350d5ea6fa0be2147aeec146",
-      "short_sha": "37b5206",
-      "message": "site: consistent byline (name + email + barisgunaydin.com + GitHub)",
-      "type": "other",
-      "date": "2026-05-27T05:59:01Z",
-      "url": "https://github.com/abgnydn/iz/commit/37b520650fbbd6c8350d5ea6fa0be2147aeec146",
-      "additions": 37,
-      "deletions": 9
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "9995d5b7fdf925e76abfba887aade31be047c5cf",
-      "short_sha": "9995d5b",
-      "message": "site: favicon, OG share image, meta tags, robots, sitemap, hero figure",
-      "type": "other",
-      "date": "2026-05-27T05:51:18Z",
-      "url": "https://github.com/abgnydn/iz/commit/9995d5b7fdf925e76abfba887aade31be047c5cf",
-      "additions": 222,
-      "deletions": 4
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "0591f873b8cec120fc735124431dbe7cc2094d9e",
-      "short_sha": "0591f87",
-      "message": "site: lead with the formula, demote trainer to /verify/",
-      "type": "other",
-      "date": "2026-05-27T05:44:56Z",
-      "url": "https://github.com/abgnydn/iz/commit/0591f873b8cec120fc735124431dbe7cc2094d9e",
-      "additions": 69,
-      "deletions": 30
     },
     {
       "slug": "quill",
@@ -6360,19 +6542,6 @@
       "date": "2026-05-27T05:04:53Z",
       "url": "https://github.com/abgnydn/nib/commit/0cd2c00fe4f57047b32f42fc49634c0ee36d2122",
       "additions": 51,
-      "deletions": 0
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "26f1127256e48ae5bb29a03f8b25e6e6a39dc1e4",
-      "short_sha": "26f1127",
-      "message": "site: static marketing site deployed to Cloudflare Pages",
-      "type": "other",
-      "date": "2026-05-27T04:56:10Z",
-      "url": "https://github.com/abgnydn/iz/commit/26f1127256e48ae5bb29a03f8b25e6e6a39dc1e4",
-      "additions": 5283,
       "deletions": 0
     },
     {
@@ -6558,19 +6727,6 @@
       "deletions": 3
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "e5a0460aca86084d7b049b7948738bc857de8b72",
-      "short_sha": "e5a0460",
-      "message": "iz-1: n=20 LODO + disclosed_cf for 11 more facilities → 84.5% ± 0.3% CI",
-      "type": "other",
-      "date": "2026-05-26T13:04:02Z",
-      "url": "https://github.com/abgnydn/iz/commit/e5a0460aca86084d7b049b7948738bc857de8b72",
-      "additions": 452,
-      "deletions": 361
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -6582,32 +6738,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/3fc27d45c5871c968bbfc74488dbb355c5cba03e",
       "additions": 10,
       "deletions": 2
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "6acdd070dc200e81ef337adfeb74dde979017529",
-      "short_sha": "6acdd07",
-      "message": "iz-1: n=20 LODO across all 4 CBAM scopes — 82.0% reduction",
-      "type": "other",
-      "date": "2026-05-26T11:48:32Z",
-      "url": "https://github.com/abgnydn/iz/commit/6acdd070dc200e81ef337adfeb74dde979017529",
-      "additions": 849,
-      "deletions": 374
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "31f57f9e6e6a1a811b69db9ba9316d96cadfaded",
-      "short_sha": "31f57f9",
-      "message": "iz-1: LODO eval + baselines + CI bands + 22-critique honesty pass",
-      "type": "other",
-      "date": "2026-05-26T10:12:48Z",
-      "url": "https://github.com/abgnydn/iz/commit/31f57f9e6e6a1a811b69db9ba9316d96cadfaded",
-      "additions": 4630,
-      "deletions": 472
     },
     {
       "slug": "neuropulse",
@@ -7234,32 +7364,6 @@
       "deletions": 3
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "b353c05612722e3c78183da5e365bb13349efac2",
-      "short_sha": "b353c05",
-      "message": "browser-native training: WebGPU loop using fused-lora shaders",
-      "type": "other",
-      "date": "2026-05-21T07:38:58Z",
-      "url": "https://github.com/abgnydn/iz/commit/b353c05612722e3c78183da5e365bb13349efac2",
-      "additions": 2948,
-      "deletions": 2
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "2b2c8ae3aa4a9e510a415794b0e7c5e91240fc99",
-      "short_sha": "2b2c8ae",
-      "message": "iz-1 substrate: Steps 7-9 + Pass 1/2 code + browser stub + paper outline",
-      "type": "other",
-      "date": "2026-05-21T07:24:28Z",
-      "url": "https://github.com/abgnydn/iz/commit/2b2c8ae3aa4a9e510a415794b0e7c5e91240fc99",
-      "additions": 2078,
-      "deletions": 0
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -7270,19 +7374,6 @@
       "date": "2026-05-21T07:15:53Z",
       "url": "https://github.com/abgnydn/neuropulse/commit/ce016f72a92f9b5040e9dc2b79e59022a8607776",
       "additions": 328,
-      "deletions": 0
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "4b630e5a56dce0ef766045ce151683cb924798b3",
-      "short_sha": "4b630e5",
-      "message": "Step 6: disclosure scraper + first ground-truth rows",
-      "type": "other",
-      "date": "2026-05-21T06:49:36Z",
-      "url": "https://github.com/abgnydn/iz/commit/4b630e5a56dce0ef766045ce151683cb924798b3",
-      "additions": 1001,
       "deletions": 0
     },
     {
@@ -8480,97 +8571,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/9582596ea1a3b11eb0d2ef288279abef063ee28d",
       "additions": 296,
       "deletions": 60
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "69c039006c6410b09f05ce51f96ba63e79d56784",
-      "short_sha": "69c0390",
-      "message": "UI/UX polish: hero, agent cards, designed disagreement reel, theme",
-      "type": "other",
-      "date": "2026-05-12T07:20:38Z",
-      "url": "https://github.com/abgnydn/panel/commit/69c039006c6410b09f05ce51f96ba63e79d56784",
-      "additions": 669,
-      "deletions": 81
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "6f353958936295ecfe104684099721c9889b1a1c",
-      "short_sha": "6f35395",
-      "message": "Streamlit Community Cloud deployment scaffolding",
-      "type": "other",
-      "date": "2026-05-11T10:22:33Z",
-      "url": "https://github.com/abgnydn/panel/commit/6f353958936295ecfe104684099721c9889b1a1c",
-      "additions": 109,
-      "deletions": 0
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "0bf2992b4da6b346c3f1fb579916981f1c727656",
-      "short_sha": "0bf2992",
-      "message": "Multi-provider LLM backend with in-UI key entry (inspired by ~/wonder)",
-      "type": "other",
-      "date": "2026-05-11T10:20:15Z",
-      "url": "https://github.com/abgnydn/panel/commit/0bf2992b4da6b346c3f1fb579916981f1c727656",
-      "additions": 501,
-      "deletions": 43
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "833fa087d8ec5aa4e98b47a474ddfe03c46cbcc3",
-      "short_sha": "833fa08",
-      "message": "Add Negotiator agent — conversation script before the recruiter meeting",
-      "type": "other",
-      "date": "2026-05-11T10:11:54Z",
-      "url": "https://github.com/abgnydn/panel/commit/833fa087d8ec5aa4e98b47a474ddfe03c46cbcc3",
-      "additions": 259,
-      "deletions": 9
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "8c5c417d7163e9f45b0070830c30dfc07a71f8e2",
-      "short_sha": "8c5c417",
-      "message": "Add provenance, ASEAN diff, what-if simulator, PDF/QR export, quality…",
-      "type": "other",
-      "date": "2026-05-11T08:58:27Z",
-      "url": "https://github.com/abgnydn/panel/commit/8c5c417d7163e9f45b0070830c30dfc07a71f8e2",
-      "additions": 855,
-      "deletions": 1
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "d55a3418e2a00da8dd55d6d94a4e0db917831fc5",
-      "short_sha": "d55a341",
-      "message": "Initial commit: Panel multi-agent rights advisor",
-      "type": "other",
-      "date": "2026-05-11T08:55:02Z",
-      "url": "https://github.com/abgnydn/panel/commit/d55a3418e2a00da8dd55d6d94a4e0db917831fc5",
-      "additions": 4504,
-      "deletions": 0
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "7c4571acd43bbeb0d3e6946ed797080a0771c324",
-      "short_sha": "7c4571a",
-      "message": "fix(mcp): skip Bun.serve in stdio-only mode",
-      "type": "fix",
-      "date": "2026-05-09T08:26:09Z",
-      "url": "https://github.com/abgnydn/tether/commit/7c4571acd43bbeb0d3e6946ed797080a0771c324",
-      "additions": 15,
-      "deletions": 11
     }
   ],
   "errors": []

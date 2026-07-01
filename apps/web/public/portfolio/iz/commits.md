@@ -1,5 +1,25 @@
 # Commits — iz
 
+## 2026-07-01
+
+- `11:41` **Bump to v0.4.1 (audit-corrections patch); CHANGELOG entry** — +19 −1 — [`651fcb5`](https://github.com/abgnydn/iz/commit/651fcb52ac8264d93913610a855ad8a52bc1bcd1)
+- `11:41` **Cut redundancy: delete dead/duplicate/superseded surfaces (repo + site)** — +116 −14644 — [`98c7f08`](https://github.com/abgnydn/iz/commit/98c7f0888634c6ccf283c1fa6f1c3080c6ea960d)
+- `11:41` **Round-3 audit: fix baselines.py SyntaxError, Climate-TRACE count, ISO…** — +194 −289 — [`b957acb`](https://github.com/abgnydn/iz/commit/b957acbd731b9a0842477aaa14386f2a417ab866)
+- `11:41` **Round-2 audit: fix conformal source, Nuh duplicate, og image, stale m…** — +542 −1548 — [`817fbb3`](https://github.com/abgnydn/iz/commit/817fbb34c00e2ecaa288e7799cb1f554c88bff39)
+- `11:41` **Policy: soften 2x-to-50x to 2x-to-30x; disclaimer now covers benchmar…** — +2 −2 — [`c59b918`](https://github.com/abgnydn/iz/commit/c59b9189b334082c61a412c7252ce1957fe7ccba)
+- `11:41` **Comprehensive per-page audit: fix real data/number errors across the …** — +267 −989 — [`d33ff03`](https://github.com/abgnydn/iz/commit/d33ff034b09d4088e8566320eee7e248c2fcd7d8)
+- `11:41` **Policy page: fix mislabeled log-MAE + label in-sample ratios honestly** — +3 −3 — [`411552b`](https://github.com/abgnydn/iz/commit/411552bc5d934028551d335fa2e50f84f21d5759)
+- `11:41` **Honest hero: lead with the result, demote the €700M hook** — +9 −9 — [`f0086da`](https://github.com/abgnydn/iz/commit/f0086dafe489b15ac0d1dc3877bfa196798e7385)
+- `11:41` **Simplify home page: cut marketing slop + redundancy (EN + TR)** — +7 −119 — [`1386a3d`](https://github.com/abgnydn/iz/commit/1386a3d09eb71c2c99212ce8684d24b6d3949d11)
+- `09:51` **Regenerate figures from honest data; drop stale SVGs** — +2914 −261 — [`739e96f`](https://github.com/abgnydn/iz/commit/739e96f16c75bb4eb837a2ec55fac58e5c629b2d)
+- `09:51` **Consistency sweep: leave-one-plant-out terminology + corrected counts** — +109 −104 — [`5c1d668`](https://github.com/abgnydn/iz/commit/5c1d668dc40f4887c1ee389abf5c3234e4ba98e0)
+- `07:50` **Clean up justfile deploy recipe doc-comment** — +1 −4 — [`26a2550`](https://github.com/abgnydn/iz/commit/26a25505bfadda9342919e62891bb5820afda3b2)
+- `07:50` **Add justfile + README Deploy section** — +52 −0 — [`0ac20fa`](https://github.com/abgnydn/iz/commit/0ac20faf455f19869dd14e08af9cb5a5f901ae29)
+- `07:50` **Add CHANGELOG documenting the v0.3 → v0.4 correction** — +55 −0 — [`b49fbc7`](https://github.com/abgnydn/iz/commit/b49fbc7ba89d545565319418d7bdc3e7c8df692f)
+- `07:50` **Correct headline to honest LOPO, demote+extract the NN demo, simplify…** — +2338 −16870 — [`d6c0a8b`](https://github.com/abgnydn/iz/commit/d6c0a8bcc5056760988ccda9ec5e0c8f60b4fa93)
+- `07:50` **Add honest leave-one-plant-out EF evaluation (bin/lopo_ef_eval.py)** — +484 −0 — [`f5b438b`](https://github.com/abgnydn/iz/commit/f5b438b704acc9653ce3476c47d257fa9346463b)
+- `07:50` **Commit external EUTL data + one-shot fetch script for offline reprodu…** — +40 −1 — [`35bdda0`](https://github.com/abgnydn/iz/commit/35bdda092fdf2fe81d837379b8997284f73ef147)
+
 ## 2026-06-02
 
 - `08:13` **policy: add prior-art/differentiation section + co-signer outreach kit** — +189 −0 — [`73d551a`](https://github.com/abgnydn/iz/commit/73d551ac57281e75d4565478ec1273a2f87411f2)
@@ -50,26 +70,3 @@
 - `09:23` **push: arXiv preprint, casual README, outreach templates, custom-domai…** — +876 −0 — [`608fd2b`](https://github.com/abgnydn/iz/commit/608fd2b573affc3a7148033cea0127438ad1db61)
 - `08:52` **feat: Bursa Çimento → n=21 + drop SaaS framing leftovers** — +703 −659 — [`cbdce1d`](https://github.com/abgnydn/iz/commit/cbdce1dc56c662464a0c1b1402ba5b2e48315604)
 - `08:19` **site: reframe iz as civic infrastructure, drop the SaaS pitch** — +209 −25 — [`13db4c8`](https://github.com/abgnydn/iz/commit/13db4c8532be628d1e02cd09bfd4340a67aa8455)
-- `08:05` **feat: facility map + downloadable CSV + CITATION.cff + GH Actions deploy** — +446 −3 — [`da4d525`](https://github.com/abgnydn/iz/commit/da4d525f041e699e6f73e976934cb490d3047974)
-- `07:56` **final sync: capacity-corrected n=20 → +86.3% NN / +87.0% formula** — +689 −582 — [`36958e1`](https://github.com/abgnydn/iz/commit/36958e191ae2d08b763b820972a944eed8624e39)
-- `07:16` **data: 15 capacity corrections from operator-source audit + matched cf…** — +201 −204 — [`19ef1e1`](https://github.com/abgnydn/iz/commit/19ef1e134533e5c918bfb807bfcae700c662c5f3)
-- `07:06` **verify+fix: close 3 more critique items (bootstrap CI, CT n=5, Habaş …** — +211 −81 — [`8361547`](https://github.com/abgnydn/iz/commit/83615474408ae4c61142ca2ee5b03a67b9d1bd2d)
-- `06:59` **verify+fix: sync per-facility tables to 5-outer aggregated medians** — +577 −291 — [`ff321de`](https://github.com/abgnydn/iz/commit/ff321deb25432e6b891cd4717a3e471d3908fa89)
-- `06:28` **verify+fix: address critique items 5-22 (assurance tiers, tests, copy)** — +813 −175 — [`a8cba13`](https://github.com/abgnydn/iz/commit/a8cba1363de4b33a5a97dfe1d1db80ef7e1066c8)
-- `06:01` **license: Apache-2.0** — +202 −0 — [`c3317cc`](https://github.com/abgnydn/iz/commit/c3317ccaf7cca8925566d4de87da190b06a4eb1e)
-- `05:59` **site: consistent byline (name + email + barisgunaydin.com + GitHub)** — +37 −9 — [`37b5206`](https://github.com/abgnydn/iz/commit/37b520650fbbd6c8350d5ea6fa0be2147aeec146)
-- `05:51` **site: favicon, OG share image, meta tags, robots, sitemap, hero figure** — +222 −4 — [`9995d5b`](https://github.com/abgnydn/iz/commit/9995d5b7fdf925e76abfba887aade31be047c5cf)
-- `05:44` **site: lead with the formula, demote trainer to /verify/** — +69 −30 — [`0591f87`](https://github.com/abgnydn/iz/commit/0591f873b8cec120fc735124431dbe7cc2094d9e)
-- `04:56` **site: static marketing site deployed to Cloudflare Pages** — +5283 −0 — [`26f1127`](https://github.com/abgnydn/iz/commit/26f1127256e48ae5bb29a03f8b25e6e6a39dc1e4)
-
-## 2026-05-26
-
-- `13:04` **iz-1: n=20 LODO + disclosed_cf for 11 more facilities → 84.5% ± 0.3% CI** — +452 −361 — [`e5a0460`](https://github.com/abgnydn/iz/commit/e5a0460aca86084d7b049b7948738bc857de8b72)
-- `11:48` **iz-1: n=20 LODO across all 4 CBAM scopes — 82.0% reduction** — +849 −374 — [`6acdd07`](https://github.com/abgnydn/iz/commit/6acdd070dc200e81ef337adfeb74dde979017529)
-- `10:12` **iz-1: LODO eval + baselines + CI bands + 22-critique honesty pass** — +4630 −472 — [`31f57f9`](https://github.com/abgnydn/iz/commit/31f57f9e6e6a1a811b69db9ba9316d96cadfaded)
-
-## 2026-05-21
-
-- `07:38` **browser-native training: WebGPU loop using fused-lora shaders** — +2948 −2 — [`b353c05`](https://github.com/abgnydn/iz/commit/b353c05612722e3c78183da5e365bb13349efac2)
-- `07:24` **iz-1 substrate: Steps 7-9 + Pass 1/2 code + browser stub + paper outline** — +2078 −0 — [`2b2c8ae`](https://github.com/abgnydn/iz/commit/2b2c8ae3aa4a9e510a415794b0e7c5e91240fc99)
-- `06:49` **Step 6: disclosure scraper + first ground-truth rows** — +1001 −0 — [`4b630e5`](https://github.com/abgnydn/iz/commit/4b630e5a56dce0ef766045ce151683cb924798b3)
