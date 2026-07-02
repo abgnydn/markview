@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-01T21:40:47.329Z",
+  "generated_at": "2026-07-02T21:12:35.295Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1720,
+  "activity_90d_total": 1695,
   "activity_90d": {
-    "2026-04-03": 27,
     "2026-04-05": 6,
     "2026-04-06": 28,
     "2026-04-07": 26,
@@ -77,7 +76,8 @@
     "2026-06-28": 1,
     "2026-06-29": 1,
     "2026-06-30": 4,
-    "2026-07-01": 24
+    "2026-07-01": 25,
+    "2026-07-02": 1
   },
   "categories": {
     "llm-inference": {
@@ -225,20 +225,20 @@
         "webgpu",
         "wgsl"
       ],
-      "pushed_at": "2026-07-01T11:58:22Z",
+      "pushed_at": "2026-07-02T08:02:14Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 11,
+      "commits_30d": 8,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "2ba4072c2027888fcf52f242b68a28e003f82b9b",
-        "short_sha": "2ba4072",
-        "message": "fix(ui): tile expanded panels into side gutters, never over the answe…",
+        "sha": "3161986be9df90ff7eb7628a1b812c14aea17bd6",
+        "short_sha": "3161986",
+        "message": "fix(tours): actually fly the camera during guided tours (#8)",
         "type": "fix",
-        "date": "2026-07-01T11:39:26Z",
-        "url": "https://github.com/abgnydn/neuropulse/commit/2ba4072c2027888fcf52f242b68a28e003f82b9b",
-        "additions": 50,
-        "deletions": 36
+        "date": "2026-07-02T07:15:06Z",
+        "url": "https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6",
+        "additions": 15,
+        "deletions": 16
       }
     },
     {
@@ -282,7 +282,7 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-07-01T12:27:11Z",
+      "pushed_at": "2026-07-02T08:33:12Z",
       "default_branch": "main",
       "latest_tag": "v0.12.0",
       "commits_30d": 50,
@@ -337,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-06-30T21:41:16Z",
+      "pushed_at": "2026-07-01T21:40:48Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "26761c8bee41aa1d32686b808ac0b288684b02a0",
-        "short_sha": "26761c8",
-        "message": "chore(portfolio): daily sync 2026-06-30",
+        "sha": "22e4ea3d2851e79f98f8a5fa6add26f2db52babc",
+        "short_sha": "22e4ea3",
+        "message": "chore(portfolio): daily sync 2026-07-01",
         "type": "chore",
-        "date": "2026-06-30T21:41:15Z",
-        "url": "https://github.com/abgnydn/markview/commit/26761c8bee41aa1d32686b808ac0b288684b02a0",
-        "additions": 184,
-        "deletions": 168
+        "date": "2026-07-01T21:40:47Z",
+        "url": "https://github.com/abgnydn/markview/commit/22e4ea3d2851e79f98f8a5fa6add26f2db52babc",
+        "additions": 643,
+        "deletions": 911
       }
     },
     {
@@ -383,7 +383,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 14,
+      "commits_30d": 11,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -427,7 +427,7 @@
       "pushed_at": "2026-07-01T11:42:09Z",
       "default_branch": "master",
       "latest_tag": "v0.4.1",
-      "commits_30d": 19,
+      "commits_30d": 17,
       "commits_synced": 50,
       "last_commit": {
         "sha": "651fcb52ac8264d93913610a855ad8a52bc1bcd1",
@@ -711,7 +711,7 @@
       "pushed_at": "2026-06-25T03:12:27Z",
       "default_branch": "master",
       "latest_tag": "v2.0.0",
-      "commits_30d": 2,
+      "commits_30d": 1,
       "commits_synced": 50,
       "last_commit": {
         "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
@@ -753,7 +753,7 @@
       "language_color": "#1a5e9a",
       "stars": 3,
       "topics": [],
-      "pushed_at": "2026-07-01T12:31:06Z",
+      "pushed_at": "2026-07-02T07:20:20Z",
       "default_branch": "main",
       "latest_tag": "v0.7.0",
       "commits_30d": 50,
@@ -980,7 +980,7 @@
       "pushed_at": "2026-06-02T07:29:19Z",
       "default_branch": "master",
       "latest_tag": "v0.1.0",
-      "commits_30d": 3,
+      "commits_30d": 0,
       "commits_synced": 4,
       "last_commit": {
         "sha": "54663c18252945c7930502cf7a7914bce5f87814",
@@ -2072,6 +2072,32 @@
     }
   ],
   "commits": [
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "3161986be9df90ff7eb7628a1b812c14aea17bd6",
+      "short_sha": "3161986",
+      "message": "fix(tours): actually fly the camera during guided tours (#8)",
+      "type": "fix",
+      "date": "2026-07-02T07:15:06Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6",
+      "additions": 15,
+      "deletions": 16
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "22e4ea3d2851e79f98f8a5fa6add26f2db52babc",
+      "short_sha": "22e4ea3",
+      "message": "chore(portfolio): daily sync 2026-07-01",
+      "type": "chore",
+      "date": "2026-07-01T21:40:47Z",
+      "url": "https://github.com/abgnydn/markview/commit/22e4ea3d2851e79f98f8a5fa6add26f2db52babc",
+      "additions": 643,
+      "deletions": 911
+    },
     {
       "slug": "iz",
       "name": "iz",
@@ -3852,19 +3878,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "b10ff1b34cc60d806fba5e7d9ad8a69642f18942",
-      "short_sha": "b10ff1b",
-      "message": "feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark",
-      "type": "feat",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942",
-      "additions": 16,
-      "deletions": 12
     },
     {
       "slug": "markview",
@@ -8558,19 +8571,6 @@
       "url": "https://github.com/abgnydn/panel/commit/3dc7c1364b2b9fadd195654a83535359fb2b7fdd",
       "additions": 363,
       "deletions": 22
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "9582596ea1a3b11eb0d2ef288279abef063ee28d",
-      "short_sha": "9582596",
-      "message": "docs: add MIT LICENSE + refresh README with hero SVG and tighter UI",
-      "type": "docs",
-      "date": "2026-05-12T07:26:21Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/9582596ea1a3b11eb0d2ef288279abef063ee28d",
-      "additions": 296,
-      "deletions": 60
     }
   ],
   "errors": []

@@ -1,5 +1,9 @@
 # Commits — neuropulse
 
+## 2026-07-02
+
+- `07:15` **fix(tours): actually fly the camera during guided tours (#8)** — +15 −16 — [`3161986`](https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6)
+
 ## 2026-07-01
 
 - `11:39` **fix(ui): tile expanded panels into side gutters, never over the answe…** — +50 −36 — [`2ba4072`](https://github.com/abgnydn/neuropulse/commit/2ba4072c2027888fcf52f242b68a28e003f82b9b)
@@ -84,7 +88,3 @@
 ## 2026-05-09
 
 - `07:28` **feat(lab): empirical-lab gates, fingerprint footer, storage modal, au…** — +1761 −62 — [`24e6014`](https://github.com/abgnydn/neuropulse/commit/24e6014cca4ee1041ff5f3f1e96a1aff928682cd)
-
-## 2026-05-05
-
-- `07:04` **feat(footer): add Star CTA + LinkedIn + personal-site links** — +8 −1 — [`9c1444a`](https://github.com/abgnydn/neuropulse/commit/9c1444ad75f0f2dbdb663d35b8c4d54c78a11b8c)

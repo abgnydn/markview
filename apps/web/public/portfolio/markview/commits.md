@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-01
+
+- `21:40` **chore(portfolio): daily sync 2026-07-01** — +643 −911 — [`22e4ea3`](https://github.com/abgnydn/markview/commit/22e4ea3d2851e79f98f8a5fa6add26f2db52babc)
+
 ## 2026-06-30
 
 - `21:41` **chore(portfolio): daily sync 2026-06-30** — +184 −168 — [`26761c8`](https://github.com/abgnydn/markview/commit/26761c8bee41aa1d32686b808ac0b288684b02a0)
@@ -105,4 +109,3 @@
 - `05:42` **fix(atmosphere): the ghost-ink root cause — .markdown-content p force…** — +14 −4 — [`06df36f`](https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea)
 - `05:42` **fix(atmosphere): kill the embossed/ghosted ink — solid readable type …** — +18 −13 — [`e03e998`](https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9)
 - `05:42` **feat(atmosphere): aged parchment — darker, stained, uneven + readable…** — +28 −17 — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)
-- `05:42` **feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark** — +16 −12 — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)

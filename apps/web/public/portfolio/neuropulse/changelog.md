@@ -8,6 +8,7 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Recent highlights
 
+- **fix**: fix(tours): actually fly the camera during guided tours (#8) — [`3161986`](https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6)
 - **fix**: fix(ui): tile expanded panels into side gutters, never over the answe… — [`2ba4072`](https://github.com/abgnydn/neuropulse/commit/2ba4072c2027888fcf52f242b68a28e003f82b9b)
 - **feat**: feat(panels): wire every panel "i" caption to the Glossary via "Learn… — [`71cd5ed`](https://github.com/abgnydn/neuropulse/commit/71cd5ed98365125ee1121ada12231cd68c127066)
 - **fix**: fix(ablation): use the real prompt, and keep the head strip inside th… — [`49bef53`](https://github.com/abgnydn/neuropulse/commit/49bef53464d3c347961cd584882a160ea5aa246b)
@@ -19,4 +20,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix(readme): stack card overflow + correct Butterfly description — [`63311b2`](https://github.com/abgnydn/neuropulse/commit/63311b23eb181b2ea261a614911be38db3a11d5f)
 - **fix**: fix(readme): XML-escape kernel + validation SVGs · add run-locally image — [`2a19835`](https://github.com/abgnydn/neuropulse/commit/2a19835de932e507d2278d3631114eae5676e648)
 - **feat**: feat(lab): empirical-lab gates, fingerprint footer, storage modal, au… — [`24e6014`](https://github.com/abgnydn/neuropulse/commit/24e6014cca4ee1041ff5f3f1e96a1aff928682cd)
-- **feat**: feat(footer): add Star CTA + LinkedIn + personal-site links — [`9c1444a`](https://github.com/abgnydn/neuropulse/commit/9c1444ad75f0f2dbdb663d35b8c4d54c78a11b8c)
