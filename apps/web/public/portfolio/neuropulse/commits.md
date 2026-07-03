@@ -1,5 +1,14 @@
 # Commits — neuropulse
 
+## 2026-07-03
+
+- `07:18` **feat(lessons): teaching quizzes, next-lesson flow, IA consolidation (…** — +209 −57 — [`3f3f529`](https://github.com/abgnydn/neuropulse/commit/3f3f529f26eb884fff39e6170bc77fc324bdfe81)
+- `07:10` **feat(levels): Kid / Explorer / Expert presentation presets (#14)** — +154 −5 — [`353df5a`](https://github.com/abgnydn/neuropulse/commit/353df5ac2c4e2f7468307dea95eca623aec97b65)
+- `07:02` **feat(demo): recorded-run demo mode + education boot fork (#13)** — +437 −158 — [`09aeafc`](https://github.com/abgnydn/neuropulse/commit/09aeafccd8114024347f944469c58b62761b4bbd)
+- `06:44` **feat(recording): capture real runs to compact JSON + CI validation (#12)** — +403 −2 — [`8ba7ed7`](https://github.com/abgnydn/neuropulse/commit/8ba7ed703043ddcadbac6866ae0d4e27bcee37dc)
+- `06:25` **Tour transport controls (pause/play/prev/next/counter) (#11)** — +226 −37 — [`c7170e5`](https://github.com/abgnydn/neuropulse/commit/c7170e5704164a4797548c8090e17a6d46a4a9e9)
+- `03:45` **feat(lessons): Phase-1 learning path — 📚 Learn overlay with checks (#9)** — +402 −0 — [`d5c7973`](https://github.com/abgnydn/neuropulse/commit/d5c7973405ac89bf8c94cfbdddc1c7966fcfab9b)
+
 ## 2026-07-02
 
 - `07:15` **fix(tours): actually fly the camera during guided tours (#8)** — +15 −16 — [`3161986`](https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6)
@@ -79,12 +88,3 @@
 - `09:27` **docs(readme): accurate Butterfly description after reading the source** — +17 −3 — [`d347565`](https://github.com/abgnydn/neuropulse/commit/d34756525c7a3749b09b6c26ba6fdc9bed5b62d4)
 - `09:17` **fix(readme): stack card overflow + correct Butterfly description** — +63 −63 — [`63311b2`](https://github.com/abgnydn/neuropulse/commit/63311b23eb181b2ea261a614911be38db3a11d5f)
 - `09:13` **docs(readme): redesigned stack quadrants + panel inventory + controls…** — +837 −42 — [`5a08431`](https://github.com/abgnydn/neuropulse/commit/5a08431efd21918026e8cac753b63bf8465648a8)
-- `09:02` **fix(readme): XML-escape kernel + validation SVGs · add run-locally image** — +303 −307 — [`2a19835`](https://github.com/abgnydn/neuropulse/commit/2a19835de932e507d2278d3631114eae5676e648)
-- `07:46` **docs(readme): comparison grid + 32-layer anatomy + kernel rack + OG card** — +456 −1 — [`8ded096`](https://github.com/abgnydn/neuropulse/commit/8ded09660acd17e549698142eb4c7fcbc66de077)
-- `07:37` **docs(readme): app preview, architecture diagram, validation table, mo…** — +687 −34 — [`474e6c3`](https://github.com/abgnydn/neuropulse/commit/474e6c3a0d9bde7d40948c0474632345861dee7f)
-- `07:31` **docs(readme): richer hero + stats strip + annotated scene diagram** — +205 −97 — [`ec2eb3b`](https://github.com/abgnydn/neuropulse/commit/ec2eb3be3a05b6160ae2120607e7dae696390e37)
-- `07:26` **docs: add MIT LICENSE + refresh README with hero SVG and tighter UI** — +296 −60 — [`9582596`](https://github.com/abgnydn/neuropulse/commit/9582596ea1a3b11eb0d2ef288279abef063ee28d)
-
-## 2026-05-09
-
-- `07:28` **feat(lab): empirical-lab gates, fingerprint footer, storage modal, au…** — +1761 −62 — [`24e6014`](https://github.com/abgnydn/neuropulse/commit/24e6014cca4ee1041ff5f3f1e96a1aff928682cd)

@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-02
+
+- `21:12` **chore(portfolio): daily sync 2026-07-02** — +62 −59 — [`9eae2f1`](https://github.com/abgnydn/markview/commit/9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8)
+
 ## 2026-07-01
 
 - `21:40` **chore(portfolio): daily sync 2026-07-01** — +643 −911 — [`22e4ea3`](https://github.com/abgnydn/markview/commit/22e4ea3d2851e79f98f8a5fa6add26f2db52babc)
@@ -108,4 +112,3 @@
 - `05:42` **perf(atmosphere): cut the cost of the paper, ambient, and images** — +25 −23 — [`5fcb55d`](https://github.com/abgnydn/markview/commit/5fcb55dc3e81c78f87bdf1d548f2636144175cfd)
 - `05:42` **fix(atmosphere): the ghost-ink root cause — .markdown-content p force…** — +14 −4 — [`06df36f`](https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea)
 - `05:42` **fix(atmosphere): kill the embossed/ghosted ink — solid readable type …** — +18 −13 — [`e03e998`](https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9)
-- `05:42` **feat(atmosphere): aged parchment — darker, stained, uneven + readable…** — +28 −17 — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)

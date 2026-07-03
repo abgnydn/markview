@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-02T21:12:35.295Z",
+  "generated_at": "2026-07-03T21:11:14.871Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1695,
+  "activity_90d_total": 1705,
   "activity_90d": {
     "2026-04-05": 6,
     "2026-04-06": 28,
@@ -77,7 +77,8 @@
     "2026-06-29": 1,
     "2026-06-30": 4,
     "2026-07-01": 25,
-    "2026-07-02": 1
+    "2026-07-02": 2,
+    "2026-07-03": 9
   },
   "categories": {
     "llm-inference": {
@@ -225,20 +226,20 @@
         "webgpu",
         "wgsl"
       ],
-      "pushed_at": "2026-07-02T08:02:14Z",
+      "pushed_at": "2026-07-03T07:18:24Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 8,
+      "commits_30d": 14,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "3161986be9df90ff7eb7628a1b812c14aea17bd6",
-        "short_sha": "3161986",
-        "message": "fix(tours): actually fly the camera during guided tours (#8)",
-        "type": "fix",
-        "date": "2026-07-02T07:15:06Z",
-        "url": "https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6",
-        "additions": 15,
-        "deletions": 16
+        "sha": "3f3f529f26eb884fff39e6170bc77fc324bdfe81",
+        "short_sha": "3f3f529",
+        "message": "feat(lessons): teaching quizzes, next-lesson flow, IA consolidation (…",
+        "type": "feat",
+        "date": "2026-07-03T07:18:24Z",
+        "url": "https://github.com/abgnydn/neuropulse/commit/3f3f529f26eb884fff39e6170bc77fc324bdfe81",
+        "additions": 209,
+        "deletions": 57
       }
     },
     {
@@ -337,20 +338,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-01T21:40:48Z",
+      "pushed_at": "2026-07-02T21:12:36Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "22e4ea3d2851e79f98f8a5fa6add26f2db52babc",
-        "short_sha": "22e4ea3",
-        "message": "chore(portfolio): daily sync 2026-07-01",
+        "sha": "9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8",
+        "short_sha": "9eae2f1",
+        "message": "chore(portfolio): daily sync 2026-07-02",
         "type": "chore",
-        "date": "2026-07-01T21:40:47Z",
-        "url": "https://github.com/abgnydn/markview/commit/22e4ea3d2851e79f98f8a5fa6add26f2db52babc",
-        "additions": 643,
-        "deletions": 911
+        "date": "2026-07-02T21:12:35Z",
+        "url": "https://github.com/abgnydn/markview/commit/9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8",
+        "additions": 62,
+        "deletions": 59
       }
     },
     {
@@ -383,7 +384,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 11,
+      "commits_30d": 8,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -424,20 +425,20 @@
       "language_color": "#e34c26",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-07-01T11:42:09Z",
+      "pushed_at": "2026-07-03T08:20:02Z",
       "default_branch": "master",
       "latest_tag": "v0.4.1",
-      "commits_30d": 17,
+      "commits_30d": 20,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "651fcb52ac8264d93913610a855ad8a52bc1bcd1",
-        "short_sha": "651fcb5",
-        "message": "Bump to v0.4.1 (audit-corrections patch); CHANGELOG entry",
+        "sha": "9e70e82f5ede574788a79f0d447c7572268332e1",
+        "short_sha": "9e70e82",
+        "message": "Add contributor call: Turkish LinkedIn draft + README contributing se…",
         "type": "other",
-        "date": "2026-07-01T11:41:44Z",
-        "url": "https://github.com/abgnydn/iz/commit/651fcb52ac8264d93913610a855ad8a52bc1bcd1",
-        "additions": 19,
-        "deletions": 1
+        "date": "2026-07-03T08:19:56Z",
+        "url": "https://github.com/abgnydn/iz/commit/9e70e82f5ede574788a79f0d447c7572268332e1",
+        "additions": 90,
+        "deletions": 5
       }
     },
     {
@@ -711,7 +712,7 @@
       "pushed_at": "2026-06-25T03:12:27Z",
       "default_branch": "master",
       "latest_tag": "v2.0.0",
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "998fc951ee1bea9f1f5d803626ee0fb0b644a5a3",
@@ -2072,6 +2073,136 @@
     }
   ],
   "commits": [
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "830d3bbf6232b9f3251a6128fd8bb8432460a657",
+      "short_sha": "830d3bb",
+      "message": "Move public site to iz-mrv.pages.dev",
+      "type": "other",
+      "date": "2026-07-03T08:19:56Z",
+      "url": "https://github.com/abgnydn/iz/commit/830d3bbf6232b9f3251a6128fd8bb8432460a657",
+      "additions": 632,
+      "deletions": 620
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "798ec43d9477d39c86788054392b6b75fea31419",
+      "short_sha": "798ec43",
+      "message": "Add GitHub repo link to the homepage",
+      "type": "other",
+      "date": "2026-07-03T08:19:56Z",
+      "url": "https://github.com/abgnydn/iz/commit/798ec43d9477d39c86788054392b6b75fea31419",
+      "additions": 4,
+      "deletions": 1
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "9e70e82f5ede574788a79f0d447c7572268332e1",
+      "short_sha": "9e70e82",
+      "message": "Add contributor call: Turkish LinkedIn draft + README contributing se…",
+      "type": "other",
+      "date": "2026-07-03T08:19:56Z",
+      "url": "https://github.com/abgnydn/iz/commit/9e70e82f5ede574788a79f0d447c7572268332e1",
+      "additions": 90,
+      "deletions": 5
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "3f3f529f26eb884fff39e6170bc77fc324bdfe81",
+      "short_sha": "3f3f529",
+      "message": "feat(lessons): teaching quizzes, next-lesson flow, IA consolidation (…",
+      "type": "feat",
+      "date": "2026-07-03T07:18:24Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/3f3f529f26eb884fff39e6170bc77fc324bdfe81",
+      "additions": 209,
+      "deletions": 57
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "353df5ac2c4e2f7468307dea95eca623aec97b65",
+      "short_sha": "353df5a",
+      "message": "feat(levels): Kid / Explorer / Expert presentation presets (#14)",
+      "type": "feat",
+      "date": "2026-07-03T07:10:30Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/353df5ac2c4e2f7468307dea95eca623aec97b65",
+      "additions": 154,
+      "deletions": 5
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "09aeafccd8114024347f944469c58b62761b4bbd",
+      "short_sha": "09aeafc",
+      "message": "feat(demo): recorded-run demo mode + education boot fork (#13)",
+      "type": "feat",
+      "date": "2026-07-03T07:02:44Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/09aeafccd8114024347f944469c58b62761b4bbd",
+      "additions": 437,
+      "deletions": 158
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "8ba7ed703043ddcadbac6866ae0d4e27bcee37dc",
+      "short_sha": "8ba7ed7",
+      "message": "feat(recording): capture real runs to compact JSON + CI validation (#12)",
+      "type": "feat",
+      "date": "2026-07-03T06:44:31Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/8ba7ed703043ddcadbac6866ae0d4e27bcee37dc",
+      "additions": 403,
+      "deletions": 2
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "c7170e5704164a4797548c8090e17a6d46a4a9e9",
+      "short_sha": "c7170e5",
+      "message": "Tour transport controls (pause/play/prev/next/counter) (#11)",
+      "type": "other",
+      "date": "2026-07-03T06:25:24Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/c7170e5704164a4797548c8090e17a6d46a4a9e9",
+      "additions": 226,
+      "deletions": 37
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "d5c7973405ac89bf8c94cfbdddc1c7966fcfab9b",
+      "short_sha": "d5c7973",
+      "message": "feat(lessons): Phase-1 learning path — 📚 Learn overlay with checks (#9)",
+      "type": "feat",
+      "date": "2026-07-03T03:45:33Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/d5c7973405ac89bf8c94cfbdddc1c7966fcfab9b",
+      "additions": 402,
+      "deletions": 0
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8",
+      "short_sha": "9eae2f1",
+      "message": "chore(portfolio): daily sync 2026-07-02",
+      "type": "chore",
+      "date": "2026-07-02T21:12:35Z",
+      "url": "https://github.com/abgnydn/markview/commit/9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8",
+      "additions": 62,
+      "deletions": 59
+    },
     {
       "slug": "neuropulse",
       "name": "neuropulse",
@@ -3878,19 +4009,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "57459e830b8ce50f8fc89463c41dab87e659425c",
-      "short_sha": "57459e8",
-      "message": "feat(atmosphere): aged parchment — darker, stained, uneven + readable…",
-      "type": "feat",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c",
-      "additions": 28,
-      "deletions": 17
     },
     {
       "slug": "markview",
@@ -6246,19 +6364,6 @@
       "deletions": 0
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "608fd2b573affc3a7148033cea0127438ad1db61",
-      "short_sha": "608fd2b",
-      "message": "push: arXiv preprint, casual README, outreach templates, custom-domai…",
-      "type": "other",
-      "date": "2026-05-27T09:23:34Z",
-      "url": "https://github.com/abgnydn/iz/commit/608fd2b573affc3a7148033cea0127438ad1db61",
-      "additions": 876,
-      "deletions": 0
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -6285,19 +6390,6 @@
       "deletions": 7
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "cbdce1dc56c662464a0c1b1402ba5b2e48315604",
-      "short_sha": "cbdce1d",
-      "message": "feat: Bursa Çimento → n=21 + drop SaaS framing leftovers",
-      "type": "feat",
-      "date": "2026-05-27T08:52:27Z",
-      "url": "https://github.com/abgnydn/iz/commit/cbdce1dc56c662464a0c1b1402ba5b2e48315604",
-      "additions": 703,
-      "deletions": 659
-    },
-    {
       "slug": "quill",
       "name": "quill",
       "language": "Rust",
@@ -6322,19 +6414,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/09bd84e4817b1c304aac8dad4e33e08802e3d62d",
       "additions": 1649,
       "deletions": 0
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "13db4c8532be628d1e02cd09bfd4340a67aa8455",
-      "short_sha": "13db4c8",
-      "message": "site: reframe iz as civic infrastructure, drop the SaaS pitch",
-      "type": "other",
-      "date": "2026-05-27T08:19:37Z",
-      "url": "https://github.com/abgnydn/iz/commit/13db4c8532be628d1e02cd09bfd4340a67aa8455",
-      "additions": 209,
-      "deletions": 25
     },
     {
       "slug": "quill",
@@ -8493,84 +8572,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/5a08431efd21918026e8cac753b63bf8465648a8",
       "additions": 837,
       "deletions": 42
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "272d751b9e2ad781f3d9dcff24c89d9adec88d98",
-      "short_sha": "272d751",
-      "message": "Fix render_intake: drop legacy has_sample / corridor-coupling block",
-      "type": "other",
-      "date": "2026-05-12T09:09:20Z",
-      "url": "https://github.com/abgnydn/panel/commit/272d751b9e2ad781f3d9dcff24c89d9adec88d98",
-      "additions": 46,
-      "deletions": 26
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "2a19835de932e507d2278d3631114eae5676e648",
-      "short_sha": "2a19835",
-      "message": "fix(readme): XML-escape kernel + validation SVGs · add run-locally image",
-      "type": "fix",
-      "date": "2026-05-12T09:02:52Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/2a19835de932e507d2278d3631114eae5676e648",
-      "additions": 303,
-      "deletions": 307
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "8ded09660acd17e549698142eb4c7fcbc66de077",
-      "short_sha": "8ded096",
-      "message": "docs(readme): comparison grid + 32-layer anatomy + kernel rack + OG card",
-      "type": "docs",
-      "date": "2026-05-12T07:46:20Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/8ded09660acd17e549698142eb4c7fcbc66de077",
-      "additions": 456,
-      "deletions": 1
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "474e6c3a0d9bde7d40948c0474632345861dee7f",
-      "short_sha": "474e6c3",
-      "message": "docs(readme): app preview, architecture diagram, validation table, mo…",
-      "type": "docs",
-      "date": "2026-05-12T07:37:28Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/474e6c3a0d9bde7d40948c0474632345861dee7f",
-      "additions": 687,
-      "deletions": 34
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "ec2eb3be3a05b6160ae2120607e7dae696390e37",
-      "short_sha": "ec2eb3b",
-      "message": "docs(readme): richer hero + stats strip + annotated scene diagram",
-      "type": "docs",
-      "date": "2026-05-12T07:31:27Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/ec2eb3be3a05b6160ae2120607e7dae696390e37",
-      "additions": 205,
-      "deletions": 97
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "3dc7c1364b2b9fadd195654a83535359fb2b7fdd",
-      "short_sha": "3dc7c13",
-      "message": "Sample contract registry + decouple worker language from corridor",
-      "type": "other",
-      "date": "2026-05-12T07:28:50Z",
-      "url": "https://github.com/abgnydn/panel/commit/3dc7c1364b2b9fadd195654a83535359fb2b7fdd",
-      "additions": 363,
-      "deletions": 22
     }
   ],
   "errors": []

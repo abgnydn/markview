@@ -323,6 +323,21 @@ confirmed) and the full post-mortem with self-critique live in the
 
 <br>
 
+## Demo mode — recorded runs
+
+The demo at `/app/` offers **"Start learning now — no download"**: instead of
+fetching the weights, it replays a **recorded run** — a real forward pass
+captured live on this engine (see `src/recording.ts` + `public/recordings/`),
+storing exactly the tensors the panels render: top-K, residual norms, layer
+deltas, head activity, layer-31 attention, logit-lens picks. Playback
+(`src/playback.ts`) drives the same UI the live engine drives, at the same
+speed-slider pace, under a permanent **RECORDED RUN** badge. Nothing is
+synthesized — it's replayed real data, clearly labeled; committed recordings
+are schema-validated in CI (`tools/verify-recordings.mjs`). Download the model
+whenever you want to drive prompts yourself.
+
+<br>
+
 ## Run locally
 
 <div align="center">

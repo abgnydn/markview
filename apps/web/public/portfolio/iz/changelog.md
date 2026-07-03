@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.4.2 — live URL moved to iz-mrv.pages.dev (patch)
+
+The public site moved from `iz-b0n.pages.dev` to **`iz-mrv.pages.dev`**. Every
+reference was updated in one pass and the artifacts rebuilt from source:
+
+- `SITE_URL` and all canonical / `og:url` tags across the site, the sitemap,
+  `robots.txt`, README, `.zenodo.json`, and `CITATION.cff`.
+- The main Open Graph card (`site/assets/og.png`) and all 59 per-facility OG
+  cards were re-rendered so the baked-in URL matches.
+- Cut a fresh release so the Zenodo archive links to the live host instead of
+  the retired `iz-b0n` subdomain. No data, method, or headline numbers changed.
+
 ## v0.4.1 — audit corrections (patch)
 
 A multi-round comprehensive audit of v0.4.0 caught and fixed real errors that had

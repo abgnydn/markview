@@ -1,5 +1,11 @@
 # Commits — iz
 
+## 2026-07-03
+
+- `08:19` **Add contributor call: Turkish LinkedIn draft + README contributing se…** — +90 −5 — [`9e70e82`](https://github.com/abgnydn/iz/commit/9e70e82f5ede574788a79f0d447c7572268332e1)
+- `08:19` **Add GitHub repo link to the homepage** — +4 −1 — [`798ec43`](https://github.com/abgnydn/iz/commit/798ec43d9477d39c86788054392b6b75fea31419)
+- `08:19` **Move public site to iz-mrv.pages.dev** — +632 −620 — [`830d3bb`](https://github.com/abgnydn/iz/commit/830d3bbf6232b9f3251a6128fd8bb8432460a657)
+
 ## 2026-07-01
 
 - `11:41` **Bump to v0.4.1 (audit-corrections patch); CHANGELOG entry** — +19 −1 — [`651fcb5`](https://github.com/abgnydn/iz/commit/651fcb52ac8264d93913610a855ad8a52bc1bcd1)
@@ -67,6 +73,3 @@
 ## 2026-05-27
 
 - `11:48` **feat: S5P NO₂ pipeline + honest negative result** — +1239 −507 — [`0fd690a`](https://github.com/abgnydn/iz/commit/0fd690a4dbae108f4050222e7b461d945ef9f5c5)
-- `09:23` **push: arXiv preprint, casual README, outreach templates, custom-domai…** — +876 −0 — [`608fd2b`](https://github.com/abgnydn/iz/commit/608fd2b573affc3a7148033cea0127438ad1db61)
-- `08:52` **feat: Bursa Çimento → n=21 + drop SaaS framing leftovers** — +703 −659 — [`cbdce1d`](https://github.com/abgnydn/iz/commit/cbdce1dc56c662464a0c1b1402ba5b2e48315604)
-- `08:19` **site: reframe iz as civic infrastructure, drop the SaaS pitch** — +209 −25 — [`13db4c8`](https://github.com/abgnydn/iz/commit/13db4c8532be628d1e02cd09bfd4340a67aa8455)
