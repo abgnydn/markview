@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-03
+
+- `21:11` **chore(portfolio): daily sync 2026-07-03** — +255 −193 — [`afcc4a7`](https://github.com/abgnydn/markview/commit/afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b)
+
 ## 2026-07-02
 
 - `21:12` **chore(portfolio): daily sync 2026-07-02** — +62 −59 — [`9eae2f1`](https://github.com/abgnydn/markview/commit/9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8)
@@ -111,4 +115,3 @@
 - `05:42` **perf(viewer): kill file-change lag — skip view-transition over heavy …** — +13 −2 — [`02f1cda`](https://github.com/abgnydn/markview/commit/02f1cda9300a15539eed977d57ec5f21d169102f)
 - `05:42` **perf(atmosphere): cut the cost of the paper, ambient, and images** — +25 −23 — [`5fcb55d`](https://github.com/abgnydn/markview/commit/5fcb55dc3e81c78f87bdf1d548f2636144175cfd)
 - `05:42` **fix(atmosphere): the ghost-ink root cause — .markdown-content p force…** — +14 −4 — [`06df36f`](https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea)
-- `05:42` **fix(atmosphere): kill the embossed/ghosted ink — solid readable type …** — +18 −13 — [`e03e998`](https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9)

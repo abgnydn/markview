@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-03T21:11:14.871Z",
+  "generated_at": "2026-07-04T21:01:57.900Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1705,
+  "activity_90d_total": 1700,
   "activity_90d": {
-    "2026-04-05": 6,
     "2026-04-06": 28,
     "2026-04-07": 26,
     "2026-04-08": 24,
@@ -78,7 +77,7 @@
     "2026-06-30": 4,
     "2026-07-01": 25,
     "2026-07-02": 2,
-    "2026-07-03": 9
+    "2026-07-03": 10
   },
   "categories": {
     "llm-inference": {
@@ -338,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-02T21:12:36Z",
+      "pushed_at": "2026-07-03T21:11:15Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8",
-        "short_sha": "9eae2f1",
-        "message": "chore(portfolio): daily sync 2026-07-02",
+        "sha": "afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
+        "short_sha": "afcc4a7",
+        "message": "chore(portfolio): daily sync 2026-07-03",
         "type": "chore",
-        "date": "2026-07-02T21:12:35Z",
-        "url": "https://github.com/abgnydn/markview/commit/9eae2f1493d46d8ab761e075d5e10a4c9e9a6db8",
-        "additions": 62,
-        "deletions": 59
+        "date": "2026-07-03T21:11:14Z",
+        "url": "https://github.com/abgnydn/markview/commit/afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
+        "additions": 255,
+        "deletions": 193
       }
     },
     {
@@ -2073,6 +2072,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
+      "short_sha": "afcc4a7",
+      "message": "chore(portfolio): daily sync 2026-07-03",
+      "type": "chore",
+      "date": "2026-07-03T21:11:14Z",
+      "url": "https://github.com/abgnydn/markview/commit/afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
+      "additions": 255,
+      "deletions": 193
+    },
     {
       "slug": "iz",
       "name": "iz",
@@ -4009,19 +4021,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9",
-      "short_sha": "e03e998",
-      "message": "fix(atmosphere): kill the embossed/ghosted ink — solid readable type …",
-      "type": "fix",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9",
-      "additions": 18,
-      "deletions": 13
     },
     {
       "slug": "markview",
