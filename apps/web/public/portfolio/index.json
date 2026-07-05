@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-04T21:01:57.900Z",
+  "generated_at": "2026-07-05T21:05:31.737Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1700,
+  "activity_90d_total": 1673,
   "activity_90d": {
-    "2026-04-06": 28,
     "2026-04-07": 26,
     "2026-04-08": 24,
     "2026-04-09": 8,
@@ -77,7 +76,8 @@
     "2026-06-30": 4,
     "2026-07-01": 25,
     "2026-07-02": 2,
-    "2026-07-03": 10
+    "2026-07-03": 10,
+    "2026-07-04": 1
   },
   "categories": {
     "llm-inference": {
@@ -337,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-03T21:11:15Z",
+      "pushed_at": "2026-07-04T21:01:59Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
-        "short_sha": "afcc4a7",
-        "message": "chore(portfolio): daily sync 2026-07-03",
+        "sha": "4e01700f28e0c1b88b336641180888352a7cc99f",
+        "short_sha": "4e01700",
+        "message": "chore(portfolio): daily sync 2026-07-04",
         "type": "chore",
-        "date": "2026-07-03T21:11:14Z",
-        "url": "https://github.com/abgnydn/markview/commit/afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
-        "additions": 255,
-        "deletions": 193
+        "date": "2026-07-04T21:01:58Z",
+        "url": "https://github.com/abgnydn/markview/commit/4e01700f28e0c1b88b336641180888352a7cc99f",
+        "additions": 28,
+        "deletions": 26
       }
     },
     {
@@ -383,7 +383,7 @@
       "pushed_at": "2026-06-09T11:23:13Z",
       "default_branch": "main",
       "latest_tag": "v0.6",
-      "commits_30d": 8,
+      "commits_30d": 6,
       "commits_synced": 50,
       "last_commit": {
         "sha": "f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41",
@@ -938,7 +938,7 @@
       "pushed_at": "2026-06-05T06:47:12Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 7,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "cc56ec37b3cd79a4cba0de3d95a2975f7a2b4352",
@@ -2072,6 +2072,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "4e01700f28e0c1b88b336641180888352a7cc99f",
+      "short_sha": "4e01700",
+      "message": "chore(portfolio): daily sync 2026-07-04",
+      "type": "chore",
+      "date": "2026-07-04T21:01:58Z",
+      "url": "https://github.com/abgnydn/markview/commit/4e01700f28e0c1b88b336641180888352a7cc99f",
+      "additions": 28,
+      "deletions": 26
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4021,19 +4034,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "06df36fd3a659a8333f165392f2901ecf7431cea",
-      "short_sha": "06df36f",
-      "message": "fix(atmosphere): the ghost-ink root cause — .markdown-content p force…",
-      "type": "fix",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea",
-      "additions": 14,
-      "deletions": 4
     },
     {
       "slug": "markview",
