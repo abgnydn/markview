@@ -1,5 +1,12 @@
 # Commits — webgpu-q
 
+## 2026-07-06
+
+- `11:27` **feat(learn): interactive education wedge — "why is water special?" (4…** — +1227 −23 — [`a6bf89c`](https://github.com/abgnydn/webgpu-q/commit/a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df)
+- `11:27` **Benchmark honesty (PySCF comparison is real) + WASM-SIMD GEMM lever (…** — +1740 −1 — [`6cd0397`](https://github.com/abgnydn/webgpu-q/commit/6cd0397dfb650015ba2864047268bf165b0e56b6)
+- `11:26` **feat(screen): headless batch molecular screening + window.__webgpuq.s…** — +303 −0 — [`60818b2`](https://github.com/abgnydn/webgpu-q/commit/60818b265fa442f152cf7bdef623c23c032ecb1f)
+- `11:26` **Rigor-hardening: fix CCSD false-convergence + swarm peer-death hang (#4)** — +372 −7 — [`9e4143d`](https://github.com/abgnydn/webgpu-q/commit/9e4143d1f4a2cc18785792a975f7b6cd6b075396)
+
 ## 2026-06-25
 
 - `03:24` **Cost-aware (LPT) swarm scheduling — throughput's first clear win (#3)** — +380 −0 — [`5f6c436`](https://github.com/abgnydn/webgpu-q/commit/5f6c436dbc262ee966dcc02c35d37cd2f2e8295b)
@@ -63,10 +70,3 @@
 - `06:40` **feat(swarm): lever 3 — gzip-binary-f64 wire codec for RelayTransport …** — +334 −13 — [`cff4c6c`](https://github.com/abgnydn/webgpu-q/commit/cff4c6c195a971f8f7325363555559f897bbfe98)
 - `04:43` **refactor(chem): make f64 WASM the recommended DF default, GPU hybrid …** — +52 −38 — [`1488b24`](https://github.com/abgnydn/webgpu-q/commit/1488b242efcd9f3a5683f1b8bead5035c940138b)
 - `03:54` **fix(claims): address scientific-critic findings — separate validated …** — +89 −8 — [`6fa7b92`](https://github.com/abgnydn/webgpu-q/commit/6fa7b922b8e567a0be688dbcf3a22c8dbc227fcb)
-
-## 2026-06-09
-
-- `11:49` **feat(site): surface the swarm on the landing page — nav, card, hero t…** — +52 −5 — [`15dd280`](https://github.com/abgnydn/webgpu-q/commit/15dd280cd5fb10e4862a3533b07d566fed65a36f)
-- `10:27` **Merge pull request #1 from abgnydn/cross-machine-gpu-batch** — +2064 −87 — [`d79299c`](https://github.com/abgnydn/webgpu-q/commit/d79299cf9b2544466d406fa26c51fa013099789b)
-- `09:44` **feat(chem): runUMP2Auto — DF-UMP2 completes the {R,U}×{HF,DFT,MP2} ma…** — +189 −0 — [`08479da`](https://github.com/abgnydn/webgpu-q/commit/08479da033265dc9b1503ed7bad5db65eb5ebe0a)
-- `09:31` **feat(chem): runMP2Auto — size-gated DF-MP2, correlation energy at any…** — +122 −1 — [`50ad6de`](https://github.com/abgnydn/webgpu-q/commit/50ad6de14c30438a6bc8ec0faabc7883f8cde26a)

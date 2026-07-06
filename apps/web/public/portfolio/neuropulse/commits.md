@@ -1,5 +1,13 @@
 # Commits — neuropulse
 
+## 2026-07-06
+
+- `13:12` **feat(lessons/tours): slower default, tours hold at the end, cleaner s…** — +93 −12 — [`ef37d49`](https://github.com/abgnydn/neuropulse/commit/ef37d4950dae28db1d7a155319b7a7db87053f09)
+- `07:56` **feat(lessons): completion share card — canvas PNG, real tensors as th…** — +137 −2 — [`0840471`](https://github.com/abgnydn/neuropulse/commit/08404712e9c4f84f4d6a51d0dc09ce42380f635b)
+- `07:04` **feat(demo): recording gallery + pre-recorded ablation + token deep-li…** — +221 −12 — [`5faefc7`](https://github.com/abgnydn/neuropulse/commit/5faefc7747b6f453f9431813d4c2a0b8570e470b)
+- `06:11` **feat(tours): story-style step progress segments in the transport bar …** — +86 −11 — [`54436b3`](https://github.com/abgnydn/neuropulse/commit/54436b3da0dc166bf59dca7829f2d705f9b91c52)
+- `05:37` **fix(ux): tour camera actually flies + demo resume + boot/icon polish …** — +83 −40 — [`cdc2468`](https://github.com/abgnydn/neuropulse/commit/cdc2468f9ad9fcd9a21f4488eadabb0d40a5b368)
+
 ## 2026-07-03
 
 - `07:18` **feat(lessons): teaching quizzes, next-lesson flow, IA consolidation (…** — +209 −57 — [`3f3f529`](https://github.com/abgnydn/neuropulse/commit/3f3f529f26eb884fff39e6170bc77fc324bdfe81)
@@ -83,8 +91,3 @@
 
 - `11:09` **fix(butterfly): hardened sweep harness + real v2.5 regression fix** — +129 −34 — [`4c90a3d`](https://github.com/abgnydn/neuropulse/commit/4c90a3d2a3d5fddce54324c387c3a3358ddb7e06)
 - `10:33` **test(butterfly): two-track sweep harness — Playwright + paste-in-console** — +635 −1 — [`ae617dd`](https://github.com/abgnydn/neuropulse/commit/ae617dd6884279c06aae5c69bf3b8682460c95ed)
-- `10:02` **feat(butterfly): v2.5 — push to research state (4 transcripts, picker…** — +270 −49 — [`706f1a7`](https://github.com/abgnydn/neuropulse/commit/706f1a7d75df688503dd9889c2d5f985eea43ce0)
-- `09:44` **fix(readme): correct mode taxonomy — 5 views + 4 overlays, not 7 modes** — +162 −156 — [`4f6d81e`](https://github.com/abgnydn/neuropulse/commit/4f6d81e2c1d428632478b2db7fef0a2ed3ae4a96)
-- `09:27` **docs(readme): accurate Butterfly description after reading the source** — +17 −3 — [`d347565`](https://github.com/abgnydn/neuropulse/commit/d34756525c7a3749b09b6c26ba6fdc9bed5b62d4)
-- `09:17` **fix(readme): stack card overflow + correct Butterfly description** — +63 −63 — [`63311b2`](https://github.com/abgnydn/neuropulse/commit/63311b23eb181b2ea261a614911be38db3a11d5f)
-- `09:13` **docs(readme): redesigned stack quadrants + panel inventory + controls…** — +837 −42 — [`5a08431`](https://github.com/abgnydn/neuropulse/commit/5a08431efd21918026e8cac753b63bf8465648a8)

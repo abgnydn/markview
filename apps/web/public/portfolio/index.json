@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-05T21:05:31.737Z",
+  "generated_at": "2026-07-06T21:40:21.344Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1673,
+  "activity_90d_total": 1659,
   "activity_90d": {
-    "2026-04-07": 26,
     "2026-04-08": 24,
     "2026-04-09": 8,
     "2026-04-10": 4,
@@ -77,7 +76,9 @@
     "2026-07-01": 25,
     "2026-07-02": 2,
     "2026-07-03": 10,
-    "2026-07-04": 1
+    "2026-07-04": 1,
+    "2026-07-05": 1,
+    "2026-07-06": 11
   },
   "categories": {
     "llm-inference": {
@@ -225,20 +226,20 @@
         "webgpu",
         "wgsl"
       ],
-      "pushed_at": "2026-07-03T07:18:24Z",
+      "pushed_at": "2026-07-06T13:12:06Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 14,
+      "commits_30d": 19,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "3f3f529f26eb884fff39e6170bc77fc324bdfe81",
-        "short_sha": "3f3f529",
-        "message": "feat(lessons): teaching quizzes, next-lesson flow, IA consolidation (…",
+        "sha": "ef37d4950dae28db1d7a155319b7a7db87053f09",
+        "short_sha": "ef37d49",
+        "message": "feat(lessons/tours): slower default, tours hold at the end, cleaner s…",
         "type": "feat",
-        "date": "2026-07-03T07:18:24Z",
-        "url": "https://github.com/abgnydn/neuropulse/commit/3f3f529f26eb884fff39e6170bc77fc324bdfe81",
-        "additions": 209,
-        "deletions": 57
+        "date": "2026-07-06T13:12:06Z",
+        "url": "https://github.com/abgnydn/neuropulse/commit/ef37d4950dae28db1d7a155319b7a7db87053f09",
+        "additions": 93,
+        "deletions": 12
       }
     },
     {
@@ -282,20 +283,20 @@
         "tensor-networks",
         "typescript"
       ],
-      "pushed_at": "2026-07-02T08:33:12Z",
+      "pushed_at": "2026-07-06T11:28:05Z",
       "default_branch": "main",
       "latest_tag": "v0.12.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
-        "short_sha": "5f6c436",
-        "message": "Cost-aware (LPT) swarm scheduling — throughput's first clear win (#3)",
-        "type": "other",
-        "date": "2026-06-25T03:24:20Z",
-        "url": "https://github.com/abgnydn/webgpu-q/commit/5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
-        "additions": 380,
-        "deletions": 0
+        "sha": "a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df",
+        "short_sha": "a6bf89c",
+        "message": "feat(learn): interactive education wedge — \"why is water special?\" (4…",
+        "type": "feat",
+        "date": "2026-07-06T11:27:59Z",
+        "url": "https://github.com/abgnydn/webgpu-q/commit/a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df",
+        "additions": 1227,
+        "deletions": 23
       }
     },
     {
@@ -337,20 +338,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-04T21:01:59Z",
+      "pushed_at": "2026-07-06T18:06:45Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "4e01700f28e0c1b88b336641180888352a7cc99f",
-        "short_sha": "4e01700",
-        "message": "chore(portfolio): daily sync 2026-07-04",
+        "sha": "05a91a8c996f9cd6f04da4396e5894ba72fd1666",
+        "short_sha": "05a91a8",
+        "message": "chore(portfolio): daily sync 2026-07-05",
         "type": "chore",
-        "date": "2026-07-04T21:01:58Z",
-        "url": "https://github.com/abgnydn/markview/commit/4e01700f28e0c1b88b336641180888352a7cc99f",
-        "additions": 28,
-        "deletions": 26
+        "date": "2026-07-05T21:05:31Z",
+        "url": "https://github.com/abgnydn/markview/commit/05a91a8c996f9cd6f04da4396e5894ba72fd1666",
+        "additions": 31,
+        "deletions": 28
       }
     },
     {
@@ -424,20 +425,20 @@
       "language_color": "#e34c26",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-07-03T08:20:02Z",
+      "pushed_at": "2026-07-06T07:19:14Z",
       "default_branch": "master",
-      "latest_tag": "v0.4.1",
-      "commits_30d": 20,
+      "latest_tag": "v0.4.2",
+      "commits_30d": 22,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "9e70e82f5ede574788a79f0d447c7572268332e1",
-        "short_sha": "9e70e82",
-        "message": "Add contributor call: Turkish LinkedIn draft + README contributing se…",
+        "sha": "4d74c50122b0d20080b1f3fedf008665298e24b3",
+        "short_sha": "4d74c50",
+        "message": "Regenerate bench.json from committed code+data (closes reproducibilit…",
         "type": "other",
-        "date": "2026-07-03T08:19:56Z",
-        "url": "https://github.com/abgnydn/iz/commit/9e70e82f5ede574788a79f0d447c7572268332e1",
-        "additions": 90,
-        "deletions": 5
+        "date": "2026-07-06T06:22:43Z",
+        "url": "https://github.com/abgnydn/iz/commit/4d74c50122b0d20080b1f3fedf008665298e24b3",
+        "additions": 114,
+        "deletions": 114
       }
     },
     {
@@ -753,7 +754,7 @@
       "language_color": "#1a5e9a",
       "stars": 3,
       "topics": [],
-      "pushed_at": "2026-07-02T07:20:20Z",
+      "pushed_at": "2026-07-06T12:59:18Z",
       "default_branch": "main",
       "latest_tag": "v0.7.0",
       "commits_30d": 50,
@@ -2072,6 +2073,162 @@
     }
   ],
   "commits": [
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "ef37d4950dae28db1d7a155319b7a7db87053f09",
+      "short_sha": "ef37d49",
+      "message": "feat(lessons/tours): slower default, tours hold at the end, cleaner s…",
+      "type": "feat",
+      "date": "2026-07-06T13:12:06Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/ef37d4950dae28db1d7a155319b7a7db87053f09",
+      "additions": 93,
+      "deletions": 12
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df",
+      "short_sha": "a6bf89c",
+      "message": "feat(learn): interactive education wedge — \"why is water special?\" (4…",
+      "type": "feat",
+      "date": "2026-07-06T11:27:59Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df",
+      "additions": 1227,
+      "deletions": 23
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "6cd0397dfb650015ba2864047268bf165b0e56b6",
+      "short_sha": "6cd0397",
+      "message": "Benchmark honesty (PySCF comparison is real) + WASM-SIMD GEMM lever (…",
+      "type": "other",
+      "date": "2026-07-06T11:27:54Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/6cd0397dfb650015ba2864047268bf165b0e56b6",
+      "additions": 1740,
+      "deletions": 1
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "60818b265fa442f152cf7bdef623c23c032ecb1f",
+      "short_sha": "60818b2",
+      "message": "feat(screen): headless batch molecular screening + window.__webgpuq.s…",
+      "type": "feat",
+      "date": "2026-07-06T11:26:29Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/60818b265fa442f152cf7bdef623c23c032ecb1f",
+      "additions": 303,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-q",
+      "name": "webgpu-q",
+      "language": "TypeScript",
+      "sha": "9e4143d1f4a2cc18785792a975f7b6cd6b075396",
+      "short_sha": "9e4143d",
+      "message": "Rigor-hardening: fix CCSD false-convergence + swarm peer-death hang (#4)",
+      "type": "other",
+      "date": "2026-07-06T11:26:25Z",
+      "url": "https://github.com/abgnydn/webgpu-q/commit/9e4143d1f4a2cc18785792a975f7b6cd6b075396",
+      "additions": 372,
+      "deletions": 7
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "08404712e9c4f84f4d6a51d0dc09ce42380f635b",
+      "short_sha": "0840471",
+      "message": "feat(lessons): completion share card — canvas PNG, real tensors as th…",
+      "type": "feat",
+      "date": "2026-07-06T07:56:41Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/08404712e9c4f84f4d6a51d0dc09ce42380f635b",
+      "additions": 137,
+      "deletions": 2
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "5faefc7747b6f453f9431813d4c2a0b8570e470b",
+      "short_sha": "5faefc7",
+      "message": "feat(demo): recording gallery + pre-recorded ablation + token deep-li…",
+      "type": "feat",
+      "date": "2026-07-06T07:04:13Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/5faefc7747b6f453f9431813d4c2a0b8570e470b",
+      "additions": 221,
+      "deletions": 12
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "4d74c50122b0d20080b1f3fedf008665298e24b3",
+      "short_sha": "4d74c50",
+      "message": "Regenerate bench.json from committed code+data (closes reproducibilit…",
+      "type": "other",
+      "date": "2026-07-06T06:22:43Z",
+      "url": "https://github.com/abgnydn/iz/commit/4d74c50122b0d20080b1f3fedf008665298e24b3",
+      "additions": 114,
+      "deletions": 114
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "54436b3da0dc166bf59dca7829f2d705f9b91c52",
+      "short_sha": "54436b3",
+      "message": "feat(tours): story-style step progress segments in the transport bar …",
+      "type": "feat",
+      "date": "2026-07-06T06:11:27Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/54436b3da0dc166bf59dca7829f2d705f9b91c52",
+      "additions": 86,
+      "deletions": 11
+    },
+    {
+      "slug": "iz",
+      "name": "iz",
+      "language": "HTML",
+      "sha": "7b2f736d484886a15cb389596597d594624417ae",
+      "short_sha": "7b2f736",
+      "message": "Cut correction-era footnotes from TL;DR + Özet",
+      "type": "other",
+      "date": "2026-07-06T06:10:30Z",
+      "url": "https://github.com/abgnydn/iz/commit/7b2f736d484886a15cb389596597d594624417ae",
+      "additions": 3,
+      "deletions": 6
+    },
+    {
+      "slug": "neuropulse",
+      "name": "neuropulse",
+      "language": "TypeScript",
+      "sha": "cdc2468f9ad9fcd9a21f4488eadabb0d40a5b368",
+      "short_sha": "cdc2468",
+      "message": "fix(ux): tour camera actually flies + demo resume + boot/icon polish …",
+      "type": "fix",
+      "date": "2026-07-06T05:37:16Z",
+      "url": "https://github.com/abgnydn/neuropulse/commit/cdc2468f9ad9fcd9a21f4488eadabb0d40a5b368",
+      "additions": 83,
+      "deletions": 40
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "05a91a8c996f9cd6f04da4396e5894ba72fd1666",
+      "short_sha": "05a91a8",
+      "message": "chore(portfolio): daily sync 2026-07-05",
+      "type": "chore",
+      "date": "2026-07-05T21:05:31Z",
+      "url": "https://github.com/abgnydn/markview/commit/05a91a8c996f9cd6f04da4396e5894ba72fd1666",
+      "additions": 31,
+      "deletions": 28
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4039,19 +4196,6 @@
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
-      "sha": "5fcb55dc3e81c78f87bdf1d548f2636144175cfd",
-      "short_sha": "5fcb55d",
-      "message": "perf(atmosphere): cut the cost of the paper, ambient, and images",
-      "type": "perf",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/5fcb55dc3e81c78f87bdf1d548f2636144175cfd",
-      "additions": 25,
-      "deletions": 23
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
       "sha": "02f1cda9300a15539eed977d57ec5f21d169102f",
       "short_sha": "02f1cda",
       "message": "perf(viewer): kill file-change lag — skip view-transition over heavy …",
@@ -4439,19 +4583,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "15dd280cd5fb10e4862a3533b07d566fed65a36f",
-      "short_sha": "15dd280",
-      "message": "feat(site): surface the swarm on the landing page — nav, card, hero t…",
-      "type": "feat",
-      "date": "2026-06-09T11:49:18Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/15dd280cd5fb10e4862a3533b07d566fed65a36f",
-      "additions": 52,
-      "deletions": 5
-    },
-    {
       "slug": "veil",
       "name": "veil",
       "language": "Rust",
@@ -4530,19 +4661,6 @@
       "deletions": 12
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "d79299cf9b2544466d406fa26c51fa013099789b",
-      "short_sha": "d79299c",
-      "message": "Merge pull request #1 from abgnydn/cross-machine-gpu-batch",
-      "type": "other",
-      "date": "2026-06-09T10:27:23Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/d79299cf9b2544466d406fa26c51fa013099789b",
-      "additions": 2064,
-      "deletions": 87
-    },
-    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -4608,19 +4726,6 @@
       "deletions": 1
     },
     {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "08479da033265dc9b1503ed7bad5db65eb5ebe0a",
-      "short_sha": "08479da",
-      "message": "feat(chem): runUMP2Auto — DF-UMP2 completes the {R,U}×{HF,DFT,MP2} ma…",
-      "type": "feat",
-      "date": "2026-06-09T09:44:07Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/08479da033265dc9b1503ed7bad5db65eb5ebe0a",
-      "additions": 189,
-      "deletions": 0
-    },
-    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -4632,19 +4737,6 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/ceecc2ef7638bbe6a5dc6f57228a496ec0262ac3",
       "additions": 27,
       "deletions": 3
-    },
-    {
-      "slug": "webgpu-q",
-      "name": "webgpu-q",
-      "language": "TypeScript",
-      "sha": "50ad6de14c30438a6bc8ec0faabc7883f8cde26a",
-      "short_sha": "50ad6de",
-      "message": "feat(chem): runMP2Auto — size-gated DF-MP2, correlation energy at any…",
-      "type": "feat",
-      "date": "2026-06-09T09:31:50Z",
-      "url": "https://github.com/abgnydn/webgpu-q/commit/50ad6de14c30438a6bc8ec0faabc7883f8cde26a",
-      "additions": 122,
-      "deletions": 1
     },
     {
       "slug": "webgpu-dna",
@@ -6298,19 +6390,6 @@
       "deletions": 0
     },
     {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "21205aa65efc48d612ffaead2be1ba4ff9dbc6ab",
-      "short_sha": "21205aa",
-      "message": "v0.1.1: EnMAP scene index + Beirle NOx cross-match + conformal CI",
-      "type": "other",
-      "date": "2026-05-28T07:57:35Z",
-      "url": "https://github.com/abgnydn/iz/commit/21205aa65efc48d612ffaead2be1ba4ff9dbc6ab",
-      "additions": 491,
-      "deletions": 0
-    },
-    {
       "slug": "postnet-cf",
       "name": "postnet-cf",
       "language": "JavaScript",
@@ -6322,19 +6401,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/4c6cb264703f3f5ed072b33f277c229631330b03",
       "additions": 984,
       "deletions": 13
-    },
-    {
-      "slug": "iz",
-      "name": "iz",
-      "language": "HTML",
-      "sha": "0fd690a4dbae108f4050222e7b461d945ef9f5c5",
-      "short_sha": "0fd690a",
-      "message": "feat: S5P NO₂ pipeline + honest negative result",
-      "type": "feat",
-      "date": "2026-05-27T11:48:12Z",
-      "url": "https://github.com/abgnydn/iz/commit/0fd690a4dbae108f4050222e7b461d945ef9f5c5",
-      "additions": 1239,
-      "deletions": 507
     },
     {
       "slug": "quill",
@@ -8506,71 +8572,6 @@
       "url": "https://github.com/abgnydn/neuropulse/commit/ae617dd6884279c06aae5c69bf3b8682460c95ed",
       "additions": 635,
       "deletions": 1
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "706f1a7d75df688503dd9889c2d5f985eea43ce0",
-      "short_sha": "706f1a7",
-      "message": "feat(butterfly): v2.5 — push to research state (4 transcripts, picker…",
-      "type": "feat",
-      "date": "2026-05-12T10:02:01Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/706f1a7d75df688503dd9889c2d5f985eea43ce0",
-      "additions": 270,
-      "deletions": 49
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "4f6d81e2c1d428632478b2db7fef0a2ed3ae4a96",
-      "short_sha": "4f6d81e",
-      "message": "fix(readme): correct mode taxonomy — 5 views + 4 overlays, not 7 modes",
-      "type": "fix",
-      "date": "2026-05-12T09:44:45Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/4f6d81e2c1d428632478b2db7fef0a2ed3ae4a96",
-      "additions": 162,
-      "deletions": 156
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "d34756525c7a3749b09b6c26ba6fdc9bed5b62d4",
-      "short_sha": "d347565",
-      "message": "docs(readme): accurate Butterfly description after reading the source",
-      "type": "docs",
-      "date": "2026-05-12T09:27:57Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/d34756525c7a3749b09b6c26ba6fdc9bed5b62d4",
-      "additions": 17,
-      "deletions": 3
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "63311b23eb181b2ea261a614911be38db3a11d5f",
-      "short_sha": "63311b2",
-      "message": "fix(readme): stack card overflow + correct Butterfly description",
-      "type": "fix",
-      "date": "2026-05-12T09:17:46Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/63311b23eb181b2ea261a614911be38db3a11d5f",
-      "additions": 63,
-      "deletions": 63
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "5a08431efd21918026e8cac753b63bf8465648a8",
-      "short_sha": "5a08431",
-      "message": "docs(readme): redesigned stack quadrants + panel inventory + controls…",
-      "type": "docs",
-      "date": "2026-05-12T09:13:29Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/5a08431efd21918026e8cac753b63bf8465648a8",
-      "additions": 837,
-      "deletions": 42
     }
   ],
   "errors": []

@@ -1,5 +1,10 @@
 # Commits — iz
 
+## 2026-07-06
+
+- `06:22` **Regenerate bench.json from committed code+data (closes reproducibilit…** — +114 −114 — [`4d74c50`](https://github.com/abgnydn/iz/commit/4d74c50122b0d20080b1f3fedf008665298e24b3)
+- `06:10` **Cut correction-era footnotes from TL;DR + Özet** — +3 −6 — [`7b2f736`](https://github.com/abgnydn/iz/commit/7b2f736d484886a15cb389596597d594624417ae)
+
 ## 2026-07-03
 
 - `08:19` **Add contributor call: Turkish LinkedIn draft + README contributing se…** — +90 −5 — [`9e70e82`](https://github.com/abgnydn/iz/commit/9e70e82f5ede574788a79f0d447c7572268332e1)
@@ -68,8 +73,3 @@
 - `14:56` **v0.1.2: per-facility pages + audit summaries + claim form + accurate map** — +19967 −863 — [`d4f8ee2`](https://github.com/abgnydn/iz/commit/d4f8ee2dc44d77654b364b199700f98bbc7b8286)
 - `08:03` **outreach: EnMAP access how-to (v0.2 unblock)** — +130 −0 — [`01806b1`](https://github.com/abgnydn/iz/commit/01806b190003cbd632e34d01dd461171869a032c)
 - `07:58` **data: ship EnMAP scene index + Beirle NOx catalog + S5P aggregated** — +6069 −0 — [`5193e3f`](https://github.com/abgnydn/iz/commit/5193e3ff5d33aaaac81d2ebac525d0ebda558c78)
-- `07:57` **v0.1.1: EnMAP scene index + Beirle NOx cross-match + conformal CI** — +491 −0 — [`21205aa`](https://github.com/abgnydn/iz/commit/21205aa65efc48d612ffaead2be1ba4ff9dbc6ab)
-
-## 2026-05-27
-
-- `11:48` **feat: S5P NO₂ pipeline + honest negative result** — +1239 −507 — [`0fd690a`](https://github.com/abgnydn/iz/commit/0fd690a4dbae108f4050222e7b461d945ef9f5c5)
