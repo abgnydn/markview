@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-06T21:40:21.344Z",
+  "generated_at": "2026-07-07T21:27:48.887Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1659,
+  "activity_90d_total": 1636,
   "activity_90d": {
-    "2026-04-08": 24,
     "2026-04-09": 8,
     "2026-04-10": 4,
     "2026-04-11": 6,
@@ -78,7 +77,7 @@
     "2026-07-03": 10,
     "2026-07-04": 1,
     "2026-07-05": 1,
-    "2026-07-06": 11
+    "2026-07-06": 12
   },
   "categories": {
     "llm-inference": {
@@ -338,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-06T18:06:45Z",
+      "pushed_at": "2026-07-06T21:40:22Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "05a91a8c996f9cd6f04da4396e5894ba72fd1666",
-        "short_sha": "05a91a8",
-        "message": "chore(portfolio): daily sync 2026-07-05",
+        "sha": "88280405d785fc28c1e48fcda103c050e0a8edec",
+        "short_sha": "8828040",
+        "message": "chore(portfolio): daily sync 2026-07-06",
         "type": "chore",
-        "date": "2026-07-05T21:05:31Z",
-        "url": "https://github.com/abgnydn/markview/commit/05a91a8c996f9cd6f04da4396e5894ba72fd1666",
-        "additions": 31,
-        "deletions": 28
+        "date": "2026-07-06T21:40:21Z",
+        "url": "https://github.com/abgnydn/markview/commit/88280405d785fc28c1e48fcda103c050e0a8edec",
+        "additions": 284,
+        "deletions": 227
       }
     },
     {
@@ -2073,6 +2072,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "88280405d785fc28c1e48fcda103c050e0a8edec",
+      "short_sha": "8828040",
+      "message": "chore(portfolio): daily sync 2026-07-06",
+      "type": "chore",
+      "date": "2026-07-06T21:40:21Z",
+      "url": "https://github.com/abgnydn/markview/commit/88280405d785fc28c1e48fcda103c050e0a8edec",
+      "additions": 284,
+      "deletions": 227
+    },
     {
       "slug": "neuropulse",
       "name": "neuropulse",
@@ -4191,19 +4203,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "02f1cda9300a15539eed977d57ec5f21d169102f",
-      "short_sha": "02f1cda",
-      "message": "perf(viewer): kill file-change lag — skip view-transition over heavy …",
-      "type": "perf",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/02f1cda9300a15539eed977d57ec5f21d169102f",
-      "additions": 13,
-      "deletions": 2
     },
     {
       "slug": "markview",

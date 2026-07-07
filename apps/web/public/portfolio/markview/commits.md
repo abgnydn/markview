@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-06
+
+- `21:40` **chore(portfolio): daily sync 2026-07-06** — +284 −227 — [`8828040`](https://github.com/abgnydn/markview/commit/88280405d785fc28c1e48fcda103c050e0a8edec)
+
 ## 2026-07-05
 
 - `21:05` **chore(portfolio): daily sync 2026-07-05** — +31 −28 — [`05a91a8`](https://github.com/abgnydn/markview/commit/05a91a8c996f9cd6f04da4396e5894ba72fd1666)
@@ -120,4 +124,3 @@
 - `05:42` **debug(webgpu): surface particle init result to the on-screen toast** — +10 −0 — [`9986472`](https://github.com/abgnydn/markview/commit/9986472f82a897727da178d72f5e55b19f08435e)
 - `05:42` **fix: vermillion lede drop-cap + graceful WebGPU-particle fallback** — +19 −5 — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
 - `05:42` **feat(world): aged-parchment page cards in the 3D world (not basic cards)** — +63 −16 — [`8bd448a`](https://github.com/abgnydn/markview/commit/8bd448a906b33402975340f1fa0fb888b6f028a4)
-- `05:42` **perf(viewer): kill file-change lag — skip view-transition over heavy …** — +13 −2 — [`02f1cda`](https://github.com/abgnydn/markview/commit/02f1cda9300a15539eed977d57ec5f21d169102f)
