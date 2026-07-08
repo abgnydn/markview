@@ -23,4 +23,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix(webgpu): particles were fully transparent — read alpha as a verte… — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
 - **fix**: fix(embeddings): batch model inputs to stop the ONNX integer-overflow… — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)
 - **fix**: fix: vermillion lede drop-cap + graceful WebGPU-particle fallback — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
-- **feat**: feat(world): aged-parchment page cards in the 3D world (not basic cards) — [`8bd448a`](https://github.com/abgnydn/markview/commit/8bd448a906b33402975340f1fa0fb888b6f028a4)
