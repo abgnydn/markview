@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-08
+
+- `21:11` **chore(portfolio): daily sync 2026-07-08** — +31 −29 — [`e610676`](https://github.com/abgnydn/markview/commit/e610676c01f2fbc0df98fd415d212c700abd4750)
+
 ## 2026-07-07
 
 - `21:27` **chore(portfolio): daily sync 2026-07-07** — +28 −26 — [`48e07d9`](https://github.com/abgnydn/markview/commit/48e07d952c6a5c0d6673946915fa6ce953d8d325)
@@ -126,4 +130,3 @@
 - `05:42` **fix(webgpu): particles were fully transparent — read alpha as a verte…** — +6 −1 — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
 - `05:42` **fix(embeddings): batch model inputs to stop the ONNX integer-overflow…** — +29 −9 — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)
 - `05:42` **debug(webgpu): surface particle init result to the on-screen toast** — +10 −0 — [`9986472`](https://github.com/abgnydn/markview/commit/9986472f82a897727da178d72f5e55b19f08435e)
-- `05:42` **fix: vermillion lede drop-cap + graceful WebGPU-particle fallback** — +19 −5 — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
