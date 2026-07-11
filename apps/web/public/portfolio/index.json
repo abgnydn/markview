@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-10T21:09:15.424Z",
+  "generated_at": "2026-07-11T20:54:12.532Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1620,
+  "activity_90d_total": 1611,
   "activity_90d": {
-    "2026-04-12": 10,
     "2026-04-14": 7,
     "2026-04-15": 15,
     "2026-04-21": 31,
@@ -76,7 +75,8 @@
     "2026-07-05": 1,
     "2026-07-06": 12,
     "2026-07-07": 1,
-    "2026-07-08": 1
+    "2026-07-08": 1,
+    "2026-07-10": 1
   },
   "categories": {
     "llm-inference": {
@@ -336,20 +336,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-08T21:11:44Z",
+      "pushed_at": "2026-07-10T21:09:16Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "e610676c01f2fbc0df98fd415d212c700abd4750",
-        "short_sha": "e610676",
-        "message": "chore(portfolio): daily sync 2026-07-08",
+        "sha": "a9589ce2675406f34b155acde5a23103d8753ad6",
+        "short_sha": "a9589ce",
+        "message": "chore(portfolio): daily sync 2026-07-10",
         "type": "chore",
-        "date": "2026-07-08T21:11:42Z",
-        "url": "https://github.com/abgnydn/markview/commit/e610676c01f2fbc0df98fd415d212c700abd4750",
-        "additions": 31,
-        "deletions": 29
+        "date": "2026-07-10T21:09:15Z",
+        "url": "https://github.com/abgnydn/markview/commit/a9589ce2675406f34b155acde5a23103d8753ad6",
+        "additions": 33,
+        "deletions": 32
       }
     },
     {
@@ -2071,6 +2071,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "a9589ce2675406f34b155acde5a23103d8753ad6",
+      "short_sha": "a9589ce",
+      "message": "chore(portfolio): daily sync 2026-07-10",
+      "type": "chore",
+      "date": "2026-07-10T21:09:15Z",
+      "url": "https://github.com/abgnydn/markview/commit/a9589ce2675406f34b155acde5a23103d8753ad6",
+      "additions": 33,
+      "deletions": 32
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4227,19 +4240,6 @@
       "date": "2026-06-12T05:55:28Z",
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
-      "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "9986472f82a897727da178d72f5e55b19f08435e",
-      "short_sha": "9986472",
-      "message": "debug(webgpu): surface particle init result to the on-screen toast",
-      "type": "other",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/9986472f82a897727da178d72f5e55b19f08435e",
-      "additions": 10,
       "deletions": 0
     },
     {
