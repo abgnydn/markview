@@ -21,4 +21,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix(deps): bump vitest 2→4 to clear the critical UI-server advisory — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
 - **feat**: feat(projects): 3d constellation route + per-slug & OG prerender — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
 - **fix**: fix(webgpu): particles were fully transparent — read alpha as a verte… — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
-- **fix**: fix(embeddings): batch model inputs to stop the ONNX integer-overflow… — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)

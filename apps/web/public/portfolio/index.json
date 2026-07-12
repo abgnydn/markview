@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-11T20:54:12.532Z",
+  "generated_at": "2026-07-12T20:55:04.681Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1611,
+  "activity_90d_total": 1612,
   "activity_90d": {
     "2026-04-14": 7,
     "2026-04-15": 15,
@@ -76,7 +76,8 @@
     "2026-07-06": 12,
     "2026-07-07": 1,
     "2026-07-08": 1,
-    "2026-07-10": 1
+    "2026-07-10": 1,
+    "2026-07-11": 1
   },
   "categories": {
     "llm-inference": {
@@ -336,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-10T21:09:16Z",
+      "pushed_at": "2026-07-11T20:54:13Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
-      "commits_30d": 50,
+      "commits_30d": 43,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "a9589ce2675406f34b155acde5a23103d8753ad6",
-        "short_sha": "a9589ce",
-        "message": "chore(portfolio): daily sync 2026-07-10",
+        "sha": "2cea401eb75d28411e797102156d8c8051c6e174",
+        "short_sha": "2cea401",
+        "message": "chore(portfolio): daily sync 2026-07-11",
         "type": "chore",
-        "date": "2026-07-10T21:09:15Z",
-        "url": "https://github.com/abgnydn/markview/commit/a9589ce2675406f34b155acde5a23103d8753ad6",
-        "additions": 33,
-        "deletions": 32
+        "date": "2026-07-11T20:54:12Z",
+        "url": "https://github.com/abgnydn/markview/commit/2cea401eb75d28411e797102156d8c8051c6e174",
+        "additions": 29,
+        "deletions": 26
       }
     },
     {
@@ -2071,6 +2072,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "2cea401eb75d28411e797102156d8c8051c6e174",
+      "short_sha": "2cea401",
+      "message": "chore(portfolio): daily sync 2026-07-11",
+      "type": "chore",
+      "date": "2026-07-11T20:54:12Z",
+      "url": "https://github.com/abgnydn/markview/commit/2cea401eb75d28411e797102156d8c8051c6e174",
+      "additions": 29,
+      "deletions": 26
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4241,19 +4255,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "499181c411fe849bec0d343ed5f2f3501787397c",
-      "short_sha": "499181c",
-      "message": "fix(embeddings): batch model inputs to stop the ONNX integer-overflow…",
-      "type": "fix",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c",
-      "additions": 29,
-      "deletions": 9
     },
     {
       "slug": "markview",

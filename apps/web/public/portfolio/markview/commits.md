@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-11
+
+- `20:54` **chore(portfolio): daily sync 2026-07-11** — +29 −26 — [`2cea401`](https://github.com/abgnydn/markview/commit/2cea401eb75d28411e797102156d8c8051c6e174)
+
 ## 2026-07-10
 
 - `21:09` **chore(portfolio): daily sync 2026-07-10** — +33 −32 — [`a9589ce`](https://github.com/abgnydn/markview/commit/a9589ce2675406f34b155acde5a23103d8753ad6)
@@ -132,4 +136,3 @@
 - `05:42` **chore(repo): reconcile to web + desktop; drop monorepo-era fossils** — +417 −1424 — [`4bee0df`](https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d)
 - `05:42` **chore(atmosphere): shelve the non-functional WebGPU particle backend** — +11 −32 — [`d41847d`](https://github.com/abgnydn/markview/commit/d41847d30a6f204e2800b5d7d52e580b6625d4a8)
 - `05:42` **fix(webgpu): particles were fully transparent — read alpha as a verte…** — +6 −1 — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
-- `05:42` **fix(embeddings): batch model inputs to stop the ONNX integer-overflow…** — +29 −9 — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)
