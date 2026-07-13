@@ -1,5 +1,9 @@
 # Commits — butterfly
 
+## 2026-07-13
+
+- `06:06` **test: add reproducibility guard for the two pure-JS rows** — +33 −1 — [`9912540`](https://github.com/abgnydn/butterfly/commit/99125408fe6a8f02534efadc78205108599bc7bf)
+
 ## 2026-06-02
 
 - `07:29` **docs: wire Zenodo DOI 10.5281/zenodo.20505472 into CITATION.cff + REA…** — +18 −1 — [`54663c1`](https://github.com/abgnydn/butterfly/commit/54663c18252945c7930502cf7a7914bce5f87814)

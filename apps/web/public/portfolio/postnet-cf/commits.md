@@ -1,5 +1,10 @@
 # Commits — postnet-cf
 
+## 2026-07-13
+
+- `08:18` **docs(ntk): add live-demo link to HF model card** — +4 −0 — [`45a777f`](https://github.com/abgnydn/postnet-cf/commit/45a777fb762f13a68f5ff9d84a93e69801739e96)
+- `07:58` **feat(ntk): host Qwen ONNX on HF Hub — Phase 40 next-7a** — +284 −37 — [`7c33c25`](https://github.com/abgnydn/postnet-cf/commit/7c33c25dbacce111150fccbceccef5a453223579)
+
 ## 2026-06-09
 
 - `11:23` **results(ntk): lockstep run — η runaway + DO eviction; -0.30 is uncont…** — +377 −0 — [`f25502f`](https://github.com/abgnydn/postnet-cf/commit/f25502f2fe7d1e95d3d43c9b7b1b3c009b875a41)
@@ -77,5 +82,3 @@
 - `06:29` **phase 32: production finding — DO free-tier daily quota exhaustion** — +16 −1 — [`35a2c70`](https://github.com/abgnydn/postnet-cf/commit/35a2c70a983e29c1482b1b6c29542dd1f0f2bf09)
 - `06:23` **phase 31: tiered fraud-detection windows for char-LM** — +18 −9 — [`c19fddf`](https://github.com/abgnydn/postnet-cf/commit/c19fddffeccb66ceb912ca1a3f96e75ef126f6e8)
 - `06:10` **phase 30: CLAUDE.md with Resume here block** — +41 −0 — [`98d6d89`](https://github.com/abgnydn/postnet-cf/commit/98d6d89ae5e1ed83164eacbe1a5e429a84347a65)
-- `06:08` **phase 29: docs/README.md — entry point for the docs/ folder** — +23 −0 — [`1228723`](https://github.com/abgnydn/postnet-cf/commit/12287235d4a8da624e2173732277b3a475dd29eb)
-- `06:07` **phase 28: docs/OPEN_QUESTIONS.md — explicit research inventory** — +82 −0 — [`8e59a8b`](https://github.com/abgnydn/postnet-cf/commit/8e59a8b834540ab81c393ac0dfc014ef8328c6fa)
