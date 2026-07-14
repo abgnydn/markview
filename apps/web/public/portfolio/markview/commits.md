@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-13
+
+- `20:59` **chore(portfolio): daily sync 2026-07-13** — +100 −88 — [`9683026`](https://github.com/abgnydn/markview/commit/968302613eea3a24f3cfa5e488649f958aedb9fa)
+
 ## 2026-07-12
 
 - `20:55` **chore(portfolio): daily sync 2026-07-12** — +30 −27 — [`6d5104d`](https://github.com/abgnydn/markview/commit/6d5104d6b295339f46aa06e678bd95ee001ea0fe)
@@ -138,4 +142,3 @@
 - `06:04` **chore(brand): refresh OG card + README hero; drop image fossils** — +100 −5 — [`f1e7d2c`](https://github.com/abgnydn/markview/commit/f1e7d2c8a3fd7698c30776c960bcb23a6f2f4edc)
 - `05:55` **feat(projects): 3d constellation route + per-slug & OG prerender** — +2921 −0 — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
 - `05:42` **chore(repo): reconcile to web + desktop; drop monorepo-era fossils** — +417 −1424 — [`4bee0df`](https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d)
-- `05:42` **chore(atmosphere): shelve the non-functional WebGPU particle backend** — +11 −32 — [`d41847d`](https://github.com/abgnydn/markview/commit/d41847d30a6f204e2800b5d7d52e580b6625d4a8)

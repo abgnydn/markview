@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-13T20:59:32.723Z",
+  "generated_at": "2026-07-14T21:03:21.484Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1609,
+  "activity_90d_total": 1595,
   "activity_90d": {
-    "2026-04-15": 15,
     "2026-04-21": 31,
     "2026-04-22": 29,
     "2026-04-23": 2,
@@ -78,7 +77,7 @@
     "2026-07-10": 1,
     "2026-07-11": 1,
     "2026-07-12": 1,
-    "2026-07-13": 3
+    "2026-07-13": 4
   },
   "categories": {
     "llm-inference": {
@@ -338,20 +337,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-13T18:07:07Z",
+      "pushed_at": "2026-07-13T20:59:33Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 43,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "6d5104d6b295339f46aa06e678bd95ee001ea0fe",
-        "short_sha": "6d5104d",
-        "message": "chore(portfolio): daily sync 2026-07-12",
+        "sha": "968302613eea3a24f3cfa5e488649f958aedb9fa",
+        "short_sha": "9683026",
+        "message": "chore(portfolio): daily sync 2026-07-13",
         "type": "chore",
-        "date": "2026-07-12T20:55:04Z",
-        "url": "https://github.com/abgnydn/markview/commit/6d5104d6b295339f46aa06e678bd95ee001ea0fe",
-        "additions": 30,
-        "deletions": 27
+        "date": "2026-07-13T20:59:32Z",
+        "url": "https://github.com/abgnydn/markview/commit/968302613eea3a24f3cfa5e488649f958aedb9fa",
+        "additions": 100,
+        "deletions": 88
       }
     },
     {
@@ -2073,6 +2072,19 @@
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "968302613eea3a24f3cfa5e488649f958aedb9fa",
+      "short_sha": "9683026",
+      "message": "chore(portfolio): daily sync 2026-07-13",
+      "type": "chore",
+      "date": "2026-07-13T20:59:32Z",
+      "url": "https://github.com/abgnydn/markview/commit/968302613eea3a24f3cfa5e488649f958aedb9fa",
+      "additions": 100,
+      "deletions": 88
+    },
     {
       "slug": "postnet-cf",
       "name": "postnet-cf",
@@ -4308,19 +4320,6 @@
       "url": "https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2",
       "additions": 2921,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "d41847d30a6f204e2800b5d7d52e580b6625d4a8",
-      "short_sha": "d41847d",
-      "message": "chore(atmosphere): shelve the non-functional WebGPU particle backend",
-      "type": "chore",
-      "date": "2026-06-12T05:42:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/d41847d30a6f204e2800b5d7d52e580b6625d4a8",
-      "additions": 11,
-      "deletions": 32
     },
     {
       "slug": "markview",
