@@ -1,5 +1,15 @@
 # Commits — markview
 
+## 2026-07-15
+
+- `10:01` **ci(portfolio): surface health radar in nightly sync job summary** — +17 −0 — [`e4a54de`](https://github.com/abgnydn/markview/commit/e4a54def1f579c0ea94cf39a8ac7218877b0c186)
+- `10:01` **chore(portfolio): concept DOIs, project status, health radar** — +101 −5 — [`5981963`](https://github.com/abgnydn/markview/commit/59819639fb4bef2d7e4181fa986b80b519b96960)
+- `09:30` **fix(presentation): correct slide splitting for varied markdown** — +100 −18 — [`9cdbf56`](https://github.com/abgnydn/markview/commit/9cdbf565819a8c843fe514ec651ec73caa5a2526)
+
+## 2026-07-14
+
+- `21:03` **chore(portfolio): daily sync 2026-07-14** — +28 −26 — [`16e491a`](https://github.com/abgnydn/markview/commit/16e491a57f1d63a53c6f6973f693b21a8629a8c6)
+
 ## 2026-07-13
 
 - `20:59` **chore(portfolio): daily sync 2026-07-13** — +100 −88 — [`9683026`](https://github.com/abgnydn/markview/commit/968302613eea3a24f3cfa5e488649f958aedb9fa)
@@ -138,7 +148,3 @@
 
 - `21:50` **chore(portfolio): daily sync 2026-06-12** — +570 −673 — [`662580e`](https://github.com/abgnydn/markview/commit/662580e2d55b20939b8eb301c64ec25fe5777eb6)
 - `06:48` **fix(deps): bump vitest 2→4 to clear the critical UI-server advisory** — +31 −143 — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
-- `06:36` **ci: bump actions off deprecated Node 20 (checkout@v6, wrangler-action…** — +6 −6 — [`21e6e19`](https://github.com/abgnydn/markview/commit/21e6e19f0397eb736de11b1caddeba3ed3efb7da)
-- `06:04` **chore(brand): refresh OG card + README hero; drop image fossils** — +100 −5 — [`f1e7d2c`](https://github.com/abgnydn/markview/commit/f1e7d2c8a3fd7698c30776c960bcb23a6f2f4edc)
-- `05:55` **feat(projects): 3d constellation route + per-slug & OG prerender** — +2921 −0 — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
-- `05:42` **chore(repo): reconcile to web + desktop; drop monorepo-era fossils** — +417 −1424 — [`4bee0df`](https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d)
