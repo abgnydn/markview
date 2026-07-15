@@ -128,7 +128,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const collabIsHost = useCollabStore((s) => s.isHost);
   const syncedFiles = useCollabStore((s) => s.syncedFiles);
   const syncedActiveFileId = useCollabStore((s) => s.syncedActiveFileId);
-  const syncedActiveFileContent = useCollabStore((s) => s.syncedActiveFileContent);
 
   // ── Drag-and-drop state ──────────────────────────────────────────
   const [isDragging, setIsDragging] = useState(false);
@@ -245,7 +244,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
 
   // Guest mode: collab viewer without edit rights
   const isGuestMode = collabIsActive && !collabIsHost;
-  const effectiveContent = isGuestMode ? syncedActiveFileContent : activeFileContent;
   const activeFile = files.find((f) => f.id === activeFileId);
   const effectiveActiveFile = isGuestMode
     ? syncedFiles.find((f) => f.id === syncedActiveFileId)
@@ -491,10 +489,10 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       <SearchDialog />
 
       {/* Overlays */}
-      {showPresentation && effectiveContent && (
+      {showPresentation && renderedHtml && (
         <Suspense fallback={null}>
           <PresentationMode
-            html={renderedHtml || effectiveContent}
+            html={renderedHtml}
             onClose={() => setShowPresentation(false)}
           />
         </Suspense>
