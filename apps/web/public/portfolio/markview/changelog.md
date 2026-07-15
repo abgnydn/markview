@@ -19,4 +19,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **feat**: feat(presentation): responsive deck layout for narrow + touch screens — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
 - **fix**: fix(editor): paste, slide fill, html export, new-file menu, dropdown … — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
 - **feat**: feat(presentation): rebuild presentation mode into a full deck engine — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
-- **fix**: fix(deps): bump vitest 2→4 to clear the critical UI-server advisory — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
