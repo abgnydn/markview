@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import type { TocHeading } from '@/lib/markdown/pipeline';
 
@@ -21,6 +21,12 @@ export function useViewerState() {
   // ── Derived viewer data ─────────────────────────────────────────────
   const [headings, setHeadings] = useState<TocHeading[]>([]);
   const [renderedHtml, setRenderedHtml] = useState('');
+
+  // Presentation mode builds its deck from `renderedHtml`. Clear it on file
+  // switch so a deck can never be assembled from the *previous* file's HTML
+  // while the new file is still rendering; MarkdownRenderer repopulates it on
+  // the next tick.
+  useEffect(() => { setRenderedHtml(''); }, [activeFileId]);
 
   // ── Stable callbacks ────────────────────────────────────────────────
   const handleHeadingsChange = useCallback((h: TocHeading[]) => {

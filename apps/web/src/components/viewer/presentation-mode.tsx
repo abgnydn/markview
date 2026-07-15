@@ -6,6 +6,7 @@ import {
   SkipBack, SkipForward, Eraser, Undo2, Highlighter, Download, Repeat, BarChart3, Captions,
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import { splitSlides } from '@/lib/markdown/slide-split';
 
 interface PresentationModeProps {
   html: string;
@@ -111,18 +112,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const presenterWin = useRef<Window | null>(null);
   const trailId = useRef(0);
 
-  const rawSlides = useMemo(() => {
-    const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
-    const container = doc.body.firstElementChild!;
-    const out: string[] = [];
-    let cur = '';
-    Array.from(container.children).forEach((el) => {
-      if (el.tagName === 'H1' || el.tagName === 'H2') { if (cur.trim()) out.push(cur); cur = el.outerHTML; }
-      else cur += el.outerHTML;
-    });
-    if (cur.trim()) out.push(cur);
-    return out.length > 0 ? out : [`<div>${html}</div>`];
-  }, [html]);
+  const rawSlides = useMemo(() => splitSlides(html), [html]);
 
   const baseParsed = useMemo(() => rawSlides.map(parseSlide), [rawSlides]);
   const baseSections = useMemo(() => rawSlides.map((s) => /^<h1/i.test(s.trim())), [rawSlides]);
@@ -299,7 +289,10 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     const avail = slide.clientHeight - parseFloat(cs.paddingTop || '0') - parseFloat(cs.paddingBottom || '0');
     const natural = body.scrollHeight;
     if (natural < 1 || avail < 1) return;
-    const scale = Math.max(0.6, Math.min(1.45, avail / natural));
+    // Scale down far enough that dense slides fit inside the (overflow:hidden)
+    // card instead of being clipped; only enlarge gently so sparse slides
+    // don't look blown-up/blurry.
+    const scale = Math.max(0.45, Math.min(1.15, avail / natural));
     if (Math.abs(scale - 1) > 0.04) {
       body.style.transformOrigin = 'center center';
       body.style.transform = `scale(${scale})`;
