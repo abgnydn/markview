@@ -2,6 +2,7 @@
 
 ## 2026-07-15
 
+- `21:03` **chore(portfolio): daily sync 2026-07-15** — +48 −49 — [`6cc678e`](https://github.com/abgnydn/markview/commit/6cc678ee31b427250e899aaebc490ccb532a73b7)
 - `10:03` **chore(portfolio): daily sync 2026-07-15** — +404 −118 — [`e95505b`](https://github.com/abgnydn/markview/commit/e95505b586ca810879fc5b48ced763f349789a2b)
 - `10:01` **ci(portfolio): surface health radar in nightly sync job summary** — +17 −0 — [`e4a54de`](https://github.com/abgnydn/markview/commit/e4a54def1f579c0ea94cf39a8ac7218877b0c186)
 - `10:01` **chore(portfolio): concept DOIs, project status, health radar** — +101 −5 — [`5981963`](https://github.com/abgnydn/markview/commit/59819639fb4bef2d7e4181fa986b80b519b96960)
@@ -144,7 +145,3 @@
 ## 2026-06-13
 
 - `21:20` **chore(portfolio): daily sync 2026-06-13** — +29 −30 — [`89c09bc`](https://github.com/abgnydn/markview/commit/89c09bcbd87e3bb6711c36e819ce292cfdee24ee)
-
-## 2026-06-12
-
-- `21:50` **chore(portfolio): daily sync 2026-06-12** — +570 −673 — [`662580e`](https://github.com/abgnydn/markview/commit/662580e2d55b20939b8eb301c64ec25fe5777eb6)
