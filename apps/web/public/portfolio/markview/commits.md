@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-07-18
+
+- `20:54` **chore(portfolio): daily sync 2026-07-18** — +69 −67 — [`fc39024`](https://github.com/abgnydn/markview/commit/fc390243b19842bf6c18dcdfc44b4b72e3a9fa25)
+
 ## 2026-07-17
 
 - `21:00` **chore(portfolio): daily sync 2026-07-17** — +70 −69 — [`086ac23`](https://github.com/abgnydn/markview/commit/086ac238fd53bef69c397f9d8d61edb36de7d9a9)
@@ -144,4 +148,3 @@
 ## 2026-06-15
 
 - `22:22` **chore(portfolio): daily sync 2026-06-15** — +240 −153 — [`cc2ac96`](https://github.com/abgnydn/markview/commit/cc2ac96dd8ae83cb89d00c46670a308484ec32e2)
-- `07:26` **feat(presentation): rebuild presentation mode into a full deck engine** — +1776 −84 — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
