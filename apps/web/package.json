@@ -59,7 +59,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.0.3",
     "@vitest/ui": "^4.1.8",
     "eslint": "^10.4.0",
     "jsdom": "^25.0.1",
