@@ -17,4 +17,3 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 - **fix**: fix(presentation): hide next-slide peek on laptop/middle screens — [`8961b01`](https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9)
 - **feat**: feat(atmosphere): lite mode — static painting, zero WebGL — [`bb9a9dd`](https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0)
 - **feat**: feat(presentation): responsive deck layout for narrow + touch screens — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
-- **fix**: fix(editor): paste, slide fill, html export, new-file menu, dropdown … — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
