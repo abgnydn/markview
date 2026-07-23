@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-22T21:12:56.387Z",
+  "generated_at": "2026-07-23T21:08:08.870Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1545,
+  "activity_90d_total": 1542,
   "activity_90d": {
-    "2026-04-24": 4,
     "2026-04-25": 12,
     "2026-04-26": 13,
     "2026-04-27": 5,
@@ -82,7 +81,8 @@
     "2026-07-18": 1,
     "2026-07-19": 1,
     "2026-07-20": 1,
-    "2026-07-21": 1
+    "2026-07-21": 1,
+    "2026-07-22": 1
   },
   "categories": {
     "llm-inference": {
@@ -286,7 +286,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 16,
+      "stale_days": 17,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505470"
@@ -335,7 +335,7 @@
       "pushed_at": "2026-07-06T11:28:05Z",
       "default_branch": "main",
       "latest_tag": "v0.12.0",
-      "commits_30d": 22,
+      "commits_30d": 5,
       "commits_synced": 50,
       "last_commit": {
         "sha": "a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df",
@@ -349,7 +349,7 @@
       },
       "status": "flagship",
       "open_issues": 27,
-      "stale_days": 16,
+      "stale_days": 17,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20494382"
@@ -393,20 +393,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-21T21:14:13Z",
+      "pushed_at": "2026-07-22T21:12:57Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
-      "commits_30d": 45,
+      "commits_30d": 34,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "fda7b4df8010d470105749ea5ba3d14423b4acbb",
-        "short_sha": "fda7b4d",
-        "message": "chore(portfolio): daily sync 2026-07-21",
+        "sha": "ec0d9271036ca3b56d41c87d43156ca23d299ed6",
+        "short_sha": "ec0d927",
+        "message": "chore(portfolio): daily sync 2026-07-22",
         "type": "chore",
-        "date": "2026-07-21T21:14:12Z",
-        "url": "https://github.com/abgnydn/markview/commit/fda7b4df8010d470105749ea5ba3d14423b4acbb",
-        "additions": 70,
-        "deletions": 67
+        "date": "2026-07-22T21:12:56Z",
+        "url": "https://github.com/abgnydn/markview/commit/ec0d9271036ca3b56d41c87d43156ca23d299ed6",
+        "additions": 68,
+        "deletions": 68
       },
       "status": "flagship",
       "open_issues": 0,
@@ -459,7 +459,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 9,
+      "stale_days": 10,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506887"
@@ -509,7 +509,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 16,
+      "stale_days": 17,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20496086"
@@ -555,7 +555,7 @@
       "pushed_at": "2026-06-25T03:44:30Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 15,
+      "commits_30d": 7,
       "commits_synced": 50,
       "last_commit": {
         "sha": "32406c88acc201694df83a4e22df64bf4391d380",
@@ -569,7 +569,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 27,
+      "stale_days": 28,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20838918"
@@ -620,7 +620,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 22,
+      "stale_days": 23,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -670,7 +670,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 68,
+      "stale_days": 69,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -722,7 +722,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 54,
+      "stale_days": 55,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -779,7 +779,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 57,
+      "stale_days": 58,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -829,7 +829,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 27,
+      "stale_days": 28,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -866,7 +866,7 @@
       "pushed_at": "2026-07-13T07:06:01Z",
       "default_branch": "main",
       "latest_tag": "v0.7.0",
-      "commits_30d": 15,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "2135979189ae01957cc8eee8efba4588011542f7",
@@ -880,7 +880,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 9,
+      "stale_days": 10,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506339"
@@ -928,7 +928,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 57,
+      "stale_days": 58,
       "live_ok": false,
       "has_citation": false,
       "citation_doi": null
@@ -988,7 +988,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 65,
+      "stale_days": 66,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1039,7 +1039,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 42,
+      "stale_days": 43,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1086,7 +1086,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 47,
+      "stale_days": 48,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": null
@@ -1134,7 +1134,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 9,
+      "stale_days": 10,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505472"
@@ -1186,7 +1186,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 22,
+      "stale_days": 23,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19344276"
@@ -1237,7 +1237,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 22,
+      "stale_days": 23,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -1288,7 +1288,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 27,
+      "stale_days": 28,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1338,7 +1338,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 27,
+      "stale_days": 28,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1388,7 +1388,7 @@
       },
       "status": "derivative",
       "open_issues": 0,
-      "stale_days": 54,
+      "stale_days": 55,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1437,7 +1437,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 54,
+      "stale_days": 55,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1486,7 +1486,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 62,
+      "stale_days": 63,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1536,7 +1536,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 63,
+      "stale_days": 64,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1586,7 +1586,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 64,
+      "stale_days": 65,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1635,7 +1635,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 64,
+      "stale_days": 65,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1683,7 +1683,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 64,
+      "stale_days": 65,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1733,7 +1733,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 64,
+      "stale_days": 65,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1783,7 +1783,7 @@
       },
       "status": "library",
       "open_issues": 1,
-      "stale_days": 68,
+      "stale_days": 69,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1832,7 +1832,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 79,
+      "stale_days": 80,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1896,7 +1896,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 79,
+      "stale_days": 80,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1955,7 +1955,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 79,
+      "stale_days": 80,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2005,7 +2005,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 79,
+      "stale_days": 80,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2055,7 +2055,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 79,
+      "stale_days": 80,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2105,7 +2105,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 86,
+      "stale_days": 87,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -2152,7 +2152,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 112,
+      "stale_days": 113,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2203,7 +2203,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 116,
+      "stale_days": 117,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2252,7 +2252,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 116,
+      "stale_days": 117,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2304,7 +2304,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 116,
+      "stale_days": 117,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2355,13 +2355,26 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 125,
+      "stale_days": 126,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "ec0d9271036ca3b56d41c87d43156ca23d299ed6",
+      "short_sha": "ec0d927",
+      "message": "chore(portfolio): daily sync 2026-07-22",
+      "type": "chore",
+      "date": "2026-07-22T21:12:56Z",
+      "url": "https://github.com/abgnydn/markview/commit/ec0d9271036ca3b56d41c87d43156ca23d299ed6",
+      "additions": 68,
+      "deletions": 68
+    },
     {
       "slug": "markview",
       "name": "markview",
@@ -4285,19 +4298,6 @@
       "url": "https://github.com/abgnydn/markview/commit/6cbb305e2e3010077b009d8a0240a766353cf8f0",
       "additions": 34,
       "deletions": 32
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "554447c022968eb2d02ee78483a03c7f550de8d9",
-      "short_sha": "554447c",
-      "message": "chore(portfolio): daily sync 2026-06-17",
-      "type": "chore",
-      "date": "2026-06-17T22:04:10Z",
-      "url": "https://github.com/abgnydn/markview/commit/554447c022968eb2d02ee78483a03c7f550de8d9",
-      "additions": 379,
-      "deletions": 597
     },
     {
       "slug": "webgpu-q",
