@@ -153,7 +153,7 @@ test.describe('Productivity Tools', () => {
   });
 
   test('search dialog opens with keyboard shortcut', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await expect(page.locator('.search-dialog')).toBeVisible({ timeout: 3000 });
   });
 

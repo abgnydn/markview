@@ -116,37 +116,37 @@ test.describe('Editor Toolbar (WYSIWYG)', () => {
 
   test('bold button inserts markdown bold syntax', async ({ page }) => {
     await page.locator(cm).click();
-    await page.keyboard.press('Meta+a');
+    await page.keyboard.press('ControlOrMeta+a');
     await page.keyboard.type('hello');
-    await page.keyboard.press('Meta+a');
+    await page.keyboard.press('ControlOrMeta+a');
     await page.locator('.editor-format-btn[title^="Bold"]').click();
     expect(await cmText(page)).toContain('**');
   });
 
   test('italic button inserts markdown italic syntax', async ({ page }) => {
     await page.locator(cm).click();
-    await page.keyboard.press('Meta+a');
+    await page.keyboard.press('ControlOrMeta+a');
     await page.keyboard.type('hello');
-    await page.keyboard.press('Meta+a');
+    await page.keyboard.press('ControlOrMeta+a');
     await page.locator('.editor-format-btn[title^="Italic"]').click();
     expect(await cmText(page)).toContain('*hello*');
   });
 
   test('Cmd+B keyboard shortcut bolds text', async ({ page }) => {
     await page.locator(cm).click();
-    await page.keyboard.press('Meta+a');
+    await page.keyboard.press('ControlOrMeta+a');
     await page.keyboard.type('hello');
-    await page.keyboard.press('Meta+a');
-    await page.keyboard.press('Meta+b');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('ControlOrMeta+b');
     expect(await cmText(page)).toContain('**');
   });
 
   test('Cmd+I keyboard shortcut italicizes text', async ({ page }) => {
     await page.locator(cm).click();
-    await page.keyboard.press('Meta+a');
+    await page.keyboard.press('ControlOrMeta+a');
     await page.keyboard.type('hello');
-    await page.keyboard.press('Meta+a');
-    await page.keyboard.press('Meta+i');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('ControlOrMeta+i');
     expect(await cmText(page)).toContain('*hello*');
   });
 
@@ -298,12 +298,12 @@ test.describe('Keyboard Shortcuts', () => {
   });
 
   test('Cmd+K opens search', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await expect(page.locator('.search-dialog')).toBeVisible({ timeout: 3000 });
   });
 
   test('Escape closes search dialog', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await expect(page.locator('.search-dialog')).toBeVisible({ timeout: 3000 });
     await page.keyboard.press('Escape');
     await expect(page.locator('.search-dialog')).not.toBeVisible();
@@ -476,7 +476,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('search dialog shows results', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await page.waitForSelector('.search-dialog', { timeout: 3000 });
     const input = page.locator('.search-dialog input');
     await input.fill('needle');
@@ -489,7 +489,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('clicking search result navigates to file', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await page.waitForSelector('.search-dialog', { timeout: 3000 });
     const input = page.locator('.search-dialog input');
     await input.fill('needle');
