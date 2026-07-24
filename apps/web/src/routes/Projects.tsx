@@ -13,6 +13,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { useChronicleWorkspace } from "@/hooks/use-chronicle-workspace";
+import { useMarketingBeacon } from "@/lib/analytics";
 import "./projects.css";
 
 // Lazy-load the chat — it pulls transformers.js (huge), don't drag it
@@ -670,6 +671,7 @@ function GridCard({
 
 // ── route ────────────────────────────────────────────────────────────────
 export default function Projects() {
+  useMarketingBeacon();
   const [index, setIndex] = useState<PortfolioIndex | null>(null);
   const [error, setError] = useState<string | null>(null);
 

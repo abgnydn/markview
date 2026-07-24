@@ -12,6 +12,7 @@
 import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { GitHubImport } from '@/components/workspace/github-import';
+import { useMarketingBeacon } from '@/lib/analytics';
 import './landing-editor.css';
 
 interface LandingEditorProps {
@@ -102,6 +103,7 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
 ];
 
 export function LandingEditor({ onStart, onImportGithub }: LandingEditorProps) {
+  useMarketingBeacon();
   const start = useCallback(() => onStart(), [onStart]);
   const download = useMemo(() => pickDownload(), []);
 

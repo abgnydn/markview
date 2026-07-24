@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useThemeStore } from "@/stores/theme-store";
 import { ViewerPage } from "@/components/viewer/viewer-page";
+import { useMarketingBeacon } from "@/lib/analytics";
 
 type Status = "loading" | "ready" | "error";
 
@@ -47,6 +48,7 @@ function CenteredMessage({ children }: { children: React.ReactNode }) {
 }
 
 export default function Project() {
+  useMarketingBeacon();
   const { slug = "" } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
