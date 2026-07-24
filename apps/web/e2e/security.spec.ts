@@ -1,23 +1,6 @@
-import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as os from 'os';
+import { uploadFile, openExportMenu } from './helpers';
 
-async function uploadFile(page: Page, filename: string, content: string) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-sec-'));
-  const filePath = path.join(tmpDir, filename);
-  fs.writeFileSync(filePath, content);
-
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('.landing-cta-primary').click();
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(filePath);
-  await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-
-  fs.unlinkSync(filePath);
-  fs.rmdirSync(tmpDir);
-}
 
 test.describe('XSS Prevention', () => {
   test('blocks <script> tag execution', async ({ page }) => {
@@ -119,11 +102,7 @@ test.describe('Export', () => {
     await page.goto('/');
     await uploadFile(page, 'export-test.md', '# Export Test\n\nSome content.');
 
-    const exportContainer = page.locator('.export-menu-container');
-    await expect(exportContainer).toBeVisible();
-    // Click the export button inside the container
-    await exportContainer.locator('.toolbar-btn').click();
-    // Menu items should appear
-    await expect(page.locator('.export-dropdown')).toBeVisible({ timeout: 3000 });
+    // Export lives in the overflow menu now
+    await openExportMenu(page);
   });
 });

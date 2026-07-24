@@ -1,45 +1,7 @@
-import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as os from 'os';
+import { uploadFile, uploadMultipleFiles, revealSidebar, openExportMenu } from './helpers';
 
-// Helper: inject file via filechooser dialog
-async function uploadFile(page: Page, filename: string, content: string) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-'));
-  const filePath = path.join(tmpDir, filename);
-  fs.writeFileSync(filePath, content);
 
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('.landing-cta-primary').click();
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(filePath);
-
-  await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-
-  fs.unlinkSync(filePath);
-  fs.rmdirSync(tmpDir);
-}
-
-// Helper: upload multiple files
-async function uploadMultipleFiles(page: Page, files: { name: string; content: string }[]) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-'));
-  const filePaths = files.map((f) => {
-    const fp = path.join(tmpDir, f.name);
-    fs.writeFileSync(fp, f.content);
-    return fp;
-  });
-
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('.landing-cta-primary').click();
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(filePaths);
-
-  await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-
-  filePaths.forEach((fp) => fs.unlinkSync(fp));
-  fs.rmdirSync(tmpDir);
-}
 
 const testMd = '# Test\n\nHello world.';
 
@@ -85,11 +47,12 @@ test.describe('Custom Themes', () => {
     await page.locator('button[title="Color scheme"]').click();
     // Click Dracula
     await page.locator('.theme-picker-item', { hasText: 'Dracula' }).click();
-    // Verify bg color changed from default
-    const newBg = await page.evaluate(() => {
-      return getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
-    });
-    expect(newBg).not.toBe(initialBg);
+    // The preset applies inside a view transition — poll until it lands.
+    await expect
+      .poll(() => page.evaluate(() =>
+        getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim()
+      ), { timeout: 5000 })
+      .not.toBe(initialBg);
   });
 
   test('theme persists across page reload', async ({ page }) => {
@@ -129,13 +92,15 @@ test.describe('Drag-and-Drop Reorder', () => {
       { name: 'gamma.md', content: '# Gamma' },
     ]);
     await page.waitForSelector('.sidebar', { timeout: 10000 });
+    // Sidebar is hover-revealed on desktop (zen.css) — keep it open.
+    await revealSidebar(page);
   });
 
   test('sidebar items show grip handle on hover', async ({ page }) => {
     const firstItem = page.locator('.sidebar-item-draggable').first();
     const handle = firstItem.locator('.sidebar-drag-handle');
-    // Hidden by default
-    await expect(handle).toHaveCSS('opacity', '0');
+    // Dimmed at rest (0.3 per current styles)
+    await expect(handle).toHaveCSS('opacity', '0.3');
     // Visible on hover
     await firstItem.hover();
     await expect(handle).not.toHaveCSS('opacity', '0');
@@ -169,7 +134,7 @@ test.describe('URL Sharing', () => {
 
   test('share as URL button exists in export menu', async ({ page }) => {
     // Open export menu
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     await expect(page.locator('.export-dropdown')).toBeVisible();
     // Check for Share as URL button
     const shareBtn = page.locator('.export-dropdown-item', { hasText: 'Share as URL' });
@@ -180,7 +145,7 @@ test.describe('URL Sharing', () => {
     // Grant clipboard permission
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     const shareBtn = page.locator('.export-dropdown-item', { hasText: 'Share as URL' });
     await shareBtn.click();
 
@@ -199,24 +164,13 @@ test.describe('URL Sharing', () => {
 test.describe('URL Share Roundtrip', () => {
   // Annotate with retries — IndexedDB state timing can be flaky with parallel workers
   test('shared URL opens as new workspace', async ({ page }) => {
-    // Step 1: Navigate to landing, clear ALL IndexedDB databases
+    // Each test runs in a fresh browser context — IndexedDB is already
+    // empty. (Deleting DBs from the live page can hang: Dexie holds open
+    // connections and deleteDatabase blocks on them.)
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    await page.evaluate(async () => {
-      const dbs = await indexedDB.databases();
-      await Promise.all(dbs.map(db => {
-        if (!db.name) return;
-        return new Promise<void>((res) => {
-          const req = indexedDB.deleteDatabase(db.name!);
-          req.onsuccess = () => res();
-          req.onerror = () => res(); // ignore errors
-        });
-      }));
-      // Give it a moment to fully delete
-      await new Promise(res => setTimeout(res, 100));
-    });
 
-    // Step 2: Build the share hash
+    // Build the share hash
     const shareHash = await page.evaluate(async () => {
       const content = '# Shared Doc\n\nOpened from URL!';
       const encoder = new TextEncoder();
@@ -231,8 +185,11 @@ test.describe('URL Share Roundtrip', () => {
       return `#md=${base64}&title=Shared+Doc`;
     });
 
-    // Step 3: Navigate to the fresh hash URL (empty IndexedDB, fresh store)
+    // Navigate to the hash URL. Same-document hash navigation doesn't
+    // remount the app, and the share-hash import only runs on mount —
+    // reload to simulate a recipient opening the link fresh.
     await page.goto(`/${shareHash}`);
+    await page.reload();
 
     // Step 4: Wait for the viewer and the shared content
     await page.waitForSelector('.viewer-layout', { timeout: 20000 });
