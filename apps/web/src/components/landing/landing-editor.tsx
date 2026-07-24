@@ -18,6 +18,7 @@ import './landing-editor.css';
 interface LandingEditorProps {
   onStart: () => void;
   onImportGithub: (files: { filename: string; content: string }[], repoName: string) => void;
+  onDropFiles: (files: { filename: string; content: string }[]) => void;
 }
 
 /**
@@ -30,10 +31,15 @@ const RELEASES_URL = 'https://github.com/abgnydn/markview/releases/latest';
 const DL = (asset: string) =>
   `https://github.com/abgnydn/markview/releases/latest/download/${asset}`;
 
-const ASSET_MAC_ARM = 'MarkView_0.3.0_aarch64.dmg';
-const ASSET_MAC_X64 = 'MarkView_0.3.0_x64.dmg';
-const ASSET_WIN_SETUP = 'MarkView_0.3.0_x64-setup.exe';
-const ASSET_LINUX_APPIMAGE = 'MarkView_0.3.0_amd64.AppImage';
+// MUST match the version of the latest published desktop-v* release —
+// `releases/latest/download/` only resolves assets of that release, so a
+// stale/premature version here means every download button 404s. Bump this
+// together with tagging a new desktop release.
+const DESKTOP_VERSION = '0.2.0';
+const ASSET_MAC_ARM = `MarkView_${DESKTOP_VERSION}_aarch64.dmg`;
+const ASSET_MAC_X64 = `MarkView_${DESKTOP_VERSION}_x64.dmg`;
+const ASSET_WIN_SETUP = `MarkView_${DESKTOP_VERSION}_x64-setup.exe`;
+const ASSET_LINUX_APPIMAGE = `MarkView_${DESKTOP_VERSION}_amd64.AppImage`;
 
 function pickDownload(): { href: string; label: string; tooltip: string } {
   if (typeof navigator === 'undefined') {
@@ -102,13 +108,23 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   },
 ];
 
-export function LandingEditor({ onStart, onImportGithub }: LandingEditorProps) {
+export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingEditorProps) {
   useMarketingBeacon();
   const start = useCallback(() => onStart(), [onStart]);
   const download = useMemo(() => pickDownload(), []);
 
+  // The hero promises "drag-drop a .md to start" — honor it right here on
+  // the landing, mirroring the viewer's drop handling.
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    const dropped = Array.from(e.dataTransfer.files).filter((f) => /\.(md|markdown)$/i.test(f.name));
+    if (dropped.length === 0) return;
+    const files = await Promise.all(dropped.map(async (f) => ({ filename: f.name, content: await f.text() })));
+    onDropFiles(files);
+  }, [onDropFiles]);
+
   return (
-    <div className="ed-landing">
+    <div className="ed-landing" onDragOver={(e) => e.preventDefault()} onDrop={(e) => void handleDrop(e)}>
       <header className="ed-nav">
         <div className="ed-nav-brand">
           <span className="ed-nav-mark" aria-hidden="true">
