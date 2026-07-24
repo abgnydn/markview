@@ -152,7 +152,6 @@ export function GraphView({ onClose }: GraphViewProps) {
       tagPaletteRef.current = palette;
     })();
     return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   // Compute focus neighborhood whenever focusId changes.
@@ -164,7 +163,6 @@ export function GraphView({ onClose }: GraphViewProps) {
       if (e.b === focusId) set.add(e.a);
     }
     return set;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusId, edgesRef.current.length]);
 
   const searchMatches = useMemo(() => {
@@ -295,7 +293,6 @@ export function GraphView({ onClose }: GraphViewProps) {
       window.removeEventListener('mouseup', onMouseUp);
       canvas.removeEventListener('wheel', onWheel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFileId, focusId, focusNeighborhood, searchMatches, constellation]);
 
   // Constellation persistence — when nodes are arranged manually, save
