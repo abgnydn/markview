@@ -6,6 +6,9 @@ import { useThemeStore } from '@/stores/theme-store';
 import { usePluginStore } from '@/lib/plugins/plugin-registry';
 import '@/lib/plugins/embed-plugin';
 import { DOM_ENHANCERS } from '@/lib/markdown/dom-enhancers';
+// Type-only imports — erased at compile time, so shiki/mermaid stay lazy.
+import type { createHighlighter } from 'shiki';
+import type MermaidDefault from 'mermaid';
 
 interface MarkdownRendererProps {
   content: string;
@@ -36,7 +39,7 @@ function decodeHtmlEntities(s: string): string {
 }
 
 // Shiki highlighter singleton
-let shikiHighlighter: Awaited<ReturnType<typeof import('shiki')['createHighlighter']>> | null = null;
+let shikiHighlighter: Awaited<ReturnType<typeof createHighlighter>> | null = null;
 let shikiPromise: Promise<void> | null = null;
 
 let shikiFailed = false;
@@ -72,8 +75,8 @@ export function preloadShiki() {
 }
 
 // Mermaid singleton — avoid re-importing on every render
-let mermaidModule: typeof import('mermaid')['default'] | null = null;
-let mermaidPromise: Promise<typeof import('mermaid')['default']> | null = null;
+let mermaidModule: typeof MermaidDefault | null = null;
+let mermaidPromise: Promise<typeof MermaidDefault> | null = null;
 
 async function ensureMermaid() {
   if (mermaidModule) return mermaidModule;

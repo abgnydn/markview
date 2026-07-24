@@ -23,7 +23,7 @@
 import type * as ThreeNS from 'three';
 import type { GaussianCloud } from './splat-cloud';
 
-type Three = typeof import('three');
+type Three = typeof ThreeNS;
 
 export interface SplatRenderer {
   mesh: ThreeNS.Mesh;
