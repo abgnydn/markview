@@ -6,6 +6,7 @@ import { useCollabStore } from '@/stores/collab-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { THEME_PRESETS } from '@/lib/themes/presets';
 import { ShareDialog } from '@/components/collab/share-dialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import '@/components/collab/collab.css';
 
 // Atmosphere / audio / time-of-day controls used to live in this file
@@ -145,6 +146,9 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   const reorderFiles = useWorkspaceStore((s) => s.reorderFiles);
   const collabIsActive = useCollabStore((s) => s.isActive);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  // Deleting a file is irreversible (content + snapshots + embeddings) —
+  // gate it behind the same ConfirmDialog that workspace-close uses.
+  const [fileToRemove, setFileToRemove] = useState<string | null>(null);
   const { mode, setMode, colorScheme, setColorScheme, atmosphere, setAtmosphere } = useThemeStore();
 
   // Drag state
@@ -241,7 +245,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
               depth={0}
               activeFileId={activeFileId}
               onSelect={(id) => { setActiveFile(id); onFileSelect?.(); }}
-              onRemove={removeFile}
+              onRemove={setFileToRemove}
             />
           ))
         ) : (
@@ -272,7 +276,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
                 className="sidebar-item-remove"
                 onClick={(e) => {
                   e.stopPropagation();
-                  removeFile(file.id);
+                  setFileToRemove(file.id);
                 }}
                 title="Remove file"
               >
@@ -315,6 +319,18 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
       </div>
     </aside>
     {showShareDialog && <ShareDialog onClose={() => setShowShareDialog(false)} />}
+    <ConfirmDialog
+      isOpen={fileToRemove !== null}
+      title="Delete file"
+      description={`Delete "${files.find((f) => f.id === fileToRemove)?.displayName ?? 'this file'}"? Its content, snapshots, and search index are removed permanently.`}
+      confirmText="Delete file"
+      tone="danger"
+      onConfirm={() => {
+        if (fileToRemove) void removeFile(fileToRemove);
+        setFileToRemove(null);
+      }}
+      onCancel={() => setFileToRemove(null)}
+    />
     </>
   );
 }

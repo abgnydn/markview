@@ -4278,3 +4278,33 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
+
+/* === Export menu: busy state + spinner (previously unstyled) === */
+.export-spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(155, 125, 255, 0.25);
+  border-top-color: var(--deck-accent, #9b7dff);
+  border-radius: 50%;
+  animation: exportSpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes exportSpin { to { transform: rotate(360deg); } }
+.export-busy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text-secondary, #9aa3b2);
+  border-bottom: 1px solid var(--border-muted, #ffffff14);
+}
+.export-dropdown.is-busy .export-dropdown-item {
+  pointer-events: none;
+  opacity: 0.45;
+}
+.export-toast.is-error {
+  color: #ff5f57;
+  border-color: rgba(255, 95, 87, 0.4);
+}

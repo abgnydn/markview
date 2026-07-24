@@ -2,6 +2,12 @@
 import { create } from 'zustand';
 import { applyThemePreset } from '@/lib/themes/presets';
 
+// localStorage can throw (private browsing, storage-blocked embeds) — a
+// theme preference failing to persist must never break the theme switch
+// itself, and initialize() must never abort app boot.
+const lsGet = (k: string): string | null => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k: string, v: string): void => { try { localStorage.setItem(k, v); } catch { /* ignore */ } };
+
 type ThemeMode = 'dark' | 'light' | 'system';
 type ResolvedTheme = 'dark' | 'light';
 /**
@@ -116,14 +122,14 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
       applyTheme(resolved);
       applyThemePreset(get().colorScheme, resolved);
     });
-    localStorage.setItem('markview-theme', mode);
+    lsSet('markview-theme', mode);
     set({ mode, resolved });
   },
 
   setFontSize: (size) => {
     const clamped = Math.max(12, Math.min(24, size));
     applyFontSize(clamped);
-    localStorage.setItem('markview-font-size', String(clamped));
+    lsSet('markview-font-size', String(clamped));
     set({ fontSize: clamped });
   },
 
@@ -144,7 +150,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
   setColorScheme: (schemeId) => {
     const { resolved } = get();
     withAppearanceTransition(() => applyThemePreset(schemeId, resolved));
-    localStorage.setItem('markview-color-scheme', schemeId);
+    lsSet('markview-color-scheme', schemeId);
     set({ colorScheme: schemeId });
   },
 
@@ -152,19 +158,19 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     // Default to dark — Markview's brand is the cosmic editor surface.
     // Users who switch to light/system get that respected; first-visit
     // default is dark so the editor matches the landing's dark hero.
-    const saved = localStorage.getItem('markview-theme') as ThemeMode | null;
+    const saved = lsGet('markview-theme') as ThemeMode | null;
     const mode = saved || 'dark';
     const resolved = resolveTheme(mode);
     applyTheme(resolved);
 
-    const savedScheme = localStorage.getItem('markview-color-scheme') || 'github';
+    const savedScheme = lsGet('markview-color-scheme') || 'github';
     applyThemePreset(savedScheme, resolved);
 
-    const savedSize = localStorage.getItem('markview-font-size');
+    const savedSize = lsGet('markview-font-size');
     const fontSize = savedSize ? parseInt(savedSize, 10) : 16;
     applyFontSize(fontSize);
 
-    const savedAtmosphere = (localStorage.getItem('markview-atmosphere') as Atmosphere | null) || 'none';
+    const savedAtmosphere = (lsGet('markview-atmosphere') as Atmosphere | null) || 'none';
     applyAtmosphere(savedAtmosphere);
 
     set({ mode, resolved, fontSize, colorScheme: savedScheme, atmosphere: savedAtmosphere });

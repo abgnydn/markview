@@ -90,9 +90,15 @@ export function GitHubImport({ onFilesLoaded }: GitHubImportProps) {
           files.push(...results.filter(Boolean) as { filename: string; content: string }[]);
         }
 
-        if (files.length > 0) {
-          onFilesLoaded(files, repoName);
+        if (files.length === 0) {
+          // Every raw-file fetch failed — without this the spinner just
+          // stops and nothing happens, which reads as "import is broken".
+          throw new Error("Found markdown files but couldn't fetch their contents — GitHub may be rate-limiting. Try again in a minute.");
         }
+        if (files.length < mdFiles.length) {
+          console.warn(`[github-import] ${mdFiles.length - files.length} of ${mdFiles.length} files failed to fetch`);
+        }
+        onFilesLoaded(files, repoName);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to import from GitHub');
