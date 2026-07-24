@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Github } from '@/components/ui/brand-icons';
+import { useMarketingBeacon } from '@/lib/analytics';
 
 
 export default function TermsPage() {
+  useMarketingBeacon();
   return (
     <div className="landing">
       {/* Sticky Nav Bar */}

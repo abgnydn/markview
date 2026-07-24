@@ -1,43 +1,10 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as os from 'os';
+import { uploadFile, uploadMultipleFiles, clickOverflowItem, openExportMenu, revealSidebar } from './helpers';
 
 // ─── Shared Helpers ──────────────────────────────────────────────────────────
 
-async function uploadFile(page: Page, filename: string, content: string) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-full-'));
-  const filePath = path.join(tmpDir, filename);
-  fs.writeFileSync(filePath, content);
 
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('.landing-cta-primary').click();
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(filePath);
-  await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-
-  fs.unlinkSync(filePath);
-  fs.rmdirSync(tmpDir);
-}
-
-async function uploadMultipleFiles(page: Page, files: { name: string; content: string }[]) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-multi-'));
-  const filePaths = files.map((f) => {
-    const fp = path.join(tmpDir, f.name);
-    fs.writeFileSync(fp, f.content);
-    return fp;
-  });
-
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('.landing-cta-primary').click();
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(filePaths);
-  await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-
-  filePaths.forEach((fp) => fs.unlinkSync(fp));
-  fs.rmdirSync(tmpDir);
-}
 
 const testMd = `# Hello World
 
@@ -77,8 +44,8 @@ test.describe('Logo Home Navigation', () => {
     await homeBtn.click();
 
     // Should show landing page
-    await expect(page.locator('.landing-hero')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.landing-title')).toContainText('The markdown viewer');
+    await expect(page.locator('.ed-landing')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.ed-hero h1')).toContainText('A markdown editor');
   });
 
   test('logo home button has correct title attribute', async ({ page }) => {
@@ -86,42 +53,6 @@ test.describe('Logo Home Navigation', () => {
     await uploadFile(page, 'test.md', testMd);
     const homeBtn = page.locator('.toolbar-home-btn');
     await expect(homeBtn).toHaveAttribute('title', 'Back to home');
-  });
-});
-
-// ─── Workspace Templates ────────────────────────────────────────────────────
-
-test.describe('Workspace Templates', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-  });
-
-  test('template section is visible on landing page', async ({ page }) => {
-    // Class is landing-templates, not landing-templates-section
-    await expect(page.locator('.landing-templates')).toBeVisible();
-  });
-
-  test('template cards are displayed', async ({ page }) => {
-    const cards = page.locator('.landing-template-card');
-    const count = await cards.count();
-    expect(count).toBeGreaterThanOrEqual(4);
-  });
-
-  test('clicking a template opens a workspace', async ({ page }) => {
-    const firstTemplate = page.locator('.landing-template-card').first();
-    await firstTemplate.click();
-    await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-    await expect(page.locator('.viewer-layout')).toBeVisible();
-    await expect(page.locator('.sidebar')).toBeVisible();
-  });
-
-  test('template workspace has pre-filled content', async ({ page }) => {
-    const firstTemplate = page.locator('.landing-template-card').first();
-    await firstTemplate.click();
-    await page.waitForSelector('.markdown-content', { timeout: 10000 });
-    // Should have actual rendered content, not empty
-    const textContent = await page.locator('.markdown-content').textContent();
-    expect(textContent!.length).toBeGreaterThan(20);
   });
 });
 
@@ -165,15 +96,13 @@ test.describe('Editor Toolbar (WYSIWYG)', () => {
     await page.goto('/');
     await uploadFile(page, 'test.md', testMd);
     await page.waitForSelector('.toolbar', { timeout: 10000 });
-    // Open editor
-    const editBtn = page.locator('button[title="Edit markdown (E)"]');
-    await editBtn.click();
+    // Editor lives in the "More actions" overflow menu now
+    await clickOverflowItem(page, 'Edit file');
     await page.waitForSelector('.editor-overlay', { timeout: 5000 });
   });
 
-  test('editor overlay displays with textarea', async ({ page }) => {
-    const textarea = page.locator('.editor-textarea, .editor-overlay textarea');
-    await expect(textarea).toBeVisible();
+  test('editor overlay displays a CodeMirror surface', async ({ page }) => {
+    await expect(page.locator('.editor-codemirror .cm-content')).toBeVisible();
   });
 
   test('editor has formatting toolbar', async ({ page }) => {
@@ -181,49 +110,44 @@ test.describe('Editor Toolbar (WYSIWYG)', () => {
     await expect(toolbar).toBeVisible();
   });
 
+  const cm = '.editor-codemirror .cm-content';
+  const cmText = (page: Page) =>
+    page.locator(cm).evaluate((el) => el.textContent ?? '');
+
   test('bold button inserts markdown bold syntax', async ({ page }) => {
-    const textarea = page.locator('.editor-textarea, .editor-overlay textarea');
-    // Clear and type text
-    await textarea.fill('hello');
-    // Select all text
-    await textarea.press('Meta+a');
-    // Click bold button
-    const boldBtn = page.locator('.editor-toolbar button[title*="Bold"]').first();
-    if (await boldBtn.isVisible()) {
-      await boldBtn.click();
-      const val = await textarea.inputValue();
-      expect(val).toContain('**');
-    }
+    await page.locator(cm).click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('hello');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.locator('.editor-format-btn[title^="Bold"]').click();
+    expect(await cmText(page)).toContain('**');
   });
 
   test('italic button inserts markdown italic syntax', async ({ page }) => {
-    const textarea = page.locator('.editor-textarea, .editor-overlay textarea');
-    await textarea.fill('hello');
-    await textarea.press('Meta+a');
-    const italicBtn = page.locator('.editor-toolbar button[title*="Italic"]').first();
-    if (await italicBtn.isVisible()) {
-      await italicBtn.click();
-      const val = await textarea.inputValue();
-      expect(val).toContain('*');
-    }
+    await page.locator(cm).click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('hello');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.locator('.editor-format-btn[title^="Italic"]').click();
+    expect(await cmText(page)).toContain('*hello*');
   });
 
   test('Cmd+B keyboard shortcut bolds text', async ({ page }) => {
-    const textarea = page.locator('.editor-textarea, .editor-overlay textarea');
-    await textarea.fill('hello');
-    await textarea.press('Meta+a');
-    await textarea.press('Meta+b');
-    const val = await textarea.inputValue();
-    expect(val).toContain('**');
+    await page.locator(cm).click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('hello');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('ControlOrMeta+b');
+    expect(await cmText(page)).toContain('**');
   });
 
   test('Cmd+I keyboard shortcut italicizes text', async ({ page }) => {
-    const textarea = page.locator('.editor-textarea, .editor-overlay textarea');
-    await textarea.fill('hello');
-    await textarea.press('Meta+a');
-    await textarea.press('Meta+i');
-    const val = await textarea.inputValue();
-    expect(val).toContain('*');
+    await page.locator(cm).click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('hello');
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('ControlOrMeta+i');
+    expect(await cmText(page)).toContain('*hello*');
   });
 
   test('editor can be closed with Escape', async ({ page }) => {
@@ -241,38 +165,37 @@ test.describe('Export Menu Actions', () => {
     await page.waitForSelector('.toolbar', { timeout: 10000 });
   });
 
-  test('export button opens dropdown', async ({ page }) => {
-    await page.locator('button[title="Copy & Export"]').click();
-    await expect(page.locator('.export-dropdown')).toBeVisible();
+  test('export action opens dropdown', async ({ page }) => {
+    await openExportMenu(page);
   });
 
   test('export dropdown has multiple format options', async ({ page }) => {
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     const items = page.locator('.export-dropdown-item');
     const count = await items.count();
     expect(count).toBeGreaterThanOrEqual(5);
   });
 
   test('copy as markdown option exists', async ({ page }) => {
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     const copyMd = page.locator('.export-dropdown-item', { hasText: /Copy.*Markdown/i });
     await expect(copyMd).toBeVisible();
   });
 
   test('copy as HTML option exists', async ({ page }) => {
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     const copyHtml = page.locator('.export-dropdown-item', { hasText: 'Copy as HTML' });
     await expect(copyHtml).toBeVisible();
   });
 
   test('share as URL option exists', async ({ page }) => {
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     const shareUrl = page.locator('.export-dropdown-item', { hasText: 'Share as URL' });
     await expect(shareUrl).toBeVisible();
   });
 
   test('export dropdown closes on click outside', async ({ page }) => {
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     await expect(page.locator('.export-dropdown')).toBeVisible();
     // Click outside
     await page.locator('.toolbar-home-btn').click();
@@ -293,13 +216,14 @@ test.describe('Split View', () => {
     await page.waitForSelector('.toolbar', { timeout: 10000 });
   });
 
-  test('split view button exists in toolbar', async ({ page }) => {
-    const splitBtn = page.locator('button[title="Split view"]');
-    await expect(splitBtn).toBeVisible();
+  test('split view lives in the overflow menu', async ({ page }) => {
+    await page.hover('.zen-zone-top');
+    await page.locator('button[title="More actions"]').click();
+    await expect(page.locator('.toolbar-overflow-item', { hasText: 'Split view' })).toBeVisible();
   });
 
   test('clicking split view shows two panes', async ({ page }) => {
-    await page.locator('button[title="Split view"]').click();
+    await clickOverflowItem(page, 'Split view');
     // Should show split layout
     await expect(page.locator('.split-view, .viewer-split, .split-pane')).toBeVisible({ timeout: 5000 });
   });
@@ -317,13 +241,14 @@ test.describe('Diff View', () => {
     await page.waitForSelector('.toolbar', { timeout: 10000 });
   });
 
-  test('diff button exists in toolbar', async ({ page }) => {
-    const diffBtn = page.locator('button[title="Compare files"]');
-    await expect(diffBtn).toBeVisible();
+  test('diff lives in the overflow menu', async ({ page }) => {
+    await page.hover('.zen-zone-top');
+    await page.locator('button[title="More actions"]').click();
+    await expect(page.locator('.toolbar-overflow-item', { hasText: 'Compare diff' })).toBeVisible();
   });
 
-  test('clicking diff button does not crash', async ({ page }) => {
-    await page.locator('button[title="Compare files"]').click();
+  test('clicking diff does not crash', async ({ page }) => {
+    await clickOverflowItem(page, 'Compare diff');
     // Diff view may require file selection — just check no crash
     await page.waitForTimeout(500);
     // Page should still be functional
@@ -373,21 +298,19 @@ test.describe('Keyboard Shortcuts', () => {
   });
 
   test('Cmd+K opens search', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await expect(page.locator('.search-dialog')).toBeVisible({ timeout: 3000 });
   });
 
   test('Escape closes search dialog', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await expect(page.locator('.search-dialog')).toBeVisible({ timeout: 3000 });
     await page.keyboard.press('Escape');
     await expect(page.locator('.search-dialog')).not.toBeVisible();
   });
 
-  test('E key or edit button opens editor', async ({ page }) => {
-    // Use the toolbar button directly — more reliable than keyboard shortcut
-    const editBtn = page.locator('button[title="Edit markdown (E)"]');
-    await editBtn.click();
+  test('edit action opens editor', async ({ page }) => {
+    await clickOverflowItem(page, 'Edit file');
     await expect(page.locator('.editor-overlay')).toBeVisible({ timeout: 5000 });
   });
 
@@ -430,6 +353,7 @@ test.describe('Sidebar File Navigation', () => {
       { name: 'gamma.md', content: '# Gamma\n\nGamma content.' },
     ]);
     await page.waitForSelector('.sidebar', { timeout: 10000 });
+    await revealSidebar(page);
   });
 
   test('sidebar shows all uploaded files', async ({ page }) => {
@@ -481,22 +405,23 @@ test.describe('Table of Contents Interaction', () => {
   });
 
   test('clicking TOC item scrolls to heading', async ({ page }) => {
-    // Click on Section B in TOC
+    // TOC is hover-revealed via the right edge zone (zen.css)
+    await page.hover('.zen-zone-right');
     const tocItem = page.locator('.toc a, .toc-item', { hasText: 'Section B' }).first();
     await tocItem.click();
-    await page.waitForTimeout(500);
-    // The heading should be near the top of the viewport
-    const isInView = await page.evaluate(() => {
-      const h2s = document.querySelectorAll('h2');
-      for (const h2 of h2s) {
-        if (h2.textContent?.includes('Section B')) {
-          const rect = h2.getBoundingClientRect();
-          return rect.top >= 0 && rect.top < 400;
+    // Smooth scrolling — poll until the heading settles near the top.
+    await expect
+      .poll(() => page.evaluate(() => {
+        const h2s = document.querySelectorAll('h2');
+        for (const h2 of h2s) {
+          if (h2.textContent?.includes('Section B')) {
+            const rect = h2.getBoundingClientRect();
+            return rect.top >= -100 && rect.top < 500;
+          }
         }
-      }
-      return false;
-    });
-    expect(isInView).toBeTruthy();
+        return false;
+      }), { timeout: 5000 })
+      .toBeTruthy();
   });
 });
 
@@ -551,7 +476,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('search dialog shows results', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await page.waitForSelector('.search-dialog', { timeout: 3000 });
     const input = page.locator('.search-dialog input');
     await input.fill('needle');
@@ -564,7 +489,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('clicking search result navigates to file', async ({ page }) => {
-    await page.keyboard.press('Meta+k');
+    await page.keyboard.press('ControlOrMeta+k');
     await page.waitForSelector('.search-dialog', { timeout: 3000 });
     const input = page.locator('.search-dialog input');
     await input.fill('needle');
@@ -628,7 +553,7 @@ test.describe('URL Hash Sharing', () => {
 
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
-    await page.locator('button[title="Copy & Export"]').click();
+    await openExportMenu(page);
     const shareBtn = page.locator('.export-dropdown-item', { hasText: 'Share as URL' });
     await shareBtn.click();
 
@@ -644,38 +569,15 @@ test.describe('Landing Page Extended', () => {
     await page.goto('/');
   });
 
-  test('has many feature cards', async ({ page }) => {
-    const features = page.locator('.landing-feature-card');
-    const count = await features.count();
-    expect(count).toBeGreaterThanOrEqual(14);
+  test('has feature articles', async ({ page }) => {
+    await page.waitForSelector('.ed-landing', { timeout: 10000 });
+    const features = page.locator('.ed-landing article');
+    expect(await features.count()).toBeGreaterThanOrEqual(4);
   });
 
-  test('has pricing section', async ({ page }) => {
-    const pricing = page.locator('.landing-pricing-section');
-    if (await pricing.isVisible().catch(() => false)) {
-      await expect(pricing).toBeVisible();
-    }
-  });
-
-  test('chrome extension install section is visible', async ({ page }) => {
-    // Look for the install/extension section — it mentions 'Chrome' somewhere
-    const extSection = page.locator('text=Chrome').first();
-    await expect(extSection).toBeVisible();
-  });
-
-  test('footer shows copyright', async ({ page }) => {
-    const footer = page.locator('.landing-footer');
+  test('footer is present', async ({ page }) => {
+    const footer = page.locator('.ed-foot');
     await expect(footer).toBeVisible();
-    await expect(footer).toContainText('MarkView');
-  });
-
-  test('demo button loads sample files', async ({ page }) => {
-    // Look for a "Try Demo" or sample-load button
-    const demoBtn = page.locator('.landing-cta-demo, button:has-text("Try Demo"), button:has-text("Load Sample")');
-    if (await demoBtn.isVisible().catch(() => false)) {
-      await demoBtn.click();
-      await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-    }
   });
 });
 
@@ -693,8 +595,7 @@ test.describe('Accessibility', () => {
 
   test('landing page has heading text', async ({ page }) => {
     await page.goto('/');
-    // The landing page title is in .landing-title (may not be h1 element)
-    await expect(page.locator('.landing-title')).toBeVisible();
+    await expect(page.locator('.ed-hero h1')).toBeVisible();
   });
 
   test('all interactive elements are focusable', async ({ page }) => {

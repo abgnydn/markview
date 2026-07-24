@@ -13,6 +13,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { useChronicleWorkspace } from "@/hooks/use-chronicle-workspace";
+import { useMarketingBeacon } from "@/lib/analytics";
 import "./projects.css";
 
 // Lazy-load the chat — it pulls transformers.js (huge), don't drag it
@@ -670,6 +671,7 @@ function GridCard({
 
 // ── route ────────────────────────────────────────────────────────────────
 export default function Projects() {
+  useMarketingBeacon();
   const [index, setIndex] = useState<PortfolioIndex | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -857,7 +859,7 @@ export default function Projects() {
   const toggleBurst = (key: string) => {
     setExpandedBursts((s) => {
       const next = new Set(s);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key); else next.add(key);
       return next;
     });
   };
@@ -927,7 +929,10 @@ export default function Projects() {
       {heatmap && (
         <section className="proj-section proj-section-tight">
           <h2 className="proj-section-title">90 days across all repos</h2>
-          <div className="proj-heatmap" role="img" aria-label="commit activity heatmap">
+          {/* role=group (not img): the cells are focusable buttons, and an
+              img role must not contain interactive descendants (axe
+              nested-interactive). */}
+          <div className="proj-heatmap" role="group" aria-label="commit activity heatmap">
             {heatmap.cols.map((col, ci) => (
               <div className="proj-heatmap-col" key={ci}>
                 {col.map((cell, ri) =>

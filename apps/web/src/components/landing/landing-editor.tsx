@@ -9,14 +9,16 @@
  * landing reads as a single chapter in the same book.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GitHubImport } from '@/components/workspace/github-import';
+import { useMarketingBeacon } from '@/lib/analytics';
 import './landing-editor.css';
 
 interface LandingEditorProps {
   onStart: () => void;
   onImportGithub: (files: { filename: string; content: string }[], repoName: string) => void;
+  onDropFiles: (files: { filename: string; content: string }[]) => void;
 }
 
 /**
@@ -29,10 +31,15 @@ const RELEASES_URL = 'https://github.com/abgnydn/markview/releases/latest';
 const DL = (asset: string) =>
   `https://github.com/abgnydn/markview/releases/latest/download/${asset}`;
 
-const ASSET_MAC_ARM = 'MarkView_0.3.0_aarch64.dmg';
-const ASSET_MAC_X64 = 'MarkView_0.3.0_x64.dmg';
-const ASSET_WIN_SETUP = 'MarkView_0.3.0_x64-setup.exe';
-const ASSET_LINUX_APPIMAGE = 'MarkView_0.3.0_amd64.AppImage';
+// MUST match the version of the latest published desktop-v* release —
+// `releases/latest/download/` only resolves assets of that release, so a
+// stale/premature version here means every download button 404s. Bump this
+// together with tagging a new desktop release.
+const DESKTOP_VERSION = '0.2.0';
+const ASSET_MAC_ARM = `MarkView_${DESKTOP_VERSION}_aarch64.dmg`;
+const ASSET_MAC_X64 = `MarkView_${DESKTOP_VERSION}_x64.dmg`;
+const ASSET_WIN_SETUP = `MarkView_${DESKTOP_VERSION}_x64-setup.exe`;
+const ASSET_LINUX_APPIMAGE = `MarkView_${DESKTOP_VERSION}_amd64.AppImage`;
 
 function pickDownload(): { href: string; label: string; tooltip: string } {
   if (typeof navigator === 'undefined') {
@@ -101,12 +108,50 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   },
 ];
 
-export function LandingEditor({ onStart, onImportGithub }: LandingEditorProps) {
+export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingEditorProps) {
+  useMarketingBeacon();
   const start = useCallback(() => onStart(), [onStart]);
   const download = useMemo(() => pickDownload(), []);
 
+  // The hero promises "drag-drop a .md to start" — honor it right here on
+  // the landing, mirroring the viewer's drop handling. dragCounter tracks
+  // enter/leave pairs so child elements don't flicker the overlay off.
+  const [isDragging, setIsDragging] = useState(false);
+  const [dropError, setDropError] = useState<string | null>(null);
+  const dragCounter = useRef(0);
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
+    const dropped = Array.from(e.dataTransfer.files).filter((f) => /\.(md|markdown)$/i.test(f.name));
+    if (dropped.length === 0) {
+      // Tell the user why nothing happened instead of silently ignoring.
+      setDropError('Only markdown files (.md, .markdown) can be opened.');
+      window.setTimeout(() => setDropError(null), 3000);
+      return;
+    }
+    const files = await Promise.all(dropped.map(async (f) => ({ filename: f.name, content: await f.text() })));
+    onDropFiles(files);
+  }, [onDropFiles]);
+
   return (
-    <div className="ed-landing">
+    <div
+      className={`ed-landing${isDragging ? ' is-dragover' : ''}`}
+      onDragOver={(e) => e.preventDefault()}
+      onDragEnter={(e) => { e.preventDefault(); dragCounter.current++; setIsDragging(true); }}
+      onDragLeave={() => { dragCounter.current--; if (dragCounter.current <= 0) { dragCounter.current = 0; setIsDragging(false); } }}
+      onDrop={(e) => void handleDrop(e)}
+    >
+      {isDragging && (
+        <div className="ed-drop-overlay" aria-hidden>
+          <div className="ed-drop-overlay-card">Drop your <code>.md</code> — it opens right here</div>
+        </div>
+      )}
+      {dropError && (
+        <div className="ed-drop-overlay" role="alert" style={{ background: 'transparent', backdropFilter: 'none', alignItems: 'flex-end', paddingBottom: 48 }}>
+          <div className="ed-drop-overlay-card" style={{ borderStyle: 'solid', borderColor: '#ff5f57' }}>{dropError}</div>
+        </div>
+      )}
       <header className="ed-nav">
         <div className="ed-nav-brand">
           <span className="ed-nav-mark" aria-hidden="true">

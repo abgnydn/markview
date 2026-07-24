@@ -18,7 +18,15 @@ export async function encodeMarkdownUrl(content: string, title?: string): Promis
     .pipeThrough(new CompressionStream('gzip'));
 
   const compressed = await new Response(stream).arrayBuffer();
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(compressed)))
+  // Chunked fromCharCode — spreading the whole byte array as arguments
+  // throws RangeError (call-argument limit) on large documents.
+  const bytes = new Uint8Array(compressed);
+  let binary = '';
+  const CHUNK = 0x8000;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+  }
+  const base64 = btoa(binary)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');

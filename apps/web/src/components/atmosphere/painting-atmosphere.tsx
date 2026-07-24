@@ -35,7 +35,6 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // forces a re-pick when the user manually advances.
   const painting = useMemo(
     () => pickPaintingFor(atmosphere),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [atmosphere, paintingNonce],
   );
 

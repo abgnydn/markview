@@ -532,7 +532,6 @@ export function MarkdownEditor({
       viewRef.current?.destroy();
       viewRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extensions]);
 
   // ⌘S to save, Esc to close. Save also drops a `save` snapshot so the

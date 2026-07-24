@@ -9,12 +9,18 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
   const { activeWorkspaceId } = useWorkspaceStore();
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleShare = async () => {
     if (!activeWorkspaceId) return;
     setLoading(true);
+    setError(null);
     try {
       await shareWorkspace(activeWorkspaceId);
+    } catch (e) {
+      // Without this, a failed WebRTC start just flips the button back
+      // to "Start Sharing" with no explanation.
+      setError(e instanceof Error ? e.message : 'Could not start the sharing session. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -56,6 +62,7 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
             >
               {loading ? 'Starting…' : 'Start Sharing'}
             </button>
+            {error && <p className="collab-error" role="alert">{error}</p>}
           </div>
         ) : (
           <div className="collab-dialog-body">

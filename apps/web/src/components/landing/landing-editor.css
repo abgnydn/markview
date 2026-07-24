@@ -489,3 +489,36 @@
 .ed-foot-credit-name:hover {
   color: var(--zen-accent);
 }
+
+/* === Drag-over affordance (landing accepts .md drops) === */
+.ed-landing.is-dragover {
+  outline: 2px dashed var(--zen-accent, #9b7dff);
+  outline-offset: -8px;
+}
+.ed-drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 9, 18, 0.55);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+  animation: edDropFade 160ms ease-out;
+}
+.ed-drop-overlay-card {
+  padding: 18px 28px;
+  border-radius: 14px;
+  border: 1px dashed var(--zen-accent, #9b7dff);
+  background: rgba(13, 15, 22, 0.92);
+  color: #eef1f6;
+  font-size: 16px;
+}
+.ed-drop-overlay-card code {
+  color: var(--zen-accent, #9b7dff);
+}
+@keyframes edDropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

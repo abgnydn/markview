@@ -1,0 +1,48 @@
+# Quality gates for every PR and push to main. The deploy workflow
+# (deploy.yml) intentionally stays build-only; this is where correctness
+# lives. The e2e suite boots the vite dev server itself via playwright's
+# webServer config.
+
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Lint (errors fail, warnings don't)
+        working-directory: apps/web
+        run: bunx eslint src e2e --quiet
+
+      - name: Unit tests
+        working-directory: apps/web
+        run: bunx vitest run
+
+      - name: Install Playwright chromium
+        working-directory: apps/web
+        run: bunx playwright install --with-deps chromium
+
+      - name: E2E tests
+        working-directory: apps/web
+        run: bunx playwright test

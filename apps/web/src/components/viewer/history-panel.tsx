@@ -45,7 +45,6 @@ export function HistoryPanel({ fileId, workspaceId, currentContent, onRestore, o
 
   useEffect(() => {
     void refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileId]);
 
   // Esc to close.
