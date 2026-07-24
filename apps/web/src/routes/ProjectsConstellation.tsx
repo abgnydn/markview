@@ -18,6 +18,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useMarketingBeacon } from "@/lib/analytics";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -646,6 +647,7 @@ function makeSparkleMaterial(): THREE.ShaderMaterial {
 }
 
 export default function ProjectsConstellation() {
+  useMarketingBeacon();
   const [index, setIndex] = useState<PortfolioIndex | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hovered, setHovered] = useState<ProjectMin | null>(null);
