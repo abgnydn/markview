@@ -357,7 +357,13 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   // ---------- Add Files to Active Workspace ----------
   addFiles: async (inputFiles) => {
     const { activeWorkspaceId, files, workspaces } = get();
-    if (!activeWorkspaceId) return;
+    // No active workspace yet (e.g. a drop that lands before workspace
+    // creation commits) — don't silently lose the user's files; seed a
+    // fresh workspace with them instead.
+    if (!activeWorkspaceId) {
+      if (inputFiles.length > 0) await get().createWorkspace(deriveDisplayName(inputFiles[0].filename), inputFiles);
+      return;
+    }
 
     const existingMax = Math.max(...files.map((f) => f.order), -1);
     const newFiles: (FileMeta & { content: string })[] = inputFiles.map((f, i) => ({

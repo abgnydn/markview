@@ -123,6 +123,16 @@ export default function Home() {
     setSearchParams({});
   };
 
+  /**
+   * Landing drag-drop → seed a workspace from the dropped .md files and
+   * drop the user straight into it (the hero promises this flow).
+   */
+  const handleDropFiles = async (files: { filename: string; content: string }[]) => {
+    if (files.length === 0) return;
+    await createWorkspace(files[0].filename.replace(/\.(md|markdown)$/i, ""), files);
+    setSearchParams({});
+  };
+
   if (!isLoaded) {
     return (
       <div
@@ -164,6 +174,7 @@ export default function Home() {
       <LandingEditor
         onStart={() => void handleStart()}
         onImportGithub={(files, repoName) => void handleImportGithub(files, repoName)}
+        onDropFiles={(files) => void handleDropFiles(files)}
       />
     );
   }
