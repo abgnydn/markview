@@ -1,27 +1,6 @@
-import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as os from 'os';
+import { uploadFile, clickOverflowItem } from './helpers';
 
-// Helper: inject file via filechooser dialog
-async function uploadFile(page: Page, filename: string, content: string) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-'));
-  const filePath = path.join(tmpDir, filename);
-  fs.writeFileSync(filePath, content);
-
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.locator('.landing-cta-primary').click();
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(filePath);
-
-  // Wait for viewer to appear
-  await page.waitForSelector('.viewer-layout', { timeout: 10000 });
-
-  // Cleanup
-  fs.unlinkSync(filePath);
-  fs.rmdirSync(tmpDir);
-}
 
 const testMarkdown = `---
 title: Test Document
@@ -186,10 +165,8 @@ test.describe('Productivity Tools', () => {
     await page.keyboard.press('Escape');
   });
 
-  test('editor mode opens via toolbar button', async ({ page }) => {
-    const editBtn = page.locator('button[title="Edit markdown (E)"]');
-    await expect(editBtn).toBeVisible();
-    await editBtn.click();
+  test('editor opens via the overflow menu', async ({ page }) => {
+    await clickOverflowItem(page, 'Edit file');
     await expect(page.locator('.editor-overlay')).toBeVisible({ timeout: 5000 });
     await page.keyboard.press('Escape');
   });
