@@ -1,5 +1,9 @@
 # Commits — gpubench
 
+## 2026-07-24
+
+- `08:37` **Benchmark-integrity overhaul: verified fused-vs-unfused comparison, h…** — +10750 −4365 — [`d5cabe9`](https://github.com/abgnydn/gpubench/commit/d5cabe90681d121bcdeefe58dac87e1c3cedf9af)
+
 ## 2026-05-15
 
 - `03:39` **chore: update contact email to hi@barisgunaydin.com** — +1 −1 — [`9e1238b`](https://github.com/abgnydn/gpubench/commit/9e1238b0993130c38e824ac43b6552779e38abf8)
@@ -78,4 +82,3 @@
 - `11:34` **DRY: PaperCard component, DOI constants, transformer research section** — +66 −38 — [`863905b`](https://github.com/abgnydn/gpubench/commit/863905b8965af6ca47a652d92e4f8027c8d23f23)
 - `10:51` **Add transformer fusion benchmark tab, config selector, fix scrollbar** — +2199 −4 — [`f4372de`](https://github.com/abgnydn/gpubench/commit/f4372dea523bb479e5c78b37938324b32d2e7e25)
 - `06:55` **Add rich data collection: per-benchmark timing, GPU limits, device info** — +158 −82 — [`3d38646`](https://github.com/abgnydn/gpubench/commit/3d386468ef2b17a36957f78edb4cde8120a497e9)
-- `04:06` **Update DOI to 10.5281/zenodo.19343570** — +2 −2 — [`1682061`](https://github.com/abgnydn/gpubench/commit/1682061a7c07f6a4ba0b51dda4a2755bf75a7167)

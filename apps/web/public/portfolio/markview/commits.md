@@ -1,5 +1,13 @@
 # Commits — markview
 
+## 2026-07-24
+
+- `04:39` **chore(web): remove dead Pro tier and fix stale legal claims** — +11 −379 — [`32fdd6b`](https://github.com/abgnydn/markview/commit/32fdd6b1c60f5db194d84da6886b4d1fb4af0134)
+
+## 2026-07-23
+
+- `21:08` **chore(portfolio): daily sync 2026-07-23** — +73 −73 — [`1f38d93`](https://github.com/abgnydn/markview/commit/1f38d9346d176dad39158cf2036cce45e38aa733)
+
 ## 2026-07-22
 
 - `21:12` **chore(portfolio): daily sync 2026-07-22** — +68 −68 — [`ec0d927`](https://github.com/abgnydn/markview/commit/ec0d9271036ca3b56d41c87d43156ca23d299ed6)
@@ -143,11 +151,3 @@
 ## 2026-06-20
 
 - `21:21` **chore(portfolio): daily sync 2026-06-20** — +34 −31 — [`574365b`](https://github.com/abgnydn/markview/commit/574365b2e60a1da15d6a205296431750861d2f83)
-
-## 2026-06-19
-
-- `21:13` **chore(portfolio): daily sync 2026-06-19** — +32 −29 — [`c792008`](https://github.com/abgnydn/markview/commit/c792008412768c9210fd2d6408df3531ee539bc5)
-
-## 2026-06-18
-
-- `22:14` **chore(portfolio): daily sync 2026-06-18** — +34 −32 — [`6cbb305`](https://github.com/abgnydn/markview/commit/6cbb305e2e3010077b009d8a0240a766353cf8f0)
