@@ -68,6 +68,12 @@ interface WorkspaceState {
   promoteFileToNewWorkspace: (fileId: string, newTitle?: string) => Promise<void>;
 }
 
+// Monotonic tokens guarding the async switch paths: rapid A→B→A switching
+// must not let a slow B read resolve last and clobber state ("last write
+// wins" instead of "last USER CHOICE wins"). Only the newest request commits.
+let workspaceSwitchToken = 0;
+let fileSwitchToken = 0;
+
 function generateId(): string {
   return crypto.randomUUID();
 }
@@ -217,12 +223,14 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const { activeWorkspaceId } = get();
     if (workspaceId === activeWorkspaceId) return;
 
+    const token = ++workspaceSwitchToken;
     set({ isContentLoading: true });
 
     const dbFiles = await db.files
       .where('workspaceId')
       .equals(workspaceId)
       .sortBy('order');
+    if (token !== workspaceSwitchToken) return; // superseded by a newer switch
 
     const files: FileMeta[] = dbFiles.map((f) => ({
       id: f.id,
@@ -237,6 +245,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       const firstFile = await db.files.get(files[0].id);
       activeFileContent = firstFile?.content || null;
     }
+    if (token !== workspaceSwitchToken) return; // superseded by a newer switch
 
     set({
       activeWorkspaceId: workspaceId,
@@ -261,7 +270,14 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
 
   // ---------- Delete Workspace ----------
   deleteWorkspace: async (workspaceId) => {
-    await db.transaction('rw', db.workspaces, db.files, async () => {
+    await db.transaction('rw', [db.workspaces, db.files, db.embeddings, db.snapshots, db.assets], async () => {
+      // Purge everything hanging off this workspace's files too —
+      // otherwise embeddings/snapshots/assets accumulate as orphan rows
+      // and quietly eat the IndexedDB quota.
+      const fileIds = await db.files.where('workspaceId').equals(workspaceId).primaryKeys();
+      await db.embeddings.where('workspaceId').equals(workspaceId).delete();
+      await db.snapshots.where('fileId').anyOf(fileIds).delete();
+      await db.assets.where('workspaceId').equals(workspaceId).delete();
       await db.files.where('workspaceId').equals(workspaceId).delete();
       await db.workspaces.delete(workspaceId);
     });
@@ -318,7 +334,9 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     if (outgoingId && main && typeof localStorage !== 'undefined') {
       try { localStorage.setItem(`mv-scroll-${outgoingId}`, String(main.scrollTop)); } catch { /* ignore */ }
     }
+    const token = ++fileSwitchToken;
     const dbFile = await db.files.get(fileId);
+    if (token !== fileSwitchToken) return; // superseded by a newer file switch
     const commit = () => {
       set({
         activeFileId: fileId,
@@ -508,6 +526,10 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       workspaceId: targetWorkspaceId,
       order: newOrder,
     });
+    // Embeddings are scoped by workspaceId — move them along or semantic
+    // search keeps surfacing this file in the OLD workspace and never
+    // finds it in the new one.
+    await db.embeddings.where('fileId').equals(fileId).modify({ workspaceId: targetWorkspaceId });
     const now = new Date();
     await db.workspaces.update(sourceWsId, {
       updatedAt: now,
@@ -608,19 +630,24 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     if (toIndex < 0 || toIndex >= workspaces.length) return;
     if (fromIndex === toIndex) return;
 
-    const updated = [...workspaces];
-    const [moved] = updated.splice(fromIndex, 1);
-    updated.splice(toIndex, 0, moved);
+    // Persist order by updating timestamps so most-recently-ordered stays
+    // first. Keep the in-memory metas in lockstep with what we write so
+    // store and DB can't disagree until reload.
+    const now = Date.now();
+    const reordered = [...workspaces];
+    const [moved] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, moved);
+    const updated = reordered.map((ws, i) => ({ ...ws, updatedAt: new Date(now - i) }));
     set({ workspaces: updated });
 
-    // Persist order by updating timestamps so most-recently-ordered stays first
-    const now = Date.now();
     db.transaction('rw', db.workspaces, async () => {
       for (let i = 0; i < updated.length; i++) {
         await db.workspaces.update(updated[i].id, {
-          updatedAt: new Date(now - i),
+          updatedAt: updated[i].updatedAt,
         });
       }
+    }).catch((err) => {
+      console.warn('[workspaces] failed to persist reorder', err);
     });
   },
 }));

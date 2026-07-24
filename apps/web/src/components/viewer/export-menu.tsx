@@ -15,6 +15,7 @@ import {
   FileCode,
   LayoutDashboard,
   Link2,
+  AlertCircle,
 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useThemeStore } from '@/stores/theme-store';
@@ -85,6 +86,8 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
         } catch (e) {
           console.error(`Export error (${label}):`, e);
           showToast(`Failed: ${label}`);
+        } finally {
+          setLoading(null);
         }
       };
     },
@@ -266,7 +269,15 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
       )}
 
       {isOpen && (
-        <div className="export-dropdown">
+        <div className={`export-dropdown${loading ? ' is-busy' : ''}`}>
+          {/* Busy banner: heavy exports (pptx, pdf, static site) take
+              seconds — without this the menu looks inert and users
+              re-click, firing the export twice (is-busy also blocks that). */}
+          {loading && (
+            <div className="export-busy" role="status">
+              <span className="export-spinner" /> Working — {loading.replace(/^(Copied|Downloaded) /, '')}…
+            </div>
+          )}
           {/* Copy */}
           <div className="export-dropdown-section">
             <div className="export-dropdown-label">Copy</div>
@@ -380,8 +391,8 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
       )}
 
       {toast && (
-        <div className="export-toast">
-          <Check size={14} />
+        <div className={`export-toast${toast.startsWith('Failed') ? ' is-error' : ''}`}>
+          {toast.startsWith('Failed') ? <AlertCircle size={14} /> : <Check size={14} />}
           <span>{toast}</span>
         </div>
       )}

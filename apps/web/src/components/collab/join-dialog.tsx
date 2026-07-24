@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Users, X } from 'lucide-react';
 import { useCollabStore } from '@/stores/collab-store';
 
@@ -7,6 +7,13 @@ export function JoinDialog({ roomId, onClose }: { roomId: string; onClose: () =>
   const { joinRoom, isConnecting } = useCollabStore();
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  // Escape dismisses, matching every other dialog in the app.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
 
   const handleJoin = async () => {
     const userName = name.trim() || 'Guest';
@@ -19,7 +26,7 @@ export function JoinDialog({ roomId, onClose }: { roomId: string; onClose: () =>
   };
 
   return (
-    <div className="collab-dialog-overlay">
+    <div className="collab-dialog-overlay" onClick={onClose}>
       <div className="collab-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="collab-dialog-header">
           <Users size={18} />

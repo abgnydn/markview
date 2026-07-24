@@ -9,7 +9,7 @@
  * landing reads as a single chapter in the same book.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GitHubImport } from '@/components/workspace/github-import';
 import { useMarketingBeacon } from '@/lib/analytics';
@@ -114,17 +114,44 @@ export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingE
   const download = useMemo(() => pickDownload(), []);
 
   // The hero promises "drag-drop a .md to start" — honor it right here on
-  // the landing, mirroring the viewer's drop handling.
+  // the landing, mirroring the viewer's drop handling. dragCounter tracks
+  // enter/leave pairs so child elements don't flicker the overlay off.
+  const [isDragging, setIsDragging] = useState(false);
+  const [dropError, setDropError] = useState<string | null>(null);
+  const dragCounter = useRef(0);
   const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
     const dropped = Array.from(e.dataTransfer.files).filter((f) => /\.(md|markdown)$/i.test(f.name));
-    if (dropped.length === 0) return;
+    if (dropped.length === 0) {
+      // Tell the user why nothing happened instead of silently ignoring.
+      setDropError('Only markdown files (.md, .markdown) can be opened.');
+      window.setTimeout(() => setDropError(null), 3000);
+      return;
+    }
     const files = await Promise.all(dropped.map(async (f) => ({ filename: f.name, content: await f.text() })));
     onDropFiles(files);
   }, [onDropFiles]);
 
   return (
-    <div className="ed-landing" onDragOver={(e) => e.preventDefault()} onDrop={(e) => void handleDrop(e)}>
+    <div
+      className={`ed-landing${isDragging ? ' is-dragover' : ''}`}
+      onDragOver={(e) => e.preventDefault()}
+      onDragEnter={(e) => { e.preventDefault(); dragCounter.current++; setIsDragging(true); }}
+      onDragLeave={() => { dragCounter.current--; if (dragCounter.current <= 0) { dragCounter.current = 0; setIsDragging(false); } }}
+      onDrop={(e) => void handleDrop(e)}
+    >
+      {isDragging && (
+        <div className="ed-drop-overlay" aria-hidden>
+          <div className="ed-drop-overlay-card">Drop your <code>.md</code> — it opens right here</div>
+        </div>
+      )}
+      {dropError && (
+        <div className="ed-drop-overlay" role="alert" style={{ background: 'transparent', backdropFilter: 'none', alignItems: 'flex-end', paddingBottom: 48 }}>
+          <div className="ed-drop-overlay-card" style={{ borderStyle: 'solid', borderColor: '#ff5f57' }}>{dropError}</div>
+        </div>
+      )}
       <header className="ed-nav">
         <div className="ed-nav-brand">
           <span className="ed-nav-mark" aria-hidden="true">

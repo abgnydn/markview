@@ -213,6 +213,12 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
     }
     if (results.length > 0) {
       addFiles(results);
+    } else {
+      // The drop contained no readable markdown — say so instead of the
+      // overlay just vanishing (looks broken otherwise).
+      window.dispatchEvent(new CustomEvent('markview:toast', {
+        detail: { message: 'Only markdown files (.md, .markdown) can be opened.' },
+      }));
     }
   }, [addFiles]);
 
@@ -241,6 +247,21 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   React.useEffect(() => {
     if (contentRef.current) contentRef.current.scrollTop = 0;
   }, [activeFileId]);
+
+  // P opens presentation mode — the toolbar tooltip has always advertised
+  // "(P)"; make the key real. Guarded like the other single-key shortcuts.
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.key !== 'p' && e.key !== 'P') || e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return;
+      if (showPresentation || showEditor) return;
+      e.preventDefault();
+      setShowPresentation(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showPresentation, showEditor, setShowPresentation]);
 
   // Guest mode: collab viewer without edit rights
   const isGuestMode = collabIsActive && !collabIsHost;
@@ -454,9 +475,20 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 resolveTransclusion={resolveTransclusion}
               />
             ) : (
-              <div className="viewer-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh', opacity: 0.15, userSelect: 'none', pointerEvents: 'none' }}>
-                <img src="/icon-512.png" alt="" style={{ width: 120, height: 120, filter: 'grayscale(100%) drop-shadow(0 0 40px rgba(255,255,255,0.1))' }} />
-                <h3 style={{ marginTop: 24, fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em' }}>MarkView</h3>
+              // Actionable empty state — the toolbar is hover-hidden, so
+              // without an in-content CTA there is no discoverable next step
+              // after deleting the last file.
+              <div className="viewer-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh', userSelect: 'none' }}>
+                <img src="/icon-512.png" alt="" style={{ width: 96, height: 96, opacity: 0.25, filter: 'grayscale(100%) drop-shadow(0 0 40px rgba(255,255,255,0.1))' }} />
+                <h3 style={{ marginTop: 20, fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', opacity: 0.5 }}>No document open</h3>
+                <p style={{ marginTop: 6, fontSize: 14, opacity: 0.45 }}>Drop a .md file anywhere, or</p>
+                <button
+                  className="viewer-empty-add-btn"
+                  onClick={() => addFilesInputRef.current?.click()}
+                  style={{ marginTop: 14, padding: '10px 22px', borderRadius: 10, border: '1px solid var(--border-muted, #333)', background: 'transparent', color: 'inherit', fontSize: 14, cursor: 'pointer' }}
+                >
+                  Add markdown files…
+                </button>
               </div>
             )}
             {activeFileId && (
