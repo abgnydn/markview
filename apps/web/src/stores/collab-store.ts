@@ -21,6 +21,7 @@ import {
 import type * as Y from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 import { db } from '@/lib/storage/db';
+import { useWorkspaceStore } from '@/stores/workspace-store';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -136,8 +137,16 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       for (const fileId of dirty) {
         const yText = contents.get(fileId) as Y.Text | undefined;
         if (yText) {
-          db.files.update(fileId, { content: yText.toString() })
+          const text = yText.toString();
+          db.files.update(fileId, { content: text })
             .catch((err) => console.warn('[collab] failed to persist host edit', err));
+          // Keep the host's reader view live too: the viewer/TOC render
+          // from workspace-store's activeFileContent, which nothing else
+          // updates during a session — without this the host keeps seeing
+          // pre-session text while (and after) peers edit the open file.
+          if (useWorkspaceStore.getState().activeFileId === fileId) {
+            useWorkspaceStore.setState({ activeFileContent: text });
+          }
         }
       }
       dirty.clear();
@@ -217,8 +226,19 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       ? readFileContent(session.ydoc, firstFile.id)
       : null;
 
-    // Subscribe to awareness
+    // Subscribe to awareness. If every peer disappears after we saw at
+    // least one, the host closed the tab or lost connection — say so,
+    // otherwise the doc silently freezes and looks live but dead.
+    let sawPeers = false;
     const unsubAwareness = onAwarenessChange(session.provider, (peers) => {
+      if (peers.length > 0) {
+        sawPeers = true;
+      } else if (sawPeers && get().isActive && !get().isHost) {
+        sawPeers = false; // announce once per drop
+        window.dispatchEvent(new CustomEvent('markview:toast', {
+          detail: { message: 'Host disconnected — the session ended. You are viewing the last-synced copy.' },
+        }));
+      }
       set({ peers });
     });
 
