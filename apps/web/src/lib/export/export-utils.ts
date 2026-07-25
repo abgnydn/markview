@@ -188,24 +188,26 @@ function buildSelfContainedHtml(title: string, bodyHtml: string, theme: 'dark' |
 
   input[type="checkbox"] { margin-right: 8px; accent-color: ${colors.accent}; }
 
-  .markdown-alert {
+  /* Class names must match what the core pipeline actually emits:
+     gh-alert / alert-<type> / gh-alert-title (NOT .markdown-alert-*). */
+  .gh-alert {
     margin: 1em 0; padding: 12px 16px;
     border-radius: 6px; border-left: 4px solid;
   }
-  .markdown-alert-note { border-color: ${colors.noteB}; background: ${colors.noteBg}; }
-  .markdown-alert-tip { border-color: ${colors.tipB}; background: ${colors.tipBg}; }
-  .markdown-alert-important { border-color: ${colors.impB}; background: ${colors.impBg}; }
-  .markdown-alert-warning { border-color: ${colors.warnB}; background: ${colors.warnBg}; }
-  .markdown-alert-caution { border-color: ${colors.cautB}; background: ${colors.cautBg}; }
-  .markdown-alert-title {
+  .gh-alert.alert-note { border-color: ${colors.noteB}; background: ${colors.noteBg}; }
+  .gh-alert.alert-tip { border-color: ${colors.tipB}; background: ${colors.tipBg}; }
+  .gh-alert.alert-important { border-color: ${colors.impB}; background: ${colors.impBg}; }
+  .gh-alert.alert-warning { border-color: ${colors.warnB}; background: ${colors.warnBg}; }
+  .gh-alert.alert-caution { border-color: ${colors.cautB}; background: ${colors.cautBg}; }
+  .gh-alert-title {
     font-weight: 600; font-size: 14px; margin-bottom: 4px;
     display: flex; align-items: center; gap: 6px;
   }
-  .markdown-alert-note .markdown-alert-title { color: ${colors.noteT}; }
-  .markdown-alert-tip .markdown-alert-title { color: ${colors.tipT}; }
-  .markdown-alert-important .markdown-alert-title { color: ${colors.impT}; }
-  .markdown-alert-warning .markdown-alert-title { color: ${colors.warnT}; }
-  .markdown-alert-caution .markdown-alert-title { color: ${colors.cautT}; }
+  .alert-note .gh-alert-title { color: ${colors.noteT}; }
+  .alert-tip .gh-alert-title { color: ${colors.tipT}; }
+  .alert-important .gh-alert-title { color: ${colors.impT}; }
+  .alert-warning .gh-alert-title { color: ${colors.warnT}; }
+  .alert-caution .gh-alert-title { color: ${colors.cautT}; }
 
   footer {
     margin-top: 60px; padding-top: 16px;

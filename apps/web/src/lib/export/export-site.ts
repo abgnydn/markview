@@ -1,5 +1,6 @@
 import { db } from '@/lib/storage/db';
 import { renderMarkdown } from '@/lib/markdown/pipeline';
+import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 import { triggerDownload } from './export-utils';
 
 /**
@@ -31,7 +32,9 @@ export async function downloadAsStaticSite(
   // Generate HTML for each file
   const pages: { filename: string; htmlFilename: string; content: string }[] = [];
   for (const file of files) {
-    const html = await renderMarkdown(file.content);
+    // Strip YAML frontmatter like the viewer does — a leading `---` block
+    // otherwise renders as a stray <hr> + garbled heading.
+    const html = await renderMarkdown(parseFrontmatter(file.content).content);
     const htmlFilename = file.filename.replace(/\.md$/i, '.html');
     pages.push({ filename: file.filename, htmlFilename, content: html });
   }

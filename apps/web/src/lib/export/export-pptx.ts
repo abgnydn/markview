@@ -36,6 +36,14 @@ export async function downloadAsPptx(
   Array.from(doc.body.children).forEach((el) => {
     const tag = el.tagName.toLowerCase();
 
+    // Match the presentation-mode convention (lib/markdown/slide-split.ts):
+    // a top-level `---` is an explicit slide boundary, not content.
+    if (tag === 'hr') {
+      if (currentSlide) slides.push(currentSlide);
+      currentSlide = null;
+      return;
+    }
+
     if (tag === 'h1' || tag === 'h2') {
       if (currentSlide) slides.push(currentSlide);
       currentSlide = { title: el.textContent || '', level: tag === 'h1' ? 1 : 2, content: [], tables: [] };
