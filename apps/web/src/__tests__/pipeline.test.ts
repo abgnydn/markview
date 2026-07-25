@@ -168,3 +168,25 @@ describe('XSS Sanitization', () => {
     expect(html).toContain(':not_a_real_emoji:');
   });
 });
+
+describe('math edge cases', () => {
+  it('currency before inline math does not eat the math delimiter', async () => {
+    const html = await renderMarkdown('I paid $5 for $x$ apples', { katex: true });
+    // $5 stays literal…
+    expect(html).toContain('$5');
+    // …and $x$ still becomes math (or at minimum no stray "x$" survives)
+    expect(html).not.toContain('x$ apples');
+    expect(html).toMatch(/katex/);
+  });
+
+  it('mid-paragraph $$block$$ math does not nest a div inside a p', async () => {
+    const html = await renderMarkdown('Here $$x+y$$ inline.', { katex: true });
+    expect(html).not.toMatch(/<p>[^<]*<div/);
+    expect(html).toContain('inline.');
+  });
+
+  it('standalone $$block$$ math still renders as a block div', async () => {
+    const html = await renderMarkdown('Before\n\n$$E = mc^2$$\n\nAfter', { katex: true });
+    expect(html).toContain('<div class="katex-block">');
+  });
+});

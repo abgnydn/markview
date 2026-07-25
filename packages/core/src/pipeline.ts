@@ -338,13 +338,31 @@ function extractMath(content: string): MathExtract {
       return key;
     });
 
-    // Inline math — $...$ on one line, no `$` or newline in body.
-    seg = seg.replace(/\$([^\s$][^$\n]*?)\$/g, (m, math) => {
-      if (/^\d/.test(math)) return m; // looks like currency
-      const key = `MATHINLINE${counter++}KEY`;
-      blocks.push({ key, math, display: false });
-      return key;
-    });
+    // Inline math — $...$ on one line, no `$` or newline in body. Manual
+    // scan instead of String.replace: when a match looks like currency
+    // ("$5 for $"), the closing `$` we matched may actually be the OPENING
+    // delimiter of a real math span right after it ("$5 for $x$"), so we
+    // must resume scanning just past the `$digits`, not past the match.
+    {
+      const re = /\$([^\s$][^$\n]*?)\$/g;
+      let out = '';
+      let last = 0;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(seg)) !== null) {
+        if (/^\d/.test(m[1])) {
+          const currency = /^\$\d+(?:[.,]\d+)*/.exec(m[0])![0];
+          out += seg.slice(last, m.index) + currency;
+          last = m.index + currency.length;
+          re.lastIndex = last;
+          continue;
+        }
+        const key = `MATHINLINE${counter++}KEY`;
+        blocks.push({ key, math: m[1], display: false });
+        out += seg.slice(last, m.index) + key;
+        last = m.index + m[0].length;
+      }
+      seg = out + seg.slice(last);
+    }
 
     return seg;
   });
@@ -389,6 +407,18 @@ async function restoreMathInHtml(
           html = html.split(wrapped).join(replacement);
           continue;
         }
+        // $$…$$ used mid-paragraph: the placeholder shares a <p> with other
+        // text. A <div> here would make the browser auto-close the <p> and
+        // split the paragraph — use a span (block styling comes from the
+        // class, which is element-agnostic).
+        html = html.split(key).join(
+          replacement
+            .replace(/^<div class="katex-block">/, '<span class="katex-block">')
+            .replace(/<\/div>$/, '</span>')
+            .replace(/^<pre><code>/, '<code>')
+            .replace(/<\/code><\/pre>$/, '</code>'),
+        );
+        continue;
       }
       // Plain string replace — keys are unique and contain no regex metas.
       html = html.split(key).join(replacement);

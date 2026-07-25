@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState, useCallback, startTransition } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';
 import { expandTransclusions, hasTransclusion, type TranscludeResolver } from '@/lib/markdown/transclude';
+import { expandWikilinks } from '@/lib/markdown/wikilinks';
 import { useThemeStore } from '@/stores/theme-store';
 import { usePluginStore } from '@/lib/plugins/plugin-registry';
 import '@/lib/plugins/embed-plugin';
@@ -256,18 +257,9 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
           if (cancelled) return;
         }
 
-        // Expand `[[name]]` wikilinks into standard markdown links. The
-        // target gets `.md` appended so they flow through the same
-        // internal-link handler as `[text](other.md)`. Pipe-style aliases
-        // ([[file|display text]]) are honored.
-        const preprocessed = source.replace(
-          /\[\[([^\]\n|]+?)(?:\|([^\]\n]+))?\]\]/g,
-          (_match, target: string, alias?: string) => {
-            const label = (alias ?? target).trim();
-            const href = `${target.trim()}.md`;
-            return `[${label}](${href})`;
-          }
-        );
+        // Expand `[[name]]` wikilinks into standard markdown links —
+        // code-aware, so `[[...]]` inside fences/inline code stays verbatim.
+        const preprocessed = expandWikilinks(source);
 
         // Render markdown
         const rawHtml = await renderMarkdown(preprocessed, {
