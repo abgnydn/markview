@@ -1,4 +1,4 @@
-const CACHE_NAME = 'markview-v4';
+const CACHE_NAME = 'markview-v5';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -46,9 +46,19 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match('/'))
     );
   } else {
+    // Cache-first with RUNTIME CACHING: hashed chunks are immutable, so
+    // store each successful response. Without the put(), only the shell
+    // was ever cached and offline loads died on their first chunk request
+    // — "offline-ready" in name only.
     event.respondWith(
       caches.match(event.request).then((cached) => {
-        return cached || fetch(event.request).catch((err) => {
+        return cached || fetch(event.request).then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return res;
+        }).catch((err) => {
           console.error('[SW] Fetch failed:', event.request.url, err);
           throw err;
         });
