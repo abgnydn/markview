@@ -535,3 +535,19 @@ html[data-atmosphere]:not([data-atmosphere='none']) .editor-overlay {
 .atmosphere-lite .atmosphere-particles {
   display: none !important;
 }
+
+/* ── Reduced motion: stop the ambient life (birds, leaves, mist, motes,
+   creatures) for users who asked the OS for less movement. The WebGL
+   particle sim and depth parallax are handled in JS (lite default). ── */
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere-bird,
+  .atmosphere-bird svg,
+  .atmosphere-leaf,
+  .atmosphere-leaf svg,
+  .atmosphere-mist,
+  .atmosphere-inkmote,
+  .atmosphere-creature,
+  .atmosphere-creature svg {
+    animation: none !important;
+  }
+}

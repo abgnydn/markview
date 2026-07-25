@@ -149,6 +149,11 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // dispatches markview:enter-painting; we resolve the current
   // painting's image URL and mount the walkable PaintingWorld.
   const [world, setWorld] = useState<{ src: string; splat: boolean } | null>(null);
+  // Stable identity matters: onClose is in the world components' effect
+  // deps — an inline closure would tear down and rebuild the entire 3D
+  // scene (terrain, 24 page textures, creatures) on every ViewerPage
+  // re-render while a world is open.
+  const closeWorld = React.useCallback(() => setWorld(null), []);
   React.useEffect(() => {
     const onEnter = () => {
       if (atmosphere === 'none') return;
@@ -339,9 +344,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       {world && (
         <Suspense fallback={null}>
           {world.splat ? (
-            <SplatWorld src={world.src} kind={atmosphere} onClose={() => setWorld(null)} />
+            <SplatWorld src={world.src} kind={atmosphere} onClose={closeWorld} />
           ) : (
-            <PaintingWorld src={world.src} kind={atmosphere} onClose={() => setWorld(null)} />
+            <PaintingWorld src={world.src} kind={atmosphere} onClose={closeWorld} />
           )}
         </Suspense>
       )}
