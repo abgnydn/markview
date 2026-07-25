@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-24T21:07:29.709Z",
+  "generated_at": "2026-07-25T20:57:04.167Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1533,
+  "activity_90d_total": 1535,
   "activity_90d": {
-    "2026-04-26": 13,
     "2026-04-27": 5,
     "2026-04-30": 2,
     "2026-05-01": 48,
@@ -83,7 +82,8 @@
     "2026-07-21": 1,
     "2026-07-22": 1,
     "2026-07-23": 1,
-    "2026-07-24": 2
+    "2026-07-24": 3,
+    "2026-07-25": 14
   },
   "categories": {
     "llm-inference": {
@@ -286,7 +286,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 18,
+      "stale_days": 19,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505470"
@@ -335,7 +335,7 @@
       "pushed_at": "2026-07-06T11:28:05Z",
       "default_branch": "main",
       "latest_tag": "v0.12.0",
-      "commits_30d": 5,
+      "commits_30d": 4,
       "commits_synced": 50,
       "last_commit": {
         "sha": "a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df",
@@ -349,7 +349,7 @@
       },
       "status": "flagship",
       "open_issues": 27,
-      "stale_days": 18,
+      "stale_days": 19,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20494382"
@@ -393,20 +393,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-24T09:00:01Z",
+      "pushed_at": "2026-07-25T05:07:22Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
-      "commits_30d": 35,
+      "commits_30d": 47,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "32fdd6b1c60f5db194d84da6886b4d1fb4af0134",
-        "short_sha": "32fdd6b",
-        "message": "chore(web): remove dead Pro tier and fix stale legal claims",
+        "sha": "ae1ce41704f6dcfaf46237ad673df7d825463514",
+        "short_sha": "ae1ce41",
+        "message": "chore(landing): desktop downloads → 0.3.0 (published, all four URLs v…",
         "type": "chore",
-        "date": "2026-07-24T04:39:03Z",
-        "url": "https://github.com/abgnydn/markview/commit/32fdd6b1c60f5db194d84da6886b4d1fb4af0134",
-        "additions": 11,
-        "deletions": 379
+        "date": "2026-07-25T05:07:15Z",
+        "url": "https://github.com/abgnydn/markview/commit/ae1ce41704f6dcfaf46237ad673df7d825463514",
+        "additions": 1,
+        "deletions": 1
       },
       "status": "flagship",
       "open_issues": 0,
@@ -459,7 +459,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 11,
+      "stale_days": 12,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506887"
@@ -509,7 +509,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 18,
+      "stale_days": 19,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20496086"
@@ -552,10 +552,10 @@
         "webllm",
         "wgsl"
       ],
-      "pushed_at": "2026-07-24T08:43:16Z",
+      "pushed_at": "2026-07-25T07:51:46Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 7,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "32406c88acc201694df83a4e22df64bf4391d380",
@@ -620,7 +620,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 24,
+      "stale_days": 25,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -653,20 +653,20 @@
       "language_color": "#3178c6",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-07-24T08:37:19Z",
+      "pushed_at": "2026-07-25T07:23:10Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 1,
+      "commits_30d": 2,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "d5cabe90681d121bcdeefe58dac87e1c3cedf9af",
-        "short_sha": "d5cabe9",
-        "message": "Benchmark-integrity overhaul: verified fused-vs-unfused comparison, h…",
+        "sha": "c5c8bd5eacb8e39d1e674ba1c190ee969309420a",
+        "short_sha": "c5c8bd5",
+        "message": "Port data layer to Cloudflare D1 (restores production data APIs) (#2)",
         "type": "other",
-        "date": "2026-07-24T08:37:13Z",
-        "url": "https://github.com/abgnydn/gpubench/commit/d5cabe90681d121bcdeefe58dac87e1c3cedf9af",
-        "additions": 10750,
-        "deletions": 4365
+        "date": "2026-07-25T07:23:10Z",
+        "url": "https://github.com/abgnydn/gpubench/commit/c5c8bd5eacb8e39d1e674ba1c190ee969309420a",
+        "additions": 539,
+        "deletions": 273
       },
       "status": "flagship",
       "open_issues": 0,
@@ -722,7 +722,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 56,
+      "stale_days": 57,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -779,7 +779,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 59,
+      "stale_days": 60,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -829,7 +829,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 29,
+      "stale_days": 30,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -880,7 +880,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 11,
+      "stale_days": 12,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506339"
@@ -928,7 +928,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 59,
+      "stale_days": 60,
       "live_ok": false,
       "has_citation": false,
       "citation_doi": null
@@ -988,7 +988,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1039,7 +1039,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 44,
+      "stale_days": 45,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1086,7 +1086,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 49,
+      "stale_days": 50,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": null
@@ -1134,7 +1134,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 11,
+      "stale_days": 12,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505472"
@@ -1186,7 +1186,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 24,
+      "stale_days": 25,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19344276"
@@ -1237,7 +1237,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 24,
+      "stale_days": 25,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -1288,7 +1288,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 29,
+      "stale_days": 30,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1338,7 +1338,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 29,
+      "stale_days": 30,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1388,7 +1388,7 @@
       },
       "status": "derivative",
       "open_issues": 0,
-      "stale_days": 56,
+      "stale_days": 57,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1437,7 +1437,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 56,
+      "stale_days": 57,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1486,7 +1486,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 64,
+      "stale_days": 65,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1536,7 +1536,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 65,
+      "stale_days": 66,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1586,7 +1586,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1635,7 +1635,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1683,7 +1683,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1733,7 +1733,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1783,7 +1783,7 @@
       },
       "status": "library",
       "open_issues": 1,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1832,7 +1832,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 81,
+      "stale_days": 82,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1896,7 +1896,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 81,
+      "stale_days": 82,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1955,7 +1955,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 81,
+      "stale_days": 82,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2005,7 +2005,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 81,
+      "stale_days": 82,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2055,7 +2055,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 81,
+      "stale_days": 82,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2105,7 +2105,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 88,
+      "stale_days": 89,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -2152,7 +2152,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 114,
+      "stale_days": 115,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2203,7 +2203,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 118,
+      "stale_days": 119,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2252,7 +2252,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 118,
+      "stale_days": 119,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2304,7 +2304,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 118,
+      "stale_days": 119,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2355,13 +2355,208 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 127,
+      "stale_days": 128,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "gpubench",
+      "name": "gpubench",
+      "language": "TypeScript",
+      "sha": "c5c8bd5eacb8e39d1e674ba1c190ee969309420a",
+      "short_sha": "c5c8bd5",
+      "message": "Port data layer to Cloudflare D1 (restores production data APIs) (#2)",
+      "type": "other",
+      "date": "2026-07-25T07:23:10Z",
+      "url": "https://github.com/abgnydn/gpubench/commit/c5c8bd5eacb8e39d1e674ba1c190ee969309420a",
+      "additions": 539,
+      "deletions": 273
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "cecb66fed4e1d8ec0b5395d0a8ad8c04d75414fd",
+      "short_sha": "cecb66f",
+      "message": "fix(atmosphere): GPU/rAF leak + resilience pass from graphics audit",
+      "type": "fix",
+      "date": "2026-07-25T05:07:15Z",
+      "url": "https://github.com/abgnydn/markview/commit/cecb66fed4e1d8ec0b5395d0a8ad8c04d75414fd",
+      "additions": 71,
+      "deletions": 14
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "ae1ce41704f6dcfaf46237ad673df7d825463514",
+      "short_sha": "ae1ce41",
+      "message": "chore(landing): desktop downloads → 0.3.0 (published, all four URLs v…",
+      "type": "chore",
+      "date": "2026-07-25T05:07:15Z",
+      "url": "https://github.com/abgnydn/markview/commit/ae1ce41704f6dcfaf46237ad673df7d825463514",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "4e986ee5513defbda68d660b7b4f465c6592b375",
+      "short_sha": "4e986ee",
+      "message": "feat(web): marketing-only analytics hook + presentation golden-path e2e",
+      "type": "feat",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/4e986ee5513defbda68d660b7b4f465c6592b375",
+      "additions": 143,
+      "deletions": 0
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "bd591f88bb615e84402e780a2d786abe7e96223b",
+      "short_sha": "bd591f8",
+      "message": "fix(app): honor landing drag-drop, stop silent file loss, fix desktop…",
+      "type": "fix",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/bd591f88bb615e84402e780a2d786abe7e96223b",
+      "additions": 83,
+      "deletions": 9
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "bfb5af30106ff76edde3a79155045acf24db0310",
+      "short_sha": "bfb5af3",
+      "message": "test(e2e): revive the entire suite against the current UI (10 → 113 p…",
+      "type": "test",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/bfb5af30106ff76edde3a79155045acf24db0310",
+      "additions": 266,
+      "deletions": 367
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "4f245e461f2b76507b047ee53156adad2c4a47aa",
+      "short_sha": "4f245e4",
+      "message": "ci: add quality gates — typecheck, lint, unit, e2e on every PR and ma…",
+      "type": "ci",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/4f245e461f2b76507b047ee53156adad2c4a47aa",
+      "additions": 48,
+      "deletions": 0
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "af0fe05e8d9ec00a2b802e929290f5cfc809f48d",
+      "short_sha": "af0fe05",
+      "message": "chore(web): make whole-src lint clean for CI",
+      "type": "chore",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/af0fe05e8d9ec00a2b802e929290f5cfc809f48d",
+      "additions": 7,
+      "deletions": 15
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "0368926108df9bda73d35246ff39b078fa75068a",
+      "short_sha": "0368926",
+      "message": "test(e2e): deterministic webServer — strict port 3000, bunx, 120s CI …",
+      "type": "test",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/0368926108df9bda73d35246ff39b078fa75068a",
+      "additions": 5,
+      "deletions": 2
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "b4d06feab2ffac99fcbb9e5251e55e6540447191",
+      "short_sha": "b4d06fe",
+      "message": "test(e2e): ControlOrMeta for editor/search shortcuts — Meta+A isn't s…",
+      "type": "test",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/b4d06feab2ffac99fcbb9e5251e55e6540447191",
+      "additions": 15,
+      "deletions": 15
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "ab2ac48d6b52e74dcc5dbdadb7503463812da59e",
+      "short_sha": "ab2ac48",
+      "message": "fix(app): correctness + UX hardening pass from full-codebase audit",
+      "type": "fix",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/ab2ac48d6b52e74dcc5dbdadb7503463812da59e",
+      "additions": 241,
+      "deletions": 31
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "059ad10fb83cb9df5acb3bb77c550cfc9bf35a3d",
+      "short_sha": "059ad10",
+      "message": "fix(collab): host viewer stays live during sessions; guests told when…",
+      "type": "fix",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/059ad10fb83cb9df5acb3bb77c550cfc9bf35a3d",
+      "additions": 22,
+      "deletions": 2
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "cc3a3ca5b406b029cabe84096b488eb4404444db",
+      "short_sha": "cc3a3ca",
+      "message": "fix(pwa): actually cache runtime assets — offline was shell-only",
+      "type": "fix",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/cc3a3ca5b406b029cabe84096b488eb4404444db",
+      "additions": 12,
+      "deletions": 2
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "633c098e2c0e6d3e21b6d90bc43c8f80df3d547c",
+      "short_sha": "633c098",
+      "message": "fix(render): rendering + export fidelity pass from pipeline audit",
+      "type": "fix",
+      "date": "2026-07-25T04:40:30Z",
+      "url": "https://github.com/abgnydn/markview/commit/633c098e2c0e6d3e21b6d90bc43c8f80df3d547c",
+      "additions": 173,
+      "deletions": 53
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "fd523da1db2f0dd470630fc91b97227469aa05d2",
+      "short_sha": "fd523da",
+      "message": "chore(portfolio): daily sync 2026-07-24",
+      "type": "chore",
+      "date": "2026-07-24T21:07:29Z",
+      "url": "https://github.com/abgnydn/markview/commit/fd523da1db2f0dd470630fc91b97227469aa05d2",
+      "additions": 227,
+      "deletions": 140
+    },
     {
       "slug": "gpubench",
       "name": "gpubench",
@@ -3650,19 +3845,6 @@
       "deletions": 0
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "8961b0103597623f9bcf95eb45ebb3f83e824cb9",
-      "short_sha": "8961b01",
-      "message": "fix(presentation): hide next-slide peek on laptop/middle screens",
-      "type": "fix",
-      "date": "2026-06-23T07:45:29Z",
-      "url": "https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9",
-      "additions": 10,
-      "deletions": 0
-    },
-    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -3676,32 +3858,6 @@
       "deletions": 4
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "466665bb2337feaa9d324122cfd9750ca3d7fc82",
-      "short_sha": "466665b",
-      "message": "perf(atmosphere): lite = minimal tier — strip decorative layers (weak…",
-      "type": "perf",
-      "date": "2026-06-23T07:28:23Z",
-      "url": "https://github.com/abgnydn/markview/commit/466665bb2337feaa9d324122cfd9750ca3d7fc82",
-      "additions": 17,
-      "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "f21b06e444a073268d8363451b136b5d38864249",
-      "short_sha": "f21b06e",
-      "message": "perf(viewer): drop the full-screen grain blend (weak-GPU compositor r…",
-      "type": "perf",
-      "date": "2026-06-23T07:18:59Z",
-      "url": "https://github.com/abgnydn/markview/commit/f21b06e444a073268d8363451b136b5d38864249",
-      "additions": 4,
-      "deletions": 1
-    },
-    {
       "slug": "zero-tvm",
       "name": "zero-tvm",
       "language": "WGSL",
@@ -3713,19 +3869,6 @@
       "url": "https://github.com/abgnydn/zero-tvm/commit/4b8f8334e1ade0f64c917b6ac56c6ece933443b2",
       "additions": 53,
       "deletions": 11
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "4e899a2c87bf40d23e81c7681aa5c5812d1c1acd",
-      "short_sha": "4e899a2",
-      "message": "perf(atmosphere): cheap text paint + truly-static lite mode",
-      "type": "perf",
-      "date": "2026-06-23T06:54:24Z",
-      "url": "https://github.com/abgnydn/markview/commit/4e899a2c87bf40d23e81c7681aa5c5812d1c1acd",
-      "additions": 27,
-      "deletions": 6
     },
     {
       "slug": "webgpu-q",
@@ -3754,19 +3897,6 @@
       "deletions": 0
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "32f2c4d440f36a3800cffa840cb1dae0fb6c66bc",
-      "short_sha": "32f2c4d",
-      "message": "perf(viewer): isolate reveal-chrome on its own GPU layer (sidebar slide)",
-      "type": "perf",
-      "date": "2026-06-23T06:36:00Z",
-      "url": "https://github.com/abgnydn/markview/commit/32f2c4d440f36a3800cffa840cb1dae0fb6c66bc",
-      "additions": 11,
-      "deletions": 0
-    },
-    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -3778,19 +3908,6 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/338e65891104e85843a725be5b9eba587dab2fd8",
       "additions": 88,
       "deletions": 22
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "4bd39fcd1a579e949169deb1689dd67f92c64cb4",
-      "short_sha": "4bd39fc",
-      "message": "perf(viewer): make the cursor-glow compositor-only (kill hover lag)",
-      "type": "perf",
-      "date": "2026-06-23T06:26:31Z",
-      "url": "https://github.com/abgnydn/markview/commit/4bd39fcd1a579e949169deb1689dd67f92c64cb4",
-      "additions": 13,
-      "deletions": 4
     },
     {
       "slug": "webgpu-q",
@@ -3832,19 +3949,6 @@
       "deletions": 7
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0",
-      "short_sha": "bb9a9dd",
-      "message": "feat(atmosphere): lite mode — static painting, zero WebGL",
-      "type": "feat",
-      "date": "2026-06-23T06:15:35Z",
-      "url": "https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0",
-      "additions": 72,
-      "deletions": 12
-    },
-    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -3858,19 +3962,6 @@
       "deletions": 16
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "10eeb0876fb793f2e6e83be4aa2d1be9c5debcf5",
-      "short_sha": "10eeb08",
-      "message": "perf(atmosphere): cap particle loop to 30fps + lower render DPR to 1.5",
-      "type": "perf",
-      "date": "2026-06-23T03:51:59Z",
-      "url": "https://github.com/abgnydn/markview/commit/10eeb0876fb793f2e6e83be4aa2d1be9c5debcf5",
-      "additions": 16,
-      "deletions": 6
-    },
-    {
       "slug": "zero-tvm",
       "name": "zero-tvm",
       "language": "WGSL",
@@ -3881,19 +3972,6 @@
       "date": "2026-06-23T03:49:31Z",
       "url": "https://github.com/abgnydn/zero-tvm/commit/95e7e0386d67657fcc51294e211fc027577502a7",
       "additions": 12,
-      "deletions": 4
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "ca94ad1109480aad352b6c29a46798b4e83c5c40",
-      "short_sha": "ca94ad1",
-      "message": "perf(atmosphere): render the depth shader on-demand, not 60fps forever",
-      "type": "perf",
-      "date": "2026-06-23T03:32:08Z",
-      "url": "https://github.com/abgnydn/markview/commit/ca94ad1109480aad352b6c29a46798b4e83c5c40",
-      "additions": 23,
       "deletions": 4
     },
     {
@@ -3999,19 +4077,6 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/1a7783f8d6017669c50f41626a7c387a6a73fcbb",
       "additions": 143,
       "deletions": 1
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "ad7186403a48e86f91391daea3879f1ffec9df67",
-      "short_sha": "ad71864",
-      "message": "perf(atmosphere): stop scroll jank from per-frame reflow + fixed-bg r…",
-      "type": "perf",
-      "date": "2026-06-23T03:08:47Z",
-      "url": "https://github.com/abgnydn/markview/commit/ad7186403a48e86f91391daea3879f1ffec9df67",
-      "additions": 77,
-      "deletions": 33
     },
     {
       "slug": "zero-tvm",
@@ -4209,19 +4274,6 @@
       "deletions": 1
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "dfac516ad1a78ba7d33a71c120d1fb39e095a933",
-      "short_sha": "dfac516",
-      "message": "feat(presentation): responsive deck layout for narrow + touch screens",
-      "type": "feat",
-      "date": "2026-06-23T01:27:18Z",
-      "url": "https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933",
-      "additions": 199,
-      "deletions": 0
-    },
-    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -4272,45 +4324,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/8e540a74eaf3ad762241ed5aea6438e8d1d5c7c6",
       "additions": 302,
       "deletions": 0
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "f9d9acf4b3be774144d37f29e4fb23b8c857b767",
-      "short_sha": "f9d9acf",
-      "message": "chore(portfolio): daily sync 2026-06-22",
-      "type": "chore",
-      "date": "2026-06-22T22:07:07Z",
-      "url": "https://github.com/abgnydn/markview/commit/f9d9acf4b3be774144d37f29e4fb23b8c857b767",
-      "additions": 29,
-      "deletions": 25
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "54f9c48962bf0b29fca100c222df3e4413904305",
-      "short_sha": "54f9c48",
-      "message": "chore(portfolio): daily sync 2026-06-21",
-      "type": "chore",
-      "date": "2026-06-21T21:19:05Z",
-      "url": "https://github.com/abgnydn/markview/commit/54f9c48962bf0b29fca100c222df3e4413904305",
-      "additions": 32,
-      "deletions": 28
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "574365b2e60a1da15d6a205296431750861d2f83",
-      "short_sha": "574365b",
-      "message": "chore(portfolio): daily sync 2026-06-20",
-      "type": "chore",
-      "date": "2026-06-20T21:21:40Z",
-      "url": "https://github.com/abgnydn/markview/commit/574365b2e60a1da15d6a205296431750861d2f83",
-      "additions": 34,
-      "deletions": 31
     },
     {
       "slug": "webgpu-q",
@@ -8848,19 +8861,6 @@
       "url": "https://github.com/abgnydn/panel/commit/92fff9ba8013a9e3401777a64beaf2a04057c935",
       "additions": 211,
       "deletions": 53
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "91f0cc95476afb94c6ebbcd0ec9fec482257647c",
-      "short_sha": "91f0cc9",
-      "message": "Design system overhaul: tokens, elevation, skeleton, urgency gauge",
-      "type": "other",
-      "date": "2026-05-12T12:43:48Z",
-      "url": "https://github.com/abgnydn/panel/commit/91f0cc95476afb94c6ebbcd0ec9fec482257647c",
-      "additions": 655,
-      "deletions": 203
     }
   ],
   "errors": []

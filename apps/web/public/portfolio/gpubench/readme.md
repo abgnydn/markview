@@ -84,7 +84,7 @@ This benchmark site demonstrates kernel fusion — fusing sequential GPU dispatc
 - **Next.js 16** (App Router)
 - **WebGPU** compute shaders (WGSL)
 - **Cloudflare Workers** hosting (via OpenNext — see `wrangler.jsonc`)
-- **Neon Postgres** (anonymous benchmark data)
+- **Cloudflare D1** (anonymous benchmark data)
 - **Tailwind CSS v4**
 
 ## Development

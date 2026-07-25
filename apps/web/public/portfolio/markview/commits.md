@@ -1,7 +1,24 @@
 # Commits — markview
 
+## 2026-07-25
+
+- `05:07` **chore(landing): desktop downloads → 0.3.0 (published, all four URLs v…** — +1 −1 — [`ae1ce41`](https://github.com/abgnydn/markview/commit/ae1ce41704f6dcfaf46237ad673df7d825463514)
+- `05:07` **fix(atmosphere): GPU/rAF leak + resilience pass from graphics audit** — +71 −14 — [`cecb66f`](https://github.com/abgnydn/markview/commit/cecb66fed4e1d8ec0b5395d0a8ad8c04d75414fd)
+- `04:40` **fix(render): rendering + export fidelity pass from pipeline audit** — +173 −53 — [`633c098`](https://github.com/abgnydn/markview/commit/633c098e2c0e6d3e21b6d90bc43c8f80df3d547c)
+- `04:40` **fix(pwa): actually cache runtime assets — offline was shell-only** — +12 −2 — [`cc3a3ca`](https://github.com/abgnydn/markview/commit/cc3a3ca5b406b029cabe84096b488eb4404444db)
+- `04:40` **fix(collab): host viewer stays live during sessions; guests told when…** — +22 −2 — [`059ad10`](https://github.com/abgnydn/markview/commit/059ad10fb83cb9df5acb3bb77c550cfc9bf35a3d)
+- `04:40` **fix(app): correctness + UX hardening pass from full-codebase audit** — +241 −31 — [`ab2ac48`](https://github.com/abgnydn/markview/commit/ab2ac48d6b52e74dcc5dbdadb7503463812da59e)
+- `04:40` **test(e2e): ControlOrMeta for editor/search shortcuts — Meta+A isn't s…** — +15 −15 — [`b4d06fe`](https://github.com/abgnydn/markview/commit/b4d06feab2ffac99fcbb9e5251e55e6540447191)
+- `04:40` **test(e2e): deterministic webServer — strict port 3000, bunx, 120s CI …** — +5 −2 — [`0368926`](https://github.com/abgnydn/markview/commit/0368926108df9bda73d35246ff39b078fa75068a)
+- `04:40` **chore(web): make whole-src lint clean for CI** — +7 −15 — [`af0fe05`](https://github.com/abgnydn/markview/commit/af0fe05e8d9ec00a2b802e929290f5cfc809f48d)
+- `04:40` **ci: add quality gates — typecheck, lint, unit, e2e on every PR and ma…** — +48 −0 — [`4f245e4`](https://github.com/abgnydn/markview/commit/4f245e461f2b76507b047ee53156adad2c4a47aa)
+- `04:40` **test(e2e): revive the entire suite against the current UI (10 → 113 p…** — +266 −367 — [`bfb5af3`](https://github.com/abgnydn/markview/commit/bfb5af30106ff76edde3a79155045acf24db0310)
+- `04:40` **fix(app): honor landing drag-drop, stop silent file loss, fix desktop…** — +83 −9 — [`bd591f8`](https://github.com/abgnydn/markview/commit/bd591f88bb615e84402e780a2d786abe7e96223b)
+- `04:40` **feat(web): marketing-only analytics hook + presentation golden-path e2e** — +143 −0 — [`4e986ee`](https://github.com/abgnydn/markview/commit/4e986ee5513defbda68d660b7b4f465c6592b375)
+
 ## 2026-07-24
 
+- `21:07` **chore(portfolio): daily sync 2026-07-24** — +227 −140 — [`fd523da`](https://github.com/abgnydn/markview/commit/fd523da1db2f0dd470630fc91b97227469aa05d2)
 - `04:39` **chore(web): remove dead Pro tier and fix stale legal claims** — +11 −379 — [`32fdd6b`](https://github.com/abgnydn/markview/commit/32fdd6b1c60f5db194d84da6886b4d1fb4af0134)
 
 ## 2026-07-23
@@ -128,26 +145,3 @@
 ## 2026-06-23
 
 - `21:45` **chore(portfolio): daily sync 2026-06-23** — +1076 −1067 — [`53e0356`](https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1)
-- `07:45` **fix(presentation): hide next-slide peek on laptop/middle screens** — +10 −0 — [`8961b01`](https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9)
-- `07:28` **perf(atmosphere): lite = minimal tier — strip decorative layers (weak…** — +17 −0 — [`466665b`](https://github.com/abgnydn/markview/commit/466665bb2337feaa9d324122cfd9750ca3d7fc82)
-- `07:18` **perf(viewer): drop the full-screen grain blend (weak-GPU compositor r…** — +4 −1 — [`f21b06e`](https://github.com/abgnydn/markview/commit/f21b06e444a073268d8363451b136b5d38864249)
-- `06:54` **perf(atmosphere): cheap text paint + truly-static lite mode** — +27 −6 — [`4e899a2`](https://github.com/abgnydn/markview/commit/4e899a2c87bf40d23e81c7681aa5c5812d1c1acd)
-- `06:36` **perf(viewer): isolate reveal-chrome on its own GPU layer (sidebar slide)** — +11 −0 — [`32f2c4d`](https://github.com/abgnydn/markview/commit/32f2c4d440f36a3800cffa840cb1dae0fb6c66bc)
-- `06:26` **perf(viewer): make the cursor-glow compositor-only (kill hover lag)** — +13 −4 — [`4bd39fc`](https://github.com/abgnydn/markview/commit/4bd39fcd1a579e949169deb1689dd67f92c64cb4)
-- `06:15` **feat(atmosphere): lite mode — static painting, zero WebGL** — +72 −12 — [`bb9a9dd`](https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0)
-- `03:51` **perf(atmosphere): cap particle loop to 30fps + lower render DPR to 1.5** — +16 −6 — [`10eeb08`](https://github.com/abgnydn/markview/commit/10eeb0876fb793f2e6e83be4aa2d1be9c5debcf5)
-- `03:32` **perf(atmosphere): render the depth shader on-demand, not 60fps forever** — +23 −4 — [`ca94ad1`](https://github.com/abgnydn/markview/commit/ca94ad1109480aad352b6c29a46798b4e83c5c40)
-- `03:08` **perf(atmosphere): stop scroll jank from per-frame reflow + fixed-bg r…** — +77 −33 — [`ad71864`](https://github.com/abgnydn/markview/commit/ad7186403a48e86f91391daea3879f1ffec9df67)
-- `01:27` **feat(presentation): responsive deck layout for narrow + touch screens** — +199 −0 — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
-
-## 2026-06-22
-
-- `22:07` **chore(portfolio): daily sync 2026-06-22** — +29 −25 — [`f9d9acf`](https://github.com/abgnydn/markview/commit/f9d9acf4b3be774144d37f29e4fb23b8c857b767)
-
-## 2026-06-21
-
-- `21:19` **chore(portfolio): daily sync 2026-06-21** — +32 −28 — [`54f9c48`](https://github.com/abgnydn/markview/commit/54f9c48962bf0b29fca100c222df3e4413904305)
-
-## 2026-06-20
-
-- `21:21` **chore(portfolio): daily sync 2026-06-20** — +34 −31 — [`574365b`](https://github.com/abgnydn/markview/commit/574365b2e60a1da15d6a205296431750861d2f83)
