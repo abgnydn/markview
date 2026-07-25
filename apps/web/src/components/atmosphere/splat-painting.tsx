@@ -63,9 +63,14 @@ export function SplatPainting({ src, paintingKey, opacity = 1, className, style 
       if (cancelled) return;
 
       // ── Load the painting + read colour / depth onto small grids ──
-      const texLoader = new THREE.TextureLoader();
+      // Plain Image() — we only need pixels, and TextureLoader would
+      // allocate a THREE.Texture we'd otherwise have to dispose.
       const paintImg = await new Promise<HTMLImageElement>((resolve, reject) => {
-        texLoader.load(src, (t) => resolve(t.image as HTMLImageElement), undefined, reject);
+        const img = new window.Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
       });
       if (cancelled) return;
 

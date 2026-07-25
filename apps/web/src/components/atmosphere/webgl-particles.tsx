@@ -657,7 +657,11 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         geom.attributes.alpha.needsUpdate = true;
 
         renderer.render(scene, camera);
-        raf = requestAnimationFrame(tick);
+        // NOTE: no requestAnimationFrame here — the top of tick() already
+        // scheduled the next frame. Scheduling in both places grew the
+        // pending-callback set by one per rendered frame (unbounded rAF
+        // accumulation, and orphan callbacks surviving teardown to render
+        // on a disposed renderer).
       };
       raf = requestAnimationFrame(tick);
 

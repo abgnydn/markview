@@ -154,7 +154,13 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // sessions; toggled from the atmosphere dots and synced via a custom
   // event (+ the storage event for other tabs).
   const [lite, setLite] = useState(() => {
-    try { return localStorage.getItem('mv-atmosphere-lite') === '1'; } catch { return false; }
+    // Explicit user choice wins; otherwise default to lite when the OS
+    // asks for reduced motion (static painting, no particle sim).
+    try {
+      const stored = localStorage.getItem('mv-atmosphere-lite');
+      if (stored !== null) return stored === '1';
+    } catch { /* ignore */ }
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
   });
   useEffect(() => {
     const sync = () => {
