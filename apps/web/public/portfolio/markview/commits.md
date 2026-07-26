@@ -2,6 +2,7 @@
 
 ## 2026-07-25
 
+- `20:57` **chore(portfolio): daily sync 2026-07-25** — +287 −286 — [`6a6726c`](https://github.com/abgnydn/markview/commit/6a6726c8fde147fb4a5abe266e5271d63c31aa24)
 - `05:07` **chore(landing): desktop downloads → 0.3.0 (published, all four URLs v…** — +1 −1 — [`ae1ce41`](https://github.com/abgnydn/markview/commit/ae1ce41704f6dcfaf46237ad673df7d825463514)
 - `05:07` **fix(atmosphere): GPU/rAF leak + resilience pass from graphics audit** — +71 −14 — [`cecb66f`](https://github.com/abgnydn/markview/commit/cecb66fed4e1d8ec0b5395d0a8ad8c04d75414fd)
 - `04:40` **fix(render): rendering + export fidelity pass from pipeline audit** — +173 −53 — [`633c098`](https://github.com/abgnydn/markview/commit/633c098e2c0e6d3e21b6d90bc43c8f80df3d547c)
@@ -141,7 +142,3 @@
 ## 2026-06-24
 
 - `21:26` **chore(portfolio): daily sync 2026-06-24** — +26 −26 — [`d5ebdc8`](https://github.com/abgnydn/markview/commit/d5ebdc88cd52ae82ea1f8a0c5e4d94d8e01e862c)
-
-## 2026-06-23
-
-- `21:45` **chore(portfolio): daily sync 2026-06-23** — +1076 −1067 — [`53e0356`](https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1)

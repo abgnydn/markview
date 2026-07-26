@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-25T20:57:04.167Z",
+  "generated_at": "2026-07-26T21:02:54.604Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1535,
+  "activity_90d_total": 1531,
   "activity_90d": {
-    "2026-04-27": 5,
     "2026-04-30": 2,
     "2026-05-01": 48,
     "2026-05-02": 5,
@@ -83,7 +82,7 @@
     "2026-07-22": 1,
     "2026-07-23": 1,
     "2026-07-24": 3,
-    "2026-07-25": 14
+    "2026-07-25": 15
   },
   "categories": {
     "llm-inference": {
@@ -192,6 +191,8 @@
   ],
   "health": {
     "stale_60d": [
+      "safenpm",
+      "panel",
       "wonderlab",
       "tether",
       "fusedx",
@@ -286,7 +287,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 19,
+      "stale_days": 20,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505470"
@@ -349,7 +350,7 @@
       },
       "status": "flagship",
       "open_issues": 27,
-      "stale_days": 19,
+      "stale_days": 20,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20494382"
@@ -393,24 +394,24 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-25T05:07:22Z",
+      "pushed_at": "2026-07-25T20:57:05Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 47,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "ae1ce41704f6dcfaf46237ad673df7d825463514",
-        "short_sha": "ae1ce41",
-        "message": "chore(landing): desktop downloads → 0.3.0 (published, all four URLs v…",
+        "sha": "6a6726c8fde147fb4a5abe266e5271d63c31aa24",
+        "short_sha": "6a6726c",
+        "message": "chore(portfolio): daily sync 2026-07-25",
         "type": "chore",
-        "date": "2026-07-25T05:07:15Z",
-        "url": "https://github.com/abgnydn/markview/commit/ae1ce41704f6dcfaf46237ad673df7d825463514",
-        "additions": 1,
-        "deletions": 1
+        "date": "2026-07-25T20:57:04Z",
+        "url": "https://github.com/abgnydn/markview/commit/6a6726c8fde147fb4a5abe266e5271d63c31aa24",
+        "additions": 287,
+        "deletions": 286
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -459,7 +460,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 12,
+      "stale_days": 13,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506887"
@@ -509,7 +510,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 19,
+      "stale_days": 20,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20496086"
@@ -569,7 +570,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20838918"
@@ -620,7 +621,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 25,
+      "stale_days": 26,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -670,7 +671,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -722,7 +723,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 57,
+      "stale_days": 58,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -779,7 +780,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 60,
+      "stale_days": 61,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -829,7 +830,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 30,
+      "stale_days": 31,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -880,7 +881,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 12,
+      "stale_days": 13,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506339"
@@ -928,7 +929,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 60,
+      "stale_days": 61,
       "live_ok": false,
       "has_citation": false,
       "citation_doi": null
@@ -988,7 +989,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 68,
+      "stale_days": 69,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1039,7 +1040,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 45,
+      "stale_days": 46,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1086,7 +1087,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 50,
+      "stale_days": 51,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": null
@@ -1134,7 +1135,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 12,
+      "stale_days": 13,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505472"
@@ -1186,7 +1187,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 25,
+      "stale_days": 26,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19344276"
@@ -1237,7 +1238,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 25,
+      "stale_days": 26,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -1288,7 +1289,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 30,
+      "stale_days": 31,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1338,7 +1339,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 30,
+      "stale_days": 31,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1388,7 +1389,7 @@
       },
       "status": "derivative",
       "open_issues": 0,
-      "stale_days": 57,
+      "stale_days": 58,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1437,7 +1438,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 57,
+      "stale_days": 58,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1486,7 +1487,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 65,
+      "stale_days": 66,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1536,7 +1537,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1586,7 +1587,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1635,7 +1636,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1683,7 +1684,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1733,7 +1734,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1783,7 +1784,7 @@
       },
       "status": "library",
       "open_issues": 1,
-      "stale_days": 71,
+      "stale_days": 72,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1832,7 +1833,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 82,
+      "stale_days": 83,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1896,7 +1897,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 82,
+      "stale_days": 83,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1955,7 +1956,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 82,
+      "stale_days": 83,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2005,7 +2006,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 82,
+      "stale_days": 83,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2055,7 +2056,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 82,
+      "stale_days": 83,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2105,7 +2106,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 89,
+      "stale_days": 90,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -2152,7 +2153,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 115,
+      "stale_days": 116,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2203,7 +2204,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 119,
+      "stale_days": 120,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2252,7 +2253,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 119,
+      "stale_days": 120,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2304,7 +2305,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 119,
+      "stale_days": 120,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2355,13 +2356,26 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 128,
+      "stale_days": 129,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "6a6726c8fde147fb4a5abe266e5271d63c31aa24",
+      "short_sha": "6a6726c",
+      "message": "chore(portfolio): daily sync 2026-07-25",
+      "type": "chore",
+      "date": "2026-07-25T20:57:04Z",
+      "url": "https://github.com/abgnydn/markview/commit/6a6726c8fde147fb4a5abe266e5271d63c31aa24",
+      "additions": 287,
+      "deletions": 286
+    },
     {
       "slug": "gpubench",
       "name": "gpubench",
@@ -3791,19 +3805,6 @@
       "url": "https://github.com/abgnydn/markview/commit/d5ebdc88cd52ae82ea1f8a0c5e4d94d8e01e862c",
       "additions": 26,
       "deletions": 26
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "53e03563c27effb8847ce703a713c6f7214825a1",
-      "short_sha": "53e0356",
-      "message": "chore(portfolio): daily sync 2026-06-23",
-      "type": "chore",
-      "date": "2026-06-23T21:45:14Z",
-      "url": "https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1",
-      "additions": 1076,
-      "deletions": 1067
     },
     {
       "slug": "webgpu-dna",
