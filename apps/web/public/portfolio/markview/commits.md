@@ -1,5 +1,14 @@
 # Commits — markview
 
+## 2026-07-27
+
+- `13:43` **fix(collab): encrypted share links, reachable guest mode, honest fail…** — +132 −25 — [`a152253`](https://github.com/abgnydn/markview/commit/a152253f7e41ad04fb8da8132494e6eca317f8e5)
+- `13:19` **ux(presentation): declutter the deck toolbar — 19 icons → 6 + a ⋯ menu** — +76 −18 — [`0378680`](https://github.com/abgnydn/markview/commit/0378680de9ca44bc18c9851e585ef9e555b29a70)
+
+## 2026-07-26
+
+- `21:02` **chore(portfolio): daily sync 2026-07-26** — +68 −70 — [`ecc6b6a`](https://github.com/abgnydn/markview/commit/ecc6b6a9c68243e94f785f748db7982a6f08ddef)
+
 ## 2026-07-25
 
 - `20:57` **chore(portfolio): daily sync 2026-07-25** — +287 −286 — [`6a6726c`](https://github.com/abgnydn/markview/commit/6a6726c8fde147fb4a5abe266e5271d63c31aa24)
@@ -133,12 +142,3 @@
 ## 2026-06-26
 
 - `21:23` **chore(portfolio): daily sync 2026-06-26** — +30 −31 — [`832037d`](https://github.com/abgnydn/markview/commit/832037deda5be1583e62803cb119868af6764d86)
-
-## 2026-06-25
-
-- `21:47` **chore(portfolio): daily sync 2026-06-25** — +435 −364 — [`76bd014`](https://github.com/abgnydn/markview/commit/76bd0143fea1d84285d55b5bc2e422bc2ed5c39a)
-- `03:34` **feat(toolbar): consolidate secondary actions into a "More" menu (#105)** — +125 −86 — [`1d229c7`](https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96)
-
-## 2026-06-24
-
-- `21:26` **chore(portfolio): daily sync 2026-06-24** — +26 −26 — [`d5ebdc8`](https://github.com/abgnydn/markview/commit/d5ebdc88cd52ae82ea1f8a0c5e4d94d8e01e862c)
