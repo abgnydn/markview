@@ -4308,3 +4308,43 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
   color: #ff5f57;
   border-color: rgba(255, 95, 87, 0.4);
 }
+
+/* === Presentation ⋯ menu — the decluttered home of secondary tools === */
+.presentation-more-wrap { position: relative; }
+.presentation-more-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  padding: 6px;
+  border-radius: 12px;
+  background: rgba(13, 15, 22, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  z-index: 30;
+}
+.presentation-more-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #c7cdd8;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.presentation-more-item:hover {
+  background: rgba(155, 125, 255, 0.14);
+  color: #eef1f6;
+}
+.presentation-more-sep {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 5px 8px;
+}
