@@ -3,6 +3,8 @@ import { create } from 'zustand';
 import {
   createProvider,
   generateRoomId,
+  generateRoomSecret,
+  getRoomSecretFromUrl,
   getShareUrl,
   populateYDoc,
   readFilesFromYDoc,
@@ -93,7 +95,11 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     if (existing) existing.destroy();
 
     const roomId = generateRoomId();
-    const session = createProvider(roomId);
+    // Per-room secret: encrypts all signaling (SDP/ICE) so neither the
+    // signaling server nor a room-ID guesser can read or MITM the
+    // handshake. It travels only in the share link's #fragment.
+    const roomSecret = generateRoomSecret();
+    const session = createProvider(roomId, roomSecret);
 
     // Load workspace files from IndexedDB
     const wsRecord = await db.workspaces.get(workspaceId);
@@ -167,7 +173,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       flushDirty();
     };
 
-    const shareUrl = getShareUrl(roomId);
+    const shareUrl = getShareUrl(roomId, roomSecret);
 
     set({
       isActive: true,
@@ -191,7 +197,9 @@ export const useCollabStore = create<CollabState>((set, get) => ({
 
     set({ isConnecting: true });
 
-    const session = createProvider(roomId);
+    // The room secret rides the link's #fragment (never sent to a server);
+    // it decrypts the room's signaling. Old links without one still work.
+    const session = createProvider(roomId, getRoomSecretFromUrl() ?? undefined);
 
     // Wait for initial sync (Y.js syncs very fast for small docs)
     await new Promise<void>((resolve) => {
@@ -216,6 +224,15 @@ export const useCollabStore = create<CollabState>((set, get) => ({
         resolve();
       }, 10000);
     });
+
+    // Nothing arrived: the host is offline, the room is stale, or P2P is
+    // blocked between the two networks. FAIL here — "joining" into an
+    // empty ghost workspace is a dead end that just looks broken.
+    if (readFilesFromYDoc(session.ydoc).length === 0) {
+      session.destroy();
+      set({ isConnecting: false });
+      throw new Error('room-empty');
+    }
 
     setLocalUser(session.provider, userName);
 

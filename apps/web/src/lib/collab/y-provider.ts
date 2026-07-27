@@ -17,15 +17,22 @@ export interface CollabSession {
 // Room ID generation
 // ---------------------------------------------------------------------------
 
-/** Generate a short, URL-safe room ID */
+/** Generate a URL-safe room ID — 12 uniform hex chars (48 bits). The old
+ *  base36-from-bytes encoding was biased and effectively weaker. */
 export function generateRoomId(): string {
   const bytes = new Uint8Array(6);
   crypto.getRandomValues(bytes);
-  const id = Array.from(bytes)
-    .map((b) => b.toString(36).padStart(2, '0'))
-    .join('')
-    .slice(0, 8);
+  const id = Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
   return `mkv-${id}`;
+}
+
+/** Generate the room secret carried in the URL *fragment*. Fragments are
+ *  never sent to any server (ours included), so only holders of the full
+ *  link can decrypt the room's signaling exchange. */
+export function generateRoomSecret(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 /** Extract room ID from URL */
@@ -35,11 +42,19 @@ export function getRoomIdFromUrl(): string | null {
   return params.get('room');
 }
 
-/** Build share URL from room ID */
-export function getShareUrl(roomId: string): string {
+/** Extract the room secret from the URL fragment (`#k=...`). Absent on
+ *  links minted before secrets existed — those rooms join unencrypted. */
+export function getRoomSecretFromUrl(): string | null {
+  if (typeof window === 'undefined') return null;
+  const m = /(?:^#|&)k=([A-Za-z0-9_-]+)/.exec(window.location.hash);
+  return m ? m[1] : null;
+}
+
+/** Build share URL from room ID + secret. The secret rides the fragment. */
+export function getShareUrl(roomId: string, secret?: string): string {
   if (typeof window === 'undefined') return '';
   const base = window.location.origin;
-  return `${base}?room=${roomId}`;
+  return secret ? `${base}?room=${roomId}#k=${secret}` : `${base}?room=${roomId}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -54,12 +69,29 @@ const SIGNALING_SERVERS = [
   'wss://markview-yjs.abgunaydin94.workers.dev',
 ];
 
-/** Create a new Y.js doc + WebRTC provider for a room */
-export function createProvider(roomId: string): CollabSession {
+// Explicit ICE config instead of simple-peer's defaults. STUN handles the
+// ~85-90% of pairs where hole-punching works; the TURN slot is where a
+// relay goes if/when connectivity complaints justify one (TURN relays the
+// already-DTLS-encrypted stream, so content stays end-to-end encrypted —
+// it would NOT weaken the privacy story).
+const ICE_SERVERS: RTCIceServer[] = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun.cloudflare.com:3478' },
+  // { urls: 'turn:…', username: '…', credential: '…' },
+];
+
+/** Create a new Y.js doc + WebRTC provider for a room. `secret`, when
+ *  present, becomes the y-webrtc room password: all signaling payloads
+ *  (SDP offers/answers/ICE) are AES-encrypted with a key derived from it,
+ *  so neither the signaling server nor a room-ID guesser can read or
+ *  MITM the handshake. */
+export function createProvider(roomId: string, secret?: string): CollabSession {
   const ydoc = new Y.Doc();
 
   const provider = new WebrtcProvider(roomId, ydoc, {
     signaling: SIGNALING_SERVERS,
+    password: secret ?? null,
+    peerOpts: { config: { iceServers: ICE_SERVERS } },
   });
 
   return {

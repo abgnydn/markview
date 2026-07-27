@@ -128,6 +128,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const collabIsHost = useCollabStore((s) => s.isHost);
   const syncedFiles = useCollabStore((s) => s.syncedFiles);
   const syncedActiveFileId = useCollabStore((s) => s.syncedActiveFileId);
+  const syncedActiveFileContent = useCollabStore((s) => s.syncedActiveFileContent);
 
   // ── Drag-and-drop state ──────────────────────────────────────────
   const [isDragging, setIsDragging] = useState(false);
@@ -274,12 +275,16 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const effectiveActiveFile = isGuestMode
     ? syncedFiles.find((f) => f.id === syncedActiveFileId)
     : activeFile;
+  // Guests have no LOCAL files — their document arrives over the wire.
+  // Everything below (frontmatter, render, stats) must read this, not
+  // activeFileContent, or a guest sees a blank pane despite a live session.
+  const effectiveContent = isGuestMode ? syncedActiveFileContent : activeFileContent;
 
   // Derived values
   const frontmatterResult = useMemo(() => {
-    if (!activeFileContent) return null;
-    return parseFrontmatter(activeFileContent);
-  }, [activeFileContent]);
+    if (!effectiveContent) return null;
+    return parseFrontmatter(effectiveContent);
+  }, [effectiveContent]);
 
   const workspaceFileNames = useMemo(
     () => files.map((f) => f.filename.split('/').pop() || f.filename),
@@ -287,9 +292,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   );
 
   const readingStats = useMemo(() => {
-    if (!activeFileContent) return null;
-    return calculateReadingStats(activeFileContent);
-  }, [activeFileContent]);
+    if (!effectiveContent) return null;
+    return calculateReadingStats(effectiveContent);
+  }, [effectiveContent]);
 
   const displayFilename = effectiveActiveFile?.filename || 'untitled';
 
@@ -469,9 +474,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 <div className="skeleton-line skeleton-long" />
                 <div className="skeleton-line skeleton-short" />
               </div>
-            ) : activeFileContent ? (
+            ) : effectiveContent ? (
               <MarkdownRenderer
-                content={frontmatterResult ? frontmatterResult.content : activeFileContent}
+                content={frontmatterResult ? frontmatterResult.content : effectiveContent}
                 onHeadingsChange={handleHeadingsChange}
                 onHtmlRendered={handleHtmlRendered}
                 onNavigateToFile={onNavigateToFile}
