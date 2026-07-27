@@ -169,7 +169,10 @@ export default function Home() {
   }
 
   // Landing if: no workspace yet OR user explicitly asked for it via ?home=1.
-  if (workspaces.length === 0 || showLanding) {
+  // EXCEPT for connected collab guests — they have no *local* workspace by
+  // design (everything arrives over the wire into ViewerPage's guest mode),
+  // so the landing gate must not swallow them after a successful join.
+  if ((workspaces.length === 0 || showLanding) && !collabIsActive) {
     return (
       <LandingEditor
         onStart={() => void handleStart()}

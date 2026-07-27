@@ -5,7 +5,7 @@ import { useCollabStore } from '@/stores/collab-store';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 
 export function ShareDialog({ onClose }: { onClose: () => void }) {
-  const { shareWorkspace, isActive, shareUrl, leaveSession } = useCollabStore();
+  const { shareWorkspace, isActive, shareUrl, leaveSession, peers } = useCollabStore();
   const { activeWorkspaceId } = useWorkspaceStore();
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -75,6 +75,11 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </button>
             </div>
+            <p className="collab-dialog-desc" aria-live="polite">
+              {peers.length > 0
+                ? `${peers.length} ${peers.length === 1 ? 'person' : 'people'} connected · end-to-end encrypted`
+                : 'Waiting for someone to open the link… (the whole link matters — the part after # is the encryption key)'}
+            </p>
             <button className="collab-btn-danger" onClick={handleStop}>
               Stop Sharing
             </button>

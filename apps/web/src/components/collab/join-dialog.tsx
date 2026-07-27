@@ -20,8 +20,8 @@ export function JoinDialog({ roomId, onClose }: { roomId: string; onClose: () =>
     setError(null);
     try {
       await joinRoom(roomId, userName);
-    } catch (e) {
-      setError('Failed to connect. The host may have stopped sharing.');
+    } catch {
+      setError('Couldn’t reach the host — they may have stopped sharing, or a firewall on either side is blocking the peer-to-peer connection.');
     }
   };
 
