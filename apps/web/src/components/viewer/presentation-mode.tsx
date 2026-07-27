@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } fr
 import {
   ChevronLeft, ChevronRight, X, Maximize2, Minimize2, LayoutGrid, Timer, Play, Pause,
   Pencil, Palette, Printer, Keyboard, StickyNote, MonitorPlay, Search, Film, Image, Link2, Volume2, VolumeX,
-  SkipBack, SkipForward, Eraser, Undo2, Highlighter, Download, Repeat, BarChart3, Captions,
+  SkipBack, SkipForward, Eraser, Undo2, Highlighter, Download, Repeat, BarChart3, Captions, MoreHorizontal,
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { splitSlides } from '@/lib/markdown/slide-split';
@@ -71,6 +71,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const [incremental, setIncremental] = useState(false);
   const [frag, setFrag] = useState(0);
   const [chromeHidden, setChromeHidden] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [numBuf, setNumBuf] = useState('');
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
   const [trail, setTrail] = useState<{ x: number; y: number; id: number }[]>([]);
@@ -415,7 +416,8 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         case '?': case 'h': case 'H': e.preventDefault(); setShowHelp((v) => !v); break;
         case 'Escape':
           e.preventDefault();
-          if (showHelp) setShowHelp(false); else if (toc) setToc(false); else if (blank) setBlank(null);
+          if (moreOpen) setMoreOpen(false);
+          else if (showHelp) setShowHelp(false); else if (toc) setToc(false); else if (blank) setBlank(null);
           else if (overview) setOverview(false); else if (magnify) setMagnify(false); else if (spotlight) setSpotlight(false);
           else if (draw) setDraw(false); else if (!document.fullscreenElement) onClose();
           break;
@@ -423,7 +425,10 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [goNext, goPrev, goTo, onClose, toggleFullscreen, slides.length, overview, showHelp, blank, draw, numBuf, clearDrawing, cycleTheme, toggleAspect, cycleTransition, toc, magnify, spotlight, search, openPresenter, jumpSection, undoDraw]);
+  }, [goNext, goPrev, goTo, onClose, toggleFullscreen, slides.length, overview, showHelp, blank, draw, numBuf, clearDrawing, cycleTheme, toggleAspect, cycleTransition, toc, magnify, spotlight, search, openPresenter, jumpSection, undoDraw, moreOpen]);
+
+  // The ⋯ menu shouldn't linger over a new slide.
+  useEffect(() => { setMoreOpen(false); }, [currentSlide]);
 
   const pct = ((currentSlide + 1) / slides.length) * 100;
   const overTime = targetMin > 0 && elapsed > targetMin * 60;
@@ -472,25 +477,38 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         </div>
       )}
 
+      {/* Calm chrome: six primary controls + one ⋯ menu. Everything else
+          stays keyboard-reachable (see ? help) and lives in the menu —
+          nineteen always-visible icons read as clutter over a slide. */}
       <div className="presentation-controls">
         {timerOn && <span className={`presentation-timer${overTime ? ' is-over' : ''}`}><Timer size={13} /> {String(Math.floor(elapsed / 60)).padStart(2, '0')}:{String(elapsed % 60).padStart(2, '0')}{targetMin > 0 && ` / ${targetMin}:00`} · {clock}</span>}
         <span className="presentation-counter">{currentSlide + 1}<em>/</em>{slides.length}</span>
-        <button className={`presentation-btn${autoplay ? ' is-on' : ''}`} onClick={() => setAutoplay((v) => !v)} title="Autoplay (P)">{autoplay ? <Pause size={15} /> : <Play size={15} />}</button>
-        <button className={`presentation-btn${notesOpen ? ' is-on' : ''}`} onClick={() => setNotesOpen((v) => !v)} title="Notes (S)"><StickyNote size={15} /></button>
-        <button className="presentation-btn" onClick={openPresenter} title="Presenter view (V)"><MonitorPlay size={15} /></button>
-        <button className="presentation-btn" onClick={() => setSearch('')} title="Search (/)"><Search size={15} /></button>
-        <button className={`presentation-btn${filmstrip ? ' is-on' : ''}`} onClick={() => setFilmstrip((v) => !v)} title="Filmstrip (,)"><Film size={15} /></button>
+        <button className={`presentation-btn${overview ? ' is-on' : ''}`} onClick={() => setOverview((v) => !v)} title="Overview (O)"><LayoutGrid size={15} /></button>
         <button className={`presentation-btn${draw ? ' is-on' : ''}`} onClick={() => setDraw((v) => !v)} title="Draw (D)"><Pencil size={15} /></button>
         <button className="presentation-btn" onClick={cycleTheme} title="Theme (M)"><Palette size={15} /></button>
-        <button className={`presentation-btn${overview ? ' is-on' : ''}`} onClick={() => setOverview((v) => !v)} title="Overview (O)"><LayoutGrid size={15} /></button>
-        <button className="presentation-btn" onClick={exportPng} title="Slide → PNG"><Image size={15} /></button>
-        <button className="presentation-btn" onClick={() => window.print()} title="Export PDF (E)"><Printer size={15} /></button>
-        <button className="presentation-btn" onClick={copyLink} title="Copy slide link"><Link2 size={15} /></button>
-        <button className={`presentation-btn${sound ? ' is-on' : ''}`} onClick={() => setSound((v) => !v)} title="Advance sound">{sound ? <Volume2 size={15} /> : <VolumeX size={15} />}</button>
-        <button className={`presentation-btn${loop ? ' is-on' : ''}`} onClick={() => setLoop((v) => !v)} title="Loop"><Repeat size={15} /></button>
-        <button className={`presentation-btn${caption ? ' is-on' : ''}`} onClick={() => setCaption((v) => !v)} title="Lower-third caption"><Captions size={15} /></button>
-        <button className={`presentation-btn${statsOpen ? ' is-on' : ''}`} onClick={() => setStatsOpen((v) => !v)} title="Stats & options"><BarChart3 size={15} /></button>
-        <button className="presentation-btn" onClick={() => setShowHelp((v) => !v)} title="Shortcuts (?)"><Keyboard size={15} /></button>
+        <div className="presentation-more-wrap">
+          <button className={`presentation-btn${moreOpen ? ' is-on' : ''}`} onClick={() => setMoreOpen((v) => !v)} title="More tools" aria-haspopup="menu" aria-expanded={moreOpen}><MoreHorizontal size={15} /></button>
+          {moreOpen && (
+            <div className="presentation-more-menu" role="menu" onClick={() => setMoreOpen(false)}>
+              <button className="presentation-more-item" onClick={() => setAutoplay((v) => !v)}>{autoplay ? <Pause size={14} /> : <Play size={14} />} Autoplay{autoplay && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setTimerOn((v) => !v)}><Timer size={14} /> Timer{timerOn && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setNotesOpen((v) => !v)}><StickyNote size={14} /> Speaker notes{notesOpen && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={openPresenter}><MonitorPlay size={14} /> Presenter view</button>
+              <button className="presentation-more-item" onClick={() => setSearch('')}><Search size={14} /> Search slides</button>
+              <button className="presentation-more-item" onClick={() => setFilmstrip((v) => !v)}><Film size={14} /> Filmstrip{filmstrip && ' ✓'}</button>
+              <hr className="presentation-more-sep" />
+              <button className="presentation-more-item" onClick={exportPng}><Image size={14} /> Slide → PNG</button>
+              <button className="presentation-more-item" onClick={() => window.print()}><Printer size={14} /> Print / PDF</button>
+              <button className="presentation-more-item" onClick={copyLink}><Link2 size={14} /> Copy slide link</button>
+              <hr className="presentation-more-sep" />
+              <button className="presentation-more-item" onClick={() => setSound((v) => !v)}>{sound ? <Volume2 size={14} /> : <VolumeX size={14} />} Advance sound{sound && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setLoop((v) => !v)}><Repeat size={14} /> Loop{loop && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setCaption((v) => !v)}><Captions size={14} /> Caption{caption && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setStatsOpen((v) => !v)}><BarChart3 size={14} /> Stats & options</button>
+              <button className="presentation-more-item" onClick={() => setShowHelp((v) => !v)}><Keyboard size={14} /> Shortcuts (?)</button>
+            </div>
+          )}
+        </div>
         <button className="presentation-btn" onClick={toggleFullscreen} title="Fullscreen (F)">{isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}</button>
         <button className="presentation-btn" onClick={onClose} title="Exit (Esc)"><X size={16} /></button>
       </div>
@@ -576,7 +594,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
       )}
 
       {numBuf && <div className="presentation-numbuf">→ {numBuf}</div>}
-      {hint && <div className="presentation-firsthint">Press <kbd>?</kbd> for {40} shortcuts & features</div>}
+      {hint && <div className="presentation-firsthint">Press <kbd>?</kbd> for shortcuts</div>}
       {laser && trail.map((t) => <div key={t.id} className="presentation-trail" style={{ left: t.x, top: t.y }} aria-hidden />)}
       {laser && pointer && <div className="presentation-laser" style={{ left: pointer.x, top: pointer.y }} aria-hidden />}
       {spotlight && pointer && <div className="presentation-spot" style={{ ['--sx' as string]: `${pointer.x}px`, ['--sy' as string]: `${pointer.y}px` }} aria-hidden />}
