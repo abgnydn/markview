@@ -1,5 +1,41 @@
 # Commits — zero-tvm
 
+## 2026-07-28
+
+- `13:38` **Merge pull request #22 from abgnydn/qwen35** — +2537 −136 — [`7a66144`](https://github.com/abgnydn/zero-tvm/commit/7a6614442bef6ff4688347cd61c6e8702f9a0307)
+- `13:36` **feat(qwen35): measured +50% vs WebLLM 0.2.84 on the hybrid; docs acro…** — +225 −37 — [`9e75b87`](https://github.com/abgnydn/zero-tvm/commit/9e75b8786e9a74458f2ba7232c48f565816666e6)
+- `13:13` **feat(qwen35): end-to-end hybrid wiring — ?model=qwen35 generates corr…** — +529 −85 — [`1adcc56`](https://github.com/abgnydn/zero-tvm/commit/1adcc56aa96ffe2b0bd1ed87dad197e99d9f43b4)
+- `12:41` **feat(qwen35): gated-DeltaNet kernel family + CPU reference + 13-test …** — +1787 −18 — [`de0cfc3`](https://github.com/abgnydn/zero-tvm/commit/de0cfc34898f94865185617f8db9f1c713a768aa)
+- `10:13` **Merge pull request #21 from abgnydn/harden-downloads** — +438 −61 — [`fa66a8f`](https://github.com/abgnydn/zero-tvm/commit/fa66a8fde738180cdc32c784dd41be12debd8112)
+- `10:11` **fix(loader): survive mid-stream HTTP2 resets — retry body reads, Rang…** — +438 −61 — [`8c2b9af`](https://github.com/abgnydn/zero-tvm/commit/8c2b9af51850260bc323976611a7a5e177ea714c)
+- `09:49` **Merge pull request #20 from abgnydn/fix-gate-stats** — +6 −4 — [`e49e7b3`](https://github.com/abgnydn/zero-tvm/commit/e49e7b3a18de33e87dfba9dfa2cc712239a8d602)
+- `09:47` **fix(chat): gate dialog throughput stat is model-aware — Qwen showed P…** — +6 −4 — [`4a47049`](https://github.com/abgnydn/zero-tvm/commit/4a47049b2f93e6f36b3988951cba4d30ca661588)
+- `09:24` **Merge pull request #19 from abgnydn/qwen-site-docs** — +58 −3 — [`95074c6`](https://github.com/abgnydn/zero-tvm/commit/95074c67d29ac473a176687f4aaa020c59eb8b8e)
+- `09:23` **docs: surface the Qwen3-4B port on landing page, docs page, and HF Sp…** — +58 −3 — [`f03946b`](https://github.com/abgnydn/zero-tvm/commit/f03946b3b5bba5d005d5944f8a6b65ab84a3305e)
+- `09:13` **Merge pull request #18 from abgnydn/qwen3** — +4288 −564 — [`db0b787`](https://github.com/abgnydn/zero-tvm/commit/db0b787750d0eb32d3c121f140960c8ff9da1a40)
+- `09:10` **feat(qwen3): same-weights A/B vs WebLLM (+80%), Qwen e2e, honest docs** — +338 −23 — [`2acc360`](https://github.com/abgnydn/zero-tvm/commit/2acc36032630f40c50bdb78d6fee008e60eeb748)
+- `08:54` **fix(qwen3): request adapter buffer limits in browser boot — first wor…** — +25 −1 — [`d3ed34b`](https://github.com/abgnydn/zero-tvm/commit/d3ed34be2bc5cb324f9286198fcc34ec645ab8ed)
+- `08:44` **feat(qwen3): end-to-end wiring — ?model=qwen3 on chat + validate** — +325 −84 — [`2870e7e`](https://github.com/abgnydn/zero-tvm/commit/2870e7e53f07c1b8adb4dab622d0f2fa184c31d9)
+- `08:24` **feat(qwen3): GQA-correct kernels + QK-norm + Qwen correctness suite (…** — +1414 −313 — [`50d216f`](https://github.com/abgnydn/zero-tvm/commit/50d216f30887cf5dd9e42b3a0d081e4f5834f26c)
+- `07:31` **feat(qwen3): model-spec parameterized engine + Qwen byte-level BPE to…** — +2260 −217 — [`ab13fc3`](https://github.com/abgnydn/zero-tvm/commit/ab13fc38dcac7e64d413e99fe44055ca805dc34b)
+- `06:28` **Merge pull request #17 from abgnydn/sync-numbers-everywhere** — +277 −59 — [`df687cc`](https://github.com/abgnydn/zero-tvm/commit/df687cc76b62f332fdad26942a49adda70589804)
+- `06:26` **chore: single-source bench numbers everywhere + HF Space auto-deploy** — +277 −59 — [`2705188`](https://github.com/abgnydn/zero-tvm/commit/2705188648797ee8812fbeb8daac725d586af445)
+- `06:13` **Merge pull request #16 from abgnydn/max-improvements** — +100539 −4062 — [`5f3abcf`](https://github.com/abgnydn/zero-tvm/commit/5f3abcf2f4b744a09cd09a435cb7c61b8e882981)
+- `06:07` **feat: split-K default after long-context A/B; e2e suite green end-to-end** — +107 −53 — [`9a16cae`](https://github.com/abgnydn/zero-tvm/commit/9a16cae4cbcf13ed0b4a9893426f014cd5904f96)
+
+## 2026-07-25
+
+- `07:51` **perf: vec4 loads default-on (+7% measured); new headline — 28% faster…** — +408 −244 — [`5cd288d`](https://github.com/abgnydn/zero-tvm/commit/5cd288d6031e88e71fe632b2f7dec6069e0787e4)
+
+## 2026-07-24
+
+- `08:43` **fix(shaders): barrier after cross-iteration score_reduce read in atte…** — +10 −0 — [`12e696c`](https://github.com/abgnydn/zero-tvm/commit/12e696ce21ed208aa5c249661d827fc79c810c2d)
+- `06:51` **feat(perf): three opt-in experiments — vec4 loads, split-K attention,…** — +1606 −46 — [`713dccb`](https://github.com/abgnydn/zero-tvm/commit/713dccb2d0f8541d85be6f232ab9eb958f011464)
+- `06:19` **refactor(engine): one decode engine — chat.ts becomes a thin page module** — +1419 −2002 — [`4eea2f4`](https://github.com/abgnydn/zero-tvm/commit/4eea2f4c1df4a9adaf02dbac1446bc631b842802)
+- `05:47` **refactor(shaders): named constants from one PHI3 source + int4_matmul…** — +1142 −1639 — [`7a1df37`](https://github.com/abgnydn/zero-tvm/commit/7a1df37ac67703bb25a4e6f040ea533bb8144922)
+- `05:19` **test: real CI verification — kernel job, tokenizer rewrite + 116 unit…** — +95934 −261 — [`8434845`](https://github.com/abgnydn/zero-tvm/commit/8434845e83adafbbece319dbaf449bc1f8002dba)
+- `05:05` **fix: correctness sweep — OPFS cache war, decode off-by-one, fused_ffn…** — +208 −112 — [`c753ac4`](https://github.com/abgnydn/zero-tvm/commit/c753ac4fc4cf1b32caa7c593942cbb699719dd26)
+
 ## 2026-06-25
 
 - `03:44` **docs: add Zenodo DOI badge + CITATION.cff identifier (#15)** — +9 −9 — [`32406c8`](https://github.com/abgnydn/zero-tvm/commit/32406c88acc201694df83a4e22df64bf4391d380)
@@ -43,42 +79,3 @@
 
 - `07:04` **Link companion projects (kernelfusion, gpubench, webgpu-dna)** — +157 −0 — [`5ec0834`](https://github.com/abgnydn/zero-tvm/commit/5ec0834561bd203949691022f7059e8a1ce22ffd)
 - `06:12` **Harden weight loader: persist, bounded concurrency, retry, version key** — +203 −47 — [`84cf90b`](https://github.com/abgnydn/zero-tvm/commit/84cf90bc6006abddb1a8d7df736cebf73f3004bb)
-- `05:08` **Center start dialog and darken its backdrop** — +8 −4 — [`68645ac`](https://github.com/abgnydn/zero-tvm/commit/68645ac11addc4517dd531435d28cfe526e36fae)
-- `04:34` **Polish /zero-tvm chat: markdown rendering, code blocks, regenerate** — +598 −112 — [`e9b918d`](https://github.com/abgnydn/zero-tvm/commit/e9b918d9be6cd0ae2b6ef43dd99bfaa6054c0e13)
-- `04:07` **Revamp /zero-tvm chat UI — pre-download dialog + modern streaming layout** — +969 −85 — [`6f439bd`](https://github.com/abgnydn/zero-tvm/commit/6f439bd39615d6d0c268a6a773090bc3cab20c4f)
-
-## 2026-04-21
-
-- `14:15` **Rewrite /docs with honest post-fusion numbers** — +144 −122 — [`6219884`](https://github.com/abgnydn/zero-tvm/commit/62198849c6cbab7e8b693889f4fadaa7e712fc62)
-- `14:08` **Update /demo with honest post-fusion numbers** — +43 −22 — [`f727e69`](https://github.com/abgnydn/zero-tvm/commit/f727e69b7f30b077c0670356859ff436f345a0be)
-- `13:06` **Add shaders.html to production build and Tools grid** — +18 −3 — [`7780f6b`](https://github.com/abgnydn/zero-tvm/commit/7780f6bd09ae396ce99db5ff2172b47d65d4305a)
-- `11:52` **Restore Share modal, dump.html, and back links to secondary pages** — +242 −4 — [`c3f1db7`](https://github.com/abgnydn/zero-tvm/commit/c3f1db75ab0ca754ab900ce08a891be186a22508)
-- `11:39` **Move landing page to / — it was the landing all along** — +818 −1169 — [`37da17a`](https://github.com/abgnydn/zero-tvm/commit/37da17a513aa7d13735dffe5a295c3340da61075)
-- `11:29` **OG/Twitter meta tags: honest social copy across all pages** — +71 −11 — [`f264f30`](https://github.com/abgnydn/zero-tvm/commit/f264f3047efb18cd8a4eef102fd6a75dfc8cd8da)
-- `11:21` **Landing page: honest numbers, post-fusion shader grid, .vercelignore** — +71 −60 — [`8237f3e`](https://github.com/abgnydn/zero-tvm/commit/8237f3ed680a1a1b704c88229862faa7dc7a227e)
-- `11:07` **Update README: shader count, dispatch counts, perf, honest head-to-head** — +134 −62 — [`2bc0d01`](https://github.com/abgnydn/zero-tvm/commit/2bc0d017bf80ec25628d4c071c871bd7656e6586)
-- `10:47` **Post-merge fixups: restore our chat.ts + zero-tvm.html, union vite en…** — +48 −240 — [`b980d4c`](https://github.com/abgnydn/zero-tvm/commit/b980d4c955a7f61a681136855f265a0d88c1dc3f)
-- `10:39` **Merge zero-tvm/main into master; take our side on conflicts** — +2402 −4046 — [`ea7d6be`](https://github.com/abgnydn/zero-tvm/commit/ea7d6be154f273608ceec6ed2ca567b5dac67326)
-- `10:31` **Remove accidentally-committed public/town.html symlink** — +0 −1 — [`7d1cf28`](https://github.com/abgnydn/zero-tvm/commit/7d1cf2860e97dd6fc50c49f8daca7523ab629ab1)
-- `10:30` **Docs + deploy: landing/architecture/docs pages, BENCH, Vercel config** — +3049 −0 — [`7e6aa92`](https://github.com/abgnydn/zero-tvm/commit/7e6aa92ebb676de0cc9038ff102825e4e17e3208)
-- `10:30` **Head-to-head WebLLM bench + local-mirror dev middleware** — +398 −0 — [`4bdd17c`](https://github.com/abgnydn/zero-tvm/commit/4bdd17cc1dcf25232d5b43f92c1fead2ff212019)
-- `10:29` **Zero-TVM decode: progressive weights, fused QKV, int8 KV, PLD sim** — +1122 −358 — [`fcefff3`](https://github.com/abgnydn/zero-tvm/commit/fcefff3a958630806a98802d88a1752411c47898)
-- `10:29` **Add fused shader variants + subgroup kernels; wire into compiler** — +2345 −1 — [`f65ed50`](https://github.com/abgnydn/zero-tvm/commit/f65ed50a03dc423a9e934ccb7ec088ce053894cc)
-
-## 2026-04-11
-
-- `14:48` **Add Vercel Web Analytics script to user-facing pages** — +5 −0 — [`c00e1e1`](https://github.com/abgnydn/zero-tvm/commit/c00e1e195db547dfc1a0aec0f9f3e1db2a5ae567)
-
-## 2026-04-10
-
-- `14:09` **Fix mismatched units in landing-page bundle comparison** — +1 −1 — [`24d200a`](https://github.com/abgnydn/zero-tvm/commit/24d200ac74a0c5db3c47ae8842fe6395d28d11cd)
-- `08:45` **Extract decode engine, add validate page, add e2e tests** — +1536 −432 — [`d5cfe86`](https://github.com/abgnydn/zero-tvm/commit/d5cfe86ae4ec9788545644ff128de060ead40c3c)
-
-## 2026-04-08
-
-- `14:40` **Remove placeholder benchmarks section from README** — +2 −7 — [`1aabf4b`](https://github.com/abgnydn/zero-tvm/commit/1aabf4bc1e423ef5089ff36f4ccec2003ee28aa7)
-- `11:41` **Move input-wrap/input-inner to shared style.css, remove duplicate fro…** — +14 −31 — [`312a77d`](https://github.com/abgnydn/zero-tvm/commit/312a77df1762773a261a92869ea1c07f1d090344)
-- `11:38` **Fix compiler-chat input alignment: use same input-wrap pattern as zer…** — +25 −28 — [`7a8cf64`](https://github.com/abgnydn/zero-tvm/commit/7a8cf64e5135f9b7551dbea7a321f81015ffe541)
-- `11:33` **Add zerotvm.com link to README** — +3 −1 — [`10f3a6b`](https://github.com/abgnydn/zero-tvm/commit/10f3a6b8ab6088afefea2b24dc8de7f439b8c386)
-- `11:29` **Replace image in README.md** — +1 −1 — [`2870fe9`](https://github.com/abgnydn/zero-tvm/commit/2870fe9e2d250ea5967180478d7ff6581e1aa4f9)
-- `11:29` **Update OG meta tags to use zerotvm.com domain** — +11 −6 — [`6d95de3`](https://github.com/abgnydn/zero-tvm/commit/6d95de348d4edb4b3e34fbc948f05628ce980770)

@@ -2,6 +2,7 @@
 
 ## 2026-07-27
 
+- `21:14` **chore(portfolio): daily sync 2026-07-27** — +107 −105 — [`f00b9f4`](https://github.com/abgnydn/markview/commit/f00b9f4e16ed0d65acf0eef150bb3cdc9a372f01)
 - `13:43` **fix(collab): encrypted share links, reachable guest mode, honest fail…** — +132 −25 — [`a152253`](https://github.com/abgnydn/markview/commit/a152253f7e41ad04fb8da8132494e6eca317f8e5)
 - `13:19` **ux(presentation): declutter the deck toolbar — 19 icons → 6 + a ⋯ menu** — +76 −18 — [`0378680`](https://github.com/abgnydn/markview/commit/0378680de9ca44bc18c9851e585ef9e555b29a70)
 
@@ -138,7 +139,3 @@
 ## 2026-06-27
 
 - `21:08` **chore(portfolio): daily sync 2026-06-27** — +33 −29 — [`d136a5b`](https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d)
-
-## 2026-06-26
-
-- `21:23` **chore(portfolio): daily sync 2026-06-26** — +30 −31 — [`832037d`](https://github.com/abgnydn/markview/commit/832037deda5be1583e62803cb119868af6764d86)

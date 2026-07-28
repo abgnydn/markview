@@ -2,12 +2,42 @@
 
 [![CI](https://github.com/abgnydn/webgpu-transformer-fusion/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/webgpu-transformer-fusion/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Speedup](https://img.shields.io/badge/vs%20unfused-66--458×-ffb56e)](#key-results-apple-m2-pro-chrome-seq64)
+[![Speedup](https://img.shields.io/badge/vs%20per--token%20decode-66--458×-ffb56e)](#key-results-apple-m2-pro-chrome-seq64)
+[![Fair baseline](https://img.shields.io/badge/vs%20single--submit-2.2--12.7×-6ea8ff)](#erratum-v2-july-2026)
 [![Sister: webgpu-fusion-max](https://img.shields.io/badge/sister-webgpu--fusion--max-orange)](https://github.com/abgnydn/webgpu-fusion-max)
 
 Fusing the entire autoregressive decoding loop (all tokens x all layers x all operations) into a **single GPU compute shader dispatch** eliminates the per-dispatch overhead that dominates browser-based LLM inference. Building on [kernel fusion for sequential fitness evaluation](https://github.com/abgnydn/webgpu-kernel-fusion) (159-720x speedups), we apply the same technique to **transformer inference**.
 
-## Key Results (Apple M2 Pro, Chrome, SEQ=64)
+## Erratum (v2, July 2026)
+
+A harness audit found that the v1 **unfused baseline computed a different
+function** than the fused kernels (broken buffer wiring: FFN consumed the
+attention output, LN2/FFN outputs were discarded, residuals missing, one
+weight set shared across layers), and the **parallel kernel corrupted the
+first `DF` floats of its output** (FFN scratch aliasing). The harness is
+fixed: all variants now share one packed weight tensor and are
+**cross-checked for numerical equivalence before timing**
+(`max|Δ| ≤ 2.3e-5` across all configs).
+
+**The ratios below reproduce within noise** on an M2 Max — the bugs changed
+dataflow, not dispatch structure — but a new **fair baseline** changes the
+interpretation: encoding all unfused dispatches into a **single command
+buffer** (equal arithmetic, one submit) removes most of the measured
+overhead without any fusion. Against it:
+
+- **Fused-1T is 2.5–5.0× *slower*** — its v1 speedups measured submit
+  batching, not fusion.
+- **Parallel-fused keeps a real 2.2× (D=32) → 12.7× (D=256) advantage**,
+  but loses at long sequences (0.8× at SEQ=256).
+- The 66–458× numbers quantify *worst-case per-token-submit decoding* vs
+  full fusion — a real pattern in naive decode loops, but not fusion's
+  intrinsic gain.
+- With **PyTorch 2.12** (much faster MPS than the version measured in v1),
+  the parallel kernel's edge over PyTorch shrinks to **0.8–14.8×**.
+
+Corrected data: [`benchmarks/results/2026-07-27_m2max_fixed/`](benchmarks/results/2026-07-27_m2max_fixed/) — full details in the paper's Erratum section.
+
+## Key Results (Apple M2 Pro, Chrome, SEQ=64 — v1 harness, per-token-submit baseline; see Erratum)
 
 ### Parallel Fused Kernel (66-458x)
 

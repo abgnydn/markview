@@ -1,5 +1,19 @@
 # Commits — webgpu-fly
 
+## 2026-07-28
+
+- `07:29` **Merge pull request #1 from abgnydn/fix/audit-2026-07** — +595 −363 — [`b466a52`](https://github.com/abgnydn/webgpu-fly/commit/b466a52ddf93e45a7806ad5b8a98c94029ff0b1f)
+- `07:00` **revert(physics): keep the kinematic assist during the RL walker** — +0 −4 — [`a9e24f1`](https://github.com/abgnydn/webgpu-fly/commit/a9e24f1d39c65f6c043067dba5acc5a232a9d5fa)
+- `06:59` **fix(tests): point the e2e suite at the simulator, not the landing page** — +15 −15 — [`af496a7`](https://github.com/abgnydn/webgpu-fly/commit/af496a725654075aa586f3d1b0c0531ed20a3b39)
+- `06:21` **docs: correct claims the code does not support** — +54 −37 — [`dcd1050`](https://github.com/abgnydn/webgpu-fly/commit/dcd105078f662e4260fb4398a359aae138501486)
+- `06:21` **test: give CI something that actually validates behaviour** — +73 −2 — [`f0915b3`](https://github.com/abgnydn/webgpu-fly/commit/f0915b31b69e0f1d22130662df68d927937b2191)
+- `06:20` **fix(tools): upload the assets the runtime actually fetches** — +23 −10 — [`35ad7d8`](https://github.com/abgnydn/webgpu-fly/commit/35ad7d8f7693ed354249ecf72ae38eee43b602d2)
+- `06:20` **docs(kernel): correct the uniform-struct misdiagnosis in lif.wgsl** — +5 −6 — [`6239296`](https://github.com/abgnydn/webgpu-fly/commit/623929666b90269866f641d85e2ef93861631688)
+- `06:20` **fix(cache): bound IndexedDB to one generation per asset** — +16 −5 — [`e2f4dcd`](https://github.com/abgnydn/webgpu-fly/commit/e2f4dcd0e0e5d2ba0fe74d05e0569ecdb8800bf9)
+- `06:20` **fix(app): surface failures instead of silently wedging the UI** — +293 −251 — [`8426ffa`](https://github.com/abgnydn/webgpu-fly/commit/8426ffa50de48ff9d11454bbcc7cd5612bf6c448)
+- `06:20` **fix(physics): stop the kinematic assist faking the trained walker** — +20 −8 — [`cd6827b`](https://github.com/abgnydn/webgpu-fly/commit/cd6827bd5929dee1d29324f9126f911a1f1b00e3)
+- `06:20` **fix(game): make replay determinism real, not just claimed** — +100 −29 — [`01c3369`](https://github.com/abgnydn/webgpu-fly/commit/01c33699df93a9872d296d0bfec372395792e0a3)
+
 ## 2026-06-05
 
 - `06:47` **docs(readme): custom connectome hero banner** — +333 −2 — [`cc56ec3`](https://github.com/abgnydn/webgpu-fly/commit/cc56ec37b3cd79a4cba0de3d95a2975f7a2b4352)
@@ -50,17 +64,3 @@
 - `13:38` **Stronger DN stim + closed-loop refinements + 4 new e2e assertions** — +103 −24 — [`90a713a`](https://github.com/abgnydn/webgpu-fly/commit/90a713a08a931edde7ae7407ba57b533357f381a)
 - `12:25` **Ignore .claude/ working dir** — +1 −1 — [`a7c82a7`](https://github.com/abgnydn/webgpu-fly/commit/a7c82a7b8eddfa7763bc6cd391fc1daedda1e7fa)
 - `12:25` **Body-walks-visibly fix: proportional kinematic assist + femur-lift gate** — +48 −10 — [`73963c0`](https://github.com/abgnydn/webgpu-fly/commit/73963c0ce7f2078b85a40dc30224b476c0afe12a)
-- `11:59` **Track r2-cors.json + match DEPLOY.md to actual deploy steps** — +47 −14 — [`47382f1`](https://github.com/abgnydn/webgpu-fly/commit/47382f1ae272be7d4091e40d8f2b927e3f08c512)
-- `11:53` **Pages deploy script — build:slim strips heavy assets before pushing** — +2 −1 — [`c6cfc98`](https://github.com/abgnydn/webgpu-fly/commit/c6cfc98226d639dc2eb553b70967b85ca5ef3542)
-- `11:18` **MANC subclass + alpha synapse (real this time) + 4 new e2e tests** — +223 −59 — [`ffb7341`](https://github.com/abgnydn/webgpu-fly/commit/ffb73415acadb1d07da99de29295c979dade4969)
-- `10:32` **Cloudflare deploy + boot overlay + click-place-target + Codex links** — +284 −65 — [`226fb0e`](https://github.com/abgnydn/webgpu-fly/commit/226fb0ec49a450ca0c0ce9243cf813e546e02fb3)
-- `09:51` **Real MANC spine — Janelia connectome wired into the runtime** — +481 −15 — [`27896b4`](https://github.com/abgnydn/webgpu-fly/commit/27896b4e7c5a9e0d94f135457ab19e2ad4631b0f)
-- `09:17` **Public deploy plumbing — vercel.json + env-var asset URLs** — +131 −7 — [`2810020`](https://github.com/abgnydn/webgpu-fly/commit/2810020556013201ee53a216a9fc942de4962b07)
-- `09:12` **Visual polish: follow-cam, pulsing target, spine activity readout** — +62 −18 — [`eaaefd8`](https://github.com/abgnydn/webgpu-fly/commit/eaaefd89cc387269213e54b930a604e91b19959b)
-- `07:57` **Add the spine — 200-neuron VNC LIF + retina overlay + tighter visual …** — +386 −93 — [`6d8130b`](https://github.com/abgnydn/webgpu-fly/commit/6d8130b77831d1ca03d126c286740d35f3985f35)
-
-## 2026-05-02
-
-- `13:36` **Playwright e2e harness — stop using user as QA loop** — +278 −2 — [`6c8ecc0`](https://github.com/abgnydn/webgpu-fly/commit/6c8ecc04e06464a8195c18b50d12c0b5734634fe)
-- `13:09` **Revert brain (lif.wgsl + sim.ts) to working 6ac057d state** — +38 −74 — [`d821ff1`](https://github.com/abgnydn/webgpu-fly/commit/d821ff1f89c4d8cf894484aef239e8030d4d0b7f)
-- `12:20` **Brain silent — revert calibration, pad Params struct** — +47 −19 — [`d11ec98`](https://github.com/abgnydn/webgpu-fly/commit/d11ec9870c2758053fe67823243fda408cbdf2ee)

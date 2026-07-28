@@ -5,6 +5,37 @@ format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/) starting
 from `0.1.0`.
 
+## [0.2.0] — 2026-07-27
+
+Measurement-integrity release. See the Erratum section in `paper.tex` and
+README for the full story.
+
+### Fixed
+
+- **Unfused baseline dataflow** — the v1 baseline computed a different
+  function than the fused kernels (FFN read the attention output, LN2/FFN
+  outputs discarded, no residuals, one weight set shared across layers).
+  Now mirrors the fused dataflow exactly with per-layer weights sliced from
+  the same packed tensor.
+- **Parallel fused kernel output corruption** — FFN hidden scratch
+  overwrote the first `DF` floats of the output buffer; scratch now lives
+  past the `SL*D` output region.
+
+### Added
+
+- **Numerical equivalence check** across fused / unfused / parallel before
+  any timing (`max|Δ| ≤ 2.3e-5` on all re-measured configs).
+- **Single-submit unfused baseline** — same kernels, all dispatches in one
+  command buffer. Reframes the results: fused-1T is 2.5–5.0× slower than
+  it; parallel-fused wins 2.2–12.7× (growing with D), loses at SEQ=256.
+- Re-measured dataset (M2 Max, N=10) incl. PyTorch 2.12 MPS baselines:
+  `benchmarks/results/2026-07-27_m2max_fixed/`.
+
+### Changed
+
+- Speedups computed from medians; `benchmark.js` destroys buffers between
+  configs and resets state between runs.
+
 ## [0.1.0] — 2026-05-04
 
 First public release. **Single-kernel fusion for autoregressive

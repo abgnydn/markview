@@ -1,5 +1,9 @@
 # Commits — neuropulse
 
+## 2026-07-28
+
+- `09:58` **Add Hugging Face Space link to landing footer (#21)** — +1 −0 — [`7eb2500`](https://github.com/abgnydn/neuropulse/commit/7eb2500f97f6091d60015786218719b27a768e93)
+
 ## 2026-07-06
 
 - `13:12` **feat(lessons/tours): slower default, tours hold at the end, cleaner s…** — +93 −12 — [`ef37d49`](https://github.com/abgnydn/neuropulse/commit/ef37d4950dae28db1d7a155319b7a7db87053f09)
@@ -90,4 +94,3 @@
 ## 2026-05-12
 
 - `11:09` **fix(butterfly): hardened sweep harness + real v2.5 regression fix** — +129 −34 — [`4c90a3d`](https://github.com/abgnydn/neuropulse/commit/4c90a3d2a3d5fddce54324c387c3a3358ddb7e06)
-- `10:33` **test(butterfly): two-track sweep harness — Playwright + paste-in-console** — +635 −1 — [`ae617dd`](https://github.com/abgnydn/neuropulse/commit/ae617dd6884279c06aae5c69bf3b8682460c95ed)

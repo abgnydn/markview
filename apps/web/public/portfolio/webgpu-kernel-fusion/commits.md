@@ -1,5 +1,11 @@
 # Commits — webgpu-kernel-fusion
 
+## 2026-07-28
+
+- `07:39` **Don't track compiled paper.pdf (build artifact; Zenodo hosts the PDF …** — +1 −0 — [`9b7105f`](https://github.com/abgnydn/webgpu-kernel-fusion/commit/9b7105f6fe8147a686336ebba8856b653c13c4f5)
+- `07:37` **Sync repo to published Zenodo v6 + recover missing snapshot artifact …** — +41 −2 — [`6b4608a`](https://github.com/abgnydn/webgpu-kernel-fusion/commit/6b4608a20b5e6e53094ef0274bd5bfd68307e624)
+- `07:16` **Publish cross-API Acrobot artifact: implementations + equivalence gat…** — +706 −3 — [`16e3442`](https://github.com/abgnydn/webgpu-kernel-fusion/commit/16e3442505aa8fd284077b13e193f2a3bc48a3b9)
+
 ## 2026-06-30
 
 - `10:24` **docs: add CITATION.cff with Zenodo concept DOI** — +15 −0 — [`d1fa87b`](https://github.com/abgnydn/webgpu-kernel-fusion/commit/d1fa87b1be1b94b0acbae01170451f4db179d5b3)

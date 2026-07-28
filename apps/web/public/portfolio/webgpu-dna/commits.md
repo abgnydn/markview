@@ -1,5 +1,44 @@
 # Commits — webgpu-dna
 
+## 2026-07-28
+
+- `09:56` **docs: fix 6 numbers/consistency issues found by the merge-audit workflow** — +13 −11 — [`bed5c3f`](https://github.com/abgnydn/webgpu-dna/commit/bed5c3f8e1de626897c43dceb26bd6a969707aa3)
+- `09:44` **docs: reconcile stale SSB_P_DIRECT references to the shipped model** — +7 −5 — [`ce4adbd`](https://github.com/abgnydn/webgpu-dna/commit/ce4adbdd098d3e70fae06dda70f960a05bc2c3f2)
+- `09:41` **docs(changelog): record the integrated work under [Unreleased]** — +30 −1 — [`9d2efcd`](https://github.com/abgnydn/webgpu-dna/commit/9d2efcd6fd6da1dac3bb3965079f7cd1aee0f331)
+- `09:38` **Merge remote-tracking branch 'origin/docs/claim-verification-fixes' i…** — +9 −9 — [`e48ddcc`](https://github.com/abgnydn/webgpu-dna/commit/e48ddcca83acf18ca09f32023c500c25cc632e9c)
+- `09:36` **Merge remote-tracking branch 'origin/docs/reconcile-numbers' into int…** — +27 −13 — [`d1b8ce3`](https://github.com/abgnydn/webgpu-dna/commit/d1b8ce3aa0467f13ee3409ac5f81257e97dd6381)
+- `09:34` **Merge remote-tracking branch 'origin/ci/activate-webgpu-smoke' into i…** — +22 −20 — [`ec35ec7`](https://github.com/abgnydn/webgpu-dna/commit/ec35ec770ff5000985c2403b10c10cb8519c7a38)
+- `09:34` **Merge remote-tracking branch 'origin/chore/drop-test-count-vanity-met…** — +5 −16 — [`66abc3d`](https://github.com/abgnydn/webgpu-dna/commit/66abc3d90509637d4377dbc3d7d6629b4459bdcc)
+- `09:34` **Merge remote-tracking branch 'origin/feat/direct-ssb-accumulated' int…** — +563 −73 — [`c4e1f17`](https://github.com/abgnydn/webgpu-dna/commit/c4e1f174062e84f533537a08f78197ca3d14c5d3)
+- `09:34` **Merge remote-tracking branch 'origin/fix/gpu-chem-onsager-sign' into …** — +8 −3 — [`b509279`](https://github.com/abgnydn/webgpu-dna/commit/b509279ef73c817e8be88d375c0ee35cbe3f1229)
+- `09:34` **Merge remote-tracking branch 'origin/feat/webgpu-robustness' into int…** — +63 −11 — [`db094fa`](https://github.com/abgnydn/webgpu-dna/commit/db094fa50ddea8be44bf02ba5e5d525993e060d9)
+
+## 2026-07-13
+
+- `07:05` **docs: fix line-57 test-count straggler (46/7 -> 50/9)** — +1 −1 — [`9c3443c`](https://github.com/abgnydn/webgpu-dna/commit/9c3443cba1fe3ef46f491fd16710620637213e20)
+- `07:04` **docs: fix 7 stale §Numbers claims flagged by the claim-verification loop** — +11 −11 — [`a440d50`](https://github.com/abgnydn/webgpu-dna/commit/a440d50f659618d3668227545ea42b13bf31ecac)
+
+## 2026-07-06
+
+- `12:59` **docs(tunables): summary line — direct model is accumulated-volume** — +3 −3 — [`0353427`](https://github.com/abgnydn/webgpu-dna/commit/0353427b069dd25e618fe8232759ff2c516f47ac)
+- `12:58` **feat(scoring): accumulated-volume direct-SSB model + refute accumulat…** — +88 −26 — [`b1a6f37`](https://github.com/abgnydn/webgpu-dna/commit/b1a6f376c8e2016f7667fa5da44e068219ea1f99)
+- `08:04` **feat(scoring): energy-threshold direct-SSB model (rigorous, no calibr…** — +276 −36 — [`865cdf5`](https://github.com/abgnydn/webgpu-dna/commit/865cdf5b21a4aea2660c246b369c9c08aa8dabf2)
+- `07:12` **scoring: pin parameter-free SSB ratio on a fresh v0.7.0 GPU dump** — +26 −14 — [`d505872`](https://github.com/abgnydn/webgpu-dna/commit/d505872a31664831869df4ca67568e172e881477)
+- `06:51` **fix(scoring): make DNA-damage scoring parameter-free (remove calibrat…** — +83 −29 — [`67dd54b`](https://github.com/abgnydn/webgpu-dna/commit/67dd54b1a03cf7d38b70825ded9c7e6b194f4e69)
+- `05:43` **docs: reconcile headline numbers with committed artifacts** — +28 −14 — [`fceec6b`](https://github.com/abgnydn/webgpu-dna/commit/fceec6bb1f0e67a4c3a896d24dd8671916ee0636)
+- `05:38` **fix(chem): correct sign of Onsager radius in the non-production IRT b…** — +8 −3 — [`77b6641`](https://github.com/abgnydn/webgpu-dna/commit/77b664102b9ea06147102bdd2cb8898fd3461da1)
+- `05:34` **feat(gpu): device-lost recovery, buffer reclamation, and np clamping** — +63 −11 — [`6c2d06a`](https://github.com/abgnydn/webgpu-dna/commit/6c2d06abff2aa43d582e01af7bd763eb5eb1fa9f)
+- `05:24` **fix(scoring): correct direct-SSB over-count in the production scorer** — +139 −17 — [`da81c05`](https://github.com/abgnydn/webgpu-dna/commit/da81c05d0eac4253e80077c4e3a24961edb520cf)
+
+## 2026-07-02
+
+- `07:20` **ci: activate headless WebGPU smoke workflow** — +22 −20 — [`257ee9c`](https://github.com/abgnydn/webgpu-dna/commit/257ee9c39e15d9dc79a2f630750e0d64007777ec)
+
+## 2026-07-01
+
+- `12:31` **fix(scoring): correct 10x strand-1 dose over-count in reference scorer** — +7 −3 — [`39632a3`](https://github.com/abgnydn/webgpu-dna/commit/39632a331d9f9e88771b7711835a98a45504d010)
+- `12:26` **docs: drop the test-count vanity metric** — +5 −16 — [`08b6070`](https://github.com/abgnydn/webgpu-dna/commit/08b60708af1074b836b9f35cc5cb0a085b41a379)
+
 ## 2026-06-23
 
 - `08:34` **Merge pull request #1 from abgnydn/claude/nice-gauss-ssp1c4** — +1167 −154 — [`2135979`](https://github.com/abgnydn/webgpu-dna/commit/2135979189ae01957cc8eee8efba4588011542f7)
@@ -34,27 +73,3 @@
 - `13:08` **experiment(E31): oxygen network functional + LET effect is textbook-c…** — +23 −0 — [`1d35f7a`](https://github.com/abgnydn/webgpu-dna/commit/1d35f7a23efe13b5b915e002b1231026a3d24e2a)
 - `12:55` **feat(chem): wire the O(3p) seed -> oxygen network is ALIVE (first oxy…** — +38 −14 — [`bd6351d`](https://github.com/abgnydn/webgpu-dna/commit/bd6351d653dbfd54d42a00ecb362382791bb6f9f)
 - `12:43` **feat(chem): port option3 oxygen network into the IRT worker (38 react…** — +51 −7 — [`a0e613e`](https://github.com/abgnydn/webgpu-dna/commit/a0e613e9e12ad504aa381e33692d4da3c36404c0)
-- `12:11` **chem(audit): extract option3's full reaction table from 11.4.1 source…** — +67 −0 — [`fba9340`](https://github.com/abgnydn/webgpu-dna/commit/fba9340746dcd14c8ee8873091aa2bc8b6c401e4)
-- `12:07` **fix: retract the false 'elastic gap' (verify-from-doc error) + correc…** — +14 −9 — [`c9a88f6`](https://github.com/abgnydn/webgpu-dna/commit/c9a88f6e96d30cc23aeee5ab4f2d9a31fe46fda1)
-- `12:04` **roadmap: log Geant4 11.4.1 model-audit gaps (Tier 0.5) + proton full-…** — +5 −2 — [`fd95782`](https://github.com/abgnydn/webgpu-dna/commit/fd957821baada8f74a10ec33282a85547df4b73c)
-- `12:02` **roadmap: log the Geant4 model-audit gaps (Tier 0.5) + proton full-cha…** — +157 −0 — [`4528cf1`](https://github.com/abgnydn/webgpu-dna/commit/4528cf1de4568c78e04c54429ac71d171472efe1)
-- `11:49` **feat(protons): proton track structure (Rudd + Miller-Green + Born) — …** — +471 −0 — [`eff4aa0`](https://github.com/abgnydn/webgpu-dna/commit/eff4aa06468193b9c1709983cbdaebc5b70cde03)
-- `10:58` **site(v0.7.0): Born excitation, sub-keV CSDA closed (0.956-1.005x), SS…** — +3 −3 — [`44fa4ab`](https://github.com/abgnydn/webgpu-dna/commit/44fa4ab6b396400e7e025c9c248c9e8a2f3c80b7)
-- `10:57` **docs(paper, v0.7.0): Born excitation + no-seam audit; sub-keV CSDA cl…** — +33 −31 — [`a27764f`](https://github.com/abgnydn/webgpu-dna/commit/a27764f1ddd3909d1754570acb3c1625c8980da2)
-- `10:54` **docs(v0.7.0): cascade Born-excitation numbers + address reviewer conc…** — +67 −39 — [`a129bd5`](https://github.com/abgnydn/webgpu-dna/commit/a129bd5f06a7717e5021f9bc3490cbdc2ec71211)
-- `10:51` **feat(v0.7.0): real Born excitation, sigma_exc fudge removed — matches…** — +48 −12 — [`c6bce13`](https://github.com/abgnydn/webgpu-dna/commit/c6bce134d5620963d2146c15687cf798ee861336)
-- `10:16` **docs(v0.6.1): correct open-items (E28 refuted E26's sigma_exc-floor) …** — +14 −17 — [`b9df2b4`](https://github.com/abgnydn/webgpu-dna/commit/b9df2b447ad03c71ff9a673088b7374552a38e08)
-- `10:12` **site(v0.6.1): live fidelity line + chemistry bullet -> sigma_exc=0.39…** — +2 −2 — [`c711d54`](https://github.com/abgnydn/webgpu-dna/commit/c711d54ad29d52d464b6f5227d1442847bb57ccd)
-- `10:11` **docs(paper): v0.6.1 sigma_exc=0.39 numbers (cascade 0.937x, RMS 6.8%,…** — +11 −11 — [`10f7f62`](https://github.com/abgnydn/webgpu-dna/commit/10f7f62a8136c88f3b7f5666e7e0ea214a03d91b)
-- `10:10` **docs(v0.6.1): cascade the sigma_exc=0.39 numbers through README/CLAUD…** — +39 −21 — [`3f6bcc1`](https://github.com/abgnydn/webgpu-dna/commit/3f6bcc16df83ec4fc45c4ec7da8faba2bf4af3d1)
-- `10:07` **feat(v0.6.1): SIGMA_EXC_SCALE 0.5->0.39 — clean win unlocked by the f…** — +31 −1 — [`591e34b`](https://github.com/abgnydn/webgpu-dna/commit/591e34bc60bcfeb4105c4c95bbbfe81707f2501f)
-- `09:33` **experiment(E27): SSB/DSB ratio is robust to DNA-target geometry (meas…** — +27 −3 — [`ceecc2e`](https://github.com/abgnydn/webgpu-dna/commit/ceecc2ef7638bbe6a5dc6f57228a496ec0262ac3)
-- `09:09` **docs: connect the G(H) overshoot to the same sigma_exc Emfietzoglou r…** — +6 −2 — [`2aaff9f`](https://github.com/abgnydn/webgpu-dna/commit/2aaff9f83c41eba7df8d9e3df5ea4633f238f816)
-- `09:09` **experiment(E26): characterise the residual cascade deficit — it's the…** — +25 −3 — [`c7d88b1`](https://github.com/abgnydn/webgpu-dna/commit/c7d88b1d0450eb9cc6034bd88bde9ed31d10ba50)
-- `09:02` **docs: kernel-fusion row — Phase A is now ~1.2% of the ~1.2s v0.6.0 ca…** — +1 −1 — [`44416f2`](https://github.com/abgnydn/webgpu-dna/commit/44416f267241087ee061a026e63d89a1f1f860f1)
-- `09:01` **perf+docs(v0.6.0): re-characterise speedup for the full cascade — ~24…** — +41 −16 — [`f0da61d`](https://github.com/abgnydn/webgpu-dna/commit/f0da61d7d5f119becdbb7662a171c33facfafc85)
-- `08:57` **perf(dispatch): stop Phase-B cascade readbacks once the wavefront sta…** — +26 −7 — [`2fc285a`](https://github.com/abgnydn/webgpu-dna/commit/2fc285a2ddf4a6a1a6ddc18bee3089f8656d8951)
-- `08:39` **docs: correct the superseded 'inter-track / native-runtime' narrative…** — +53 −26 — [`c405965`](https://github.com/abgnydn/webgpu-dna/commit/c40596593d5ba06ab96fb8873a8275bf6474662c)
-- `08:29` **docs: sweep remaining v0.5.0 numbers -> v0.6.0 (CLAUDE L2/L4, README …** — +14 −6 — [`6c25d8f`](https://github.com/abgnydn/webgpu-dna/commit/6c25d8ff85eac5a7ec91d71ff22222ce6e1c93be)
-- `08:20` **paper(v0.6.0): update numbers + narrative for the full electron cascade** — +48 −37 — [`ec068ec`](https://github.com/abgnydn/webgpu-dna/commit/ec068ecfc234d3e5803a5e07f9fe2a605e453806)
-- `08:13` **site(v0.6.0): full-cascade numbers on the live fidelity line (0.931×,…** — +1 −1 — [`4bd047d`](https://github.com/abgnydn/webgpu-dna/commit/4bd047d0fd10705ef7577e8c803230d864a0dd59)

@@ -1,5 +1,16 @@
 # Commits — webgpu-q
 
+## 2026-07-28
+
+- `09:05` **deploy: HF Space lands on index.html, snapshot 2a7b175c88e2** — +3 −3 — [`1caa88d`](https://github.com/abgnydn/webgpu-q/commit/1caa88dbff3acb572145a1592724c1fd5d06602d)
+- `09:05` **fix(learn): move the site nav above the header** — +19 −14 — [`2a7b175`](https://github.com/abgnydn/webgpu-q/commit/2a7b175c88e2e0cd6095c527b462608b932c7525)
+- `08:55` **docs(deploy): record the bare-directory-URL breakage on HF Spaces** — +7 −0 — [`2e289da`](https://github.com/abgnydn/webgpu-q/commit/2e289daf65bed3e49127b97ab4f9c32390c92469)
+- `08:54` **deploy: bump HF Space snapshot to cf8c39eb122f** — +1 −1 — [`87526ab`](https://github.com/abgnydn/webgpu-q/commit/87526ab9eebaf0517cb6de3bcedd8deb479e2493)
+- `08:54` **fix(learn): link /experiments/index.html explicitly** — +3 −1 — [`cf8c39e`](https://github.com/abgnydn/webgpu-q/commit/cf8c39eb122fda7714c265b963bfa43812f25e48)
+- `08:53` **deploy: bump HF Space snapshot to ec257087725b** — +1 −1 — [`65e67ef`](https://github.com/abgnydn/webgpu-q/commit/65e67ef95775daabaca4a18c889a06169f1faca3)
+- `08:52` **fix(learn): give the lesson a route out — it was a dead end** — +12 −0 — [`ec25708`](https://github.com/abgnydn/webgpu-q/commit/ec257087725b2d5afc0687d202e0cbe6a606de4c)
+- `07:07` **deploy: record the HF Space card and its deploy procedure** — +123 −0 — [`0228f5c`](https://github.com/abgnydn/webgpu-q/commit/0228f5c746b46ea0fbd862bba13ec67d4c06f8a4)
+
 ## 2026-07-06
 
 - `11:27` **feat(learn): interactive education wedge — "why is water special?" (4…** — +1227 −23 — [`a6bf89c`](https://github.com/abgnydn/webgpu-q/commit/a6bf89ce0fa74ef419812f9726ca6c69d3d2f2df)
@@ -59,14 +70,3 @@
 - `12:18` **feat(screening): validation + discovery campaigns — first real screen…** — +181 −0 — [`1e9fa40`](https://github.com/abgnydn/webgpu-q/commit/1e9fa4069c47809fb31e3ab79c13714f644be0ec)
 - `09:43` **docs(svg): refresh README diagrams for v0.10.0** — +13 −13 — [`8dfd987`](https://github.com/abgnydn/webgpu-q/commit/8dfd987ed5b7fa4ccfda2013b37397b0f9a22ba8)
 - `08:58` **chore(release): v0.10.0 — distributed chemistry across the crowd + si…** — +92 −12 — [`02098d4`](https://github.com/abgnydn/webgpu-q/commit/02098d41e40fef86396f54dc89aed8056c1bb75b)
-- `08:25` **fix(swarm): greedy-pull scheduler — balanced auto-distribution** — +164 −143 — [`ffe4df1`](https://github.com/abgnydn/webgpu-q/commit/ffe4df1b490ac8bbeaf8a61841fc78e5b0bf0f0f)
-- `07:14` **feat(swarm): honest multi-tab scaling curve + fix screening measurement** — +133 −7 — [`0a3f5f0`](https://github.com/abgnydn/webgpu-q/commit/0a3f5f0b3a8050d139db5adca625f9d4a08d30f7)
-- `07:01` **feat(swarm): distributed molecule screening — rank a library by HOMO–…** — +141 −1 — [`de1412b`](https://github.com/abgnydn/webgpu-q/commit/de1412b36a4185da9f59d8e8f18d51b240c25087)
-- `06:51` **test(swarm): measure distributed-MP2 single-molecule speedup — honest…** — +174 −0 — [`92132d8`](https://github.com/abgnydn/webgpu-q/commit/92132d80b8259f1dc7c4601ab6da9c57b175b710)
-- `06:22` **feat(swarm): distributed DF-MP2 — collaborative single-molecule corre…** — +356 −2 — [`b4c1fc4`](https://github.com/abgnydn/webgpu-q/commit/b4c1fc429b60ae7add3c99ccbfef562444c929f2)
-
-## 2026-06-10
-
-- `06:40` **feat(swarm): lever 3 — gzip-binary-f64 wire codec for RelayTransport …** — +334 −13 — [`cff4c6c`](https://github.com/abgnydn/webgpu-q/commit/cff4c6c195a971f8f7325363555559f897bbfe98)
-- `04:43` **refactor(chem): make f64 WASM the recommended DF default, GPU hybrid …** — +52 −38 — [`1488b24`](https://github.com/abgnydn/webgpu-q/commit/1488b242efcd9f3a5683f1b8bead5035c940138b)
-- `03:54` **fix(claims): address scientific-critic findings — separate validated …** — +89 −8 — [`6fa7b92`](https://github.com/abgnydn/webgpu-q/commit/6fa7b922b8e567a0be688dbcf3a22c8dbc227fcb)

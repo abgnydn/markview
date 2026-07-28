@@ -1,5 +1,10 @@
 # Commits — webgpu-transformer-fusion
 
+## 2026-07-28
+
+- `07:45` **Sync repo to published Zenodo v2 + recover snapshot artifact (#2)** — +4263 −7 — [`70e6f92`](https://github.com/abgnydn/webgpu-transformer-fusion/commit/70e6f9285073cfdfa16468ee47193d6c98c4122a)
+- `07:16` **Erratum v2: fix harness defects, verify kernel equivalence, add fair …** — +1477 −368 — [`7998eb4`](https://github.com/abgnydn/webgpu-transformer-fusion/commit/7998eb4b0c8ff7a99ac486bfe173f390a693b898)
+
 ## 2026-06-30
 
 - `10:24` **docs: add CITATION.cff with Zenodo concept DOI** — +15 −0 — [`2ad1d8f`](https://github.com/abgnydn/webgpu-transformer-fusion/commit/2ad1d8f50e03dab009e08e34563b9f8eba3a42d7)

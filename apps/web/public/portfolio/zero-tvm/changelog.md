@@ -5,6 +5,92 @@ format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/) starting
 from `0.1.0`.
 
+## [Unreleased]
+
+Correctness fixes, the first measured optimization promoted to default, and a
+new headline number. The engine now measures **faster than WebLLM** on the
+one machine benchmarked.
+
+### Added
+
+- **Qwen3.5-4B hybrid port (v1, `?model=qwen35`)** — the first *hybrid*
+  architecture on the engine: 24 gated-DeltaNet (linear-attention) layers +
+  8 gated full-attention layers (GQA 16/4, head_dim 256, partial RoPE 64 of
+  256, sigmoid attention gate), 248k vocab with renumbered specials, tied
+  lm_head. To our knowledge the first hand-written-kernel int4 gated-DeltaNet
+  hybrid in a browser. The path is **v1-scalar-GDN** (scalar DeltaNet
+  kernels, no chunked prefill — prompts replay token-by-token, unfused GDN
+  projections). Suites: `npm run test:kernels:qwen35` (13/13 GDN kernel
+  family vs CPU reference) + mirror-gated `tests/e2e/qwen35.test.ts`.
+- **Qwen3.5 same-weights A/B vs WebLLM** — `BENCH_QUERY="?model=qwen35"
+  npm run bench` runs both engines back-to-back in one session on the same
+  local weight bytes. Measured pair (2026-07-28, M2 Max, Chrome 150):
+  Zero-TVM **47.99** vs WebLLM **31.99** tok/s (+50.0%), WebLLM via its own
+  prebuilt Qwen3.5-4B lib. Recorded in BENCH.md with the v1-scalar-GDN
+  floor caveat; `bench/results.json` untouched. A `?splitk=0` vs default
+  spot-check on the hybrid's 8 attention layers is recorded there too.
+- **Qwen3-4B port (v1, `?model=qwen3`)** — the spec-parameterized engine now
+  runs a second architecture end-to-end in the browser: GQA 32/8 with
+  qDim ≠ d, per-head QK-norm, byte-level BPE tokenizer, tied lm_head, ChatML
+  (non-thinking) template. `zero-tvm.html?model=qwen3` and
+  `validate.html?model=qwen3`; Phi-3 stays the default and all existing URLs
+  keep their exact behavior. The Qwen path is **v1-unfused** (QK-norm rules
+  out the fused QKV kernel → 10 dispatches/layer; vec4 loads only where
+  K % 1024 == 0; no int8-KV). Suites: `npm run test:kernels:qwen` (21/21
+  compile-and-shape gate) + a mirror-gated e2e file (`tests/e2e/qwen.test.ts`).
+- **Qwen3 same-weights A/B vs WebLLM** — `BENCH_QUERY="?model=qwen3"
+  npm run bench` now runs BOTH engines back-to-back in one session against
+  the same local weight bytes (WebLLM via its own prebuilt Qwen3-4B wasm and
+  a per-model mirror route) and prints both medians + the gap, without
+  touching `bench/results.json` (that stays the Phi-3 headline artifact).
+  First measured pair (2026-07-28, M2 Max, Chrome 150): Zero-TVM **25.43**
+  vs WebLLM **14.15** tok/s (+79.8%) — but both engines run Qwen3-4B far
+  below their Phi-3 rates on this machine, so the gap reflects WebLLM's
+  prebuilt Qwen3 lib as much as our v1 port. Recorded in BENCH.md as the
+  baseline for the Qwen tuning phase, not promoted to any headline.
+
+### Fixed
+
+- **fused_ffn f32 accumulation** — the fused FFN now accumulates in f32
+  throughout instead of f16.
+- **Attention workgroup-barrier bug** — a missing barrier in the attention
+  kernel.
+- **Decode off-by-one** — the decode loop was off by one token position.
+
+### Changed
+
+- **`@mlc-ai/web-llm` dev-dependency bumped `^0.2.80` → `0.2.84`** — the
+  Qwen3.5 hybrid model libs first ship in WebLLM's v0_2_84 prebuilt set.
+  `webllm-bench` now uses the v0_2_84 lib names for all three models
+  (upstream dropped the `ctx4k_` segment from the wasm names and renamed
+  the `useIndexedDBCache` AppConfig flag to `cacheBackend`). The recorded
+  Phi-3 / Qwen3-4B pair numbers in BENCH.md were measured against the
+  v0_2_80-era libs and stand as dated history.
+- **vec4 loads are now the default** (`?vec4=0` / `?vec4qkv=0` to opt out).
+  Measured 2026-07-25 on Apple M2 Max vs the same-day pre-vec4 baseline of
+  60.96 tok/s: `?vec4=1` +4.5%, `?vec4qkv=1` +4.2%, both together **+7.1%**
+  (65.27 tok/s). Full A/B table in BENCH.md.
+- **New headline head-to-head** (2026-07-25, Apple M2 Max, Chrome
+  150.0.7871.182, identical local Phi-3-mini q4f16_1 weights, 128 tokens ×
+  5 runs, median): Zero-TVM **66.33 tok/s** vs WebLLM v0.2.80 **51.98 tok/s**
+  — **~28% faster**. Supersedes the "22% behind" M2 Pro numbers (different
+  machine AND a since-fixed engine — the delta is not all optimization; the
+  same-run WebLLM figure is the valid comparator). Best measured opt-in
+  config `?vec4=1&vec4qkv=1&splitk=8`: 68.36 tok/s. Old M2 Pro numbers kept
+  in BENCH.md "Prior measurements".
+- README / BENCH.md / site copy rewritten around the measured result; the
+  split-K attention flag (`?splitk=N`, ~+3% at short context) stays opt-in
+  pending a long-context A/B.
+
+### Falsified (measured and not shipped)
+
+- **FFN prologue fusion** (`?fuseprologue=1`) — folding the FFN-entry
+  add_norm into the FFN kernel's shared-memory phase measured **−13.7%**
+  (52.62 tok/s) on M2 Max: the redundant per-workgroup RMSNorm recompute
+  costs far more than the −32 dispatch bubbles save. Flag + shaders kept
+  for A/B on other GPUs, documented as a negative result in BENCH.md —
+  same treatment as the tiling and spec-decode negatives.
+
 ## [0.2.0] — 2026-06-25
 
 Tooling, tests, and docs pass. Engine behavior is unchanged; this release adds
