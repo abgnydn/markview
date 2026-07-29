@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-28T21:12:03.679Z",
+  "generated_at": "2026-07-29T21:00:00.517Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1641,
+  "activity_90d_total": 1648,
   "activity_90d": {
-    "2026-04-30": 2,
     "2026-05-01": 48,
     "2026-05-02": 5,
     "2026-05-04": 61,
@@ -85,7 +84,8 @@
     "2026-07-25": 16,
     "2026-07-26": 1,
     "2026-07-27": 3,
-    "2026-07-28": 75
+    "2026-07-28": 76,
+    "2026-07-29": 8
   },
   "categories": {
     "llm-inference": {
@@ -194,9 +194,12 @@
   ],
   "health": {
     "stale_60d": [
+      "fused-lora",
       "safenpm",
       "panel",
       "wonderlab",
+      "davakasasi",
+      "founder-lab",
       "tether",
       "fusedx",
       "hub",
@@ -290,7 +293,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505470"
@@ -353,7 +356,7 @@
       },
       "status": "flagship",
       "open_issues": 27,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20494382"
@@ -397,20 +400,20 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-27T21:15:00Z",
+      "pushed_at": "2026-07-28T21:12:05Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
-      "commits_30d": 48,
+      "commits_30d": 49,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "f00b9f4e16ed0d65acf0eef150bb3cdc9a372f01",
-        "short_sha": "f00b9f4",
-        "message": "chore(portfolio): daily sync 2026-07-27",
+        "sha": "ea2229ead2cb85db314e1b4632233d3b88f2c292",
+        "short_sha": "ea2229e",
+        "message": "chore(portfolio): daily sync 2026-07-28",
         "type": "chore",
-        "date": "2026-07-27T21:14:58Z",
-        "url": "https://github.com/abgnydn/markview/commit/f00b9f4e16ed0d65acf0eef150bb3cdc9a372f01",
-        "additions": 107,
-        "deletions": 105
+        "date": "2026-07-28T21:12:03Z",
+        "url": "https://github.com/abgnydn/markview/commit/ea2229ead2cb85db314e1b4632233d3b88f2c292",
+        "additions": 6328,
+        "deletions": 5528
       },
       "status": "flagship",
       "open_issues": 0,
@@ -463,7 +466,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 15,
+      "stale_days": 16,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506887"
@@ -513,7 +516,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 22,
+      "stale_days": 23,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20496086"
@@ -554,22 +557,23 @@
         "tvm",
         "webgpu",
         "webllm",
-        "wgsl"
+        "wgsl",
+        "qwen3"
       ],
-      "pushed_at": "2026-07-28T13:38:29Z",
+      "pushed_at": "2026-07-29T09:13:08Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 27,
+      "commits_30d": 35,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "7a6614442bef6ff4688347cd61c6e8702f9a0307",
-        "short_sha": "7a66144",
-        "message": "Merge pull request #22 from abgnydn/qwen35",
+        "sha": "f5669635e477f606f69d5ce07932857f54ff05b8",
+        "short_sha": "f566963",
+        "message": "Merge pull request #26 from abgnydn/space-card-refresh",
         "type": "other",
-        "date": "2026-07-28T13:38:28Z",
-        "url": "https://github.com/abgnydn/zero-tvm/commit/7a6614442bef6ff4688347cd61c6e8702f9a0307",
-        "additions": 2537,
-        "deletions": 136
+        "date": "2026-07-29T09:13:08Z",
+        "url": "https://github.com/abgnydn/zero-tvm/commit/f5669635e477f606f69d5ce07932857f54ff05b8",
+        "additions": 2,
+        "deletions": 2
       },
       "status": "flagship",
       "open_issues": 0,
@@ -624,7 +628,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 28,
+      "stale_days": 29,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -674,7 +678,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 3,
+      "stale_days": 4,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -726,7 +730,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 60,
+      "stale_days": 61,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -783,7 +787,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 63,
+      "stale_days": 64,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -833,7 +837,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 33,
+      "stale_days": 34,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -884,7 +888,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506339"
@@ -932,7 +936,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 63,
+      "stale_days": 64,
       "live_ok": false,
       "has_citation": false,
       "citation_doi": null
@@ -992,7 +996,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 71,
+      "stale_days": 72,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1043,7 +1047,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 48,
+      "stale_days": 49,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1090,7 +1094,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": null
@@ -1138,7 +1142,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 15,
+      "stale_days": 16,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505472"
@@ -1189,7 +1193,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": null
@@ -1241,7 +1245,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19344276"
@@ -1292,7 +1296,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -1342,7 +1346,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 33,
+      "stale_days": 34,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1392,7 +1396,7 @@
       },
       "status": "derivative",
       "open_issues": 0,
-      "stale_days": 60,
+      "stale_days": 61,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1441,7 +1445,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 60,
+      "stale_days": 61,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1490,7 +1494,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 68,
+      "stale_days": 69,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1540,7 +1544,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 69,
+      "stale_days": 70,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1590,7 +1594,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1639,7 +1643,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1687,7 +1691,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1737,7 +1741,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1787,7 +1791,7 @@
       },
       "status": "library",
       "open_issues": 1,
-      "stale_days": 74,
+      "stale_days": 75,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1836,7 +1840,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 85,
+      "stale_days": 86,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1900,7 +1904,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 85,
+      "stale_days": 86,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1959,7 +1963,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 85,
+      "stale_days": 86,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2009,7 +2013,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 85,
+      "stale_days": 86,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2059,7 +2063,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 85,
+      "stale_days": 86,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2109,7 +2113,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 92,
+      "stale_days": 93,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -2156,7 +2160,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 118,
+      "stale_days": 119,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2207,7 +2211,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 122,
+      "stale_days": 123,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2256,7 +2260,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 122,
+      "stale_days": 123,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2308,7 +2312,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 122,
+      "stale_days": 123,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2359,13 +2363,130 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 131,
+      "stale_days": 132,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "f5669635e477f606f69d5ce07932857f54ff05b8",
+      "short_sha": "f566963",
+      "message": "Merge pull request #26 from abgnydn/space-card-refresh",
+      "type": "other",
+      "date": "2026-07-29T09:13:08Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/f5669635e477f606f69d5ce07932857f54ff05b8",
+      "additions": 2,
+      "deletions": 2
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "895a501a5525e0737c70ed9daa389125dcb28482",
+      "short_sha": "895a501",
+      "message": "docs(space): refresh the HF Space card to the current measured pairs",
+      "type": "docs",
+      "date": "2026-07-29T09:11:20Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/895a501a5525e0737c70ed9daa389125dcb28482",
+      "additions": 2,
+      "deletions": 2
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "1fd54b3d395628adad70a410675d8712aed57033",
+      "short_sha": "1fd54b3",
+      "message": "Merge pull request #25 from abgnydn/qwen3-tuning",
+      "type": "other",
+      "date": "2026-07-29T08:09:17Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/1fd54b3d395628adad70a410675d8712aed57033",
+      "additions": 715,
+      "deletions": 144
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "43a5e99edc34f587db473c034377e753b75968cc",
+      "short_sha": "43a5e99",
+      "message": "perf(qwen3): fused qk_norm+rope+append kernel + K%512 vec4 — 75.74 to…",
+      "type": "perf",
+      "date": "2026-07-29T08:07:08Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/43a5e99edc34f587db473c034377e753b75968cc",
+      "additions": 715,
+      "deletions": 144
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "49c3c144f033742e1d90d23642db5717f766453d",
+      "short_sha": "49c3c14",
+      "message": "Merge pull request #24 from abgnydn/prefill-reuse",
+      "type": "other",
+      "date": "2026-07-29T07:32:41Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/49c3c144f033742e1d90d23642db5717f766453d",
+      "additions": 1739,
+      "deletions": 52
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "209673467b9be4429cbd99006dc081f68caa5cd7",
+      "short_sha": "2096734",
+      "message": "perf: chunked GDN prefill (3x) + cross-turn prefix reuse (TTFT 15s ->…",
+      "type": "perf",
+      "date": "2026-07-29T07:30:33Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/209673467b9be4429cbd99006dc081f68caa5cd7",
+      "additions": 1739,
+      "deletions": 52
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "305595dbfefa3505c45eca6c98581abaea9e3c57",
+      "short_sha": "305595d",
+      "message": "Merge pull request #23 from abgnydn/hybrid-perf",
+      "type": "other",
+      "date": "2026-07-29T05:34:32Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/305595dbfefa3505c45eca6c98581abaea9e3c57",
+      "additions": 336,
+      "deletions": 123
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "099787d51b472419806de476c92828eaea5afc87",
+      "short_sha": "099787d",
+      "message": "perf(qwen35): GDN projection fusion 4->1 + no-replay blocking decode …",
+      "type": "perf",
+      "date": "2026-07-29T05:32:23Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/099787d51b472419806de476c92828eaea5afc87",
+      "additions": 336,
+      "deletions": 123
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "ea2229ead2cb85db314e1b4632233d3b88f2c292",
+      "short_sha": "ea2229e",
+      "message": "chore(portfolio): daily sync 2026-07-28",
+      "type": "chore",
+      "date": "2026-07-28T21:12:03Z",
+      "url": "https://github.com/abgnydn/markview/commit/ea2229ead2cb85db314e1b4632233d3b88f2c292",
+      "additions": 6328,
+      "deletions": 5528
+    },
     {
       "slug": "zero-tvm",
       "name": "zero-tvm",
@@ -4939,19 +5060,6 @@
       "url": "https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
       "additions": 35,
       "deletions": 32
-    },
-    {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
-      "short_sha": "d136a5b",
-      "message": "chore(portfolio): daily sync 2026-06-27",
-      "type": "chore",
-      "date": "2026-06-27T21:08:56Z",
-      "url": "https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d",
-      "additions": 33,
-      "deletions": 29
     },
     {
       "slug": "draw-instant",
@@ -8761,110 +8869,6 @@
       "url": "https://github.com/abgnydn/tether/commit/ed29a3d418b194255a2e15a139a49e26b04adcaa",
       "additions": 664,
       "deletions": 664
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "0f6246ba68efd3bce56d8a3077be413c36a8e328",
-      "short_sha": "0f6246b",
-      "message": "chore: excise davakasasi + KVKK across v2",
-      "type": "chore",
-      "date": "2026-05-21T12:26:59Z",
-      "url": "https://github.com/abgnydn/tether/commit/0f6246ba68efd3bce56d8a3077be413c36a8e328",
-      "additions": 50,
-      "deletions": 8391
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "3135176ac3812bf099c6af1121a2469c132c5efa",
-      "short_sha": "3135176",
-      "message": "chore: drop tracked playwright last-run output",
-      "type": "chore",
-      "date": "2026-05-21T12:15:26Z",
-      "url": "https://github.com/abgnydn/tether/commit/3135176ac3812bf099c6af1121a2469c132c5efa",
-      "additions": 0,
-      "deletions": 4
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "559e743bd0b3ac4de67c76c852ee76eff6daca74",
-      "short_sha": "559e743",
-      "message": "fix(mcp): gate supervisor-only behaviors on MARKVIEW_BRAIN_ROLE",
-      "type": "fix",
-      "date": "2026-05-21T12:15:19Z",
-      "url": "https://github.com/abgnydn/tether/commit/559e743bd0b3ac4de67c76c852ee76eff6daca74",
-      "additions": 39,
-      "deletions": 14
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "c8d13e4cf63accd39da3b329b6a4203546c40f1a",
-      "short_sha": "c8d13e4",
-      "message": "research(butterfly): longmemeval_m — the pattern holds across 3 order…",
-      "type": "research",
-      "date": "2026-05-21T07:44:53Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/c8d13e4cf63accd39da3b329b6a4203546c40f1a",
-      "additions": 96,
-      "deletions": 3
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "ce016f72a92f9b5040e9dc2b79e59022a8607776",
-      "short_sha": "ce016f7",
-      "message": "research(butterfly): per-question-type breakdown + cross-domain test",
-      "type": "research",
-      "date": "2026-05-21T07:15:53Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/ce016f72a92f9b5040e9dc2b79e59022a8607776",
-      "additions": 328,
-      "deletions": 0
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "3242b22168bcca644251fbf4270cdb017313ffc8",
-      "short_sha": "3242b22",
-      "message": "research(butterfly): the headline — 87% evidence preservation at 3× c…",
-      "type": "research",
-      "date": "2026-05-21T06:46:44Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/3242b22168bcca644251fbf4270cdb017313ffc8",
-      "additions": 39,
-      "deletions": 3
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "980a33a3c28a2678d22175b83a1190aaa705224e",
-      "short_sha": "980a33a",
-      "message": "research(butterfly): the punchline — train on longmem, beat regex by 3×",
-      "type": "research",
-      "date": "2026-05-20T17:34:58Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/980a33a3c28a2678d22175b83a1190aaa705224e",
-      "additions": 276,
-      "deletions": 1
-    },
-    {
-      "slug": "neuropulse",
-      "name": "neuropulse",
-      "language": "TypeScript",
-      "sha": "ff008a88f6c9a7ca3e715b59e56f4040a0a0c966",
-      "short_sha": "ff008a8",
-      "message": "research(butterfly): longmemeval_s — directional finding holds on adv…",
-      "type": "research",
-      "date": "2026-05-20T17:22:10Z",
-      "url": "https://github.com/abgnydn/neuropulse/commit/ff008a88f6c9a7ca3e715b59e56f4040a0a0c966",
-      "additions": 18,
-      "deletions": 2
     }
   ],
   "errors": []

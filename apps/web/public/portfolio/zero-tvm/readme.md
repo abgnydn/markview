@@ -15,14 +15,14 @@
 | | WebLLM (TVM) | Zero-TVM (this repo) |
 |---|---|---|
 | Decode speed (M2 Max, same weights, same run) | **<!--bench:webllm-->47.9<!--/bench:webllm--> tok/s** | **<!--bench:zt-->62.90<!--/bench:zt--> tok/s** (ratio stable −28…−31% across sessions, see [BENCH.md](BENCH.md)) |
-| Unique WGSL kernels | **85** (autotuned) | **10 roles / 27 kernels** (18 .wgsl + 9 generated int4 variants) |
+| Unique WGSL kernels | **85** (autotuned) | **10 roles / 55 kernels** (37 .wgsl + 18 generated int4 variants) |
 | Total WGSL lines | **12,962** (generated) | **~2,150** hand-written + a 280-line readable generator |
 | Dispatches per decode step | **342** | **228** (f16 KV) / **260** (int8 KV) |
 | Runtime | TVM → WASM scheduler | Plain TypeScript, none |
 | Tokenizer | bundled from WebLLM | BPE from scratch (`tokenizer.ts`) |
 | JS bundle (chat page, excl. weights) | **5.9 MB** / 2.1 MB gz | **157 kB** / 33 kB gz |
 
-Same model, same quantized weights. [WebLLM / MLC-LLM](https://webllm.mlc.ai/) — the standard way to run a browser LLM — ships an Apache-TVM pipeline that emits 85 autotuned WGSL kernels driven from a WASM scheduler. This repo replaces that whole stack with **10 kernel roles (27 WGSL kernels — 18 hand-written files plus 9 int4-matmul variants emitted by a small readable generator, counting subgroup/tiled/int8 variants) and ~2,000 lines of TypeScript** (engine + tokenizer + weight loader) — and, as of the 2026-07-25 head-to-head, decodes faster than it on the one machine measured. The whole forward pass — 32 transformer layers, paged KV cache, int4-dequant matmul, RoPE, fused FFN, RMSNorm, paged attention, argmax sampling — is readable end-to-end in a single sitting. That is the point.
+Same model, same quantized weights. [WebLLM / MLC-LLM](https://webllm.mlc.ai/) — the standard way to run a browser LLM — ships an Apache-TVM pipeline that emits 85 autotuned WGSL kernels driven from a WASM scheduler. This repo replaces that whole stack with **10 kernel roles (55 WGSL kernels — 37 hand-written files plus 18 int4-matmul variants emitted by a small readable generator, counting subgroup/tiled/int8 variants) and ~2,000 lines of TypeScript** (engine + tokenizer + weight loader) — and, as of the 2026-07-25 head-to-head, decodes faster than it on the one machine measured. The whole forward pass — 32 transformer layers, paged KV cache, int4-dequant matmul, RoPE, fused FFN, RMSNorm, paged attention, argmax sampling — is readable end-to-end in a single sitting. That is the point.
 
 ## What's actually in the box
 
@@ -78,6 +78,8 @@ The build produces a multi-page Vite output: `index.html` (landing page — proj
 - `?ffnsg=1` — opt into the tiled-subgroup fused FFN
 - `?kv8=1` — opt into the int8 KV cache path (`kv_quantize_int8` + `attention_int8`)
 - `?vec4=0` / `?vec4qkv=0` — opt OUT of the vec4<u32> weight + activation loads in the int4 matmuls / `qkv_fused`. Default ON since 2026-07-25: measured +7.1% together on M2 Max (see BENCH.md)
+- `?vec4h=0` — opt OUT of just the K%512 `_vec4h` half-unroll matmul siblings (the K%1024 full-vec4 instances stay on). Default ON since 2026-07-29: +5.7% on Qwen3, +2.0% on Qwen3.5 (they're what give d=2560 / ffn=9728 wide loads)
+- `?fuseqk=0` — opt OUT of the fused qk_norm+RoPE+KV-append kernel on the Qwen3 unfused path (restores the 3-dispatch reference chain, 8 → 10 dispatches/layer). Default ON since 2026-07-29: +2.3% alone on M2 Max
 - `?splitk=N` — split-K flash-decode attention, N ∈ 2..16 partitions per head + combine pass; f16 KV only. **Default N=8** since the long-context A/B (+3.1% at 128-token, +4.0% at 1024-token decode on M2 Max); `?splitk=0` to disable
 - `?fuseprologue=1` — fold the FFN-entry add_norm into the FFN kernel's prologue, `add3_norm` at the layer tail. Measured −13.7% on M2 Max — a documented negative result, kept for A/B on other GPUs
 
@@ -101,19 +103,23 @@ a genuinely different architecture:
 - ChatML template, run in the non-thinking form (`<think>` rendering is not
   built)
 
-Honest performance framing: the Qwen path is **v1-unfused** — QK-norm is
-incompatible with the fused QKV+RoPE+KV-append kernel, so it runs the
-unfused reference composition (10 dispatches/layer vs the Phi-3 chat path's
-7), and the vec4-load matmuls only engage where K is a multiple of 1024
-(o_proj's K=4096 qualifies; d=2560 and ffn=9728 do not). No int8-KV.
-Measured same-session pair on an Apple M2 Max (2026-07-28, Chrome
-150.0.7871.187, identical local weight bytes): Zero-TVM **25.4 tok/s**
-decode vs WebLLM's prebuilt Qwen3-4B at **14.2 tok/s** — ~1.8× on that pair.
-Read that gap cautiously: it is one pair on one machine, and both engines
-run Qwen3-4B far below their Phi-3 rates here (62.9 → 25.4 for Zero-TVM,
-47.9 → 14.2 for WebLLM), so it says as much about WebLLM's prebuilt Qwen3
-lib on this GPU as about our port. Protocol and caveats in
-[BENCH.md](BENCH.md).
+Honest performance framing: QK-norm is incompatible with the fused
+QKV+RoPE+KV-append kernel, so the QKV matmul stays a separate dispatch — but
+since the 2026-07-29 tuning round everything after it is fused: the
+`qk_norm_rope_append` kernel folds the per-head norm, RoPE, and the paged KV
+write into one pass (**8 dispatches/layer** vs the Phi-3 chat path's 7;
+`?fuseqk=0` restores the 10-dispatch reference chain), and the `_vec4h`
+K%512 matmul variants extend the wide loads to d=2560 and ffn=9728
+(`?vec4h=0` opts out; K=4096 instances were already on full vec4). No
+int8-KV. Measured same-session pair on an Apple M2 Max (2026-07-29, Chrome
+150.0.7871.187, identical local weight bytes): Zero-TVM **75.7 tok/s**
+decode vs WebLLM 0.2.84's prebuilt Qwen3-4B at **43.8 tok/s** — +73% on
+that pair. Read gaps cautiously: one pair, one machine — and note that the
+2026-07-28 v1 pair (25.4 vs 14.2) did not reproduce on the same machine the
+next day (both engines moved ~3× together; see BENCH.md's tuning-round
+session note), so the per-item deltas are same-day A/Bs: fused-qk +2.3%,
+vec4h +5.7%, combined +5.8% over the same-day flags-off half. Protocol and
+caveats in [BENCH.md](BENCH.md).
 
 Weights: `node scripts/download-weights.mjs --model qwen3` primes the local
 dev mirror (~2.3 GB); without it the page streams from HuggingFace.
@@ -134,14 +140,26 @@ gated-DeltaNet hybrid running in a browser. What it adds over Qwen3-4B:
   `mlc-chat-config.json` still lists the stale Qwen3 stop ids — we resolve
   stops from `tokenizer.json` instead), tied lm_head
 
-Measured same-session pair on an Apple M2 Max (2026-07-28, Chrome
-150.0.7871.187, identical local weight bytes): Zero-TVM **47.99 tok/s**
-decode vs WebLLM 0.2.84's prebuilt Qwen3.5-4B at **31.99 tok/s** — +50% on
-that pair. Same honest framing as always: one machine, one pair, and the
-Zero-TVM path is **v1-scalar-GDN** — scalar (non-subgroup) DeltaNet kernels,
-no chunked prefill (prompts replay token-by-token), unfused GDN projections
-— so the number is a floor, not a tuned result. Protocol and caveats in
-[BENCH.md](BENCH.md).
+Measured same-session pair on an Apple M2 Max (2026-07-29, Chrome 150,
+identical local weight bytes): Zero-TVM **53.07 tok/s** decode vs WebLLM
+0.2.84's prebuilt Qwen3.5-4B at **32.36 tok/s** — +64% on that pair (the
+2026-07-28 v1 floor was 47.99 vs 31.99, +50%; the gain since is the fused
+GDN input projection — the four per-layer in_proj matmuls packed into one
+12352-row dispatch — plus an incremental blocking decode with no prompt
+replay). Prefill is no longer token-by-token: the 2026-07-29 prefill round
+runs prompts in **chunks of ≤64** (batched projections, one `gdn_recur`
+dispatch per layer per chunk, causal batched attention) — 67.9 → **202
+prefill tok/s** on an 816-token prompt — and every model now does
+**cross-turn prefix reuse** (turn 3 of a ~950-token conversation:
+first-token latency 14.3 s → **0.19 s** on Qwen3.5; reused-prefix logits
+verified bit-identical to a fresh prefill). The 2026-07-29 Qwen3 tuning
+round's `_vec4h` matmuls also engage on the hybrid's K=2560 projections
+(+2.0% A/B; latest same-day pair **65.7 vs 34.0 tok/s** — the jump from
+53.07 is mostly prefix reuse removing prefill from the bench wall-clock
+window, not a kernel win; see BENCH.md's cross-check note). Same honest framing as
+always: one machine, one pair, and the GDN decode kernels are still scalar
+(non-subgroup) — the decode number remains a floor, not a tuned result.
+Protocol and caveats in [BENCH.md](BENCH.md).
 
 Weights: `node scripts/download-weights.mjs --model qwen35` primes the local
 dev mirror (~2.6 GB); without it the page streams from HuggingFace.
@@ -345,7 +363,7 @@ These are the caveats that survive the code as-shipped. Several earlier ones —
 ### Deliberate scoping
 
 - **Greedy decoding only.** Sampling is a single `argmax.wgsl` dispatch. No temperature, top-k, top-p, repetition penalty. A CPU-side sampler over the f32 logit buffer would be ~30 lines; left out to keep the minimal-stack claim honest.
-- **Sequential prefill.** Each prompt token is run through the full decode path. Fine for chat-length prompts; the `int4_matmul_batched_m4` generator variant is the shader for a batched-prefill attention path but is not yet wired into the decode loop.
+- **Sequential prefill on the pure-attention models.** Phi-3/Qwen3 prompt tokens still run the full decode path one at a time (cross-turn prefix reuse makes this cheap for multi-turn chat — only the delta prefills). Qwen3.5's hybrid path prefills in chunks of ≤64 since the 2026-07-29 prefill round (`int4_matmul_batched_dyn` batched projections + one `gdn_recur` dispatch per layer per chunk); porting the chunked composition to the attention-only specs is future work.
 - **One decode engine, two configurations.** `engine-core.ts` is the single `buildDecodeEngine`; `validate.html` runs it unfused/scalar with blocking per-token readback (deterministic positions, logits access), `zero-tvm.html` runs it fused with URL-flag shader variants and the pipelined readback ring. The per-layer QKV stage and the readback style are the only mode-dependent parts.
 - **Residual buffer ping-pong.** WebGPU forbids read+write to the same buffer in one dispatch, so the decode loops swap between `B.residual` and `B.residual2` across the `add_norm` dispatches. The two swaps per layer cancel out, which is why the per-layer bind groups can be pre-computed once and reused for every token.
 

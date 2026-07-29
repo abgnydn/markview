@@ -13,6 +13,82 @@ one machine benchmarked.
 
 ### Added
 
+- **Qwen3-4B tuning round (2026-07-29)** — the v1-unfused Qwen3 decode path
+  gets its first dedicated round; measured **75.74** vs WebLLM 0.2.84's
+  **43.75** tok/s on a same-session M2 Max pair (**+73.1%**); per-item
+  deltas vs the same-day flags-off half (the 2026-07-28 25.43/14.15 pair
+  did not reproduce — both engines moved ~3× together; session note in
+  BENCH.md):
+  - *Fused qk_norm+RoPE+KV-append* (`qk_norm_rope_append.wgsl`,
+    `?fuseqk=0` opts out) — one 32-thread WG per (token, head) over Q, K
+    and V heads: per-head RMSNorm reduction, normalized head staged in
+    workgroup memory for the RoPE pair exchange, K/V written straight into
+    the paged cache. 4 post-norm dispatches → 2; **10 → 8
+    dispatches/layer** (364 → 292/token). +2.3% alone; ~+0.1% on top of
+    vec4h (documented as non-composing).
+  - *K%512 vec4 matmul variants* (`_vec4h` generator siblings, `?vec4h=0`
+    opts out) — vec2<u32> weight loads halve the per-thread unroll,
+    relaxing the vec4 K-divisibility gate from 1024 to 512 so Qwen3's
+    d=2560 (qkv/gate_up/LM-head) and ffn=9728 (down_proj) instances get
+    wide loads; per-instance resolution in `resolveMatmul`. +5.7% alone on
+    Qwen3; also engages on Qwen3.5's K=2560 projections (see BENCH.md).
+    4 new generated pipelines (f16/f32 × sg/tiled); generator now emits 18
+    variants (55 WGSL kernels total — shader-count copy updated across the
+    site/docs).
+  - Kernel suite grows to **26/26** (fused-kernel test with V-region
+    negative controls; _vec4h correctness at K=2560/9728 incl. f32; ±vec4h
+    resolution cases). Skipped, documented: the whole-head qkv_fused
+    restructure (occupancy-falsified by the existing qkv-tiling negatives)
+    and the unfused int8-KV composition (memory win only; conflicts with
+    the fused qk kernel).
+- **Prefill round A (2026-07-29)** — chunked GDN prefill + cross-turn
+  prefix reuse, measured on the same M2 Max (BENCH.md "Prefill round A"):
+  - *Chunked GDN prefill (Qwen3.5, `?chunk=0` opts out)* — prompt tokens run
+    in chunks of ≤64: every projection is ONE `int4_matmul_batched_dyn`
+    dispatch (new generator variant: the m=4 register block looping over
+    runtime-M row blocks), the conv/gates/norm run batched
+    (`gdn_conv_seq` + `gdn_conv_commit`, seq+stride uniforms on
+    `gdn_gates`/`gdn_norm_out`), the recurrence is ONE `gdn_recur` dispatch
+    per layer per chunk, and the 8 attention layers batch through the new
+    causal `attention_prefill` (bit-exact vs the decode kernel) with a
+    batched FFN (`silu_mul`). 816-token prompt: **67.9 → 202.1 prefill
+    tok/s** (TTFT 12.0 → 4.0 s). Chunk-vs-per-token equality is pinned
+    BIT-EXACTLY (f32 recurrent state included) in the kernel suite, now
+    **19/19** (6 new tests).
+  - *Cross-turn prefix reuse (all models, `?reuse=0` opts out)* — the engine
+    records the exact (position, token) of every submitted forward pass
+    (including the pipelined stop-token overrun, reconstructed from the
+    readback chain) and prefills only the delta on the next turn. Hybrid
+    reuse is all-or-nothing (the GDN recurrence can't rewind); the ChatML
+    non-thinking template now re-renders past assistant turns WITH the
+    empty `<think>` block so each turn extends the absorbed sequence
+    exactly. Turn-3 first-token latency (~950–1105-token conversations):
+    Phi-3 15,405 → **269 ms**, Qwen3-4B 14,554 → **438 ms**, Qwen3.5
+    14,340 → **194 ms**. Reused-prefix logits verified **bit-identical**
+    to a fresh prefill on all three models (`checkReuse()`, opt-in).
+  - New devtools harnesses `benchPrefill` / `benchTurns` / `checkReuse`
+    (bench-console), engine API `debugCompareReuse` / `getLastPrefill`,
+    and 2 new multi-turn e2e tests (13/13).
+- **Qwen3.5 hybrid perf round (2026-07-29)** — two engine changes, measured
+  **53.07** vs WebLLM 0.2.84's **32.36** tok/s on the same-session M2 Max
+  pair (**+64.0%**, up from the v1 floor's 47.99 vs 31.99 / +50.0%):
+  - *Fused GDN input projection* — the four per-DeltaNet-layer in_proj
+    matmuls (qkv 8192 + z 4096 + a 32 + b 32 rows, all K=d) pack into ONE
+    12352-row int4 dispatch. The loader concatenates the q4f16_1 records at
+    upload; downstream kernels read the packed output in place (`gdn_conv`
+    at offset 0, `gdn_norm_out`'s z region and `gdn_gates`' [a|b] pair via
+    256-aligned bind-group offsets). 412 → **340 dispatches/token**.
+  - *Incremental blocking decode* — the blocking `generate()` no longer
+    replays the whole prompt: the engine tracks the GDN state position
+    (`gdnStatePos`) and reuses the non-idempotent recurrent state whenever
+    it provably matches `startPos` (falling back to a full replay — which
+    re-zeroes state — otherwise). After `forwardLogits`, the validate
+    battery's decode now runs zero prompt passes; its reported rate went
+    ~17 → ~40 tok/s. `generatePipelined` (chat/bench) was already
+    incremental; its ≤1-token overrun past a stop is documented as safe.
+  All suites re-verified: kernels 28/28 + 21/21 + 13/13 (gdn_gates/gdn_block
+  updated to the packed layout, CPU reference `ref-gdn.mjs` unchanged),
+  287 unit, e2e 11/11, validate battery lexically correct.
 - **Qwen3.5-4B hybrid port (v1, `?model=qwen35`)** — the first *hybrid*
   architecture on the engine: 24 gated-DeltaNet (linear-attention) layers +
   8 gated full-attention layers (GQA 16/4, head_dim 256, partial RoPE 64 of

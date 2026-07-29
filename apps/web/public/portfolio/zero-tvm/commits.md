@@ -1,5 +1,16 @@
 # Commits — zero-tvm
 
+## 2026-07-29
+
+- `09:13` **Merge pull request #26 from abgnydn/space-card-refresh** — +2 −2 — [`f566963`](https://github.com/abgnydn/zero-tvm/commit/f5669635e477f606f69d5ce07932857f54ff05b8)
+- `09:11` **docs(space): refresh the HF Space card to the current measured pairs** — +2 −2 — [`895a501`](https://github.com/abgnydn/zero-tvm/commit/895a501a5525e0737c70ed9daa389125dcb28482)
+- `08:09` **Merge pull request #25 from abgnydn/qwen3-tuning** — +715 −144 — [`1fd54b3`](https://github.com/abgnydn/zero-tvm/commit/1fd54b3d395628adad70a410675d8712aed57033)
+- `08:07` **perf(qwen3): fused qk_norm+rope+append kernel + K%512 vec4 — 75.74 to…** — +715 −144 — [`43a5e99`](https://github.com/abgnydn/zero-tvm/commit/43a5e99edc34f587db473c034377e753b75968cc)
+- `07:32` **Merge pull request #24 from abgnydn/prefill-reuse** — +1739 −52 — [`49c3c14`](https://github.com/abgnydn/zero-tvm/commit/49c3c144f033742e1d90d23642db5717f766453d)
+- `07:30` **perf: chunked GDN prefill (3x) + cross-turn prefix reuse (TTFT 15s ->…** — +1739 −52 — [`2096734`](https://github.com/abgnydn/zero-tvm/commit/209673467b9be4429cbd99006dc081f68caa5cd7)
+- `05:34` **Merge pull request #23 from abgnydn/hybrid-perf** — +336 −123 — [`305595d`](https://github.com/abgnydn/zero-tvm/commit/305595dbfefa3505c45eca6c98581abaea9e3c57)
+- `05:32` **perf(qwen35): GDN projection fusion 4->1 + no-replay blocking decode …** — +336 −123 — [`099787d`](https://github.com/abgnydn/zero-tvm/commit/099787d51b472419806de476c92828eaea5afc87)
+
 ## 2026-07-28
 
 - `13:38` **Merge pull request #22 from abgnydn/qwen35** — +2537 −136 — [`7a66144`](https://github.com/abgnydn/zero-tvm/commit/7a6614442bef6ff4688347cd61c6e8702f9a0307)
@@ -56,26 +67,3 @@
 - `03:01` **fix(bench): abort on software GPU, use hf instead of huggingface-cli …** — +22 −7 — [`be8dacf`](https://github.com/abgnydn/zero-tvm/commit/be8dacf1999fc51e7787c05957305fa5f6c70d84)
 - `02:49` **Add one-click Colab notebook for the GPU bench (#2)** — +36 −0 — [`6a32c63`](https://github.com/abgnydn/zero-tvm/commit/6a32c638033e73872a2f031730c5a6238a532c8b)
 - `02:23` **Critique fixes: prune dead code, headless WebGPU kernel tests, bench …** — +1108 −1142 — [`2d8c839`](https://github.com/abgnydn/zero-tvm/commit/2d8c839e11986b7ac196328ccfd8cce444a241df)
-
-## 2026-05-15
-
-- `03:40` **chore: update contact email to hi@barisgunaydin.com** — +1 −1 — [`9c2d099`](https://github.com/abgnydn/zero-tvm/commit/9c2d099bef976c25b763eab490704843e64247ac)
-
-## 2026-05-14
-
-- `13:50` **docs(readme): link RESEARCH_STANDARDS.md (shared canonical discipline…** — +1 −1 — [`05ef338`](https://github.com/abgnydn/zero-tvm/commit/05ef338e203041d8f4becf2cdba29883c6fa3a8f)
-- `13:49` **docs: add canonical RESEARCH_STANDARDS.md (mirror of webgpu-q/RESEARC…** — +407 −0 — [`b4b0b4d`](https://github.com/abgnydn/zero-tvm/commit/b4b0b4ddbbfb63e6017eb49b99a8d35cbdc85aed)
-
-## 2026-05-05
-
-- `07:31` **feat(boot): unified weight-cache SW + download gate across chat templ…** — +958 −45 — [`9fe1cd2`](https://github.com/abgnydn/zero-tvm/commit/9fe1cd22c6c859d4b5ed764cf931060eb11725fc)
-- `07:24` **feat(footer): add Star CTA + LinkedIn + personal-site links** — +35 −14 — [`211c92c`](https://github.com/abgnydn/zero-tvm/commit/211c92c123ec412d9db9034f06807bb80a938c2f)
-
-## 2026-05-04
-
-- `10:55` **Add CI, CHANGELOG, README badges** — +84 −0 — [`fd2ffff`](https://github.com/abgnydn/zero-tvm/commit/fd2ffffc7d044a38e7e3a0dd40682d1ad5bebfc9)
-
-## 2026-04-22
-
-- `07:04` **Link companion projects (kernelfusion, gpubench, webgpu-dna)** — +157 −0 — [`5ec0834`](https://github.com/abgnydn/zero-tvm/commit/5ec0834561bd203949691022f7059e8a1ce22ffd)
-- `06:12` **Harden weight loader: persist, bounded concurrency, retry, version key** — +203 −47 — [`84cf90b`](https://github.com/abgnydn/zero-tvm/commit/84cf90bc6006abddb1a8d7df736cebf73f3004bb)
