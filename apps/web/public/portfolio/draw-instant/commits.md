@@ -1,5 +1,9 @@
 # Commits — draw-instant
 
+## 2026-07-30
+
+- `13:05` **fix(bench): measure the work, not the fence** — +123 −53 — [`9882ada`](https://github.com/abgnydn/draw-instant/commit/9882adac2c238bcd105e878ae1c567e97ee6a2c2)
+
 ## 2026-07-28
 
 - `12:53` **fix(ui): rename morph toggle to say what it actually changes** — +16 −16 — [`8d8bedd`](https://github.com/abgnydn/draw-instant/commit/8d8bedd8da763f85d763f1cd463df79e7a5b82f5)

@@ -1,5 +1,10 @@
 # Commits — webgpu-fly
 
+## 2026-07-30
+
+- `11:51` **Merge pull request #2 from abgnydn/docs/full-disclosure** — +353 −70 — [`b7875a1`](https://github.com/abgnydn/webgpu-fly/commit/b7875a1409897eb3122de9c0663ffc00cb0b5112)
+- `10:34` **docs: make every claim true and inventory every shortcut** — +353 −70 — [`11fbc83`](https://github.com/abgnydn/webgpu-fly/commit/11fbc839e48dbc637148745b861e07bb299beb34)
+
 ## 2026-07-28
 
 - `07:29` **Merge pull request #1 from abgnydn/fix/audit-2026-07** — +595 −363 — [`b466a52`](https://github.com/abgnydn/webgpu-fly/commit/b466a52ddf93e45a7806ad5b8a98c94029ff0b1f)
@@ -62,5 +67,3 @@
 ## 2026-05-04
 
 - `13:38` **Stronger DN stim + closed-loop refinements + 4 new e2e assertions** — +103 −24 — [`90a713a`](https://github.com/abgnydn/webgpu-fly/commit/90a713a08a931edde7ae7407ba57b533357f381a)
-- `12:25` **Ignore .claude/ working dir** — +1 −1 — [`a7c82a7`](https://github.com/abgnydn/webgpu-fly/commit/a7c82a7b8eddfa7763bc6cd391fc1daedda1e7fa)
-- `12:25` **Body-walks-visibly fix: proportional kinematic assist + femur-lift gate** — +48 −10 — [`73963c0`](https://github.com/abgnydn/webgpu-fly/commit/73963c0ce7f2078b85a40dc30224b476c0afe12a)

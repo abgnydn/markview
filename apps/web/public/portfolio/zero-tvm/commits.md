@@ -1,5 +1,13 @@
 # Commits — zero-tvm
 
+## 2026-07-30
+
+- `08:19` **Merge pull request #28 from abgnydn/fix-loading-overlay** — +4 −1 — [`9164c71`](https://github.com/abgnydn/zero-tvm/commit/9164c714c69ce78b868f99cde9bdf7327c49c587)
+- `08:17` **fix(chat): the loading overlay was never visible — every visitor watc…** — +4 −1 — [`93a1309`](https://github.com/abgnydn/zero-tvm/commit/93a130915bdfecaaaf14da77a5ba153bd567f615)
+- `07:08` **Merge pull request #27 from abgnydn/fix-bench-v2** — +1069 −232 — [`ff548e5`](https://github.com/abgnydn/zero-tvm/commit/ff548e51c6ec2ac037de137895422e95989e90e6)
+- `07:06` **fix(bench): correct a measurement defect, withdraw two pairs, republi…** — +778 −194 — [`369aa7a`](https://github.com/abgnydn/zero-tvm/commit/369aa7a3cdc081b46cecb640bcdadba89ad5e0f3)
+- `06:13` **fix(chat): per-model context budgets + derived reply cap** — +291 −38 — [`cad4e08`](https://github.com/abgnydn/zero-tvm/commit/cad4e08896ceb5bdcef07e189635b108ad019c0c)
+
 ## 2026-07-29
 
 - `09:13` **Merge pull request #26 from abgnydn/space-card-refresh** — +2 −2 — [`f566963`](https://github.com/abgnydn/zero-tvm/commit/f5669635e477f606f69d5ce07932857f54ff05b8)
@@ -62,8 +70,3 @@
 - `07:47` **fix(bench): WebGPU adapter on T4 — disable Dawn adapter blocklist (#8)** — +22 −14 — [`35955bd`](https://github.com/abgnydn/zero-tvm/commit/35955bd3e2ff50a6cca69bf42c774aae73613300)
 - `07:06` **fix(bench): instrument boot to pinpoint the hang (#7)** — +53 −11 — [`4b8f833`](https://github.com/abgnydn/zero-tvm/commit/4b8f8334e1ade0f64c917b6ac56c6ece933443b2)
 - `03:49` **fix(bench): bind dev server to 127.0.0.1 — Colab localhost/IPv6 timeo…** — +12 −4 — [`95e7e03`](https://github.com/abgnydn/zero-tvm/commit/95e7e0386d67657fcc51294e211fc027577502a7)
-- `03:28` **fix(bench): clean Colab re-run — fresh clone + T4-only (#5)** — +2 −2 — [`d7dc57d`](https://github.com/abgnydn/zero-tvm/commit/d7dc57d648dedf2862472849fb5913a3baa44937)
-- `03:08` **fix(bench): get the real T4 on Colab — libnvidia-gl + ANGLE/Vulkan fl…** — +12 −4 — [`2a9dd1e`](https://github.com/abgnydn/zero-tvm/commit/2a9dd1e3f1ec3f833b0d066392ce2d0f8ba5a1a0)
-- `03:01` **fix(bench): abort on software GPU, use hf instead of huggingface-cli …** — +22 −7 — [`be8dacf`](https://github.com/abgnydn/zero-tvm/commit/be8dacf1999fc51e7787c05957305fa5f6c70d84)
-- `02:49` **Add one-click Colab notebook for the GPU bench (#2)** — +36 −0 — [`6a32c63`](https://github.com/abgnydn/zero-tvm/commit/6a32c638033e73872a2f031730c5a6238a532c8b)
-- `02:23` **Critique fixes: prune dead code, headless WebGPU kernel tests, bench …** — +1108 −1142 — [`2d8c839`](https://github.com/abgnydn/zero-tvm/commit/2d8c839e11986b7ac196328ccfd8cce444a241df)

@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-07-29T21:00:00.517Z",
+  "generated_at": "2026-07-30T21:14:15.812Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1648,
+  "activity_90d_total": 1609,
   "activity_90d": {
-    "2026-05-01": 48,
     "2026-05-02": 5,
     "2026-05-04": 61,
     "2026-05-05": 58,
@@ -85,7 +84,8 @@
     "2026-07-26": 1,
     "2026-07-27": 3,
     "2026-07-28": 76,
-    "2026-07-29": 8
+    "2026-07-29": 9,
+    "2026-07-30": 8
   },
   "categories": {
     "llm-inference": {
@@ -293,7 +293,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 2,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505470"
@@ -356,7 +356,7 @@
       },
       "status": "flagship",
       "open_issues": 27,
-      "stale_days": 1,
+      "stale_days": 2,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20494382"
@@ -400,24 +400,24 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-07-28T21:12:05Z",
+      "pushed_at": "2026-07-29T21:00:01Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 49,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "ea2229ead2cb85db314e1b4632233d3b88f2c292",
-        "short_sha": "ea2229e",
-        "message": "chore(portfolio): daily sync 2026-07-28",
+        "sha": "f1f6eea5b1ae178c6cf2e237538d6030adfdf198",
+        "short_sha": "f1f6eea",
+        "message": "chore(portfolio): daily sync 2026-07-29",
         "type": "chore",
-        "date": "2026-07-28T21:12:03Z",
-        "url": "https://github.com/abgnydn/markview/commit/ea2229ead2cb85db314e1b4632233d3b88f2c292",
-        "additions": 6328,
-        "deletions": 5528
+        "date": "2026-07-29T21:00:00Z",
+        "url": "https://github.com/abgnydn/markview/commit/f1f6eea5b1ae178c6cf2e237538d6030adfdf198",
+        "additions": 316,
+        "deletions": 230
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -466,7 +466,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 16,
+      "stale_days": 17,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506887"
@@ -516,7 +516,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 23,
+      "stale_days": 24,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20496086"
@@ -560,20 +560,20 @@
         "wgsl",
         "qwen3"
       ],
-      "pushed_at": "2026-07-29T09:13:08Z",
+      "pushed_at": "2026-07-30T08:19:23Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 35,
+      "commits_30d": 40,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "f5669635e477f606f69d5ce07932857f54ff05b8",
-        "short_sha": "f566963",
-        "message": "Merge pull request #26 from abgnydn/space-card-refresh",
+        "sha": "9164c714c69ce78b868f99cde9bdf7327c49c587",
+        "short_sha": "9164c71",
+        "message": "Merge pull request #28 from abgnydn/fix-loading-overlay",
         "type": "other",
-        "date": "2026-07-29T09:13:08Z",
-        "url": "https://github.com/abgnydn/zero-tvm/commit/f5669635e477f606f69d5ce07932857f54ff05b8",
-        "additions": 2,
-        "deletions": 2
+        "date": "2026-07-30T08:19:23Z",
+        "url": "https://github.com/abgnydn/zero-tvm/commit/9164c714c69ce78b868f99cde9bdf7327c49c587",
+        "additions": 4,
+        "deletions": 1
       },
       "status": "flagship",
       "open_issues": 0,
@@ -614,7 +614,7 @@
       "pushed_at": "2026-06-30T10:24:03Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 1,
+      "commits_30d": 0,
       "commits_synced": 34,
       "last_commit": {
         "sha": "701bf49fd0c51d56e3472c43a80325ab5717144e",
@@ -628,7 +628,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 29,
+      "stale_days": 30,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -678,7 +678,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 4,
+      "stale_days": 5,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -730,7 +730,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 61,
+      "stale_days": 62,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -787,7 +787,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 64,
+      "stale_days": 65,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -837,7 +837,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 34,
+      "stale_days": 35,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -888,7 +888,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 2,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506339"
@@ -936,7 +936,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 64,
+      "stale_days": 65,
       "live_ok": false,
       "has_citation": false,
       "citation_doi": null
@@ -996,7 +996,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 72,
+      "stale_days": 73,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1047,7 +1047,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 49,
+      "stale_days": 50,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1077,24 +1077,24 @@
       "language_color": "#3178c6",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-07-28T07:29:36Z",
+      "pushed_at": "2026-07-30T11:51:07Z",
       "default_branch": "main",
       "latest_tag": null,
-      "commits_30d": 11,
+      "commits_30d": 13,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "b466a52ddf93e45a7806ad5b8a98c94029ff0b1f",
-        "short_sha": "b466a52",
-        "message": "Merge pull request #1 from abgnydn/fix/audit-2026-07",
+        "sha": "b7875a1409897eb3122de9c0663ffc00cb0b5112",
+        "short_sha": "b7875a1",
+        "message": "Merge pull request #2 from abgnydn/docs/full-disclosure",
         "type": "other",
-        "date": "2026-07-28T07:29:30Z",
-        "url": "https://github.com/abgnydn/webgpu-fly/commit/b466a52ddf93e45a7806ad5b8a98c94029ff0b1f",
-        "additions": 595,
-        "deletions": 363
+        "date": "2026-07-30T11:51:00Z",
+        "url": "https://github.com/abgnydn/webgpu-fly/commit/b7875a1409897eb3122de9c0663ffc00cb0b5112",
+        "additions": 353,
+        "deletions": 70
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 0,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": null
@@ -1142,7 +1142,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 16,
+      "stale_days": 17,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505472"
@@ -1176,24 +1176,24 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-07-28T12:53:59Z",
+      "pushed_at": "2026-07-30T13:05:46Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 20,
-      "commits_synced": 31,
+      "commits_30d": 21,
+      "commits_synced": 32,
       "last_commit": {
-        "sha": "8d8bedd8da763f85d763f1cd463df79e7a5b82f5",
-        "short_sha": "8d8bedd",
-        "message": "fix(ui): rename morph toggle to say what it actually changes",
+        "sha": "9882adac2c238bcd105e878ae1c567e97ee6a2c2",
+        "short_sha": "9882ada",
+        "message": "fix(bench): measure the work, not the fence",
         "type": "fix",
-        "date": "2026-07-28T12:53:57Z",
-        "url": "https://github.com/abgnydn/draw-instant/commit/8d8bedd8da763f85d763f1cd463df79e7a5b82f5",
-        "additions": 16,
-        "deletions": 16
+        "date": "2026-07-30T13:05:44Z",
+        "url": "https://github.com/abgnydn/draw-instant/commit/9882adac2c238bcd105e878ae1c567e97ee6a2c2",
+        "additions": 123,
+        "deletions": 53
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 0,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": null
@@ -1231,7 +1231,7 @@
       "pushed_at": "2026-07-28T07:45:35Z",
       "default_branch": "master",
       "latest_tag": "v0.1.0",
-      "commits_30d": 3,
+      "commits_30d": 2,
       "commits_synced": 15,
       "last_commit": {
         "sha": "70e6f9285073cfdfa16468ee47193d6c98c4122a",
@@ -1245,7 +1245,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 2,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19344276"
@@ -1282,7 +1282,7 @@
       "pushed_at": "2026-07-28T07:39:22Z",
       "default_branch": "main",
       "latest_tag": "v0.1.0",
-      "commits_30d": 4,
+      "commits_30d": 3,
       "commits_synced": 26,
       "last_commit": {
         "sha": "9b7105f6fe8147a686336ebba8856b653c13c4f5",
@@ -1296,7 +1296,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 2,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -1346,7 +1346,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 34,
+      "stale_days": 35,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1396,7 +1396,7 @@
       },
       "status": "derivative",
       "open_issues": 0,
-      "stale_days": 61,
+      "stale_days": 62,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1445,7 +1445,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 61,
+      "stale_days": 62,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1494,7 +1494,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 69,
+      "stale_days": 70,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1544,7 +1544,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1594,7 +1594,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 71,
+      "stale_days": 72,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1643,7 +1643,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 71,
+      "stale_days": 72,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1691,7 +1691,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 71,
+      "stale_days": 72,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1741,7 +1741,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 71,
+      "stale_days": 72,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1791,7 +1791,7 @@
       },
       "status": "library",
       "open_issues": 1,
-      "stale_days": 75,
+      "stale_days": 76,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1840,7 +1840,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 86,
+      "stale_days": 87,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1904,7 +1904,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 86,
+      "stale_days": 87,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1963,7 +1963,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 86,
+      "stale_days": 87,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2013,7 +2013,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 86,
+      "stale_days": 87,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2063,7 +2063,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 86,
+      "stale_days": 87,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2113,7 +2113,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 93,
+      "stale_days": 94,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -2160,7 +2160,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 119,
+      "stale_days": 120,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2211,7 +2211,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 123,
+      "stale_days": 124,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2260,7 +2260,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 123,
+      "stale_days": 124,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2312,7 +2312,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 123,
+      "stale_days": 124,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2363,13 +2363,130 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 132,
+      "stale_days": 133,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "draw-instant",
+      "name": "draw-instant",
+      "language": "JavaScript",
+      "sha": "9882adac2c238bcd105e878ae1c567e97ee6a2c2",
+      "short_sha": "9882ada",
+      "message": "fix(bench): measure the work, not the fence",
+      "type": "fix",
+      "date": "2026-07-30T13:05:44Z",
+      "url": "https://github.com/abgnydn/draw-instant/commit/9882adac2c238bcd105e878ae1c567e97ee6a2c2",
+      "additions": 123,
+      "deletions": 53
+    },
+    {
+      "slug": "webgpu-fly",
+      "name": "webgpu-fly",
+      "language": "TypeScript",
+      "sha": "b7875a1409897eb3122de9c0663ffc00cb0b5112",
+      "short_sha": "b7875a1",
+      "message": "Merge pull request #2 from abgnydn/docs/full-disclosure",
+      "type": "other",
+      "date": "2026-07-30T11:51:00Z",
+      "url": "https://github.com/abgnydn/webgpu-fly/commit/b7875a1409897eb3122de9c0663ffc00cb0b5112",
+      "additions": 353,
+      "deletions": 70
+    },
+    {
+      "slug": "webgpu-fly",
+      "name": "webgpu-fly",
+      "language": "TypeScript",
+      "sha": "11fbc839e48dbc637148745b861e07bb299beb34",
+      "short_sha": "11fbc83",
+      "message": "docs: make every claim true and inventory every shortcut",
+      "type": "docs",
+      "date": "2026-07-30T10:34:19Z",
+      "url": "https://github.com/abgnydn/webgpu-fly/commit/11fbc839e48dbc637148745b861e07bb299beb34",
+      "additions": 353,
+      "deletions": 70
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "9164c714c69ce78b868f99cde9bdf7327c49c587",
+      "short_sha": "9164c71",
+      "message": "Merge pull request #28 from abgnydn/fix-loading-overlay",
+      "type": "other",
+      "date": "2026-07-30T08:19:23Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/9164c714c69ce78b868f99cde9bdf7327c49c587",
+      "additions": 4,
+      "deletions": 1
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "93a130915bdfecaaaf14da77a5ba153bd567f615",
+      "short_sha": "93a1309",
+      "message": "fix(chat): the loading overlay was never visible — every visitor watc…",
+      "type": "fix",
+      "date": "2026-07-30T08:17:14Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/93a130915bdfecaaaf14da77a5ba153bd567f615",
+      "additions": 4,
+      "deletions": 1
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "ff548e51c6ec2ac037de137895422e95989e90e6",
+      "short_sha": "ff548e5",
+      "message": "Merge pull request #27 from abgnydn/fix-bench-v2",
+      "type": "other",
+      "date": "2026-07-30T07:08:55Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/ff548e51c6ec2ac037de137895422e95989e90e6",
+      "additions": 1069,
+      "deletions": 232
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "369aa7a3cdc081b46cecb640bcdadba89ad5e0f3",
+      "short_sha": "369aa7a",
+      "message": "fix(bench): correct a measurement defect, withdraw two pairs, republi…",
+      "type": "fix",
+      "date": "2026-07-30T07:06:36Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/369aa7a3cdc081b46cecb640bcdadba89ad5e0f3",
+      "additions": 778,
+      "deletions": 194
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "cad4e08896ceb5bdcef07e189635b108ad019c0c",
+      "short_sha": "cad4e08",
+      "message": "fix(chat): per-model context budgets + derived reply cap",
+      "type": "fix",
+      "date": "2026-07-30T06:13:40Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/cad4e08896ceb5bdcef07e189635b108ad019c0c",
+      "additions": 291,
+      "deletions": 38
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "f1f6eea5b1ae178c6cf2e237538d6030adfdf198",
+      "short_sha": "f1f6eea",
+      "message": "chore(portfolio): daily sync 2026-07-29",
+      "type": "chore",
+      "date": "2026-07-29T21:00:00Z",
+      "url": "https://github.com/abgnydn/markview/commit/f1f6eea5b1ae178c6cf2e237538d6030adfdf198",
+      "additions": 316,
+      "deletions": 230
+    },
     {
       "slug": "zero-tvm",
       "name": "zero-tvm",
@@ -5049,19 +5166,6 @@
       "deletions": 26
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
-      "short_sha": "a9558ff",
-      "message": "chore(portfolio): daily sync 2026-06-28",
-      "type": "chore",
-      "date": "2026-06-28T21:06:10Z",
-      "url": "https://github.com/abgnydn/markview/commit/a9558ffbdc47727bfbd63a904bd723fcfe8b7abe",
-      "additions": 35,
-      "deletions": 32
-    },
-    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -5465,19 +5569,6 @@
       "deletions": 4
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "d7dc57d648dedf2862472849fb5913a3baa44937",
-      "short_sha": "d7dc57d",
-      "message": "fix(bench): clean Colab re-run — fresh clone + T4-only (#5)",
-      "type": "fix",
-      "date": "2026-06-23T03:28:14Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/d7dc57d648dedf2862472849fb5913a3baa44937",
-      "additions": 2,
-      "deletions": 2
-    },
-    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -5569,19 +5660,6 @@
       "deletions": 1
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "2a9dd1e3f1ec3f833b0d066392ce2d0f8ba5a1a0",
-      "short_sha": "2a9dd1e",
-      "message": "fix(bench): get the real T4 on Colab — libnvidia-gl + ANGLE/Vulkan fl…",
-      "type": "fix",
-      "date": "2026-06-23T03:08:45Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/2a9dd1e3f1ec3f833b0d066392ce2d0f8ba5a1a0",
-      "additions": 12,
-      "deletions": 4
-    },
-    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -5593,32 +5671,6 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/d43a6181841d1840ef98035cced92b228e95ef5b",
       "additions": 81,
       "deletions": 13
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "be8dacf1999fc51e7787c05957305fa5f6c70d84",
-      "short_sha": "be8dacf",
-      "message": "fix(bench): abort on software GPU, use hf instead of huggingface-cli …",
-      "type": "fix",
-      "date": "2026-06-23T03:01:02Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/be8dacf1999fc51e7787c05957305fa5f6c70d84",
-      "additions": 22,
-      "deletions": 7
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "6a32c638033e73872a2f031730c5a6238a532c8b",
-      "short_sha": "6a32c63",
-      "message": "Add one-click Colab notebook for the GPU bench (#2)",
-      "type": "other",
-      "date": "2026-06-23T02:49:35Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/6a32c638033e73872a2f031730c5a6238a532c8b",
-      "additions": 36,
-      "deletions": 0
     },
     {
       "slug": "webgpu-q",
@@ -5645,19 +5697,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/bd83af74a41661aae1e52e16f3cee88e9cdcb4f5",
       "additions": 64,
       "deletions": 0
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "2d8c839e11986b7ac196328ccfd8cce444a241df",
-      "short_sha": "2d8c839",
-      "message": "Critique fixes: prune dead code, headless WebGPU kernel tests, bench …",
-      "type": "other",
-      "date": "2026-06-23T02:23:00Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/2d8c839e11986b7ac196328ccfd8cce444a241df",
-      "additions": 1108,
-      "deletions": 1142
     },
     {
       "slug": "webgpu-dna",
@@ -8830,45 +8869,6 @@
       "url": "https://github.com/abgnydn/nib/commit/500ced33bc62ab1973ea4ad414ae599198d124ad",
       "additions": 658,
       "deletions": 5
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "16968b3edc7625161ca5f859f577eff8dad06744",
-      "short_sha": "16968b3",
-      "message": "chore: guard --webrtc against Bun panic on @roamhq/wrtc",
-      "type": "chore",
-      "date": "2026-05-21T12:37:26Z",
-      "url": "https://github.com/abgnydn/tether/commit/16968b3edc7625161ca5f859f577eff8dad06744",
-      "additions": 13,
-      "deletions": 0
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "b578a887ae9e1b3824b50439ecb95e560851213d",
-      "short_sha": "b578a88",
-      "message": "feat: port WebRTC context bridge from v1",
-      "type": "feat",
-      "date": "2026-05-21T12:36:24Z",
-      "url": "https://github.com/abgnydn/tether/commit/b578a887ae9e1b3824b50439ecb95e560851213d",
-      "additions": 3154,
-      "deletions": 22
-    },
-    {
-      "slug": "tether",
-      "name": "tether",
-      "language": "TypeScript",
-      "sha": "ed29a3d418b194255a2e15a139a49e26b04adcaa",
-      "short_sha": "ed29a3d",
-      "message": "chore: rebrand markview → Tether",
-      "type": "chore",
-      "date": "2026-05-21T12:29:05Z",
-      "url": "https://github.com/abgnydn/tether/commit/ed29a3d418b194255a2e15a139a49e26b04adcaa",
-      "additions": 664,
-      "deletions": 664
     }
   ],
   "errors": []

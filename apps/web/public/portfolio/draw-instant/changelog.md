@@ -27,8 +27,15 @@ v0→v5 milestones in [ROADMAP.md](./ROADMAP.md).
 ### Fixed
 - Fusion probe unbiased: removed a temp `createBindGroup` stack-capture
   diagnostic and hoisted bind-group creation out of the timed loops; the
-  fused-vs-naive diff is now measured by readback, not asserted. M2: 0.60 ms
-  naive / 0.30 ms fused = 2.0× (was 2.67× under the biased bench).
+  fused-vs-naive diff is now measured by readback, not asserted.
+- Timing method corrected in `bench.js` and `bench-torch.py`: batch N
+  iterations behind a single fence, repeat at 2N, take the slope so the fixed
+  fence cost cancels. Fencing per iteration was measuring synchronisation
+  rather than work — harmless-looking in Chrome, but ~13 ms per iteration under
+  Deno/wgpu, which floored every headless measurement at 13 ms and reported
+  fused and naive as identical. M2 after the fix: 0.10 ms naive / 0.03 ms
+  fused = 3.2×, with PyTorch eager MPS independently landing on the same
+  0.10 ms as the naive path. Supersedes the 2.0× and 2.67× figures.
 - Live / loop / camera modes are mutually exclusive; the continuous loop
   carries an epoch token (no zombie double loops); camera errors reuse the stop
   path; a probe failure no longer disables Generate; the shared metrics bar

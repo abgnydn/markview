@@ -94,7 +94,7 @@ diff, measured live in your browser. No cherry-picking. On **Apple M2**:
 
 | Block | Naive | Fused | Result | Correctness |
 |---|---:|---:|:--:|---|
-| Elementwise probe (`bench.js`) | 0.60 ms | 0.30 ms | 🟢 2.0× | readback-verified at boot |
+| Elementwise probe (`bench.js`) | 0.10 ms | 0.03 ms | 🟢 3.2× | readback-verified at boot |
 | FFN (`fused-block.js`) | 66.7 ms | 66.1 ms | 🔴 1.01× (wash) | 0 max abs diff |
 | Full transformer block (`fused-block-full.js`) | 28.6 ms | 28.3 ms | 🔴 1.01× (wash) | 8.0e-7 max abs diff |
 
@@ -106,10 +106,13 @@ it's launch-bound even on M2, and collapsing 6 dispatches to 1 shows ~2×.
 
 🟢 **Discrete GPUs are the target.** Kernel-launch overhead dominates there.
 The in-repo head-to-head on the same op chain and the same M2: fused WGSL
-**0.30 ms** vs PyTorch eager MPS **0.35 ms** vs our naive path 0.60 ms —
-`uv run bench-torch.py` reproduces it on your machine. Bigger multipliers on
-discrete and mobile GPUs are the thesis, and we won't quote any until they're
-measured from this repo — see [BENCHMARKS.md](./BENCHMARKS.md) for methodology.
+**0.03 ms**, our naive path **0.10 ms**, PyTorch eager MPS **0.10 ms** —
+`uv run bench-torch.py` reproduces it on your machine. That eager MPS and our
+naive path agree exactly is the point: both are six separate kernel launches,
+measured independently. Bigger multipliers on discrete and mobile GPUs are the
+thesis, and we won't quote any until they're measured from this repo — see
+[BENCHMARKS.md](./BENCHMARKS.md) for the timing method, which matters more than
+it sounds.
 
 > **We publish what we measured, even when we lose.** A benchmark that hides a
 > wash is worse than no benchmark.
@@ -293,7 +296,7 @@ The non-negotiables (full text in [CONTRIBUTING.md](./CONTRIBUTING.md)):
 | U-Net dispatches today | **60+ / step** | ORT Web — the overhead we're collapsing |
 | Fused full block | **14 → 9 dispatches** | what the math allows at equal kernel quality |
 | Fused attention | **3 → 1 dispatch** | flash-style single dispatch, softmax on-chip |
-| PyTorch head-to-head | **0.30 vs 0.35 ms** | fused WGSL vs torch eager MPS, same chain + machine — `uv run bench-torch.py` |
+| PyTorch head-to-head | **0.03 vs 0.10 ms** | fused WGSL vs torch eager MPS, same chain + machine + timing method — `uv run bench-torch.py` |
 | SD-Turbo steps | **1–4** | Euler Discrete schedule |
 | Latent / image | **[1,4,64,64] / [1,3,512,512]** | VAE scaling factor 0.18215 |
 | Kernel gate | **< 1e-4** | max abs diff vs. CPU reference |
