@@ -8,6 +8,7 @@ _no tags yet_
 
 ## Recent highlights
 
+- **fix**: fix(physics): make the trained walker actually walk — [`cb74df6`](https://github.com/abgnydn/webgpu-fly/commit/cb74df69a362a38c4ae5695706aa92d2c50ef120)
 - **fix**: fix(tests): point the e2e suite at the simulator, not the landing page — [`af496a7`](https://github.com/abgnydn/webgpu-fly/commit/af496a725654075aa586f3d1b0c0531ed20a3b39)
 - **fix**: fix(tools): upload the assets the runtime actually fetches — [`35ad7d8`](https://github.com/abgnydn/webgpu-fly/commit/35ad7d8f7693ed354249ecf72ae38eee43b602d2)
 - **fix**: fix(cache): bound IndexedDB to one generation per asset — [`e2f4dcd`](https://github.com/abgnydn/webgpu-fly/commit/e2f4dcd0e0e5d2ba0fe74d05e0569ecdb8800bf9)

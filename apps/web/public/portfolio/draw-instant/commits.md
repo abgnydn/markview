@@ -1,5 +1,13 @@
 # Commits — draw-instant
 
+## 2026-07-31
+
+- `10:51` **perf(wgsl-ops): register-block Gemm, 3.1-6.2x** — +95 −20 — [`38c138e`](https://github.com/abgnydn/draw-instant/commit/38c138ed603a2877574679cc5df47a02cc2284c6)
+- `10:42` **perf(wgsl-ops): register-block convMM too, 4-5x on production shapes** — +125 −28 — [`54913e3`](https://github.com/abgnydn/draw-instant/commit/54913e338166faf375d040562d9a23ec9732ffed)
+- `10:13` **perf(wgsl-ops): register-block the matmul, 2.6-4.5x on production shapes** — +159 −12 — [`a8376eb`](https://github.com/abgnydn/draw-instant/commit/a8376eb04c1c05a21fb0bfaf1542d045f24e33be)
+- `10:06` **fix(bench): interleave the two paths, share one batch size, warm to s…** — +108 −74 — [`6645d2f`](https://github.com/abgnydn/draw-instant/commit/6645d2f5770830382f37c9f29d4f8b947dbdb5aa)
+- `07:20` **fix(bench): roll batch-slope timing across all nine; correct the results** — +182 −175 — [`d8bbdbc`](https://github.com/abgnydn/draw-instant/commit/d8bbdbc64e8d28da83907a39feba58b8af88a6e5)
+
 ## 2026-07-30
 
 - `13:05` **fix(bench): measure the work, not the fence** — +123 −53 — [`9882ada`](https://github.com/abgnydn/draw-instant/commit/9882adac2c238bcd105e878ae1c567e97ee6a2c2)

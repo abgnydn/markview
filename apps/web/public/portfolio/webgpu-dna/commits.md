@@ -1,5 +1,17 @@
 # Commits — webgpu-dna
 
+## 2026-07-31
+
+- `10:15` **Merge pull request #15 from abgnydn/chore/remove-dead-code** — +5 −729 — [`0390ab8`](https://github.com/abgnydn/webgpu-dna/commit/0390ab80e53ed0d0d26ea4c1e3096c2282bdcd22)
+- `10:14` **Merge pull request #14 from abgnydn/fix/worker-seeded-rng** — +29 −10 — [`6529315`](https://github.com/abgnydn/webgpu-dna/commit/652931582a849160d3cc5794de2cef638c271eba)
+- `10:12` **chore: remove confirmed dead code (~725 lines)** — +5 −729 — [`dca6c16`](https://github.com/abgnydn/webgpu-dna/commit/dca6c1659e95203f482fc83a56733d47fafcdd02)
+- `10:04` **fix(chem): seed the production worker RNG for reproducibility** — +29 −10 — [`299e32e`](https://github.com/abgnydn/webgpu-dna/commit/299e32e8d89ac01518417c62fe0d762a046dc732)
+- `10:01` **Merge pull request #13 from abgnydn/review/fixes-2026-07** — +155 −45 — [`8984abc`](https://github.com/abgnydn/webgpu-dna/commit/8984abcd65954cd23fb9d142dceefc46e7b6608b)
+- `08:28` **docs: correct stale comments and label unused reference code** — +5 −9 — [`59113e0`](https://github.com/abgnydn/webgpu-dna/commit/59113e0513f4e80c6b829f01278819f8fb8d4ff4)
+- `08:28` **ci: gate WGSL + production build; fail loudly on a corrupt demo asset** — +9 −2 — [`f01198a`](https://github.com/abgnydn/webgpu-dna/commit/f01198aeadd9364b414e7f2f55fa830698116666)
+- `08:28` **test: cover the accumulation, indirect-SSB, and DSB-clustering paths** — +114 −0 — [`52b035b`](https://github.com/abgnydn/webgpu-dna/commit/52b035b55b7245d837a837b40eef073c15994ac7)
+- `08:27` **fix: correctness fixes from the deep-review audit** — +27 −34 — [`2b25e4d`](https://github.com/abgnydn/webgpu-dna/commit/2b25e4d1e292baa1328d9d65f4ad7a2e62143577)
+
 ## 2026-07-28
 
 - `09:56` **docs: fix 6 numbers/consistency issues found by the merge-audit workflow** — +13 −11 — [`bed5c3f`](https://github.com/abgnydn/webgpu-dna/commit/bed5c3f8e1de626897c43dceb26bd6a969707aa3)
@@ -61,15 +73,3 @@
 
 - `05:04` **experiment(E37): 100 keV proton ranges 2x too far (2.65 vs G4 1.2 / P…** — +16 −0 — [`d0921b7`](https://github.com/abgnydn/webgpu-dna/commit/d0921b767ba58e3f7ba57e636b0e504b70f5d94f)
 - `05:00` **experiment(E36): causal isolation — IRT engine is CORRECT; deficit is…** — +14858 −13 — [`5362833`](https://github.com/abgnydn/webgpu-dna/commit/5362833d36aebc65582c285fba025553a10f42ab)
-- `04:04` **experiment(E35): diagnose the oxygen discrepancy -> high-LET recombin…** — +15 −0 — [`d0e830f`](https://github.com/abgnydn/webgpu-dna/commit/d0e830fc72b976b8bab6484cbdfbb7b20305ca49)
-
-## 2026-06-09
-
-- `15:24` **experiment(E34): validate oxygen network vs the REAL option3 oracle —…** — +21 −0 — [`51ad614`](https://github.com/abgnydn/webgpu-dna/commit/51ad6141b8e4fd44c3a77d6acf3a213aeded3a30)
-- `13:38` **chore: commit run_irt_ssb.cjs O2 wiring (arg6 µM) used for the E33 OE…** — +2 −1 — [`8fdb05d`](https://github.com/abgnydn/webgpu-dna/commit/8fdb05dcb3cef7da8c33046ee79ade999d39daf0)
-- `13:37` **experiment(E33): damage-level OER is ~1.0 (honest negative) — needs D…** — +15 −0 — [`8529bab`](https://github.com/abgnydn/webgpu-dna/commit/8529bab40c30d225115eb6eb8a5af7927d88d42e)
-- `13:19` **feat(chem): dissolved O2 (the oxygen effect / OER) — dose-dependent e…** — +46 −1 — [`1851ee1`](https://github.com/abgnydn/webgpu-dna/commit/1851ee12fe1e635c8c38af3121d1d588467aca2b)
-- `13:14` **fix(proton): G4DNARuddAngle ejection angle, replacing today's isotrop…** — +13 −4 — [`1b37fef`](https://github.com/abgnydn/webgpu-dna/commit/1b37fefe78b055dae691da62d469177879eb5a60)
-- `13:08` **experiment(E31): oxygen network functional + LET effect is textbook-c…** — +23 −0 — [`1d35f7a`](https://github.com/abgnydn/webgpu-dna/commit/1d35f7a23efe13b5b915e002b1231026a3d24e2a)
-- `12:55` **feat(chem): wire the O(3p) seed -> oxygen network is ALIVE (first oxy…** — +38 −14 — [`bd6351d`](https://github.com/abgnydn/webgpu-dna/commit/bd6351d653dbfd54d42a00ecb362382791bb6f9f)
-- `12:43` **feat(chem): port option3 oxygen network into the IRT worker (38 react…** — +51 −7 — [`a0e613e`](https://github.com/abgnydn/webgpu-dna/commit/a0e613e9e12ad504aa381e33692d4da3c36404c0)

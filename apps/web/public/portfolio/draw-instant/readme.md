@@ -48,8 +48,9 @@ U-Net denoiser, computed on your own GPU, in the tab. No server, no upload.**
   path generates real images today — including live, continuous-loop, and camera modes;
   the all-our-kernels path runs the VAE and is being extended to the U-Net.
 - **Not faster than ORT on Apple Silicon.** On unified memory the fused path
-  *ties* the naive path on the compute-bound blocks — and we publish that, in
-  full, below. The win is on discrete GPUs, where launch overhead dominates.
+  *ties* the naive path on the compute-bound blocks, and loses on two of the
+  nine — and we publish that, in full, below. The win is expected on discrete
+  GPUs, where launch overhead dominates; that number is not measured yet.
 - **Not a general ONNX runtime.** The parser and executor cover exactly the
   SD-Turbo op set, on purpose. Unsupported ops surface explicitly rather than
   silently mis-execute.
@@ -90,19 +91,33 @@ The page opens with a generate panel and a column of live benchmark cards.
 ## How fast — honestly, both directions
 
 Every benchmark prints the device, the naive-vs-fused ms, and a correctness
-diff, measured live in your browser. No cherry-picking. On **Apple M2**:
+diff, measured live in your browser. No cherry-picking. Speedups below are the
+**median of 3 full sweeps** on an **Apple M2 Max** — single runs vary too much
+to quote:
 
-| Block | Naive | Fused | Result | Correctness |
-|---|---:|---:|:--:|---|
-| Elementwise probe (`bench.js`) | 0.10 ms | 0.03 ms | 🟢 3.2× | readback-verified at boot |
-| FFN (`fused-block.js`) | 66.7 ms | 66.1 ms | 🔴 1.01× (wash) | 0 max abs diff |
-| Full transformer block (`fused-block-full.js`) | 28.6 ms | 28.3 ms | 🔴 1.01× (wash) | 8.0e-7 max abs diff |
+| Block | Chrome (Dawn) | Deno (wgpu) | Correctness |
+|---|---:|---:|---|
+| Elementwise probe (`bench.js`) | 🟢 **~2–6×** (unstable) | ~2–6× | readback-verified at boot |
+| Conv 3×3 (`fused-conv.js`) | 1.02× | 0.93× | 0.28 rel |
+| FFN (`fused-block.js`) | 1.00× | 0.97× | 0.61 rel |
+| ResNet (`fused-resnet.js`) | 0.99× | 1.02× | 9→4 dispatches |
+| Attention (`fused-attn.js`) | 0.99× | 0.55× | 3.3e-9 max abs diff |
+| Full transformer block (`fused-block-full.js`) | 0.97× | 0.95× | 14→9 dispatches |
+| Group norm (`fused-groupnorm.js`) | 0.88× | 0.96× | 0 max abs diff |
+| Cross-attention (`fused-cross-attn.js`) | 🔴 0.87× | 0.56× | 0 max abs diff |
+| Timestep embed (`fused-tembed.js`) | 🔴 0.11× | 0.12× | 1.7e-6 max abs diff |
 
-🔴 **The compute-bound blocks are a wash on Apple Silicon, and that's
-expected.** Unified memory makes the global-memory round-trips that fusion
-eliminates nearly free — there's little launch/bandwidth overhead left to
-remove. The tiny elementwise probe is the exception: at sub-millisecond scale
-it's launch-bound even on M2, and collapsing 6 dispatches to 1 shows ~2×.
+🔴 **The compute-bound blocks are a wash on Apple Silicon, and two fused
+kernels are outright slower.** Unified memory makes the global-memory
+round-trips that fusion eliminates nearly free, so there's little overhead left
+to remove. The losses are a kernel problem, not a fusion one: timestep-embed and
+cross-attention concentrate work into too few workgroups and under-occupy the
+GPU, while the naive path spreads the same arithmetic across it. Fusion removes
+memory traffic; it can't remove the need to fill the machine. The tiny
+elementwise probe is the exception — it wins on every run, but its magnitude
+swings ~2–6× because at sub-millisecond scale it's dominated by machine noise,
+so we quote a range rather than a figure. Full nine-block table, both runtimes, in
+[BENCHMARKS.md](./BENCHMARKS.md).
 
 🟢 **Discrete GPUs are the target.** Kernel-launch overhead dominates there.
 The in-repo head-to-head on the same op chain and the same M2: fused WGSL

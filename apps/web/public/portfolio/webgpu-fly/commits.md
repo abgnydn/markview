@@ -1,5 +1,12 @@
 # Commits — webgpu-fly
 
+## 2026-07-31
+
+- `09:56` **Merge pull request #3 from abgnydn/fix/trained-walker-walks** — +470 −174 — [`14c1ecf`](https://github.com/abgnydn/webgpu-fly/commit/14c1ecfd507739d4d53455b7ca4653fe088130a9)
+- `09:55` **docs: the trained walker walks** — +125 −58 — [`30693c9`](https://github.com/abgnydn/webgpu-fly/commit/30693c92c8c24d31cf90295893f291bb03dab353)
+- `09:55` **test: gate the walker on real locomotion, and ship the yardstick** — +175 −29 — [`316ee5f`](https://github.com/abgnydn/webgpu-fly/commit/316ee5fb55a2b1b8bfb8683d6d18102727c79fb3)
+- `09:54` **fix(physics): make the trained walker actually walk** — +170 −87 — [`cb74df6`](https://github.com/abgnydn/webgpu-fly/commit/cb74df69a362a38c4ae5695706aa92d2c50ef120)
+
 ## 2026-07-30
 
 - `11:51` **Merge pull request #2 from abgnydn/docs/full-disclosure** — +353 −70 — [`b7875a1`](https://github.com/abgnydn/webgpu-fly/commit/b7875a1409897eb3122de9c0663ffc00cb0b5112)
@@ -60,10 +67,3 @@
 - `09:35` **Walking policy obs layout decoded from SavedModel proto** — +73 −15 — [`f37db3a`](https://github.com/abgnydn/webgpu-fly/commit/f37db3ad7b63e0dc363e209f26f5b079015b2cb3)
 - `09:23` **Walking policy correctness: numpy ground truth, fixed weight mapping,…** — +208 −55 — [`19d3c5b`](https://github.com/abgnydn/webgpu-fly/commit/19d3c5b2b13ffab6067ebeb39cf40dc1ced2bf96)
 - `08:30` **Build fix: dynamic import path with @vite-ignore for tests** — +6 −2 — [`732df73`](https://github.com/abgnydn/webgpu-fly/commit/732df73b979e234d9436937677fa71279b4a1b44)
-- `08:28` **Trained flybody walking policy loads + runs in the browser** — +396 −0 — [`b80a24d`](https://github.com/abgnydn/webgpu-fly/commit/b80a24d84e3fea100ba6124cc1421ea1ada38d85)
-- `07:26` **Straight-walking DNs + smoother closed-loop tracking** — +50 −16 — [`20b2ae2`](https://github.com/abgnydn/webgpu-fly/commit/20b2ae268c9a6fecc20441a73b320eb3cf21cdc7)
-- `06:55` **Fix closed-loop sign error: visual reflex now turns fly TOWARD target** — +81 −38 — [`c0a0b7b`](https://github.com/abgnydn/webgpu-fly/commit/c0a0b7bb571439eda9b66e820da29dcbe8dfa14d)
-
-## 2026-05-04
-
-- `13:38` **Stronger DN stim + closed-loop refinements + 4 new e2e assertions** — +103 −24 — [`90a713a`](https://github.com/abgnydn/webgpu-fly/commit/90a713a08a931edde7ae7407ba57b533357f381a)
