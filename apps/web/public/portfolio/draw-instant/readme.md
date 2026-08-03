@@ -119,15 +119,30 @@ swings ~2–6× because at sub-millisecond scale it's dominated by machine noise
 so we quote a range rather than a figure. Full nine-block table, both runtimes, in
 [BENCHMARKS.md](./BENCHMARKS.md).
 
-🟢 **Discrete GPUs are the target.** Kernel-launch overhead dominates there.
-The in-repo head-to-head on the same op chain and the same M2: fused WGSL
+🔵 **The discrete-GPU bet did not pay off — and it is now measured, not assumed.**
+On a real NVIDIA Tesla T4 (Colab, Deno/Vulkan) the pattern matches Apple: FFN
+0.99×, conv 0.99×, attention 0.74×, cross-attention 0.75×, timestep embed 0.11×.
+Only the elementwise probe (3.58×) and GroupNorm (1.15×) win — and both are
+bandwidth-bound. The honest formulation is narrower than the original thesis:
+**fusion pays when an op is memory-bandwidth-bound, does nothing when it is
+compute-bound, and hurts when the fused kernel under-occupies the GPU.** Bytes
+moved is the variable that matters, not dispatch count. A U-Net is dominated by
+convolutions and matmuls — the compute-bound case. See
+[BENCHMARKS.md](./BENCHMARKS.md) for the full table and the caveats (a T4 is a
+slow 2018 card, so a 4090 is a stronger test still).
+
+🟢 **Where the real speedups came from.** Not fusion — kernel quality. The
+production kernels in `wgsl-ops.js` were running at low single-digit percent of
+the machine; register-blocking them gave matmul 2.6–4.5×, conv 4–5.3×, and Gemm
+3.1–6.2×. That moves time-per-image, which is the metric that matters.
+
+The in-repo PyTorch head-to-head on the same op chain and the same M2: fused WGSL
 **0.03 ms**, our naive path **0.10 ms**, PyTorch eager MPS **0.10 ms** —
 `uv run bench-torch.py` reproduces it on your machine. That eager MPS and our
 naive path agree exactly is the point: both are six separate kernel launches,
-measured independently. Bigger multipliers on discrete and mobile GPUs are the
-thesis, and we won't quote any until they're measured from this repo — see
-[BENCHMARKS.md](./BENCHMARKS.md) for the timing method, which matters more than
-it sounds.
+measured independently. See [BENCHMARKS.md](./BENCHMARKS.md) for the timing
+method, which matters more than it sounds — a per-iteration GPU fence was
+silently dominating every measurement in this repo until it was found.
 
 > **We publish what we measured, even when we lose.** A benchmark that hides a
 > wash is worse than no benchmark.

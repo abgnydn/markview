@@ -1,5 +1,17 @@
 # Commits — draw-instant
 
+## 2026-08-03
+
+- `13:42` **docs: record the engine-vs-ORT result and the T4 limitation** — +48 −0 — [`53d5ce0`](https://github.com/abgnydn/draw-instant/commit/53d5ce0b8ba38ae281bddc8804b24978ae0200da)
+- `12:16` **chore(colab): run the engine-vs-ORT comparison in the notebook too** — +20 −7 — [`1565701`](https://github.com/abgnydn/draw-instant/commit/1565701a37e2206781fe6252970b92b5ea44e5d7)
+- `12:15` **feat: headless engine-vs-ORT comparison, and the answer** — +89 −1 — [`84871d2`](https://github.com/abgnydn/draw-instant/commit/84871d2aaaa721ec0a1a26222b6a6999c4d5876f)
+- `12:10` **fix(executor): two bugs the ORT comparison surfaced** — +46 −3 — [`e36cfd6`](https://github.com/abgnydn/draw-instant/commit/e36cfd6d8c07845e7d543fdabde56f0aed7215f6)
+- `10:10` **feat: engine-vs-ORT comparison harness** — +99 −0 — [`4d638d7`](https://github.com/abgnydn/draw-instant/commit/4d638d76e84bedf7af4bf1fbf7fd27045b7a502b)
+- `06:50` **feat: cache probe — measure the redundancy before building for it** — +334 −3 — [`e33bad8`](https://github.com/abgnydn/draw-instant/commit/e33bad88d6c64d3c9419f5f2ee6f46c68c9b3d78)
+- `06:26` **docs(roadmap): retire the launch-overhead thesis it was built on** — +11 −7 — [`75a21cf`](https://github.com/abgnydn/draw-instant/commit/75a21cff5bf3f9dc86e615292dcf025f2cbdadac)
+- `06:25` **docs: the discrete-GPU number, and what it says** — +80 −46 — [`7e19ad6`](https://github.com/abgnydn/draw-instant/commit/7e19ad6fd38dfc13781f509aa185cf4a9453c046)
+- `06:18` **fix(bench-headless): isolate each bench in its own process** — +42 −11 — [`e073c34`](https://github.com/abgnydn/draw-instant/commit/e073c347c7813bd13146cccd7cd891552b011666)
+
 ## 2026-07-31
 
 - `10:51` **perf(wgsl-ops): register-block Gemm, 3.1-6.2x** — +95 −20 — [`38c138e`](https://github.com/abgnydn/draw-instant/commit/38c138ed603a2877574679cc5df47a02cc2284c6)

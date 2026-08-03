@@ -1,7 +1,20 @@
 # Commits — webgpu-fly
 
+## 2026-08-03
+
+- `12:22` **Merge pull request #8 from abgnydn/fix/webgpu-adapter-check** — +11 −3 — [`912cf15`](https://github.com/abgnydn/webgpu-fly/commit/912cf154f6292b24e5970ae870fb9e7132714cbc)
+- `12:21` **fix: ask for a GPU adapter before downloading 314 MB, not after** — +11 −3 — [`62b09d4`](https://github.com/abgnydn/webgpu-fly/commit/62b09d49f75c428bf161a40922c329263fa6fabe)
+- `10:50` **Merge pull request #7 from abgnydn/fix/landing-discloses-assist** — +10 −1 — [`b478078`](https://github.com/abgnydn/webgpu-fly/commit/b47807823e249cb20439a7a047a6b6068b0abe06)
+- `10:49` **fix(landing): say that the body is moved directly, not carried by its…** — +10 −1 — [`b518fdc`](https://github.com/abgnydn/webgpu-fly/commit/b518fdcf9dc9f03322c11546f053ddd7b0268f09)
+- `09:36` **Merge pull request #6 from abgnydn/fix/pre-launch-truth-pass** — +183 −82 — [`9047838`](https://github.com/abgnydn/webgpu-fly/commit/9047838a3da673005832868c5f75ba02e4f3a1e7)
+- `09:35` **fix: correct five false public claims, and measure the attitude damper** — +183 −82 — [`a692026`](https://github.com/abgnydn/webgpu-fly/commit/a69202618d1c079293d1e97f0244e52901b0cd05)
+- `07:35` **Merge pull request #5 from abgnydn/feat/hf-space-ready** — +229 −16 — [`e859d81`](https://github.com/abgnydn/webgpu-fly/commit/e859d81ba4c9a8306434df25477b90e7d23fd387)
+- `07:34` **feat: cold-start progress, early WebGPU bail, and Hugging Face Space …** — +229 −16 — [`54c592e`](https://github.com/abgnydn/webgpu-fly/commit/54c592e845687472da1c5fd785fd4fb1db09eea8)
+- `06:50` **Merge pull request #4 from abgnydn/feat/muscle-resolved-vnc** — +647 −2 — [`a872c26`](https://github.com/abgnydn/webgpu-fly/commit/a872c26c24d3f8ac6fe475a735d8f2e1b19762b7)
+
 ## 2026-07-31
 
+- `13:22` **feat(vnc): resolve motor output per muscle, and test the rhythm question** — +647 −2 — [`50d7c83`](https://github.com/abgnydn/webgpu-fly/commit/50d7c8329f92bc3db446cd965f7c324a34231dc6)
 - `09:56` **Merge pull request #3 from abgnydn/fix/trained-walker-walks** — +470 −174 — [`14c1ecf`](https://github.com/abgnydn/webgpu-fly/commit/14c1ecfd507739d4d53455b7ca4653fe088130a9)
 - `09:55` **docs: the trained walker walks** — +125 −58 — [`30693c9`](https://github.com/abgnydn/webgpu-fly/commit/30693c92c8c24d31cf90295893f291bb03dab353)
 - `09:55` **test: gate the walker on real locomotion, and ship the yardstick** — +175 −29 — [`316ee5f`](https://github.com/abgnydn/webgpu-fly/commit/316ee5fb55a2b1b8bfb8683d6d18102727c79fb3)
@@ -54,16 +67,3 @@
 - `07:41` **upload_to_r2.sh: LC_ALL=C and use npx wrangler** — +4 −1 — [`353c2d6`](https://github.com/abgnydn/webgpu-fly/commit/353c2d6baaedffa468696adc5643163236d60c3e)
 - `07:24` **Cache-bust manifest: ?v=<sha> + immutable Cache-Control on R2** — +185 −18 — [`07a9536`](https://github.com/abgnydn/webgpu-fly/commit/07a95361c94f6b360aa8ee13905c4b63d26d0657)
 - `07:23` **Wire BPN command neuron from Dallmann 2026 supp table 1** — +101 −2 — [`c5d8e88`](https://github.com/abgnydn/webgpu-fly/commit/c5d8e884bc54a8674eedf183905a657d02c3d1ed)
-
-## 2026-05-05
-
-- `13:57` **Wire RRN command neuron + Dallmann walking-circuit catalog** — +130 −15 — [`bc9f0da`](https://github.com/abgnydn/webgpu-fly/commit/bc9f0da87a56be852402b1c8604ecefabcd2af28)
-- `13:15` **Add 3 famous DNs from Dallmann walking-circuit roster** — +91 −0 — [`28b2889`](https://github.com/abgnydn/webgpu-fly/commit/28b2889efefe4ed0f0467eab99c6f9ced18b5ab1)
-- `13:03` **Trained walker: fix actuator order, ranges, joint slicing, appendage …** — +417 −67 — [`78d0cbb`](https://github.com/abgnydn/webgpu-fly/commit/78d0cbbd6a58168921591b707dd190264dceda17)
-- `12:14` **README rewrite: reflect full project state — brain + spine + body + R…** — +105 −41 — [`04118c1`](https://github.com/abgnydn/webgpu-fly/commit/04118c151ea6e016e6708de6c9bde9ee30649609)
-- `11:46` **Trained walker: per-call input LayerNorm + tanh action mapping** — +68 −15 — [`e1fd80e`](https://github.com/abgnydn/webgpu-fly/commit/e1fd80e39e2bf18373cba7a5f02528d4c0c5d67f)
-- `10:52` **Strictened trained-walker test: body actually advances forward + stay…** — +58 −8 — [`5905d41`](https://github.com/abgnydn/webgpu-fly/commit/5905d4151518d8e39549900c02092c32a0ec3ae2)
-- `10:00` **End-to-end trained walker — observation builder, action mapping, runt…** — +360 −15 — [`85aeb7b`](https://github.com/abgnydn/webgpu-fly/commit/85aeb7be6d7d1070f685b72957b465bd71072d6d)
-- `09:35` **Walking policy obs layout decoded from SavedModel proto** — +73 −15 — [`f37db3a`](https://github.com/abgnydn/webgpu-fly/commit/f37db3ad7b63e0dc363e209f26f5b079015b2cb3)
-- `09:23` **Walking policy correctness: numpy ground truth, fixed weight mapping,…** — +208 −55 — [`19d3c5b`](https://github.com/abgnydn/webgpu-fly/commit/19d3c5b2b13ffab6067ebeb39cf40dc1ced2bf96)
-- `08:30` **Build fix: dynamic import path with @vite-ignore for tests** — +6 −2 — [`732df73`](https://github.com/abgnydn/webgpu-fly/commit/732df73b979e234d9436937677fa71279b4a1b44)

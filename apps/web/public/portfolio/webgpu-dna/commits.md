@@ -1,7 +1,23 @@
 # Commits — webgpu-dna
 
+## 2026-08-03
+
+- `13:46` **Merge pull request #17 from abgnydn/research/geant4-gap-findings** — +667 −9 — [`2381459`](https://github.com/abgnydn/webgpu-dna/commit/2381459a3a5dd964c4d3f2e833b54369115e3220)
+- `13:45` **docs: re-measure the cascade-ion headline with Auger (0.942x -> 0.981x)** — +19 −6 — [`b2df9ba`](https://github.com/abgnydn/webgpu-dna/commit/b2df9ba524fcfb2e2e332fe83473cd9092447a84)
+- `12:25` **research(E37): rigorous folded-in-place chromatin vs grid — folding i…** — +133 −0 — [`d3cd4e6`](https://github.com/abgnydn/webgpu-dna/commit/d3cd4e67fc524bc3e0b7a77ecbd01e50b4f917b9)
+- `11:14` **research(E36): chromatin vs grid re-scoring — realistic geometry lowe…** — +165 −0 — [`a4c15cd`](https://github.com/abgnydn/webgpu-dna/commit/a4c15cd4c2961398e6bfdb6a8aff45406d5773cb)
+- `10:58` **feat(chem): optional surviving-OH position collection (experiment hook)** — +10 −0 — [`88e252f`](https://github.com/abgnydn/webgpu-dna/commit/88e252f1ad60af6c604a051b774de775b16d623f)
+- `10:52` **feat(geometry): 30 nm chromatin fibre (solenoid of nucleosomes)** — +73 −1 — [`98b8322`](https://github.com/abgnydn/webgpu-dna/commit/98b832238914e175a3912ed1a7a192cba0994734)
+- `10:46` **feat(geometry): analytical nucleosome DNA geometry (chromatin foundat…** — +170 −0 — [`a074a78`](https://github.com/abgnydn/webgpu-dna/commit/a074a78420f4251ff4c5166e26fa720e52cb7f35)
+- `10:43` **research(E35): measure the Auger cascade-ion improvement (0.906 -> 0.…** — +3 −2 — [`ff9908d`](https://github.com/abgnydn/webgpu-dna/commit/ff9908d8ed91660bb0c701a79b569f3f992a6c25)
+- `10:26` **feat(physics): emit the K-shell Auger electron (real Geant4-DNA fidel…** — +78 −4 — [`5589180`](https://github.com/abgnydn/webgpu-dna/commit/5589180000ad52f73ebc6463edd9807057892a00)
+- `07:18` **research(E34): direct-SSB radius sweep — localizes the damage gap to …** — +20 −0 — [`09ab897`](https://github.com/abgnydn/webgpu-dna/commit/09ab897c62c969be5a81cb1a79ff8c9adbd6ac81)
+- `06:12` **Merge pull request #16 from abgnydn/fix/direct-ssb-deposit-site** — +242 −123 — [`38bc701`](https://github.com/abgnydn/webgpu-dna/commit/38bc7014ea9571b6208e6c2b506dda8e2bb6dbf4)
+
 ## 2026-07-31
 
+- `11:23` **docs: re-report the direct-SSB ratio at the true deposit site (E33)** — +50 −9 — [`38052b9`](https://github.com/abgnydn/webgpu-dna/commit/38052b93b44006f0624ecd275bf0454a46405306)
+- `11:10` **feat(scoring): score direct SSB at the true deposit site, not the dis…** — +192 −114 — [`45266fd`](https://github.com/abgnydn/webgpu-dna/commit/45266fdd4a8067d2cdf2f9c04010516f174bcc2d)
 - `10:15` **Merge pull request #15 from abgnydn/chore/remove-dead-code** — +5 −729 — [`0390ab8`](https://github.com/abgnydn/webgpu-dna/commit/0390ab80e53ed0d0d26ea4c1e3096c2282bdcd22)
 - `10:14` **Merge pull request #14 from abgnydn/fix/worker-seeded-rng** — +29 −10 — [`6529315`](https://github.com/abgnydn/webgpu-dna/commit/652931582a849160d3cc5794de2cef638c271eba)
 - `10:12` **chore: remove confirmed dead code (~725 lines)** — +5 −729 — [`dca6c16`](https://github.com/abgnydn/webgpu-dna/commit/dca6c1659e95203f482fc83a56733d47fafcdd02)
@@ -57,19 +73,3 @@
 - `07:47` **colab(phase-a): self-contained Vulkan install (loader + tools + produ…** — +8 −0 — [`411d298`](https://github.com/abgnydn/webgpu-dna/commit/411d298fc10e4c8f233699b3eb4a091a42f365f2)
 - `07:40` **colab: force WGPU_BACKEND_TYPE=Vulkan (GL backend can't do compute st…** — +17 −4 — [`c42be78`](https://github.com/abgnydn/webgpu-dna/commit/c42be785d82b2c63471a3c96b8f9ad7668c30a87)
 - `06:43` **colab: Phase A host port (wgpu-py) — real primaries on the T4** — +200 −0 — [`6d61662`](https://github.com/abgnydn/webgpu-dna/commit/6d61662cea906f148bbf44d9b2349791f8e998a0)
-- `06:30` **finding(B2): Colab/Kaggle T4 RUNS WebGPU — FREE_COMPUTE.md §3 overturned** — +88 −22 — [`338e658`](https://github.com/abgnydn/webgpu-dna/commit/338e65891104e85843a725be5b9eba587dab2fd8)
-- `06:19` **colab: fix wgpu compute typecode (u32->I), make shader-validate the P…** — +18 −7 — [`94a5612`](https://github.com/abgnydn/webgpu-dna/commit/94a56127249ae9fc52df9830a6bbb74e08c368b0)
-- `03:27` **chore: gitignore __pycache__ + drop accidentally committed .pyc** — +4 −0 — [`5670805`](https://github.com/abgnydn/webgpu-dna/commit/5670805bac09a8b3027d7453b08e16a666b1c4e4)
-- `03:27` **colab: real-GPU WebGPU attempt + shader validation via wgpu-py** — +213 −0 — [`1a066e5`](https://github.com/abgnydn/webgpu-dna/commit/1a066e5e59306e64bebad5a46dbe3c7367fe14d3)
-- `03:15` **ci: stage webgpu-smoke workflow under ci/ (token lacks workflow scope)** — +87 −1 — [`2b1ab11`](https://github.com/abgnydn/webgpu-dna/commit/2b1ab1186567edd89b8d15589ee2a919ce827b30)
-- `03:12` **ci: headless WebGPU smoke — run the real WGSL shaders on a software a…** — +143 −1 — [`1a7783f`](https://github.com/abgnydn/webgpu-dna/commit/1a7783f8d6017669c50f41626a7c387a6a73fcbb)
-- `03:03` **docs: close the remaining critique items (tunables, L5, perf, chem6, …** — +81 −13 — [`d43a618`](https://github.com/abgnydn/webgpu-dna/commit/d43a6181841d1840ef98035cced92b228e95ef5b)
-- `02:13` **test: add three CI guardrails against the recurring failure classes** — +219 −11 — [`1c9563b`](https://github.com/abgnydn/webgpu-dna/commit/1c9563bc8f34d0ee0d2c79007406a14651ebccae)
-- `01:47` **chore: apply the README + .gitignore Vercel removals** — +1 −7 — [`4d70594`](https://github.com/abgnydn/webgpu-dna/commit/4d705947582ba49be110d53e447f584a1ed52142)
-- `01:45` **chore: remove leftover Vercel config (production is Cloudflare Pages)** — +0 −11 — [`c43e796`](https://github.com/abgnydn/webgpu-dna/commit/c43e79606b19c3ec53f315faa288bfe55692ac2c)
-- `01:10` **docs: correct overstated claims, reconcile versions, add reproducibil…** — +107 −96 — [`71a9194`](https://github.com/abgnydn/webgpu-dna/commit/71a9194038ecf2a69b7573735a4d780f7e69bfeb)
-
-## 2026-06-10
-
-- `05:04` **experiment(E37): 100 keV proton ranges 2x too far (2.65 vs G4 1.2 / P…** — +16 −0 — [`d0921b7`](https://github.com/abgnydn/webgpu-dna/commit/d0921b767ba58e3f7ba57e636b0e504b70f5d94f)
-- `05:00` **experiment(E36): causal isolation — IRT engine is CORRECT; deficit is…** — +14858 −13 — [`5362833`](https://github.com/abgnydn/webgpu-dna/commit/5362833d36aebc65582c285fba025553a10f42ab)
