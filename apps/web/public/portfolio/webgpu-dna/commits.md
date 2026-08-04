@@ -1,5 +1,12 @@
 # Commits — webgpu-dna
 
+## 2026-08-04
+
+- `13:44` **feat(chem): collectOHrec + E40 explicit×chromatin offline replay scorer** — +204 −1 — [`b389f4a`](https://github.com/abgnydn/webgpu-dna/commit/b389f4af945cd3490eed263d812b8604f1484432)
+- `13:32` **docs(README): §Numbers SSB row — E39 explicit-channel reframe (5.74→1…** — +1 −1 — [`34775a9`](https://github.com/abgnydn/webgpu-dna/commit/34775a9aac3c0c47ed78185d267e18ee66922b79)
+- `13:30` **feat(chem): explicit OH+deoxyribose IRT reaction channel (Geant4-fait…** — +136 −4 — [`d9f2438`](https://github.com/abgnydn/webgpu-dna/commit/d9f24381fe536cf15d7c9eff07b7198b65aa0f0e)
+- `06:48` **research(E38): indirect-model saturation, not geometry, drives the ou…** — +25 −2 — [`ffd6827`](https://github.com/abgnydn/webgpu-dna/commit/ffd6827dd17c1c43c7145605998973ac5830100e)
+
 ## 2026-08-03
 
 - `13:46` **Merge pull request #17 from abgnydn/research/geant4-gap-findings** — +667 −9 — [`2381459`](https://github.com/abgnydn/webgpu-dna/commit/2381459a3a5dd964c4d3f2e833b54369115e3220)
@@ -66,10 +73,3 @@
 
 - `12:31` **fix(scoring): correct 10x strand-1 dose over-count in reference scorer** — +7 −3 — [`39632a3`](https://github.com/abgnydn/webgpu-dna/commit/39632a331d9f9e88771b7711835a98a45504d010)
 - `12:26` **docs: drop the test-count vanity metric** — +5 −16 — [`08b6070`](https://github.com/abgnydn/webgpu-dna/commit/08b60708af1074b836b9f35cc5cb0a085b41a379)
-
-## 2026-06-23
-
-- `08:34` **Merge pull request #1 from abgnydn/claude/nice-gauss-ssp1c4** — +1167 −154 — [`2135979`](https://github.com/abgnydn/webgpu-dna/commit/2135979189ae01957cc8eee8efba4588011542f7)
-- `07:47` **colab(phase-a): self-contained Vulkan install (loader + tools + produ…** — +8 −0 — [`411d298`](https://github.com/abgnydn/webgpu-dna/commit/411d298fc10e4c8f233699b3eb4a091a42f365f2)
-- `07:40` **colab: force WGPU_BACKEND_TYPE=Vulkan (GL backend can't do compute st…** — +17 −4 — [`c42be78`](https://github.com/abgnydn/webgpu-dna/commit/c42be785d82b2c63471a3c96b8f9ad7668c30a87)
-- `06:43` **colab: Phase A host port (wgpu-py) — real primaries on the T4** — +200 −0 — [`6d61662`](https://github.com/abgnydn/webgpu-dna/commit/6d61662cea906f148bbf44d9b2349791f8e998a0)

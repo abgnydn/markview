@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-08-03T21:07:23.667Z",
+  "generated_at": "2026-08-04T21:15:19.156Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1555,
+  "activity_90d_total": 1522,
   "activity_90d": {
-    "2026-05-06": 40,
     "2026-05-07": 28,
     "2026-05-08": 14,
     "2026-05-09": 12,
@@ -86,7 +85,8 @@
     "2026-07-31": 32,
     "2026-08-01": 1,
     "2026-08-02": 1,
-    "2026-08-03": 35
+    "2026-08-03": 36,
+    "2026-08-04": 6
   },
   "categories": {
     "llm-inference": {
@@ -294,7 +294,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 6,
+      "stale_days": 7,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505470"
@@ -357,7 +357,7 @@
       },
       "status": "flagship",
       "open_issues": 27,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20494382"
@@ -401,24 +401,24 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-08-03T18:06:23Z",
+      "pushed_at": "2026-08-03T21:07:26Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
       "commits_30d": 48,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "e64762721c4ae95734aa503002fc4bd127466c6d",
-        "short_sha": "e647627",
-        "message": "chore(portfolio): daily sync 2026-08-02",
+        "sha": "7ab3b958dd1d1e6d99e456d8d1a23d23679ba797",
+        "short_sha": "7ab3b95",
+        "message": "chore(portfolio): daily sync 2026-08-03",
         "type": "chore",
-        "date": "2026-08-02T20:59:37Z",
-        "url": "https://github.com/abgnydn/markview/commit/e64762721c4ae95734aa503002fc4bd127466c6d",
-        "additions": 72,
-        "deletions": 72
+        "date": "2026-08-03T21:07:23Z",
+        "url": "https://github.com/abgnydn/markview/commit/7ab3b958dd1d1e6d99e456d8d1a23d23679ba797",
+        "additions": 1077,
+        "deletions": 1028
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -467,7 +467,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 21,
+      "stale_days": 22,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506887"
@@ -517,7 +517,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 28,
+      "stale_days": 29,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20496086"
@@ -561,7 +561,7 @@
         "wgsl",
         "qwen3"
       ],
-      "pushed_at": "2026-08-03T13:49:43Z",
+      "pushed_at": "2026-08-04T08:14:50Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
       "commits_30d": 40,
@@ -629,7 +629,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 34,
+      "stale_days": 35,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -679,7 +679,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 9,
+      "stale_days": 10,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -731,7 +731,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -788,7 +788,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 69,
+      "stale_days": 70,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -838,7 +838,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 39,
+      "stale_days": 40,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -872,20 +872,20 @@
       "language_color": "#1a5e9a",
       "stars": 3,
       "topics": [],
-      "pushed_at": "2026-08-03T13:46:37Z",
+      "pushed_at": "2026-08-04T13:44:51Z",
       "default_branch": "main",
       "latest_tag": "v0.7.0",
-      "commits_30d": 43,
+      "commits_30d": 47,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "2381459a3a5dd964c4d3f2e833b54369115e3220",
-        "short_sha": "2381459",
-        "message": "Merge pull request #17 from abgnydn/research/geant4-gap-findings",
-        "type": "other",
-        "date": "2026-08-03T13:46:31Z",
-        "url": "https://github.com/abgnydn/webgpu-dna/commit/2381459a3a5dd964c4d3f2e833b54369115e3220",
-        "additions": 667,
-        "deletions": 9
+        "sha": "b389f4af945cd3490eed263d812b8604f1484432",
+        "short_sha": "b389f4a",
+        "message": "feat(chem): collectOHrec + E40 explicit×chromatin offline replay scorer",
+        "type": "feat",
+        "date": "2026-08-04T13:44:48Z",
+        "url": "https://github.com/abgnydn/webgpu-dna/commit/b389f4af945cd3490eed263d812b8604f1484432",
+        "additions": 204,
+        "deletions": 1
       },
       "status": "flagship",
       "open_issues": 0,
@@ -937,7 +937,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 69,
+      "stale_days": 70,
       "live_ok": false,
       "has_citation": false,
       "citation_doi": null
@@ -997,7 +997,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 77,
+      "stale_days": 78,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1048,7 +1048,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 54,
+      "stale_days": 55,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1095,7 +1095,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 0,
+      "stale_days": 1,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": null
@@ -1143,7 +1143,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 21,
+      "stale_days": 22,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505472"
@@ -1177,20 +1177,20 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-08-03T13:42:23Z",
+      "pushed_at": "2026-08-04T13:44:56Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 35,
-      "commits_synced": 46,
+      "commits_30d": 37,
+      "commits_synced": 48,
       "last_commit": {
-        "sha": "53d5ce0b8ba38ae281bddc8804b24978ae0200da",
-        "short_sha": "53d5ce0",
-        "message": "docs: record the engine-vs-ORT result and the T4 limitation",
-        "type": "docs",
-        "date": "2026-08-03T13:42:21Z",
-        "url": "https://github.com/abgnydn/draw-instant/commit/53d5ce0b8ba38ae281bddc8804b24978ae0200da",
-        "additions": 48,
-        "deletions": 0
+        "sha": "5e4281fe2b71c822011b74bf52070e0943c9c0b2",
+        "short_sha": "5e4281f",
+        "message": "feat(scope-nodes): read the op graph over the wire, not the whole model",
+        "type": "feat",
+        "date": "2026-08-04T13:44:54Z",
+        "url": "https://github.com/abgnydn/draw-instant/commit/5e4281fe2b71c822011b74bf52070e0943c9c0b2",
+        "additions": 29,
+        "deletions": 6
       },
       "status": "experiment",
       "open_issues": 0,
@@ -1246,7 +1246,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 6,
+      "stale_days": 7,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19344276"
@@ -1297,7 +1297,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 6,
+      "stale_days": 7,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -1347,7 +1347,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 39,
+      "stale_days": 40,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1397,7 +1397,7 @@
       },
       "status": "derivative",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1446,7 +1446,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 66,
+      "stale_days": 67,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1495,7 +1495,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 74,
+      "stale_days": 75,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1545,7 +1545,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 75,
+      "stale_days": 76,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1595,7 +1595,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 76,
+      "stale_days": 77,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1644,7 +1644,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 76,
+      "stale_days": 77,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1692,7 +1692,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 76,
+      "stale_days": 77,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1742,7 +1742,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 76,
+      "stale_days": 77,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1792,7 +1792,7 @@
       },
       "status": "library",
       "open_issues": 1,
-      "stale_days": 80,
+      "stale_days": 81,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1841,7 +1841,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 91,
+      "stale_days": 92,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1905,7 +1905,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 91,
+      "stale_days": 92,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1964,7 +1964,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 91,
+      "stale_days": 92,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2014,7 +2014,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 91,
+      "stale_days": 92,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2064,7 +2064,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 91,
+      "stale_days": 92,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2114,7 +2114,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 98,
+      "stale_days": 99,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -2161,7 +2161,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 124,
+      "stale_days": 125,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2212,7 +2212,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 128,
+      "stale_days": 129,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2261,7 +2261,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 128,
+      "stale_days": 129,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2313,7 +2313,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 128,
+      "stale_days": 129,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2364,13 +2364,104 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 137,
+      "stale_days": 138,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "draw-instant",
+      "name": "draw-instant",
+      "language": "JavaScript",
+      "sha": "5e4281fe2b71c822011b74bf52070e0943c9c0b2",
+      "short_sha": "5e4281f",
+      "message": "feat(scope-nodes): read the op graph over the wire, not the whole model",
+      "type": "feat",
+      "date": "2026-08-04T13:44:54Z",
+      "url": "https://github.com/abgnydn/draw-instant/commit/5e4281fe2b71c822011b74bf52070e0943c9c0b2",
+      "additions": 29,
+      "deletions": 6
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "b389f4af945cd3490eed263d812b8604f1484432",
+      "short_sha": "b389f4a",
+      "message": "feat(chem): collectOHrec + E40 explicit×chromatin offline replay scorer",
+      "type": "feat",
+      "date": "2026-08-04T13:44:48Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/b389f4af945cd3490eed263d812b8604f1484432",
+      "additions": 204,
+      "deletions": 1
+    },
+    {
+      "slug": "draw-instant",
+      "name": "draw-instant",
+      "language": "JavaScript",
+      "sha": "6d24d013c93e57b9feb493cbd4e3b154742d1d46",
+      "short_sha": "6d24d01",
+      "message": "feat(executor): memory-traffic counter, and it cancels the quantisati…",
+      "type": "feat",
+      "date": "2026-08-04T13:34:57Z",
+      "url": "https://github.com/abgnydn/draw-instant/commit/6d24d013c93e57b9feb493cbd4e3b154742d1d46",
+      "additions": 71,
+      "deletions": 0
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "34775a9aac3c0c47ed78185d267e18ee66922b79",
+      "short_sha": "34775a9",
+      "message": "docs(README): §Numbers SSB row — E39 explicit-channel reframe (5.74→1…",
+      "type": "docs",
+      "date": "2026-08-04T13:32:17Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/34775a9aac3c0c47ed78185d267e18ee66922b79",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "d9f24381fe536cf15d7c9eff07b7198b65aa0f0e",
+      "short_sha": "d9f2438",
+      "message": "feat(chem): explicit OH+deoxyribose IRT reaction channel (Geant4-fait…",
+      "type": "feat",
+      "date": "2026-08-04T13:30:25Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/d9f24381fe536cf15d7c9eff07b7198b65aa0f0e",
+      "additions": 136,
+      "deletions": 4
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "ffd6827dd17c1c43c7145605998973ac5830100e",
+      "short_sha": "ffd6827",
+      "message": "research(E38): indirect-model saturation, not geometry, drives the ou…",
+      "type": "research",
+      "date": "2026-08-04T06:48:32Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/ffd6827dd17c1c43c7145605998973ac5830100e",
+      "additions": 25,
+      "deletions": 2
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "7ab3b958dd1d1e6d99e456d8d1a23d23679ba797",
+      "short_sha": "7ab3b95",
+      "message": "chore(portfolio): daily sync 2026-08-03",
+      "type": "chore",
+      "date": "2026-08-03T21:07:23Z",
+      "url": "https://github.com/abgnydn/markview/commit/7ab3b958dd1d1e6d99e456d8d1a23d23679ba797",
+      "additions": 1077,
+      "deletions": 1028
+    },
     {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
@@ -5492,19 +5583,6 @@
       "deletions": 26
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
-      "short_sha": "afcc4a7",
-      "message": "chore(portfolio): daily sync 2026-07-03",
-      "type": "chore",
-      "date": "2026-07-03T21:11:14Z",
-      "url": "https://github.com/abgnydn/markview/commit/afcc4a7cc7c026ba7632e4cee2cc85da23e5ce6b",
-      "additions": 255,
-      "deletions": 193
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -6181,19 +6259,6 @@
       "deletions": 5
     },
     {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "2135979189ae01957cc8eee8efba4588011542f7",
-      "short_sha": "2135979",
-      "message": "Merge pull request #1 from abgnydn/claude/nice-gauss-ssp1c4",
-      "type": "other",
-      "date": "2026-06-23T08:34:04Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/2135979189ae01957cc8eee8efba4588011542f7",
-      "additions": 1167,
-      "deletions": 154
-    },
-    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -6218,32 +6283,6 @@
       "url": "https://github.com/abgnydn/zero-tvm/commit/35955bd3e2ff50a6cca69bf42c774aae73613300",
       "additions": 22,
       "deletions": 14
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "411d298fc10e4c8f233699b3eb4a091a42f365f2",
-      "short_sha": "411d298",
-      "message": "colab(phase-a): self-contained Vulkan install (loader + tools + produ…",
-      "type": "other",
-      "date": "2026-06-23T07:47:23Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/411d298fc10e4c8f233699b3eb4a091a42f365f2",
-      "additions": 8,
-      "deletions": 0
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "c42be785d82b2c63471a3c96b8f9ad7668c30a87",
-      "short_sha": "c42be78",
-      "message": "colab: force WGPU_BACKEND_TYPE=Vulkan (GL backend can't do compute st…",
-      "type": "other",
-      "date": "2026-06-23T07:40:24Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/c42be785d82b2c63471a3c96b8f9ad7668c30a87",
-      "additions": 17,
-      "deletions": 4
     },
     {
       "slug": "draw-instant",
@@ -6309,19 +6348,6 @@
       "url": "https://github.com/abgnydn/draw-instant/commit/00fed60a63921505fc9ec45add44673ea265cbe3",
       "additions": 41,
       "deletions": 16
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "6d61662cea906f148bbf44d9b2349791f8e998a0",
-      "short_sha": "6d61662",
-      "message": "colab: Phase A host port (wgpu-py) — real primaries on the T4",
-      "type": "other",
-      "date": "2026-06-23T06:43:20Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/6d61662cea906f148bbf44d9b2349791f8e998a0",
-      "additions": 200,
-      "deletions": 0
     },
     {
       "slug": "draw-instant",
@@ -8843,32 +8869,6 @@
       "date": "2026-05-26T06:29:32Z",
       "url": "https://github.com/abgnydn/postnet-cf/commit/35a2c70a983e29c1482b1b6c29542dd1f0f2bf09",
       "additions": 16,
-      "deletions": 1
-    },
-    {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "c19fddffeccb66ceb912ca1a3f96e75ef126f6e8",
-      "short_sha": "c19fddf",
-      "message": "phase 31: tiered fraud-detection windows for char-LM",
-      "type": "other",
-      "date": "2026-05-26T06:23:56Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/c19fddffeccb66ceb912ca1a3f96e75ef126f6e8",
-      "additions": 18,
-      "deletions": 9
-    },
-    {
-      "slug": "panel",
-      "name": "panel",
-      "language": "Python",
-      "sha": "d7bf288f9d1c356b9045db3e7076d45267d18143",
-      "short_sha": "d7bf288",
-      "message": "Bump cache SCHEMA_VERSION v4 → v5 to invalidate stale rebuttals",
-      "type": "other",
-      "date": "2026-05-26T06:12:04Z",
-      "url": "https://github.com/abgnydn/panel/commit/d7bf288f9d1c356b9045db3e7076d45267d18143",
-      "additions": 1,
       "deletions": 1
     }
   ],

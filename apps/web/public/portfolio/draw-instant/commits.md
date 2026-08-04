@@ -1,5 +1,10 @@
 # Commits — draw-instant
 
+## 2026-08-04
+
+- `13:44` **feat(scope-nodes): read the op graph over the wire, not the whole model** — +29 −6 — [`5e4281f`](https://github.com/abgnydn/draw-instant/commit/5e4281fe2b71c822011b74bf52070e0943c9c0b2)
+- `13:34` **feat(executor): memory-traffic counter, and it cancels the quantisati…** — +71 −0 — [`6d24d01`](https://github.com/abgnydn/draw-instant/commit/6d24d013c93e57b9feb493cbd4e3b154742d1d46)
+
 ## 2026-08-03
 
 - `13:42` **docs: record the engine-vs-ORT result and the T4 limitation** — +48 −0 — [`53d5ce0`](https://github.com/abgnydn/draw-instant/commit/53d5ce0b8ba38ae281bddc8804b24978ae0200da)
