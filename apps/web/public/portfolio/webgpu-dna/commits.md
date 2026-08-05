@@ -1,5 +1,11 @@
 # Commits — webgpu-dna
 
+## 2026-08-05
+
+- `07:14` **feat(app): ship the explicit OH+deoxyribose channel as the default → …** — +21 −7 — [`3758a0a`](https://github.com/abgnydn/webgpu-dna/commit/3758a0aad6a9c9384021af02f4ff9438b3064551)
+- `07:06` **fix(chem): widen explicit dnaReactQuery to complete search → on-line …** — +16 −7 — [`ab7c7e0`](https://github.com/abgnydn/webgpu-dna/commit/ab7c7e089e944d6996092eea3e379fa5e46e3df1)
+- `06:14` **research(E40): explicit channel × folded chromatin — faithful model l…** — +51 −6 — [`3e958a5`](https://github.com/abgnydn/webgpu-dna/commit/3e958a5de1f8ce5cc770c83363d69663ad610f18)
+
 ## 2026-08-04
 
 - `13:44` **feat(chem): collectOHrec + E40 explicit×chromatin offline replay scorer** — +204 −1 — [`b389f4a`](https://github.com/abgnydn/webgpu-dna/commit/b389f4af945cd3490eed263d812b8604f1484432)
@@ -64,12 +70,3 @@
 - `05:38` **fix(chem): correct sign of Onsager radius in the non-production IRT b…** — +8 −3 — [`77b6641`](https://github.com/abgnydn/webgpu-dna/commit/77b664102b9ea06147102bdd2cb8898fd3461da1)
 - `05:34` **feat(gpu): device-lost recovery, buffer reclamation, and np clamping** — +63 −11 — [`6c2d06a`](https://github.com/abgnydn/webgpu-dna/commit/6c2d06abff2aa43d582e01af7bd763eb5eb1fa9f)
 - `05:24` **fix(scoring): correct direct-SSB over-count in the production scorer** — +139 −17 — [`da81c05`](https://github.com/abgnydn/webgpu-dna/commit/da81c05d0eac4253e80077c4e3a24961edb520cf)
-
-## 2026-07-02
-
-- `07:20` **ci: activate headless WebGPU smoke workflow** — +22 −20 — [`257ee9c`](https://github.com/abgnydn/webgpu-dna/commit/257ee9c39e15d9dc79a2f630750e0d64007777ec)
-
-## 2026-07-01
-
-- `12:31` **fix(scoring): correct 10x strand-1 dose over-count in reference scorer** — +7 −3 — [`39632a3`](https://github.com/abgnydn/webgpu-dna/commit/39632a331d9f9e88771b7711835a98a45504d010)
-- `12:26` **docs: drop the test-count vanity metric** — +5 −16 — [`08b6070`](https://github.com/abgnydn/webgpu-dna/commit/08b60708af1074b836b9f35cc5cb0a085b41a379)

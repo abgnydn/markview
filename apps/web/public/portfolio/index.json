@@ -1,10 +1,9 @@
 {
-  "generated_at": "2026-08-04T21:15:19.156Z",
+  "generated_at": "2026-08-05T21:14:42.824Z",
   "project_count": 41,
   "river_count": 500,
-  "activity_90d_total": 1522,
+  "activity_90d_total": 1553,
   "activity_90d": {
-    "2026-05-07": 28,
     "2026-05-08": 14,
     "2026-05-09": 12,
     "2026-05-11": 26,
@@ -82,11 +81,12 @@
     "2026-07-28": 76,
     "2026-07-29": 9,
     "2026-07-30": 9,
-    "2026-07-31": 32,
+    "2026-07-31": 35,
     "2026-08-01": 1,
     "2026-08-02": 1,
-    "2026-08-03": 36,
-    "2026-08-04": 6
+    "2026-08-03": 49,
+    "2026-08-04": 20,
+    "2026-08-05": 29
   },
   "categories": {
     "llm-inference": {
@@ -280,7 +280,7 @@
       "pushed_at": "2026-07-28T09:58:53Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 6,
+      "commits_30d": 1,
       "commits_synced": 50,
       "last_commit": {
         "sha": "7eb2500f97f6091d60015786218719b27a768e93",
@@ -294,7 +294,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 7,
+      "stale_days": 8,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505470"
@@ -343,7 +343,7 @@
       "pushed_at": "2026-08-03T10:04:22Z",
       "default_branch": "main",
       "latest_tag": "v0.12.0",
-      "commits_30d": 28,
+      "commits_30d": 24,
       "commits_synced": 50,
       "last_commit": {
         "sha": "413e76d5ac4ee074db2a4adbf667e64ebf782553",
@@ -357,7 +357,7 @@
       },
       "status": "flagship",
       "open_issues": 27,
-      "stale_days": 1,
+      "stale_days": 2,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20494382"
@@ -401,24 +401,24 @@
         "tauri",
         "vite"
       ],
-      "pushed_at": "2026-08-03T21:07:26Z",
+      "pushed_at": "2026-08-04T21:15:20Z",
       "default_branch": "main",
       "latest_tag": "desktop-v0.3.0",
-      "commits_30d": 48,
+      "commits_30d": 49,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "7ab3b958dd1d1e6d99e456d8d1a23d23679ba797",
-        "short_sha": "7ab3b95",
-        "message": "chore(portfolio): daily sync 2026-08-03",
+        "sha": "3a6e8f9b07ffa46c77efb88c1dd5b8a38173096f",
+        "short_sha": "3a6e8f9",
+        "message": "chore(portfolio): daily sync 2026-08-04",
         "type": "chore",
-        "date": "2026-08-03T21:07:23Z",
-        "url": "https://github.com/abgnydn/markview/commit/7ab3b958dd1d1e6d99e456d8d1a23d23679ba797",
-        "additions": 1077,
-        "deletions": 1028
+        "date": "2026-08-04T21:15:19Z",
+        "url": "https://github.com/abgnydn/markview/commit/3a6e8f9b07ffa46c77efb88c1dd5b8a38173096f",
+        "additions": 180,
+        "deletions": 175
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 0,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -467,7 +467,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 22,
+      "stale_days": 23,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20506887"
@@ -503,7 +503,7 @@
       "pushed_at": "2026-07-06T07:19:14Z",
       "default_branch": "master",
       "latest_tag": "v0.4.2",
-      "commits_30d": 2,
+      "commits_30d": 0,
       "commits_synced": 50,
       "last_commit": {
         "sha": "4d74c50122b0d20080b1f3fedf008665298e24b3",
@@ -517,7 +517,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 29,
+      "stale_days": 30,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20496086"
@@ -561,20 +561,20 @@
         "wgsl",
         "qwen3"
       ],
-      "pushed_at": "2026-08-04T08:14:50Z",
+      "pushed_at": "2026-08-05T15:08:41Z",
       "default_branch": "main",
       "latest_tag": "v0.2.0",
-      "commits_30d": 40,
+      "commits_30d": 50,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "9164c714c69ce78b868f99cde9bdf7327c49c587",
-        "short_sha": "9164c71",
-        "message": "Merge pull request #28 from abgnydn/fix-loading-overlay",
+        "sha": "0a45bb443969accbcda15b3fa9c234ebd4caf913",
+        "short_sha": "0a45bb4",
+        "message": "landing: say what it is, plainly",
         "type": "other",
-        "date": "2026-07-30T08:19:23Z",
-        "url": "https://github.com/abgnydn/zero-tvm/commit/9164c714c69ce78b868f99cde9bdf7327c49c587",
+        "date": "2026-08-05T15:08:28Z",
+        "url": "https://github.com/abgnydn/zero-tvm/commit/0a45bb443969accbcda15b3fa9c234ebd4caf913",
         "additions": 4,
-        "deletions": 1
+        "deletions": 6
       },
       "status": "flagship",
       "open_issues": 0,
@@ -629,7 +629,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 35,
+      "stale_days": 36,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -679,7 +679,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 10,
+      "stale_days": 11,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -731,7 +731,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -788,7 +788,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -838,7 +838,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 40,
+      "stale_days": 41,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -872,20 +872,20 @@
       "language_color": "#1a5e9a",
       "stars": 3,
       "topics": [],
-      "pushed_at": "2026-08-04T13:44:51Z",
+      "pushed_at": "2026-08-05T07:14:14Z",
       "default_branch": "main",
       "latest_tag": "v0.7.0",
-      "commits_30d": 47,
+      "commits_30d": 41,
       "commits_synced": 50,
       "last_commit": {
-        "sha": "b389f4af945cd3490eed263d812b8604f1484432",
-        "short_sha": "b389f4a",
-        "message": "feat(chem): collectOHrec + E40 explicit×chromatin offline replay scorer",
+        "sha": "3758a0aad6a9c9384021af02f4ff9438b3064551",
+        "short_sha": "3758a0a",
+        "message": "feat(app): ship the explicit OH+deoxyribose channel as the default → …",
         "type": "feat",
-        "date": "2026-08-04T13:44:48Z",
-        "url": "https://github.com/abgnydn/webgpu-dna/commit/b389f4af945cd3490eed263d812b8604f1484432",
-        "additions": 204,
-        "deletions": 1
+        "date": "2026-08-05T07:14:11Z",
+        "url": "https://github.com/abgnydn/webgpu-dna/commit/3758a0aad6a9c9384021af02f4ff9438b3064551",
+        "additions": 21,
+        "deletions": 7
       },
       "status": "flagship",
       "open_issues": 0,
@@ -937,7 +937,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 70,
+      "stale_days": 71,
       "live_ok": false,
       "has_citation": false,
       "citation_doi": null
@@ -997,7 +997,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 78,
+      "stale_days": 79,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1048,7 +1048,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 55,
+      "stale_days": 56,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1095,7 +1095,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 1,
+      "stale_days": 2,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": null
@@ -1143,7 +1143,7 @@
       },
       "status": "flagship",
       "open_issues": 0,
-      "stale_days": 22,
+      "stale_days": 23,
       "live_ok": null,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.20505472"
@@ -1177,20 +1177,20 @@
       "language_color": "#f1e05a",
       "stars": 0,
       "topics": [],
-      "pushed_at": "2026-08-04T13:44:56Z",
+      "pushed_at": "2026-08-05T01:47:54Z",
       "default_branch": "master",
       "latest_tag": null,
-      "commits_30d": 37,
-      "commits_synced": 48,
+      "commits_30d": 38,
+      "commits_synced": 49,
       "last_commit": {
-        "sha": "5e4281fe2b71c822011b74bf52070e0943c9c0b2",
-        "short_sha": "5e4281f",
-        "message": "feat(scope-nodes): read the op graph over the wire, not the whole model",
-        "type": "feat",
-        "date": "2026-08-04T13:44:54Z",
-        "url": "https://github.com/abgnydn/draw-instant/commit/5e4281fe2b71c822011b74bf52070e0943c9c0b2",
-        "additions": 29,
-        "deletions": 6
+        "sha": "c7471f96a7df604473c44df59c5085916c9c2f0c",
+        "short_sha": "c7471f9",
+        "message": "fix(unet): unblock node 10, fuse the U-Net's GroupNorms, fail loudly …",
+        "type": "fix",
+        "date": "2026-08-05T01:47:52Z",
+        "url": "https://github.com/abgnydn/draw-instant/commit/c7471f96a7df604473c44df59c5085916c9c2f0c",
+        "additions": 118,
+        "deletions": 3
       },
       "status": "experiment",
       "open_issues": 0,
@@ -1246,7 +1246,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 7,
+      "stale_days": 8,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19344276"
@@ -1297,7 +1297,7 @@
       },
       "status": "paper-artifact",
       "open_issues": 0,
-      "stale_days": 7,
+      "stale_days": 8,
       "live_ok": true,
       "has_citation": true,
       "citation_doi": "10.5281/zenodo.19331833"
@@ -1347,7 +1347,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 40,
+      "stale_days": 41,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1397,7 +1397,7 @@
       },
       "status": "derivative",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1446,7 +1446,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 67,
+      "stale_days": 68,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1495,7 +1495,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 75,
+      "stale_days": 76,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -1545,7 +1545,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 76,
+      "stale_days": 77,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1595,7 +1595,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 77,
+      "stale_days": 78,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1644,7 +1644,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 77,
+      "stale_days": 78,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1692,7 +1692,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 77,
+      "stale_days": 78,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1742,7 +1742,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 77,
+      "stale_days": 78,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1792,7 +1792,7 @@
       },
       "status": "library",
       "open_issues": 1,
-      "stale_days": 81,
+      "stale_days": 82,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1841,7 +1841,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 92,
+      "stale_days": 93,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1905,7 +1905,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 92,
+      "stale_days": 93,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -1964,7 +1964,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 92,
+      "stale_days": 93,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2014,7 +2014,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 92,
+      "stale_days": 93,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2064,7 +2064,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 92,
+      "stale_days": 93,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2114,7 +2114,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 99,
+      "stale_days": 100,
       "live_ok": true,
       "has_citation": false,
       "citation_doi": null
@@ -2161,7 +2161,7 @@
       },
       "status": "library",
       "open_issues": 0,
-      "stale_days": 125,
+      "stale_days": 126,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2212,7 +2212,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 129,
+      "stale_days": 130,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2261,7 +2261,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 129,
+      "stale_days": 130,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2313,7 +2313,7 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 129,
+      "stale_days": 130,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
@@ -2364,13 +2364,455 @@
       },
       "status": "experiment",
       "open_issues": 0,
-      "stale_days": 138,
+      "stale_days": 139,
       "live_ok": null,
       "has_citation": false,
       "citation_doi": null
     }
   ],
   "commits": [
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "0a45bb443969accbcda15b3fa9c234ebd4caf913",
+      "short_sha": "0a45bb4",
+      "message": "landing: say what it is, plainly",
+      "type": "other",
+      "date": "2026-08-05T15:08:28Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/0a45bb443969accbcda15b3fa9c234ebd4caf913",
+      "additions": 4,
+      "deletions": 6
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "b5875959b5fc25ffd0fa2c09e821c63cdc5d70d6",
+      "short_sha": "b587595",
+      "message": "fix(deploy-space): git-lfs actually engages now — -q is not a git-lfs…",
+      "type": "fix",
+      "date": "2026-08-05T14:35:09Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/b5875959b5fc25ffd0fa2c09e821c63cdc5d70d6",
+      "additions": 9,
+      "deletions": 0
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "acf2bc22ff362a83b2aa55b4874c41a1e73e6165",
+      "short_sha": "acf2bc2",
+      "message": "Rebuild every surface around one rule: facts live in exactly one place",
+      "type": "other",
+      "date": "2026-08-05T14:20:05Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/acf2bc22ff362a83b2aa55b4874c41a1e73e6165",
+      "additions": 341,
+      "deletions": 813
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "d22f516e7368b47596c75937575be7e749f68c8c",
+      "short_sha": "d22f516",
+      "message": "Merge site-refresh (PR #29) + surface Qwen3.6 everywhere",
+      "type": "other",
+      "date": "2026-08-05T12:59:34Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/d22f516e7368b47596c75937575be7e749f68c8c",
+      "additions": 278,
+      "deletions": 24
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "600c1c508c3cb1ea31035bd9c507a9e744a49d9a",
+      "short_sha": "600c1c5",
+      "message": "fix(qwen36q3): hfRepo is abgunaydin/… — the HF account, not the GitHu…",
+      "type": "fix",
+      "date": "2026-08-05T12:24:27Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/600c1c508c3cb1ea31035bd9c507a9e744a49d9a",
+      "additions": 2,
+      "deletions": 2
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "d602c9341e76b18b9167b643a672de5463d4aa93",
+      "short_sha": "d602c93",
+      "message": "Merge moe-affine-int4: Qwen3.6-35B-A3B — first MoE, MLX loader, 3-bit…",
+      "type": "other",
+      "date": "2026-08-05T12:07:47Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/d602c9341e76b18b9167b643a672de5463d4aa93",
+      "additions": 7899,
+      "deletions": 187
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "0cf4c22bf988ae0364d8fc27b714ac58a0713082",
+      "short_sha": "0cf4c22",
+      "message": "docs(qwen36): CLAUDE.md model section, changelog entry, measured rate…",
+      "type": "docs",
+      "date": "2026-08-05T12:07:12Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/0cf4c22bf988ae0364d8fc27b714ac58a0713082",
+      "additions": 59,
+      "deletions": 1
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "a69d749a7f782aea7e2cdf435d70ce47f251b5db",
+      "short_sha": "a69d749",
+      "message": "feat(qwen36): 3-bit experts — the 32 GB build. ?model=qwen36q3, answe…",
+      "type": "feat",
+      "date": "2026-08-05T11:48:36Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/a69d749a7f782aea7e2cdf435d70ce47f251b5db",
+      "additions": 346,
+      "deletions": 43
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "c8d1234e67dcd5c7f1211764a9b00d51bc1747b3",
+      "short_sha": "c8d1234",
+      "message": "perf(qwen36): KV budget 3072 -> 384 pages — headroom beats context on…",
+      "type": "perf",
+      "date": "2026-08-05T11:18:13Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/c8d1234e67dcd5c7f1211764a9b00d51bc1747b3",
+      "additions": 7,
+      "deletions": 4
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "29d1c99b9e3f45cf6aa33dfa920681c22d72bb07",
+      "short_sha": "29d1c99",
+      "message": "fix(validate): MoE specs boot with subgroup variants on the default path",
+      "type": "fix",
+      "date": "2026-08-05T10:47:53Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/29d1c99b9e3f45cf6aa33dfa920681c22d72bb07",
+      "additions": 12,
+      "deletions": 2
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "ef603fdbf63f43b8e5fa8b29bbb540e9047fe7e7",
+      "short_sha": "ef603fd",
+      "message": "fix(chat): single-pass warmup for MoE specs",
+      "type": "fix",
+      "date": "2026-08-05T10:40:23Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/ef603fdbf63f43b8e5fa8b29bbb540e9047fe7e7",
+      "additions": 8,
+      "deletions": 6
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "edbe73d3f2c1014e61a4738eb8bcc4adb32920fa",
+      "short_sha": "edbe73d",
+      "message": "fix(chat): the pipeline warmup is now visible in the boot log",
+      "type": "fix",
+      "date": "2026-08-05T10:30:42Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/edbe73d3f2c1014e61a4738eb8bcc4adb32920fa",
+      "additions": 10,
+      "deletions": 3
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "5735fa4f66e2e7231df0751312bb2881fae21343",
+      "short_sha": "5735fa4",
+      "message": "test(qwen36): manual start button on the smoke page — decode was gate…",
+      "type": "test",
+      "date": "2026-08-05T10:22:27Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/5735fa4f66e2e7231df0751312bb2881fae21343",
+      "additions": 7,
+      "deletions": 4
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "63885a2e216dec12a85cc88a079e1eecd4eb5732",
+      "short_sha": "63885a2",
+      "message": "docs(qwen36): honest RAM requirement in the gate + the decode-thrash …",
+      "type": "docs",
+      "date": "2026-08-05T10:11:17Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/63885a2e216dec12a85cc88a079e1eecd4eb5732",
+      "additions": 64,
+      "deletions": 4
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "65f5d48031b44b04e757205a57f5d3968e2af96b",
+      "short_sha": "65f5d48",
+      "message": "feat(qwen36): the model runs end to end — correct logits, matching ml…",
+      "type": "feat",
+      "date": "2026-08-05T09:41:02Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/65f5d48031b44b04e757205a57f5d3968e2af96b",
+      "additions": 558,
+      "deletions": 46
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "887e942ac02df665b19924db7df331d1b4295bb7",
+      "short_sha": "887e942",
+      "message": "feat(qwen36): wire the MoE block into the decode loop, with guards th…",
+      "type": "feat",
+      "date": "2026-08-05T08:18:34Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/887e942ac02df665b19924db7df331d1b4295bb7",
+      "additions": 266,
+      "deletions": 24
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "addb2660fe6c25b9fa4e8b8f05f98c8d7dd189c4",
+      "short_sha": "addb266",
+      "message": "feat(qwen36): compile the MoE + affine pipelines, and make matmul res…",
+      "type": "feat",
+      "date": "2026-08-05T07:49:39Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/addb2660fe6c25b9fa4e8b8f05f98c8d7dd189c4",
+      "additions": 144,
+      "deletions": 5
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "f6bdfa599d11c7cc8c60cc56eade7f0dd40639c3",
+      "short_sha": "f6bdfa5",
+      "message": "feat(qwen36): affine embedding kernel, the three missing int4 variant…",
+      "type": "feat",
+      "date": "2026-08-05T07:44:20Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/f6bdfa599d11c7cc8c60cc56eade7f0dd40639c3",
+      "additions": 198,
+      "deletions": 28
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "fb22400efe197b3921c6df4332530260d21b6478",
+      "short_sha": "fb22400",
+      "message": "test(qwen36): the whole decoder layer against mlx_lm's DecoderLayer",
+      "type": "test",
+      "date": "2026-08-05T07:22:38Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/fb22400efe197b3921c6df4332530260d21b6478",
+      "additions": 233,
+      "deletions": 2
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "5a7c469de40022f37b374a2aa68ec88193be004a",
+      "short_sha": "5a7c469",
+      "message": "feat(qwen36): ModelSpec + MLX safetensors repacker, byte-verified aga…",
+      "type": "feat",
+      "date": "2026-08-05T07:15:38Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/5a7c469de40022f37b374a2aa68ec88193be004a",
+      "additions": 597,
+      "deletions": 19
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "3758a0aad6a9c9384021af02f4ff9438b3064551",
+      "short_sha": "3758a0a",
+      "message": "feat(app): ship the explicit OH+deoxyribose channel as the default → …",
+      "type": "feat",
+      "date": "2026-08-05T07:14:11Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/3758a0aad6a9c9384021af02f4ff9438b3064551",
+      "additions": 21,
+      "deletions": 7
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "ab7c7e089e944d6996092eea3e379fa5e46e3df1",
+      "short_sha": "ab7c7e0",
+      "message": "fix(chem): widen explicit dnaReactQuery to complete search → on-line …",
+      "type": "fix",
+      "date": "2026-08-05T07:06:42Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/ab7c7e089e944d6996092eea3e379fa5e46e3df1",
+      "additions": 16,
+      "deletions": 7
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "460f136f49accc698871f3a5248686cda2b6e1c9",
+      "short_sha": "460f136",
+      "message": "test(qwen36): layer 3's gated attention against mlx_lm — both layer t…",
+      "type": "test",
+      "date": "2026-08-05T07:02:42Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/460f136f49accc698871f3a5248686cda2b6e1c9",
+      "additions": 166,
+      "deletions": 3
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "8099ce9c124110b587a2f1b4cc10a6bd0550567d",
+      "short_sha": "8099ce9",
+      "message": "test(qwen36): layer 0's GDN sub-block against mlx_lm's own module",
+      "type": "test",
+      "date": "2026-08-05T06:57:34Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/8099ce9c124110b587a2f1b4cc10a6bd0550567d",
+      "additions": 408,
+      "deletions": 10
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "5eb94a036091c93c221b05f2eeb0f68c0ad25811",
+      "short_sha": "5eb94a0",
+      "message": "refactor(int4): affine variant reads MLX's bias verbatim, not 7*scale…",
+      "type": "refactor",
+      "date": "2026-08-05T06:34:36Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/5eb94a036091c93c221b05f2eeb0f68c0ad25811",
+      "additions": 38,
+      "deletions": 28
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "57ea241819f2bb10831dd2208cd558cf8adf6c95",
+      "short_sha": "57ea241",
+      "message": "perf(moe): 2.3x on the MoE block — parallel router, one stack, 6 disp…",
+      "type": "perf",
+      "date": "2026-08-05T06:29:07Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/57ea241819f2bb10831dd2208cd558cf8adf6c95",
+      "additions": 337,
+      "deletions": 236
+    },
+    {
+      "slug": "webgpu-dna",
+      "name": "webgpu-dna",
+      "language": "WGSL",
+      "sha": "3e958a5de1f8ce5cc770c83363d69663ad610f18",
+      "short_sha": "3e958a5",
+      "message": "research(E40): explicit channel × folded chromatin — faithful model l…",
+      "type": "research",
+      "date": "2026-08-05T06:14:37Z",
+      "url": "https://github.com/abgnydn/webgpu-dna/commit/3e958a5de1f8ce5cc770c83363d69663ad610f18",
+      "additions": 51,
+      "deletions": 6
+    },
+    {
+      "slug": "draw-instant",
+      "name": "draw-instant",
+      "language": "JavaScript",
+      "sha": "c7471f96a7df604473c44df59c5085916c9c2f0c",
+      "short_sha": "c7471f9",
+      "message": "fix(unet): unblock node 10, fuse the U-Net's GroupNorms, fail loudly …",
+      "type": "fix",
+      "date": "2026-08-05T01:47:52Z",
+      "url": "https://github.com/abgnydn/draw-instant/commit/c7471f96a7df604473c44df59c5085916c9c2f0c",
+      "additions": 118,
+      "deletions": 3
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "d83cb533ff126f1e0d4752fcfc17d564db2adab5",
+      "short_sha": "d83cb53",
+      "message": "docs(tests): the node kernel harness cannot measure time — ~100 ms pe…",
+      "type": "docs",
+      "date": "2026-08-05T01:31:07Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/d83cb533ff126f1e0d4752fcfc17d564db2adab5",
+      "additions": 7,
+      "deletions": 0
+    },
+    {
+      "slug": "markview",
+      "name": "markview",
+      "language": "TypeScript",
+      "sha": "3a6e8f9b07ffa46c77efb88c1dd5b8a38173096f",
+      "short_sha": "3a6e8f9",
+      "message": "chore(portfolio): daily sync 2026-08-04",
+      "type": "chore",
+      "date": "2026-08-04T21:15:19Z",
+      "url": "https://github.com/abgnydn/markview/commit/3a6e8f9b07ffa46c77efb88c1dd5b8a38173096f",
+      "additions": 180,
+      "deletions": 175
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "cc4f308e5985e7c0838f4c9bfe81f29b8b8a4620",
+      "short_sha": "cc4f308",
+      "message": "perf(moe): expert index as a grid dimension — 37 dispatches per block…",
+      "type": "perf",
+      "date": "2026-08-04T15:08:57Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/cc4f308e5985e7c0838f4c9bfe81f29b8b8a4620",
+      "additions": 166,
+      "deletions": 162
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "b62c774e6cc46814f6d47bc7f6363f12dd742f80",
+      "short_sha": "b62c774",
+      "message": "feat(moe): complete MoE block on GPU — router, experts, shared expert",
+      "type": "feat",
+      "date": "2026-08-04T14:20:06Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/b62c774e6cc46814f6d47bc7f6363f12dd742f80",
+      "additions": 310,
+      "deletions": 13
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "37b280d84a4d99c9e0d3135447b74afe53310eca",
+      "short_sha": "37b280d",
+      "message": "feat(moe): routed expert path running on GPU, validated against MLX's…",
+      "type": "feat",
+      "date": "2026-08-04T13:54:48Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/37b280d84a4d99c9e0d3135447b74afe53310eca",
+      "additions": 211,
+      "deletions": 5
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "dfe70f92f5076f71ac2825129149ba70554a5d89",
+      "short_sha": "dfe70f9",
+      "message": "test(int4): cover the subgroup, tiled and f32 affine variants",
+      "type": "test",
+      "date": "2026-08-04T13:45:29Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/dfe70f92f5076f71ac2825129149ba70554a5d89",
+      "additions": 32,
+      "deletions": 2
+    },
     {
       "slug": "draw-instant",
       "name": "draw-instant",
@@ -2396,6 +2838,19 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/b389f4af945cd3490eed263d812b8604f1484432",
       "additions": 204,
       "deletions": 1
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "24eea5544902e3b1a00da25cb6650ee74acfa986",
+      "short_sha": "24eea55",
+      "message": "feat(int4): affine (MLX) quantization variant + real-weight kernel va…",
+      "type": "feat",
+      "date": "2026-08-04T13:40:39Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/24eea5544902e3b1a00da25cb6650ee74acfa986",
+      "additions": 249,
+      "deletions": 14
     },
     {
       "slug": "draw-instant",
@@ -2437,6 +2892,97 @@
       "deletions": 4
     },
     {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "a5c22c81b223ce237eb82912ad0f09197e12549b",
+      "short_sha": "a5c22c8",
+      "message": "docs(1599): the bug is already fixed upstream — reframe the comment e…",
+      "type": "docs",
+      "date": "2026-08-04T08:14:48Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/a5c22c81b223ce237eb82912ad0f09197e12549b",
+      "additions": 50,
+      "deletions": 84
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "f00c78465911bfde5053af181cfbd8f5bc139edb",
+      "short_sha": "f00c784",
+      "message": "docs(1599): build the chunk-level Scan and measure it — 11-13x on WebGPU",
+      "type": "docs",
+      "date": "2026-08-04T07:57:48Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/f00c78465911bfde5053af181cfbd8f5bc139edb",
+      "additions": 143,
+      "deletions": 6
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "746214b3f5efe939335345740df69103b85476b6",
+      "short_sha": "746214b",
+      "message": "docs(1599): test the \"just trace the chunked function\" theory — it fails",
+      "type": "docs",
+      "date": "2026-08-04T07:26:48Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/746214b3f5efe939335345740df69103b85476b6",
+      "additions": 154,
+      "deletions": 23
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "069426bdc47f1cbec46b54655ac2a1329495b23f",
+      "short_sha": "069426b",
+      "message": "docs(1599): name the fix — HF's own chunked fallback, on the wrong br…",
+      "type": "docs",
+      "date": "2026-08-04T07:18:21Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/069426bdc47f1cbec46b54655ac2a1329495b23f",
+      "additions": 23,
+      "deletions": 5
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "2856f10e8b4f00f872203fb3f148b33bbb4aec82",
+      "short_sha": "2856f10",
+      "message": "docs(1599): rewrite the comment so it reads like a person wrote it",
+      "type": "docs",
+      "date": "2026-08-04T07:07:38Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/2856f10e8b4f00f872203fb3f148b33bbb4aec82",
+      "additions": 47,
+      "deletions": 110
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "12ea44642a42eccfd78784986b831854e781cfb0",
+      "short_sha": "12ea446",
+      "message": "docs(1599): don't assert an untested negative about ORT #27780",
+      "type": "docs",
+      "date": "2026-08-04T06:57:46Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/12ea44642a42eccfd78784986b831854e781cfb0",
+      "additions": 16,
+      "deletions": 6
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "72ed840bb67c9e951b1d76f6b7feed02fa37a063",
+      "short_sha": "72ed840",
+      "message": "docs(1599): measure the Scan's share properly — ablation, in situ: 91…",
+      "type": "docs",
+      "date": "2026-08-04T06:52:02Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/72ed840bb67c9e951b1d76f6b7feed02fa37a063",
+      "additions": 194,
+      "deletions": 34
+    },
+    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -2450,6 +2996,19 @@
       "deletions": 2
     },
     {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "fd336b07d643e6e0328c99f98551be506d0f112e",
+      "short_sha": "fd336b0",
+      "message": "docs(1599): the clean measurement refutes my own method — no percenta…",
+      "type": "docs",
+      "date": "2026-08-04T06:42:23Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/fd336b07d643e6e0328c99f98551be506d0f112e",
+      "additions": 105,
+      "deletions": 3
+    },
+    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -2461,6 +3020,19 @@
       "url": "https://github.com/abgnydn/markview/commit/7ab3b958dd1d1e6d99e456d8d1a23d23679ba797",
       "additions": 1077,
       "deletions": 1028
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "b1751b518a055e1a66eccb7f90e661872b4e39b5",
+      "short_sha": "b1751b5",
+      "message": "docs(1599): confirm on a live Colab T4 — CUDA EP will not initialise,…",
+      "type": "docs",
+      "date": "2026-08-03T13:49:41Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/b1751b518a055e1a66eccb7f90e661872b4e39b5",
+      "additions": 42,
+      "deletions": 36
     },
     {
       "slug": "webgpu-dna",
@@ -2500,6 +3072,32 @@
       "url": "https://github.com/abgnydn/draw-instant/commit/53d5ce0b8ba38ae281bddc8804b24978ae0200da",
       "additions": 48,
       "deletions": 0
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "910938a1e735a5c5f9b2239615743e0ee5dd02e6",
+      "short_sha": "910938a",
+      "message": "docs(1599): stop swallowing the pip failure that made \"GPU\" runs sile…",
+      "type": "docs",
+      "date": "2026-08-03T13:34:59Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/910938a1e735a5c5f9b2239615743e0ee5dd02e6",
+      "additions": 60,
+      "deletions": 37
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "6fa605f7c8102d811734a22f2d459f2c10c02a37",
+      "short_sha": "6fa605f",
+      "message": "docs(1599): report the ACTIVE execution provider, not the requested one",
+      "type": "docs",
+      "date": "2026-08-03T12:29:26Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/6fa605f7c8102d811734a22f2d459f2c10c02a37",
+      "additions": 49,
+      "deletions": 32
     },
     {
       "slug": "webgpu-dna",
@@ -2578,6 +3176,19 @@
       "url": "https://github.com/abgnydn/draw-instant/commit/e36cfd6d8c07845e7d543fdabde56f0aed7215f6",
       "additions": 46,
       "deletions": 3
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "fb5350a684d35e34a8ef3993c364c24dcb737a93",
+      "short_sha": "fb5350a",
+      "message": "docs(1599): make the Colab GPU path actually runnable — fix install c…",
+      "type": "docs",
+      "date": "2026-08-03T11:54:19Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/fb5350a684d35e34a8ef3993c364c24dcb737a93",
+      "additions": 61,
+      "deletions": 41
     },
     {
       "slug": "webgpu-dna",
@@ -2671,6 +3282,19 @@
       "deletions": 2
     },
     {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "986ac7bf4ca01c930ae50033318fb76695c00179",
+      "short_sha": "986ac7b",
+      "message": "docs(1599): add Colab appendix that measures provider assignment and …",
+      "type": "docs",
+      "date": "2026-08-03T10:28:28Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/986ac7bf4ca01c930ae50033318fb76695c00179",
+      "additions": 209,
+      "deletions": 27
+    },
+    {
       "slug": "webgpu-dna",
       "name": "webgpu-dna",
       "language": "WGSL",
@@ -2682,6 +3306,19 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/5589180000ad52f73ebc6463edd9807057892a00",
       "additions": 78,
       "deletions": 4
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "5e3f6d28a41e56c970b7a6342257dcfd75ae11e7",
+      "short_sha": "5e3f6d2",
+      "message": "docs(1599): same-session full-model vs isolated Scan — one clean run,…",
+      "type": "docs",
+      "date": "2026-08-03T10:19:13Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/5e3f6d28a41e56c970b7a6342257dcfd75ae11e7",
+      "additions": 76,
+      "deletions": 0
     },
     {
       "slug": "draw-instant",
@@ -2710,6 +3347,19 @@
       "deletions": 26
     },
     {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "14723c39e612306832944ec51702a226444cd6f8",
+      "short_sha": "14723c3",
+      "message": "docs(1599): re-verify on the ORT-web build transformers.js 4.2.0 actu…",
+      "type": "docs",
+      "date": "2026-08-03T10:00:37Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/14723c39e612306832944ec51702a226444cd6f8",
+      "additions": 69,
+      "deletions": 56
+    },
+    {
       "slug": "webgpu-fly",
       "name": "webgpu-fly",
       "language": "TypeScript",
@@ -2734,6 +3384,32 @@
       "url": "https://github.com/abgnydn/webgpu-fly/commit/a69202618d1c079293d1e97f0244e52901b0cd05",
       "additions": 183,
       "deletions": 82
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "5f80ce116dac26736b857c329306a3b72824acea",
+      "short_sha": "5f80ce1",
+      "message": "docs(1599): measure the Scan's share of prefill — it's most of it",
+      "type": "docs",
+      "date": "2026-08-03T08:24:48Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/5f80ce116dac26736b857c329306a3b72824acea",
+      "additions": 143,
+      "deletions": 10
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "28183819c876d8493fd27a229f4e095ce06cce35",
+      "short_sha": "2818381",
+      "message": "docs(1599): measure that WebGPU can't run the Scan — it falls back to…",
+      "type": "docs",
+      "date": "2026-08-03T08:01:18Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/28183819c876d8493fd27a229f4e095ce06cce35",
+      "additions": 225,
+      "deletions": 3
     },
     {
       "slug": "webgpu-fly",
@@ -2775,6 +3451,19 @@
       "deletions": 0
     },
     {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "4d50458267d78dab82b4dfd6b456702788db7d84",
+      "short_sha": "4d50458",
+      "message": "docs(1599): measure that the runtime really does execute the Scan per…",
+      "type": "docs",
+      "date": "2026-08-03T07:13:48Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/4d50458267d78dab82b4dfd6b456702788db7d84",
+      "additions": 213,
+      "deletions": 15
+    },
+    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -2786,6 +3475,19 @@
       "url": "https://github.com/abgnydn/draw-instant/commit/e33bad88d6c64d3c9419f5f2ee6f46c68c9b3d78",
       "additions": 334,
       "deletions": 3
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "bcc08a04e7de67f4020c8328c6988155bdeae49d",
+      "short_sha": "bcc08a0",
+      "message": "docs(1599): fill in the verified Colab link",
+      "type": "docs",
+      "date": "2026-08-03T06:50:31Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/bcc08a04e7de67f4020c8328c6988155bdeae49d",
+      "additions": 5,
+      "deletions": 2
     },
     {
       "slug": "webgpu-fly",
@@ -2825,6 +3527,19 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/d096eb3fc7a26c3d936d55509aeaf75fdc712ecd",
       "additions": 3,
       "deletions": 2
+    },
+    {
+      "slug": "zero-tvm",
+      "name": "zero-tvm",
+      "language": "WGSL",
+      "sha": "192fc842c158549247a783257526d93e610099d7",
+      "short_sha": "192fc84",
+      "message": "docs(1599): make the Scan finding reproducible in Colab, drop unverif…",
+      "type": "docs",
+      "date": "2026-08-03T06:43:59Z",
+      "url": "https://github.com/abgnydn/zero-tvm/commit/192fc842c158549247a783257526d93e610099d7",
+      "additions": 310,
+      "deletions": 57
     },
     {
       "slug": "webgpu-q",
@@ -3412,71 +4127,6 @@
       "deletions": 70
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "9164c714c69ce78b868f99cde9bdf7327c49c587",
-      "short_sha": "9164c71",
-      "message": "Merge pull request #28 from abgnydn/fix-loading-overlay",
-      "type": "other",
-      "date": "2026-07-30T08:19:23Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/9164c714c69ce78b868f99cde9bdf7327c49c587",
-      "additions": 4,
-      "deletions": 1
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "93a130915bdfecaaaf14da77a5ba153bd567f615",
-      "short_sha": "93a1309",
-      "message": "fix(chat): the loading overlay was never visible — every visitor watc…",
-      "type": "fix",
-      "date": "2026-07-30T08:17:14Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/93a130915bdfecaaaf14da77a5ba153bd567f615",
-      "additions": 4,
-      "deletions": 1
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "ff548e51c6ec2ac037de137895422e95989e90e6",
-      "short_sha": "ff548e5",
-      "message": "Merge pull request #27 from abgnydn/fix-bench-v2",
-      "type": "other",
-      "date": "2026-07-30T07:08:55Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/ff548e51c6ec2ac037de137895422e95989e90e6",
-      "additions": 1069,
-      "deletions": 232
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "369aa7a3cdc081b46cecb640bcdadba89ad5e0f3",
-      "short_sha": "369aa7a",
-      "message": "fix(bench): correct a measurement defect, withdraw two pairs, republi…",
-      "type": "fix",
-      "date": "2026-07-30T07:06:36Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/369aa7a3cdc081b46cecb640bcdadba89ad5e0f3",
-      "additions": 778,
-      "deletions": 194
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "cad4e08896ceb5bdcef07e189635b108ad019c0c",
-      "short_sha": "cad4e08",
-      "message": "fix(chat): per-model context budgets + derived reply cap",
-      "type": "fix",
-      "date": "2026-07-30T06:13:40Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/cad4e08896ceb5bdcef07e189635b108ad019c0c",
-      "additions": 291,
-      "deletions": 38
-    },
-    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -3490,110 +4140,6 @@
       "deletions": 230
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "f5669635e477f606f69d5ce07932857f54ff05b8",
-      "short_sha": "f566963",
-      "message": "Merge pull request #26 from abgnydn/space-card-refresh",
-      "type": "other",
-      "date": "2026-07-29T09:13:08Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/f5669635e477f606f69d5ce07932857f54ff05b8",
-      "additions": 2,
-      "deletions": 2
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "895a501a5525e0737c70ed9daa389125dcb28482",
-      "short_sha": "895a501",
-      "message": "docs(space): refresh the HF Space card to the current measured pairs",
-      "type": "docs",
-      "date": "2026-07-29T09:11:20Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/895a501a5525e0737c70ed9daa389125dcb28482",
-      "additions": 2,
-      "deletions": 2
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "1fd54b3d395628adad70a410675d8712aed57033",
-      "short_sha": "1fd54b3",
-      "message": "Merge pull request #25 from abgnydn/qwen3-tuning",
-      "type": "other",
-      "date": "2026-07-29T08:09:17Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/1fd54b3d395628adad70a410675d8712aed57033",
-      "additions": 715,
-      "deletions": 144
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "43a5e99edc34f587db473c034377e753b75968cc",
-      "short_sha": "43a5e99",
-      "message": "perf(qwen3): fused qk_norm+rope+append kernel + K%512 vec4 — 75.74 to…",
-      "type": "perf",
-      "date": "2026-07-29T08:07:08Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/43a5e99edc34f587db473c034377e753b75968cc",
-      "additions": 715,
-      "deletions": 144
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "49c3c144f033742e1d90d23642db5717f766453d",
-      "short_sha": "49c3c14",
-      "message": "Merge pull request #24 from abgnydn/prefill-reuse",
-      "type": "other",
-      "date": "2026-07-29T07:32:41Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/49c3c144f033742e1d90d23642db5717f766453d",
-      "additions": 1739,
-      "deletions": 52
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "209673467b9be4429cbd99006dc081f68caa5cd7",
-      "short_sha": "2096734",
-      "message": "perf: chunked GDN prefill (3x) + cross-turn prefix reuse (TTFT 15s ->…",
-      "type": "perf",
-      "date": "2026-07-29T07:30:33Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/209673467b9be4429cbd99006dc081f68caa5cd7",
-      "additions": 1739,
-      "deletions": 52
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "305595dbfefa3505c45eca6c98581abaea9e3c57",
-      "short_sha": "305595d",
-      "message": "Merge pull request #23 from abgnydn/hybrid-perf",
-      "type": "other",
-      "date": "2026-07-29T05:34:32Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/305595dbfefa3505c45eca6c98581abaea9e3c57",
-      "additions": 336,
-      "deletions": 123
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "099787d51b472419806de476c92828eaea5afc87",
-      "short_sha": "099787d",
-      "message": "perf(qwen35): GDN projection fusion 4->1 + no-replay blocking decode …",
-      "type": "perf",
-      "date": "2026-07-29T05:32:23Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/099787d51b472419806de476c92828eaea5afc87",
-      "additions": 336,
-      "deletions": 123
-    },
-    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -3605,45 +4151,6 @@
       "url": "https://github.com/abgnydn/markview/commit/ea2229ead2cb85db314e1b4632233d3b88f2c292",
       "additions": 6328,
       "deletions": 5528
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "7a6614442bef6ff4688347cd61c6e8702f9a0307",
-      "short_sha": "7a66144",
-      "message": "Merge pull request #22 from abgnydn/qwen35",
-      "type": "other",
-      "date": "2026-07-28T13:38:28Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/7a6614442bef6ff4688347cd61c6e8702f9a0307",
-      "additions": 2537,
-      "deletions": 136
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "9e75b8786e9a74458f2ba7232c48f565816666e6",
-      "short_sha": "9e75b87",
-      "message": "feat(qwen35): measured +50% vs WebLLM 0.2.84 on the hybrid; docs acro…",
-      "type": "feat",
-      "date": "2026-07-28T13:36:09Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/9e75b8786e9a74458f2ba7232c48f565816666e6",
-      "additions": 225,
-      "deletions": 37
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "1adcc56aa96ffe2b0bd1ed87dad197e99d9f43b4",
-      "short_sha": "1adcc56",
-      "message": "feat(qwen35): end-to-end hybrid wiring — ?model=qwen35 generates corr…",
-      "type": "feat",
-      "date": "2026-07-28T13:13:43Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/1adcc56aa96ffe2b0bd1ed87dad197e99d9f43b4",
-      "additions": 529,
-      "deletions": 85
     },
     {
       "slug": "draw-instant",
@@ -3672,19 +4179,6 @@
       "deletions": 0
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "de0cfc34898f94865185617f8db9f1c713a768aa",
-      "short_sha": "de0cfc3",
-      "message": "feat(qwen35): gated-DeltaNet kernel family + CPU reference + 13-test …",
-      "type": "feat",
-      "date": "2026-07-28T12:41:41Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/de0cfc34898f94865185617f8db9f1c713a768aa",
-      "additions": 1787,
-      "deletions": 18
-    },
-    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -3696,32 +4190,6 @@
       "url": "https://github.com/abgnydn/draw-instant/commit/f535cd63981b053b8f9957c00fa6ecfa45f9672f",
       "additions": 9,
       "deletions": 9
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "fa66a8fde738180cdc32c784dd41be12debd8112",
-      "short_sha": "fa66a8f",
-      "message": "Merge pull request #21 from abgnydn/harden-downloads",
-      "type": "other",
-      "date": "2026-07-28T10:13:57Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/fa66a8fde738180cdc32c784dd41be12debd8112",
-      "additions": 438,
-      "deletions": 61
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "8c2b9af51850260bc323976611a7a5e177ea714c",
-      "short_sha": "8c2b9af",
-      "message": "fix(loader): survive mid-stream HTTP2 resets — retry body reads, Rang…",
-      "type": "fix",
-      "date": "2026-07-28T10:11:48Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/8c2b9af51850260bc323976611a7a5e177ea714c",
-      "additions": 438,
-      "deletions": 61
     },
     {
       "slug": "neuropulse",
@@ -3748,32 +4216,6 @@
       "url": "https://github.com/abgnydn/webgpu-dna/commit/bed5c3f8e1de626897c43dceb26bd6a969707aa3",
       "additions": 13,
       "deletions": 11
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "e49e7b3a18de33e87dfba9dfa2cc712239a8d602",
-      "short_sha": "e49e7b3",
-      "message": "Merge pull request #20 from abgnydn/fix-gate-stats",
-      "type": "other",
-      "date": "2026-07-28T09:49:01Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/e49e7b3a18de33e87dfba9dfa2cc712239a8d602",
-      "additions": 6,
-      "deletions": 4
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "4a47049b2f93e6f36b3988951cba4d30ca661588",
-      "short_sha": "4a47049",
-      "message": "fix(chat): gate dialog throughput stat is model-aware — Qwen showed P…",
-      "type": "fix",
-      "date": "2026-07-28T09:47:03Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/4a47049b2f93e6f36b3988951cba4d30ca661588",
-      "additions": 6,
-      "deletions": 4
     },
     {
       "slug": "webgpu-dna",
@@ -3893,58 +4335,6 @@
       "deletions": 3
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "95074c67d29ac473a176687f4aaa020c59eb8b8e",
-      "short_sha": "95074c6",
-      "message": "Merge pull request #19 from abgnydn/qwen-site-docs",
-      "type": "other",
-      "date": "2026-07-28T09:24:43Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/95074c67d29ac473a176687f4aaa020c59eb8b8e",
-      "additions": 58,
-      "deletions": 3
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "f03946b3b5bba5d005d5944f8a6b65ab84a3305e",
-      "short_sha": "f03946b",
-      "message": "docs: surface the Qwen3-4B port on landing page, docs page, and HF Sp…",
-      "type": "docs",
-      "date": "2026-07-28T09:23:06Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/f03946b3b5bba5d005d5944f8a6b65ab84a3305e",
-      "additions": 58,
-      "deletions": 3
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "db0b787750d0eb32d3c121f140960c8ff9da1a40",
-      "short_sha": "db0b787",
-      "message": "Merge pull request #18 from abgnydn/qwen3",
-      "type": "other",
-      "date": "2026-07-28T09:13:15Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/db0b787750d0eb32d3c121f140960c8ff9da1a40",
-      "additions": 4288,
-      "deletions": 564
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "2acc36032630f40c50bdb78d6fee008e60eeb748",
-      "short_sha": "2acc360",
-      "message": "feat(qwen3): same-weights A/B vs WebLLM (+80%), Qwen e2e, honest docs",
-      "type": "feat",
-      "date": "2026-07-28T09:10:55Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/2acc36032630f40c50bdb78d6fee008e60eeb748",
-      "additions": 338,
-      "deletions": 23
-    },
-    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -3982,19 +4372,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/2e289daf65bed3e49127b97ab4f9c32390c92469",
       "additions": 7,
       "deletions": 0
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "d3ed34be2bc5cb324f9286198fcc34ec645ab8ed",
-      "short_sha": "d3ed34b",
-      "message": "fix(qwen3): request adapter buffer limits in browser boot — first wor…",
-      "type": "fix",
-      "date": "2026-07-28T08:54:47Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/d3ed34be2bc5cb324f9286198fcc34ec645ab8ed",
-      "additions": 25,
-      "deletions": 1
     },
     {
       "slug": "draw-instant",
@@ -4062,32 +4439,6 @@
       "deletions": 0
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "2870e7e53f07c1b8adb4dab622d0f2fa184c31d9",
-      "short_sha": "2870e7e",
-      "message": "feat(qwen3): end-to-end wiring — ?model=qwen3 on chat + validate",
-      "type": "feat",
-      "date": "2026-07-28T08:44:00Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/2870e7e53f07c1b8adb4dab622d0f2fa184c31d9",
-      "additions": 325,
-      "deletions": 84
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "50d216f30887cf5dd9e42b3a0d081e4f5834f26c",
-      "short_sha": "50d216f",
-      "message": "feat(qwen3): GQA-correct kernels + QK-norm + Qwen correctness suite (…",
-      "type": "feat",
-      "date": "2026-07-28T08:24:55Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/50d216f30887cf5dd9e42b3a0d081e4f5834f26c",
-      "additions": 1414,
-      "deletions": 313
-    },
-    {
       "slug": "webgpu-transformer-fusion",
       "name": "webgpu-transformer-fusion",
       "language": "JavaScript",
@@ -4125,19 +4476,6 @@
       "url": "https://github.com/abgnydn/webgpu-kernel-fusion/commit/6b4608a20b5e6e53094ef0274bd5bfd68307e624",
       "additions": 41,
       "deletions": 2
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "ab13fc38dcac7e64d413e99fe44055ca805dc34b",
-      "short_sha": "ab13fc3",
-      "message": "feat(qwen3): model-spec parameterized engine + Qwen byte-level BPE to…",
-      "type": "feat",
-      "date": "2026-07-28T07:31:55Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/ab13fc38dcac7e64d413e99fe44055ca805dc34b",
-      "additions": 2260,
-      "deletions": 217
     },
     {
       "slug": "webgpu-fly",
@@ -4322,32 +4660,6 @@
       "deletions": 99
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "df687cc76b62f332fdad26942a49adda70589804",
-      "short_sha": "df687cc",
-      "message": "Merge pull request #17 from abgnydn/sync-numbers-everywhere",
-      "type": "other",
-      "date": "2026-07-28T06:28:14Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/df687cc76b62f332fdad26942a49adda70589804",
-      "additions": 277,
-      "deletions": 59
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "2705188648797ee8812fbeb8daac725d586af445",
-      "short_sha": "2705188",
-      "message": "chore: single-source bench numbers everywhere + HF Space auto-deploy",
-      "type": "chore",
-      "date": "2026-07-28T06:26:28Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/2705188648797ee8812fbeb8daac725d586af445",
-      "additions": 277,
-      "deletions": 59
-    },
-    {
       "slug": "webgpu-fly",
       "name": "webgpu-fly",
       "language": "TypeScript",
@@ -4478,19 +4790,6 @@
       "deletions": 29
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "5f3abcf2f4b744a09cd09a435cb7c61b8e882981",
-      "short_sha": "5f3abcf",
-      "message": "Merge pull request #16 from abgnydn/max-improvements",
-      "type": "other",
-      "date": "2026-07-28T06:13:30Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/5f3abcf2f4b744a09cd09a435cb7c61b8e882981",
-      "additions": 100539,
-      "deletions": 4062
-    },
-    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -4569,19 +4868,6 @@
       "deletions": 1
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "9a16cae4cbcf13ed0b4a9893426f014cd5904f96",
-      "short_sha": "9a16cae",
-      "message": "feat: split-K default after long-context A/B; e2e suite green end-to-end",
-      "type": "feat",
-      "date": "2026-07-28T06:07:32Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/9a16cae4cbcf13ed0b4a9893426f014cd5904f96",
-      "additions": 107,
-      "deletions": 53
-    },
-    {
       "slug": "markview",
       "name": "markview",
       "language": "TypeScript",
@@ -4645,19 +4931,6 @@
       "url": "https://github.com/abgnydn/markview/commit/6a6726c8fde147fb4a5abe266e5271d63c31aa24",
       "additions": 287,
       "deletions": 286
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "5cd288d6031e88e71fe632b2f7dec6069e0787e4",
-      "short_sha": "5cd288d",
-      "message": "perf: vec4 loads default-on (+7% measured); new headline — 28% faster…",
-      "type": "perf",
-      "date": "2026-07-25T07:51:44Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/5cd288d6031e88e71fe632b2f7dec6069e0787e4",
-      "additions": 408,
-      "deletions": 244
     },
     {
       "slug": "gpubench",
@@ -4855,19 +5128,6 @@
       "deletions": 140
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "12e696ce21ed208aa5c249661d827fc79c810c2d",
-      "short_sha": "12e696c",
-      "message": "fix(shaders): barrier after cross-iteration score_reduce read in atte…",
-      "type": "fix",
-      "date": "2026-07-24T08:43:14Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/12e696ce21ed208aa5c249661d827fc79c810c2d",
-      "additions": 10,
-      "deletions": 0
-    },
-    {
       "slug": "gpubench",
       "name": "gpubench",
       "language": "TypeScript",
@@ -4879,71 +5139,6 @@
       "url": "https://github.com/abgnydn/gpubench/commit/d5cabe90681d121bcdeefe58dac87e1c3cedf9af",
       "additions": 10750,
       "deletions": 4365
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "713dccb2d0f8541d85be6f232ab9eb958f011464",
-      "short_sha": "713dccb",
-      "message": "feat(perf): three opt-in experiments — vec4 loads, split-K attention,…",
-      "type": "feat",
-      "date": "2026-07-24T06:51:12Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/713dccb2d0f8541d85be6f232ab9eb958f011464",
-      "additions": 1606,
-      "deletions": 46
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "4eea2f4c1df4a9adaf02dbac1446bc631b842802",
-      "short_sha": "4eea2f4",
-      "message": "refactor(engine): one decode engine — chat.ts becomes a thin page module",
-      "type": "refactor",
-      "date": "2026-07-24T06:19:19Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/4eea2f4c1df4a9adaf02dbac1446bc631b842802",
-      "additions": 1419,
-      "deletions": 2002
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "7a1df37ac67703bb25a4e6f040ea533bb8144922",
-      "short_sha": "7a1df37",
-      "message": "refactor(shaders): named constants from one PHI3 source + int4_matmul…",
-      "type": "refactor",
-      "date": "2026-07-24T05:47:57Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/7a1df37ac67703bb25a4e6f040ea533bb8144922",
-      "additions": 1142,
-      "deletions": 1639
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "8434845e83adafbbece319dbaf449bc1f8002dba",
-      "short_sha": "8434845",
-      "message": "test: real CI verification — kernel job, tokenizer rewrite + 116 unit…",
-      "type": "test",
-      "date": "2026-07-24T05:19:44Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/8434845e83adafbbece319dbaf449bc1f8002dba",
-      "additions": 95934,
-      "deletions": 261
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "c753ac4fc4cf1b32caa7c593942cbb699719dd26",
-      "short_sha": "c753ac4",
-      "message": "fix: correctness sweep — OPFS cache war, decode off-by-one, fused_ffn…",
-      "type": "fix",
-      "date": "2026-07-24T05:05:01Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/c753ac4fc4cf1b32caa7c593942cbb699719dd26",
-      "additions": 208,
-      "deletions": 112
     },
     {
       "slug": "markview",
@@ -5570,19 +5765,6 @@
       "deletions": 28
     },
     {
-      "slug": "markview",
-      "name": "markview",
-      "language": "TypeScript",
-      "sha": "4e01700f28e0c1b88b336641180888352a7cc99f",
-      "short_sha": "4e01700",
-      "message": "chore(portfolio): daily sync 2026-07-04",
-      "type": "chore",
-      "date": "2026-07-04T21:01:58Z",
-      "url": "https://github.com/abgnydn/markview/commit/4e01700f28e0c1b88b336641180888352a7cc99f",
-      "additions": 28,
-      "deletions": 26
-    },
-    {
       "slug": "iz",
       "name": "iz",
       "language": "HTML",
@@ -5700,19 +5882,6 @@
       "deletions": 0
     },
     {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "257ee9c39e15d9dc79a2f630750e0d64007777ec",
-      "short_sha": "257ee9c",
-      "message": "ci: activate headless WebGPU smoke workflow",
-      "type": "ci",
-      "date": "2026-07-02T07:20:14Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/257ee9c39e15d9dc79a2f630750e0d64007777ec",
-      "additions": 22,
-      "deletions": 20
-    },
-    {
       "slug": "neuropulse",
       "name": "neuropulse",
       "language": "TypeScript",
@@ -5723,32 +5892,6 @@
       "date": "2026-07-02T07:15:06Z",
       "url": "https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6",
       "additions": 15,
-      "deletions": 16
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "39632a331d9f9e88771b7711835a98a45504d010",
-      "short_sha": "39632a3",
-      "message": "fix(scoring): correct 10x strand-1 dose over-count in reference scorer",
-      "type": "fix",
-      "date": "2026-07-01T12:31:04Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/39632a331d9f9e88771b7711835a98a45504d010",
-      "additions": 7,
-      "deletions": 3
-    },
-    {
-      "slug": "webgpu-dna",
-      "name": "webgpu-dna",
-      "language": "WGSL",
-      "sha": "08b60708af1074b836b9f35cc5cb0a085b41a379",
-      "short_sha": "08b6070",
-      "message": "docs: drop the test-count vanity metric",
-      "type": "docs",
-      "date": "2026-07-01T12:26:42Z",
-      "url": "https://github.com/abgnydn/webgpu-dna/commit/08b60708af1074b836b9f35cc5cb0a085b41a379",
-      "additions": 5,
       "deletions": 16
     },
     {
@@ -6116,19 +6259,6 @@
       "deletions": 139
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "32406c88acc201694df83a4e22df64bf4391d380",
-      "short_sha": "32406c8",
-      "message": "docs: add Zenodo DOI badge + CITATION.cff identifier (#15)",
-      "type": "docs",
-      "date": "2026-06-25T03:44:30Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/32406c88acc201694df83a4e22df64bf4391d380",
-      "additions": 9,
-      "deletions": 9
-    },
-    {
       "slug": "webgpu-q",
       "name": "webgpu-q",
       "language": "TypeScript",
@@ -6140,19 +6270,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/5f6c436dbc262ee966dcc02c35d37cd2f2e8295b",
       "additions": 380,
       "deletions": 0
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "1c8ce0f03d6c8b7ad63fff508f2aeb91514a1eb4",
-      "short_sha": "1c8ce0f",
-      "message": "docs(zenodo): tighten deposit metadata for a clean DOI record (#14)",
-      "type": "docs",
-      "date": "2026-06-25T03:14:55Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/1c8ce0f03d6c8b7ad63fff508f2aeb91514a1eb4",
-      "additions": 2,
-      "deletions": 4
     },
     {
       "slug": "draw-instant",
@@ -6168,19 +6285,6 @@
       "deletions": 3
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "7f2d6f2c65524448a46a9c96208dc28e3907b94b",
-      "short_sha": "7f2d6f2",
-      "message": "chore: bump to 0.2.0 for a fresh release (#13)",
-      "type": "chore",
-      "date": "2026-06-25T03:05:44Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/7f2d6f2c65524448a46a9c96208dc28e3907b94b",
-      "additions": 37,
-      "deletions": 2
-    },
-    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -6192,32 +6296,6 @@
       "url": "https://github.com/abgnydn/draw-instant/commit/af2cdf96509b6d8fef2370d40717dbdf8cb6bfb2",
       "additions": 632,
       "deletions": 197
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "bda3f6777a3180bbeb20a7d6c48d67af789f0361",
-      "short_sha": "bda3f67",
-      "message": "docs: add Zenodo .zenodo.json + CITATION.cff for a citable DOI (#12)",
-      "type": "docs",
-      "date": "2026-06-25T03:02:29Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/bda3f6777a3180bbeb20a7d6c48d67af789f0361",
-      "additions": 64,
-      "deletions": 3
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "9bf9fef60d2fd55fd8a2d40a9eef2a9c285e6ffe",
-      "short_sha": "9bf9fef",
-      "message": "docs(readme): replace stale v1 screenshot with current hero (#11)",
-      "type": "docs",
-      "date": "2026-06-25T02:58:19Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/9bf9fef60d2fd55fd8a2d40a9eef2a9c285e6ffe",
-      "additions": 1,
-      "deletions": 1
     },
     {
       "slug": "draw-instant",
@@ -6233,32 +6311,6 @@
       "deletions": 1
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "dc21078010d280becd6f694d454a74f750383169",
-      "short_sha": "dc21078",
-      "message": "docs(readme): lead with the comparison table + headline number (#10)",
-      "type": "docs",
-      "date": "2026-06-25T02:47:06Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/dc21078010d280becd6f694d454a74f750383169",
-      "additions": 11,
-      "deletions": 15
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "9661b9ba351347c2c555ae569f6fdf20f0ee0b25",
-      "short_sha": "9661b9b",
-      "message": "docs(readme): fix stale main.ts ref, document test suite + bench (#9)",
-      "type": "docs",
-      "date": "2026-06-25T02:40:31Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/9661b9ba351347c2c555ae569f6fdf20f0ee0b25",
-      "additions": 17,
-      "deletions": 5
-    },
-    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -6272,19 +6324,6 @@
       "deletions": 7
     },
     {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "35955bd3e2ff50a6cca69bf42c774aae73613300",
-      "short_sha": "35955bd",
-      "message": "fix(bench): WebGPU adapter on T4 — disable Dawn adapter blocklist (#8)",
-      "type": "fix",
-      "date": "2026-06-23T07:47:30Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/35955bd3e2ff50a6cca69bf42c774aae73613300",
-      "additions": 22,
-      "deletions": 14
-    },
-    {
       "slug": "draw-instant",
       "name": "draw-instant",
       "language": "JavaScript",
@@ -6296,19 +6335,6 @@
       "url": "https://github.com/abgnydn/draw-instant/commit/1f21e16895e8c48e741b5df4e103d9429c7a70fc",
       "additions": 122,
       "deletions": 0
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "4b8f8334e1ade0f64c917b6ac56c6ece933443b2",
-      "short_sha": "4b8f833",
-      "message": "fix(bench): instrument boot to pinpoint the hang (#7)",
-      "type": "fix",
-      "date": "2026-06-23T07:06:08Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/4b8f8334e1ade0f64c917b6ac56c6ece933443b2",
-      "additions": 53,
-      "deletions": 11
     },
     {
       "slug": "draw-instant",
@@ -6413,19 +6439,6 @@
       "url": "https://github.com/abgnydn/webgpu-q/commit/60c1e1acca9b92e734e9e4cc3365f8f68c24dc97",
       "additions": 94,
       "deletions": 16
-    },
-    {
-      "slug": "zero-tvm",
-      "name": "zero-tvm",
-      "language": "WGSL",
-      "sha": "95e7e0386d67657fcc51294e211fc027577502a7",
-      "short_sha": "95e7e03",
-      "message": "fix(bench): bind dev server to 127.0.0.1 — Colab localhost/IPv6 timeo…",
-      "type": "fix",
-      "date": "2026-06-23T03:49:31Z",
-      "url": "https://github.com/abgnydn/zero-tvm/commit/95e7e0386d67657fcc51294e211fc027577502a7",
-      "additions": 12,
-      "deletions": 4
     },
     {
       "slug": "webgpu-q",
@@ -8857,19 +8870,6 @@
       "url": "https://github.com/abgnydn/postnet-cf/commit/dd723ae5483dea6ef690d277c407a5e8b42b2e6f",
       "additions": 33,
       "deletions": 3
-    },
-    {
-      "slug": "postnet-cf",
-      "name": "postnet-cf",
-      "language": "JavaScript",
-      "sha": "35a2c70a983e29c1482b1b6c29542dd1f0f2bf09",
-      "short_sha": "35a2c70",
-      "message": "phase 32: production finding — DO free-tier daily quota exhaustion",
-      "type": "other",
-      "date": "2026-05-26T06:29:32Z",
-      "url": "https://github.com/abgnydn/postnet-cf/commit/35a2c70a983e29c1482b1b6c29542dd1f0f2bf09",
-      "additions": 16,
-      "deletions": 1
     }
   ],
   "errors": []

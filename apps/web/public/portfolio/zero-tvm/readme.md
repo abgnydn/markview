@@ -1,203 +1,80 @@
-<img alt="Zero-TVM — run Phi-3 in the browser on 10 hand-written WGSL kernels (zerotvm.com)" src="docs/hero.png" />
+<img alt="Zero-TVM — LLMs up to a 35B sparse MoE in the browser on hand-written WGSL kernels (zerotvm.com)" src="docs/hero.png" />
 
 # Zero-TVM
 
 [![CI](https://github.com/abgnydn/zero-tvm/actions/workflows/ci.yml/badge.svg)](https://github.com/abgnydn/zero-tvm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Live](https://img.shields.io/badge/live-zerotvm.com-6ea8ff)](https://zerotvm.com)
-[![Bench](https://img.shields.io/badge/bench-vs%20WebLLM-orange)](./BENCH.md)
+[![Bench](https://img.shields.io/badge/bench-vs%20WebLLM%20%2B%20llama.cpp-orange)](./BENCH.md)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20838918.svg)](https://doi.org/10.5281/zenodo.20838918)
 
-**[zerotvm.com](https://zerotvm.com)**
+**[zerotvm.com](https://zerotvm.com)** — pick a model, it runs in your tab.
 
-**Phi-3-mini (3.8B) running in the browser on 10 hand-written WGSL kernels — measured +16% on total wall-clock throughput and +31% on decode against WebLLM on an Apple M2 Max, with no TVM, no compiler, and no WASM runtime.**
+Hand-written WebGPU inference. Models from a 3.8B dense to **Qwen3.6-35B-A3B —
+a 256-expert sparse MoE that no browser compiler stack ships a build of** —
+decode on ten hand-written WGSL kernel roles and ~2,000 lines of TypeScript.
+No WebLLM, no TVM, no ONNX, no WASM runtime. The whole forward pass —
+transformer layers, paged KV cache, int4/int3 dequant, gated DeltaNet, the
+sparse-MoE block, argmax — is readable end-to-end in one sitting. On the
+models WebLLM *does* ship, this engine measures faster on byte-identical
+weights; **every number, every protocol, and every withdrawn claim lives in
+[BENCH.md](BENCH.md)** — nothing is quoted here that a git pull could silently
+outdate.
 
-| | WebLLM (TVM) | Zero-TVM (this repo) |
-|---|---|---|
-| Total throughput, prefill + decode (M2 Max, same weights, same session) | **<!--bench:webllm-->60.0<!--/bench:webllm--> tok/s** | **<!--bench:zt-->69.55<!--/bench:zt--> tok/s** (**+16.0%**, 2026-07-30 — see [BENCH.md](BENCH.md)) |
-| Decode only, same pair | **63.2 tok/s** (self-reported) | **83.1 tok/s** (**+31.4%**) |
-| Time to first token, ~35-token prompt | **~150 ms** (implied) | **291 ms** — *WebLLM wins this one; see below* |
-| Unique WGSL kernels | **85** (autotuned) | **10 roles / 55 kernels** (37 .wgsl + 18 generated int4 variants) |
-| Total WGSL lines | **12,962** (generated) | **~2,150** hand-written + a 280-line readable generator |
-| Dispatches per decode step | **342** | **228** (f16 KV) / **260** (int8 KV) |
-| Runtime | TVM → WASM scheduler | Plain TypeScript, none |
-| Tokenizer | bundled from WebLLM | BPE from scratch (`tokenizer.ts`) |
-| JS bundle (chat page, excl. weights) | **5.9 MB** / 2.1 MB gz | **157 kB** / 33 kB gz |
+## Try it
 
-Same model, same quantized weights. [WebLLM / MLC-LLM](https://webllm.mlc.ai/) — the standard way to run a browser LLM — ships an Apache-TVM pipeline that emits 85 autotuned WGSL kernels driven from a WASM scheduler. This repo replaces that whole stack with **10 kernel roles (55 WGSL kernels — 37 hand-written files plus 18 int4-matmul variants emitted by a small readable generator, counting subgroup/tiled/int8 variants) and ~2,000 lines of TypeScript** (engine + tokenizer + weight loader) — and, as of the 2026-07-30 head-to-head, runs faster than it on the one machine measured. The whole forward pass — 32 transformer layers, paged KV cache, int4-dequant matmul, RoPE, fused FFN, RMSNorm, paged attention, argmax sampling — is readable end-to-end in a single sitting. That is the point.
+Open **[zerotvm.com](https://zerotvm.com)** and pick a model. Weights stream
+from HuggingFace once, then cache in your browser (OPFS); nothing ever leaves
+your machine. The shipped models — sizes, RAM requirements, `?model=` flags —
+are defined in
+[`src/zero-tvm/model-registry.ts`](src/zero-tvm/model-registry.ts). The site's
+model cards render from that table, so the code constant *is* the complete,
+current list.
 
-**Two numbers, always both.** *Total* is wall-clock throughput with prefill included — both engines doing identical work, the conservative figure. *Decode* excludes prefill and is the kernel-level figure. Quoting one without the other is cherry-picking, so this repo quotes both everywhere. (Until 2026-07-30 it quoted one blended number labelled "decode"; the bench harness had also stopped making our half pay prefill after cross-turn prefix reuse shipped, which invalidated two published Qwen comparisons. The defect, the fix, and the withdrawn pairs are written up at the top of [BENCH.md](BENCH.md).)
-
-## What's actually in the box
-
-Numbers above are measured from the source and build output in this repo; throughput varies by GPU, shows live in the chat UI, and the full head-to-head (methodology + raw runs) is in [BENCH.md](BENCH.md). Zero-TVM issues **fewer** dispatches than TVM because it fuses operations TVM's default pipeline doesn't:
-
-- `qkv_fused.wgsl` — Q/K/V projection + RoPE + paged-KV append, one dispatch per layer (was 3 in earlier revisions and in TVM's emission).
-- `attention.wgsl` — paged attention combined with the page-table read.
-- `fused_ffn.wgsl` — gate + up + SiLU in one pass.
-- `add_norm.wgsl` — residual add + RMSNorm in one pass.
-
-Counting note: "10 kernel roles" counts the default f16-KV decode path. By file
-basename there are 11 prefixes — the eleventh, `kv_quantize_int8.wgsl`, only
-runs on the opt-in `?kv8=1` int8-KV path.
-
-Every FLOP the model executes is in a file you can open. Every GPU buffer has a human label. Every dispatch is annotated in `src/zero-tvm/engine-core.ts` — the single decode engine that both the chat page and the validation page drive.
-
-## Why this might be interesting
-
-Hand-written GPU kernels usually lose significantly to an autotuning compiler. The claim this repo is designed to test is: **for a decoder-only LLM of this shape, most of the compiler's complexity budget isn't buying much.** The expensive parts are matmul, attention, and int4 dequant. Everything else is plumbing. ~10 kernels of plumbing, instead of 85.
-
-Measured result on an Apple M2 Max, Chrome 150, identical Phi-3-mini-q4f16_1 weights, same-session head-to-head (2026-07-30): **Zero-TVM is 16.0% faster on total wall-clock throughput and 31.4% faster on decode** than the autotuned compiler. Absolute tok/s drifts a lot with machine state — both engines moved together by ~10 tok/s between 2026-07-29 and 2026-07-30 with no code change on this path — so only same-session pairs mean anything; the current medians are in the table above and in [BENCH.md](BENCH.md), synced from `bench/results.json`. Full methodology and A/B results in [BENCH.md](BENCH.md), including three tile-variant experiments, a prompt-lookup speculative-decoding experiment, and an FFN-prologue-fusion experiment that were *falsified* by measurement rather than shipped. (An earlier measurement on an M2 Pro with an older, buggier engine put this repo 22% *behind* WebLLM — that history is preserved, not retconned, in BENCH.md.)
-
-**The advantage grows with how recent the architecture is** — the most interesting thing in the corrected round, and monotonic on both metrics:
-
-| Model | arch. released | Δ total | Δ decode |
-|---|---|---|---|
-| Phi-3-mini | 2024 | **+16.0%** | **+31.4%** |
-| Qwen3-4B | 2025 | **+31.7%** | **+58.0%** |
-| Qwen3.5-4B | 2026 | **+100.5%** | **+113.6%** |
-
-The reading that fits is that compiler stacks have had less time to tune newer architectures, so there is more room for a hand-written kernel set to take. That is an observation across three points on one machine on one day, not a proven law — no mechanism was isolated and nothing controls for how differently each model stresses the two engines. Treat it as a hypothesis worth testing on a fourth model.
-
-**Where we lose: time to first token on short prompts.** WebLLM's prefill runs 251–271 tok/s on Phi-3/Qwen3, implying a TTFT around 150 ms on Phi-3 where we measure 291 ms — and 453 ms on Qwen3-4B. We win sustained decode decisively and lose the first-token sprint on short inputs. It is specifically a *short*-prompt weakness: chunked prefill measures 202 tok/s on an 816-token prompt, and cross-turn prefix reuse removes prefill entirely on follow-up turns. It is the top open item on BENCH.md's levers list.
-
-The scope of these numbers matters: one machine, one browser, short-context bench, one same-session pair per model. But within that scope the question the repo was built to test now has a sharper answer — the ten hand-written kernels aren't merely "close enough" to the 85 autotuned ones; on this hardware they win on throughput. The repo also makes the stack *auditable*: if you want to instrument a layer, add a new fusion, test a different attention pattern, or teach someone how browser LLM inference works at the metal, there is no compiler in the way — just WGSL and a few hundred lines of TypeScript orchestrating it.
-
-The closest reference point is Karpathy's [llm.c](https://github.com/karpathy/llm.c) (hand-written CUDA/C GPT-2). This is that thesis — *you don't need the giant framework* — ported to browser / WebGPU / int4 / paged KV / modern arch, for a model people actually use.
-
-## How to run
-
-**Requirements:** A recent Chrome or Edge with WebGPU enabled and the `shader-f16` feature available. Tested on macOS (M2 Pro / M2 Max, Chrome 120–150). Other platforms should work but are untested.
+## Quick start
 
 ```bash
 npm install
-npm run dev
+npm run dev            # Vite dev server — serves every page
+npm run build          # tsc && vite build → dist/
+npm run check          # typecheck + unit tests
 ```
 
-Then open <http://localhost:5173/zero-tvm.html>. On first load the browser downloads the Phi-3-mini-4k-instruct Q4 weights from HuggingFace (~1.8 GB) and caches them in OPFS (Origin Private File System). Subsequent loads are instant.
+Weights for local dev mirror into `.weights-local/` (see
+[CLAUDE.md](CLAUDE.md) for per-model download commands); the dev server serves
+them at `/local-weights/` so nothing re-downloads.
 
-To build a deployable bundle:
+## The kernels
+
+Every shader is hand-written WGSL in
+[`src/compiler/shaders/`](src/compiler/shaders/), plus one small readable
+generator for the int4/int3 matmul family. There is no compiler and no
+autotuner; what the GPU runs is what you can read. For the other side of the
+argument, [shaders.html](https://zerotvm.com/shaders) browses the TVM-generated
+kernels WebLLM ships, captured live from a running session.
+
+## How it's validated
+
+Three layers, each catching what the previous cannot:
 
 ```bash
-npm run build   # → dist/
+npm run test:kernels        # synthetic suite — every kernel vs a JS reference
+npm run test:kernels:real   # real weights — layers vs mlx_lm's OWN modules
+npm run test:kernels:mlx    # checkpoint repacking, byte-for-byte, no tolerance
 ```
 
-The build produces a multi-page Vite output: `index.html` (landing page — project overview, shader catalog, compare table), `zero-tvm.html` (chat demo), `compiler-chat.html`, `demo.html` (dispatch visualization), `validate.html` (multi-prompt smoke test), `webllm-bench.html` (head-to-head harness), `architecture.html`, `docs.html`, `dump.html` (TVM shader capture), `shaders.html` (captured-shader browser).
-
-### URL flags
-
-`zero-tvm.html` accepts a handful of query flags for A/B-ing shader variants without rebuilding. Defaults are tuned for Apple GPUs; flags let you isolate a path:
-
-- `?sg=0` — disable all subgroup shaders (argmax / attention / QKV matmul)
-- `?sgqkv=0` / `?sgattn=0` / `?sgargmax=0` — disable one at a time
-- `?qkvtile=1` / `?qkvtile2=1` — opt into tiled QKV variants (both regressed on M2 Pro — kept for portability testing)
-- `?ffnsg=1` — opt into the tiled-subgroup fused FFN
-- `?kv8=1` — opt into the int8 KV cache path (`kv_quantize_int8` + `attention_int8`)
-- `?vec4=0` / `?vec4qkv=0` — opt OUT of the vec4<u32> weight + activation loads in the int4 matmuls / `qkv_fused`. Default ON since 2026-07-25: measured +7.1% together on M2 Max (see BENCH.md)
-- `?vec4h=0` — opt OUT of just the K%512 `_vec4h` half-unroll matmul siblings (the K%1024 full-vec4 instances stay on). Default ON since 2026-07-29: +5.7% on Qwen3, +2.0% on Qwen3.5 (they're what give d=2560 / ffn=9728 wide loads)
-- `?fuseqk=0` — opt OUT of the fused qk_norm+RoPE+KV-append kernel on the Qwen3 unfused path (restores the 3-dispatch reference chain, 8 → 10 dispatches/layer). Default ON since 2026-07-29: +2.3% alone on M2 Max
-- `?splitk=N` — split-K flash-decode attention, N ∈ 2..16 partitions per head + combine pass; f16 KV only. **Default N=8** since the long-context A/B (+3.1% at 128-token, +4.0% at 1024-token decode on M2 Max); `?splitk=0` to disable
-- `?fuseprologue=1` — fold the FFN-entry add_norm into the FFN kernel's prologue, `add3_norm` at the layer tail. Measured −13.7% on M2 Max — a documented negative result, kept for A/B on other GPUs
-
-Open DevTools and `window.specSim(160, 3, 3)` runs the CPU-side prompt-lookup speculative-decoding acceptance simulator over three prompt types — see `src/zero-tvm/spec-sim.ts`.
-
-## Models
-
-**Phi-3-mini-4k-instruct (3.8B, q4f16_1) — the default.** Everything above —
-the headline numbers, the kernel counts, the fusion story — is about Phi-3.
-No URL flag needed; all existing URLs keep their exact behavior.
-
-**Qwen3-4B (q4f16_1) — `?model=qwen3` on `zero-tvm.html` and
-`validate.html`.** A v1 port that exercises the spec-parameterized engine on
-a genuinely different architecture:
-
-- **GQA 32/8** — 32 query heads over 8 KV heads (Phi-3 is 32/32 MHA), with
-  `qDim = 4096 ≠ d = 2560`
-- **QK-norm** — per-head RMSNorm on Q and K between the projection and RoPE
-- **byte-level BPE tokenizer** (Qwen2-style `tokenizer.json`; Phi-3 is SPM)
-- **tied lm_head** — logits reuse the quantized embedding matrix
-- ChatML template, run in the non-thinking form (`<think>` rendering is not
-  built)
-
-Honest performance framing: QK-norm is incompatible with the fused
-QKV+RoPE+KV-append kernel, so the QKV matmul stays a separate dispatch — but
-since the 2026-07-29 tuning round everything after it is fused: the
-`qk_norm_rope_append` kernel folds the per-head norm, RoPE, and the paged KV
-write into one pass (**8 dispatches/layer** vs the Phi-3 chat path's 7;
-`?fuseqk=0` restores the 10-dispatch reference chain), and the `_vec4h`
-K%512 matmul variants extend the wide loads to d=2560 and ffn=9728
-(`?vec4h=0` opts out; K=4096 instances were already on full vec4). No
-int8-KV. Measured same-session pair on an Apple M2 Max (**2026-07-30**,
-Chrome 150, identical local weight bytes, corrected protocol): Zero-TVM
-**59.85 tok/s total** (TTFT 453 ms, decode 75.49) vs WebLLM 0.2.84's
-prebuilt Qwen3-4B at **45.46 tok/s total** (self-reported decode 47.77) —
-**+31.7% total, +58.0% decode**. On this model WebLLM has the better first
-token: its 263–271 tok/s prefill implies ~150 ms against our 453 ms.
-
-Read gaps cautiously: one pair, one machine. Two earlier published pairs are
-gone — the 2026-07-29 "75.7 vs 43.8, +73%" pair is **withdrawn** (the bench
-harness had stopped making our half pay prefill; see BENCH.md's corrected
-protocol), and the 2026-07-28 v1 pair (25.4 vs 14.2) was a degraded session
-that did not reproduce. The Zero-TVM-vs-Zero-TVM per-item deltas from the
-tuning round are unaffected and stand: fused-qk +2.3%, vec4h +5.7%, combined
-+5.8% over the same-day flags-off half. Protocol and caveats in
-[BENCH.md](BENCH.md); machine-readable pair in
-[`bench/results/qwen3-4b.json`](bench/results/qwen3-4b.json).
-
-Weights: `node scripts/download-weights.mjs --model qwen3` primes the local
-dev mirror (~2.3 GB); without it the page streams from HuggingFace.
-
-**Qwen3.5-4B (q4f16_1) — `?model=qwen35` on `zero-tvm.html` and
-`validate.html`.** The third model, and the first *hybrid*: 24
-gated-DeltaNet (linear-attention) layers interleaved with 8 gated
-full-attention layers, running on the same hand-written kernels. To our
-knowledge this is the first hand-written-kernel int4 implementation of a
-gated-DeltaNet hybrid running in a browser. What it adds over Qwen3-4B:
-
-- **hybrid layer stack** — attention on every 4th layer only; the other 24
-  layers run gated DeltaNet: a recurrent delta-rule state update (16 k-heads,
-  32 v-heads, head dims 128, short conv K=4), no KV cache on those layers
-- **GQA 16/4 at head_dim 256** on the attention layers, with **partial RoPE**
-  (only 64 of 256 dims rotate) and a **sigmoid output gate** per head
-- **248,320-token vocab** with renumbered special tokens (the repo's shipped
-  `mlc-chat-config.json` still lists the stale Qwen3 stop ids — we resolve
-  stops from `tokenizer.json` instead), tied lm_head
-
-Measured same-session pair on an Apple M2 Max (**2026-07-30**, Chrome 150,
-identical local weight bytes, corrected protocol): Zero-TVM **65.28 tok/s
-total** (TTFT 171 ms, decode 73.30) vs WebLLM 0.2.84's prebuilt Qwen3.5-4B at
-**32.56 tok/s total** (self-reported decode 34.32) — **+100.5% total,
-+113.6% decode**. This is the one model where first-token latency is roughly
-a wash rather than a loss (our 171 ms against an implied ~0.2 s from
-WebLLM's 175–177 tok/s prefill).
-
-Prefill is no longer token-by-token: the 2026-07-29 prefill round
-runs prompts in **chunks of ≤64** (batched projections, one `gdn_recur`
-dispatch per layer per chunk, causal batched attention) — 67.9 → **202
-prefill tok/s** on an 816-token prompt — and every model now does
-**cross-turn prefix reuse** (turn 3 of a ~950-token conversation:
-first-token latency 14.3 s → **0.19 s** on Qwen3.5; reused-prefix logits
-verified bit-identical to a fresh prefill). The 2026-07-29 Qwen3 tuning
-round's `_vec4h` matmuls also engage on the hybrid's K=2560 projections
-(+2.0% in a Zero-TVM-vs-Zero-TVM A/B). Superseded history: the "65.7 vs 34.0,
-+93%" cross-check published on 2026-07-29 is **withdrawn** (bench-harness
-defect — our half had stopped paying prefill; see BENCH.md), and the earlier
-53.07/32.36 (+64%) and 47.99/31.99 (+50%) pairs were fair but are older.
-Same honest framing as always: one machine, one pair, and the GDN decode
-kernels are still scalar (non-subgroup) — the decode number remains a floor,
-not a tuned result. Protocol and caveats in [BENCH.md](BENCH.md);
-machine-readable pair in
-[`bench/results/qwen35-4b.json`](bench/results/qwen35-4b.json).
-
-Weights: `node scripts/download-weights.mjs --model qwen35` primes the local
-dev mirror (~2.6 GB); without it the page streams from HuggingFace.
+The real-weight suite runs whole sub-blocks (gated DeltaNet, attention, the
+MoE block, a full decoder layer) against the reference implementation's own
+modules on the actual checkpoint, and greedy decode against `mlx_lm`'s output.
+Performance claims are measured under the written protocol in
+[BENCH.md](BENCH.md), including the negative results and the withdrawn pairs.
 
 ## The repository as an argument
 
 The directory layout is the narrative arc of the project. Each page is a milestone.
 
 ```
-index.html              (landing page — essay, shader catalog, compare table)
+index.html              (landing page — model picker; cards render from model-registry.ts)
 compiler-chat.html      → src/compiler/chat-v2.ts  (1) WebLLM reference: captures
                                                        dispatches, our shaders replay
                                                        279 of 342 of them
@@ -208,6 +85,11 @@ validate.html           → src/zero-tvm/validate.ts Multi-prompt smoke test dri
 webllm-bench.html       → src/webllm-bench/main.ts (3) Honesty check: WebLLM driven
                                                        against the same local weights
                                                        for a fair head-to-head
+wllama-bench.html       → src/wllama-bench/main.ts (4) Second honesty check:
+                                                       llama.cpp's WebGPU backend via
+                                                       wllama. GGUF, NOT the same
+                                                       weight bytes — runtime AND
+                                                       quantization differ (BENCH.md)
 
 demo.html               → src/demo.ts              Dispatch timeline visualization
 dump.html               → src/dump-tvm.ts          Captures all 85 TVM-emitted WGSL
@@ -295,113 +177,15 @@ src/
 
 `RESEARCH.md` is the writeup of how the shader capture worked and what reading TVM's output revealed about its kernel set. `BENCH.md` records the measured numbers, the head-to-head methodology, and the experiments that were falsified rather than shipped. `RESEARCH_STANDARDS.md` is the 15-principle engineering discipline this repo shares with its sibling WebGPU/WGSL research projects (webgpu-q quantum chemistry, webgpu-dna radiobiology, neuropulse LLM visualization) — single source of truth, falsifiable JSON artifacts, honest negatives, no fudge factors, shader byte-hashing, multi-level correctness.
 
-## How it's tested
+## Where everything lives
 
-Three layers, intentionally separate:
-
-1. **Per-shader correctness vs TVM** — `test-shaders.html` (`src/compiler/test-harness.ts`).
-   Loads WebLLM, intercepts the WGSL device to capture every TVM dispatch from a real
-   decode step, then runs each of our shaders against the matching TVM dispatch's
-   input buffers and compares the f16/f32 output buffers element-wise (`cmpF16`/`cmpF32`).
-   Each shader is reported with `maxDiff`, `avgDiff`, and exact-match percentage.
-   Catches kernel-level bugs but only exercises one prompt.
-
-2. **Live forward pass on diverse prompts** — `validate.html` (`src/zero-tvm/validate.ts`).
-   Drives `engine-core.ts` (the reference path) against a battery of prompts
-   (factual recall, arithmetic, code, instruction following, open-ended) through
-   `forwardLogits` and reports for each: the top-10 next-token candidates with
-   probabilities, the entropy of the predictive distribution, and a short greedy
-   continuation. A reader can scroll through the page and verify the model behaves
-   like Phi-3 on inputs that were never in the per-shader test set.
-
-3. **Automated kernel correctness (headless, CI-ready)** — `npm run test:kernels`
-   (`tests/kernels/`). Runs the real WGSL kernels from `src/compiler/shaders/`
-   against independent CPU references — 8 of the 10 roles, exact or within f16
-   tolerance. Uses the Dawn-native WebGPU binding on Mesa lavapipe, so it needs
-   no GPU and runs in CI; on a machine with a GPU it uses the real adapter. This
-   is the automated net the per-shader browser harness (layer 1) never had.
-
-`zero-tvm.html` and `validate.html` share the same decode engine
-(`engine-core.ts`); the chat page runs it in the fused / variant-selected /
-pipelined configuration while validate runs the unfused scalar reference with
-blocking per-token readback, so a validate pass exercises the same kernels,
-buffers, and bind-group layout the chat page ships.
-
-## Performance
-
-Measured on Apple M2 Max, Chrome 150, Phi-3-mini-4k-instruct q4f16_1,
-128-token target × 5 runs, median, same-session pair (2026-07-30; latest run
-recorded in `bench/results.json`). Every run pays a full prefill on both
-sides:
-
-| | total tok/s (median) |
+| what | where |
 |---|---|
-| Zero-TVM (this repo, f16 KV, default shaders) | **<!--bench:zt-->69.55<!--/bench:zt-->** |
-| WebLLM v0.2.80 (MLC-LLM, same weights, same session) | **<!--bench:webllm-->60.0<!--/bench:webllm-->** |
-
-Both metrics for that pair: **total 69.55 vs 59.95 (+16.0%)**, **decode-only
-83.10 vs 63.23 (+31.4%)**, our TTFT 291 ms against WebLLM's implied ~150 ms.
-The marker-wrapped cells are the total wall-clock medians, auto-synced from
-`bench/results.json`; the unambiguous per-model record is in
-[`bench/results/`](bench/results/).
-
-Reproduce on any WebGPU GPU with `npm run bench` — it drives both engines on
-identical weights and refreshes every marker-wrapped number (see below). It
-also runs headless on a cloud GPU (Colab notebook + Docker image in
-[`bench/`](bench/)) for machines without a local one.
-
-### Keeping the numbers in sync
-
-`bench/results.json` is the single source of truth. `npm run bench` writes it
-and rewrites every marker-wrapped number (`<!--bench:zt/webllm/gap-->`) in
-BENCH.md, README.md, index.html, and docs.html, plus the `// bench:zt` constant
-in `src/webllm-bench/main.ts` — `npm run bench:sync -- --write` re-propagates
-it without a GPU (see `bench/README.md`). Merging to `main` then auto-deploys
-zerotvm.com (Cloudflare Pages) and mirrors the built site + Space card to the
-[Hugging Face Space](https://huggingface.co/spaces/abgunaydin/zero-tvm) via
-`.github/workflows/deploy-space.yml` (needs an `HF_TOKEN` repo secret; the job
-skips with a notice if it's absent).
-
-That's +16.0% on total and +31.4% on decode against the autotuned compiler on
-an identical workload — one machine, one model, one browser, one pair. An
-earlier M2 Pro measurement with an older engine read 22% *behind*; both
-hardware and code changed since, so the same-session WebLLM number is the only
-valid comparator (details in BENCH.md). See [BENCH.md](BENCH.md) for the full
-protocol, the raw numbers, the 2026-07-30 harness defect and the two pairs it
-invalidated, and the optimization experiments that were *measured and
-dropped*:
-
-- Three QKV tiling strategies (1152 WGs × 32 threads, 2304 × 32, 2304 × 64) — all
-  regressed vs the 4608-WG subgroup baseline. Apple GPUs want high WG occupancy
-  on this kernel; tiling reduces it.
-- Prompt-lookup speculative decoding — CPU-simulated over three prompt types
-  (prose, code, summary). Acceptance rate <8% at N=3, K=3; below the 67% threshold
-  the `(1+αK)/((K+1)/2)` throughput formula needs to break even. Falsified before
-  any shader was written (`src/zero-tvm/spec-sim.ts`).
-- FFN prologue fusion (`?fuseprologue=1`) — folding addNorm1 into the FFN kernel
-  to remove 32 dispatch bubbles per token measured **−13.7%** on M2 Max: the
-  redundant per-workgroup RMSNorm recompute costs more than the dispatch
-  bubbles save. Kept behind its flag for A/B on other GPUs.
-
-## Known caveats
-
-These are the caveats that survive the code as-shipped. Several earlier ones — silent context overflow, per-token uniform buffer leaks, double `queue.submit()`, redundant first-token readback — were turned into code fixes rather than documentation. The remaining items are either inherent to the approach or deliberate scoping decisions.
-
-### Inherent
-
-- **Phi-3-mini-4k-instruct Q4 only.** The model shape lives in one place — the `PHI3` object in `src/compiler/shader-prelude.ts` (`D=3072`, `HEADS=32`, `HEAD_DIM=96`, `LAYERS=32`, `FFN=8192`, `VOCAB=32064`, `PAGE_SIZE=16`, `MAX_PAGES=257`) — which is rendered as a WGSL `const` prelude and injected into every shader, so the address arithmetic uses named constants (`D`, `HEAD_DIM`, `KV_PAGE_STRIDE`, …) instead of magic literals. Porting to Mistral or Llama is still not just a config edit: the kernels bake in structural assumptions (MHA with no GQA, `HEAD_DIM = 32×3` thread partitioning in attention, `D` divisible by 256, RoPE pair layout), plus the tokenizer/template/loader items below.
-- **GPU memory footprint ≈ 3.6 GB.** Phi-3-mini Q4 weights are ~1.8 GB, and the paged KV cache is `32 layers × 257 pages × 196,608 B/page ≈ 1.6 GB`. On an M2 Pro with 16 GB unified memory this is invisible; on a 4 GB integrated GPU it will OOM during KV allocation before the first token. If you want to trade context length for memory, lower `MAX_PAGES` in `src/compiler/compiler.ts` — 128 pages = 2048-token context, ~0.8 GB KV, which fits almost anywhere. The optional `?kv8=1` int8 KV path roughly halves the KV footprint.
-- **Requires the `shader-f16` WebGPU feature.** Matmuls run in f16 (`enable f16` at the top of every int4 matmul variant). The LM head uses an f32 output buffer (the `int4_matmul_f32` generator variant) because the sampling pipeline needs f32 logits — TVM's `NT_matmul14_cast2` does the same cast. Chrome/Edge with WebGPU and `shader-f16` is required; Safari's WebGPU does not yet expose `shader-f16`.
-- **BPE tokenizer is a hand-rolled reimplementation, not `tokenizers.js`.** `src/zero-tvm/tokenizer.ts` is ~280 lines: vocab lookup, merge table, metaspace prefixing, byte fallback, SentencePiece hex-byte decode. It does **not** implement HuggingFace's full pre-tokenization regex pipeline or Unicode NFKC normalization. For normal English chat it matches the reference tokenizer; for emoji, unusual Unicode, or some punctuation patterns it may diverge. If correctness matters for your input, run the prompt through `@huggingface/tokenizers` and compare.
-- **Phi-3 chat template is baked in.** `buildChatPrompt` in `tokenizer.ts` emits `<|system|>...<|end|>\n<|user|>...<|end|>\n<|assistant|>\n`. Stop tokens are the Phi-3 set `{2, 32000, 32007}`. Port to another model → edit both.
-- **Weight loader expects MLC's Q4f16_1 layout.** [`mlc-ai/Phi-3-mini-4k-instruct-q4f16_1-MLC`](https://huggingface.co/mlc-ai/Phi-3-mini-4k-instruct-q4f16_1-MLC), including MLC's renamed parameter scheme (`transformer.h.N.mixer.*`, not `model.layers.N.*`). If MLC re-quantizes or re-names, the loader needs a patch.
-
-### Deliberate scoping
-
-- **Greedy decoding only.** Sampling is a single `argmax.wgsl` dispatch. No temperature, top-k, top-p, repetition penalty. A CPU-side sampler over the f32 logit buffer would be ~30 lines; left out to keep the minimal-stack claim honest.
-- **Sequential prefill on the pure-attention models — and it costs us the first token.** Phi-3/Qwen3 prompt tokens still run the full decode path one at a time (cross-turn prefix reuse makes this cheap for multi-turn chat — only the delta prefills). Measured consequence: on a cold ~35-token prompt our TTFT is 291 ms (Phi-3) / 453 ms (Qwen3-4B) against WebLLM's implied ~150 ms — **WebLLM has the better first token on short prompts, and we publish that.** Qwen3.5's hybrid path prefills in chunks of ≤64 since the 2026-07-29 prefill round (`int4_matmul_batched_dyn` batched projections + one `gdn_recur` dispatch per layer per chunk) and is roughly at parity on TTFT; porting the chunked composition to the attention-only specs is future work and is the top item on BENCH.md's levers list.
-- **One decode engine, two configurations.** `engine-core.ts` is the single `buildDecodeEngine`; `validate.html` runs it unfused/scalar with blocking per-token readback (deterministic positions, logits access), `zero-tvm.html` runs it fused with URL-flag shader variants and the pipelined readback ring. The per-layer QKV stage and the readback style are the only mode-dependent parts.
-- **Residual buffer ping-pong.** WebGPU forbids read+write to the same buffer in one dispatch, so the decode loops swap between `B.residual` and `B.residual2` across the `add_norm` dispatches. The two swaps per layer cancel out, which is why the per-layer bind groups can be pre-computed once and reused for every token.
+| Every measured number + protocol | [BENCH.md](BENCH.md) |
+| Engine documentation (per-model commands, flags, gotchas) | [CLAUDE.md](CLAUDE.md) |
+| Shipped model list (the source of truth) | [`src/zero-tvm/model-registry.ts`](src/zero-tvm/model-registry.ts) |
+| Reference docs + diagrams | [docs](https://zerotvm.com/docs) · [architecture](https://zerotvm.com/architecture) |
+| Release history | [CHANGELOG.md](CHANGELOG.md) |
 
 ## License
 
@@ -416,6 +200,6 @@ to [Zenodo](https://zenodo.org) — cite the concept DOI
 versions.
 
 ```
-Gunaydin, A. B. (2026). Zero-TVM: Phi-3-mini in the browser on hand-written
+Gunaydin, A. B. (2026). Zero-TVM: browser LLM inference on hand-written
 WGSL kernels. https://zerotvm.com | https://github.com/abgnydn/zero-tvm
 ```

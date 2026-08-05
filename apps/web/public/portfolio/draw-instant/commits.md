@@ -1,5 +1,9 @@
 # Commits — draw-instant
 
+## 2026-08-05
+
+- `01:47` **fix(unet): unblock node 10, fuse the U-Net's GroupNorms, fail loudly …** — +118 −3 — [`c7471f9`](https://github.com/abgnydn/draw-instant/commit/c7471f96a7df604473c44df59c5085916c9c2f0c)
+
 ## 2026-08-04
 
 - `13:44` **feat(scope-nodes): read the op graph over the wire, not the whole model** — +29 −6 — [`5e4281f`](https://github.com/abgnydn/draw-instant/commit/5e4281fe2b71c822011b74bf52070e0943c9c0b2)
