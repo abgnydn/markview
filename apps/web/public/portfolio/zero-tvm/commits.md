@@ -1,5 +1,21 @@
 # Commits — zero-tvm
 
+## 2026-08-06
+
+- `09:26` **share: the guest IS the chat page — surface extracted into chat-ui.{t…** — +787 −675 — [`e7e5b6c`](https://github.com/abgnydn/zero-tvm/commit/e7e5b6c9cae52ed86b65b56251d4e9d6a834eaac)
+- `09:16` **models: Llama-3.2-1B-Instruct (?model=llama32) — first Llama on the e…** — +129 −6 — [`b1f75a5`](https://github.com/abgnydn/zero-tvm/commit/b1f75a53c2782eed624f988b5cb3e865916df2a7)
+- `09:16` **mlx loader: convert by the header's dtype, not by assumption** — +18 −1 — [`8f33997`](https://github.com/abgnydn/zero-tvm/commit/8f33997044f20ffe4c52e41a19f198e060afef6a)
+- `09:11` **share: reply budget = remaining context, not a 1024 cap** — +4 −1 — [`9eb0d9b`](https://github.com/abgnydn/zero-tvm/commit/9eb0d9be61b780782c02e6fddd2fcc1240fcf6ef)
+- `09:01` **add-model: chat_template.jinja probe, llama3 detection, layer_types g…** — +79 −14 — [`0b0022b`](https://github.com/abgnydn/zero-tvm/commit/0b0022bcdce684232b9525067b07fcf0183fc380)
+- `08:58` **share: stamp the deployed signaling URL (abgunaydin94.workers.dev)** — +1 −1 — [`e5180bf`](https://github.com/abgnydn/zero-tvm/commit/e5180bfca521af47c9d9183cb6f8285d2df0c080)
+- `08:57` **chat: Llama-3 header template + tokenizer pipeline from the repo's ow…** — +1129 −8 — [`ded5eca`](https://github.com/abgnydn/zero-tvm/commit/ded5eca57808ae7c757030a6825d04d07c36e14b)
+- `08:52` **rope: precomputed inv_freq table binding — llama3 rope_scaling support** — +103 −16 — [`cd4bf95`](https://github.com/abgnydn/zero-tvm/commit/cd4bf95896257af18bbbd0e83abb1858043d2572)
+- `08:50` **share: serve the model in this tab to another device over WebRTC** — +704 −0 — [`3ddcd6d`](https://github.com/abgnydn/zero-tvm/commit/3ddcd6d307d4f1949615122344f1c965af2dcfb9)
+- `08:10` **build: rotate asset URLs (hash:10) + real 404s — fix a poisoned edge …** — +39 −0 — [`27ec988`](https://github.com/abgnydn/zero-tvm/commit/27ec988ab790d29161131342165ce5133dc29030)
+- `08:08` **registry: point at the validate step — and rotate a poisoned CDN URL** — +3 −1 — [`c8ef676`](https://github.com/abgnydn/zero-tvm/commit/c8ef6765cae9e01c511afd0a24495373c0e43899)
+- `07:53` **add-model: one command from an MLX checkpoint to a registered, valida…** — +1259 −71 — [`869f90f`](https://github.com/abgnydn/zero-tvm/commit/869f90f263da251993b1bf255fa870d01e2f2de8)
+- `07:53` **site: finish the plain-register revamp** — +61 −66 — [`b754c98`](https://github.com/abgnydn/zero-tvm/commit/b754c988d894affe854d24ad1e0f6e68dbea4381)
+
 ## 2026-08-05
 
 - `15:08` **landing: say what it is, plainly** — +4 −6 — [`0a45bb4`](https://github.com/abgnydn/zero-tvm/commit/0a45bb443969accbcda15b3fa9c234ebd4caf913)
@@ -42,19 +58,3 @@
 - `07:07` **docs(1599): rewrite the comment so it reads like a person wrote it** — +47 −110 — [`2856f10`](https://github.com/abgnydn/zero-tvm/commit/2856f10e8b4f00f872203fb3f148b33bbb4aec82)
 - `06:57` **docs(1599): don't assert an untested negative about ORT #27780** — +16 −6 — [`12ea446`](https://github.com/abgnydn/zero-tvm/commit/12ea44642a42eccfd78784986b831854e781cfb0)
 - `06:52` **docs(1599): measure the Scan's share properly — ablation, in situ: 91…** — +194 −34 — [`72ed840`](https://github.com/abgnydn/zero-tvm/commit/72ed840bb67c9e951b1d76f6b7feed02fa37a063)
-- `06:42` **docs(1599): the clean measurement refutes my own method — no percenta…** — +105 −3 — [`fd336b0`](https://github.com/abgnydn/zero-tvm/commit/fd336b07d643e6e0328c99f98551be506d0f112e)
-
-## 2026-08-03
-
-- `13:49` **docs(1599): confirm on a live Colab T4 — CUDA EP will not initialise,…** — +42 −36 — [`b1751b5`](https://github.com/abgnydn/zero-tvm/commit/b1751b518a055e1a66eccb7f90e661872b4e39b5)
-- `13:34` **docs(1599): stop swallowing the pip failure that made "GPU" runs sile…** — +60 −37 — [`910938a`](https://github.com/abgnydn/zero-tvm/commit/910938a1e735a5c5f9b2239615743e0ee5dd02e6)
-- `12:29` **docs(1599): report the ACTIVE execution provider, not the requested one** — +49 −32 — [`6fa605f`](https://github.com/abgnydn/zero-tvm/commit/6fa605f7c8102d811734a22f2d459f2c10c02a37)
-- `11:54` **docs(1599): make the Colab GPU path actually runnable — fix install c…** — +61 −41 — [`fb5350a`](https://github.com/abgnydn/zero-tvm/commit/fb5350a684d35e34a8ef3993c364c24dcb737a93)
-- `10:28` **docs(1599): add Colab appendix that measures provider assignment and …** — +209 −27 — [`986ac7b`](https://github.com/abgnydn/zero-tvm/commit/986ac7bf4ca01c930ae50033318fb76695c00179)
-- `10:19` **docs(1599): same-session full-model vs isolated Scan — one clean run,…** — +76 −0 — [`5e3f6d2`](https://github.com/abgnydn/zero-tvm/commit/5e3f6d28a41e56c970b7a6342257dcfd75ae11e7)
-- `10:00` **docs(1599): re-verify on the ORT-web build transformers.js 4.2.0 actu…** — +69 −56 — [`14723c3`](https://github.com/abgnydn/zero-tvm/commit/14723c39e612306832944ec51702a226444cd6f8)
-- `08:24` **docs(1599): measure the Scan's share of prefill — it's most of it** — +143 −10 — [`5f80ce1`](https://github.com/abgnydn/zero-tvm/commit/5f80ce116dac26736b857c329306a3b72824acea)
-- `08:01` **docs(1599): measure that WebGPU can't run the Scan — it falls back to…** — +225 −3 — [`2818381`](https://github.com/abgnydn/zero-tvm/commit/28183819c876d8493fd27a229f4e095ce06cce35)
-- `07:13` **docs(1599): measure that the runtime really does execute the Scan per…** — +213 −15 — [`4d50458`](https://github.com/abgnydn/zero-tvm/commit/4d50458267d78dab82b4dfd6b456702788db7d84)
-- `06:50` **docs(1599): fill in the verified Colab link** — +5 −2 — [`bcc08a0`](https://github.com/abgnydn/zero-tvm/commit/bcc08a04e7de67f4020c8328c6988155bdeae49d)
-- `06:43` **docs(1599): make the Scan finding reproducible in Colab, drop unverif…** — +310 −57 — [`192fc84`](https://github.com/abgnydn/zero-tvm/commit/192fc842c158549247a783257526d93e610099d7)

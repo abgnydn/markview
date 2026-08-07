@@ -10,16 +10,17 @@
 
 **[zerotvm.com](https://zerotvm.com)** — pick a model, it runs in your tab.
 
-Hand-written WebGPU inference. Models from a 3.8B dense to **Qwen3.6-35B-A3B —
-a 256-expert sparse MoE that no browser compiler stack ships a build of** —
-decode on ten hand-written WGSL kernel roles and ~2,000 lines of TypeScript.
-No WebLLM, no TVM, no ONNX, no WASM runtime. The whole forward pass —
-transformer layers, paged KV cache, int4/int3 dequant, gated DeltaNet, the
-sparse-MoE block, argmax — is readable end-to-end in one sitting. On the
-models WebLLM *does* ship, this engine measures faster on byte-identical
-weights; **every number, every protocol, and every withdrawn claim lives in
-[BENCH.md](BENCH.md)** — nothing is quoted here that a git pull could silently
-outdate.
+Zero-TVM is an LLM inference engine for the browser, written by hand: ten
+WGSL kernel roles and ~2,000 lines of TypeScript. No WebLLM, no TVM, no ONNX,
+no WASM runtime.
+
+- Models from a 3.8B dense to Qwen3.6-35B-A3B, a 256-expert sparse MoE
+  (which WebLLM does not ship)
+- int4 / int3 quantized weights, loaded by byte range, cached in the browser
+- Paged KV cache, gated DeltaNet, sparse-MoE routing — in plain WGSL
+- Layers validated against mlx_lm's own modules on the real checkpoints
+- Benchmarked against WebLLM on identical weights; protocol and all numbers,
+  including withdrawn claims, in [BENCH.md](BENCH.md)
 
 ## Try it
 
@@ -27,9 +28,7 @@ Open **[zerotvm.com](https://zerotvm.com)** and pick a model. Weights stream
 from HuggingFace once, then cache in your browser (OPFS); nothing ever leaves
 your machine. The shipped models — sizes, RAM requirements, `?model=` flags —
 are defined in
-[`src/zero-tvm/model-registry.ts`](src/zero-tvm/model-registry.ts). The site's
-model cards render from that table, so the code constant *is* the complete,
-current list.
+[`src/zero-tvm/model-registry.ts`](src/zero-tvm/model-registry.ts). The site's model cards render from that table.
 
 ## Quick start
 
@@ -48,8 +47,7 @@ them at `/local-weights/` so nothing re-downloads.
 
 Every shader is hand-written WGSL in
 [`src/compiler/shaders/`](src/compiler/shaders/), plus one small readable
-generator for the int4/int3 matmul family. There is no compiler and no
-autotuner; what the GPU runs is what you can read. For the other side of the
+generator for the int4/int3 matmul family. There is no compiler and no autotuner. For the other side of the
 argument, [shaders.html](https://zerotvm.com/shaders) browses the TVM-generated
 kernels WebLLM ships, captured live from a running session.
 
@@ -68,6 +66,23 @@ MoE block, a full decoder layer) against the reference implementation's own
 modules on the actual checkpoint, and greedy decode against `mlx_lm`'s output.
 Performance claims are measured under the written protocol in
 [BENCH.md](BENCH.md), including the negative results and the withdrawn pairs.
+
+## Adding a model
+
+Models whose blocks the kernel set already covers are added mechanically:
+
+```bash
+npm run add-model -- mlx-community/Qwen3-4B-4bit --param qwen3mlx
+```
+
+One command probes the checkpoint (a few hundred KB of ranged reads), checks
+it against the constraint matrix, generates the `ModelSpec`, registers it on
+every surface (landing cards, switcher, `?model=` URL), and compiles every
+kernel under the new dims. If the model needs a kernel that doesn't exist, the
+same command says exactly which one — [docs/COMPAT.md](docs/COMPAT.md) is the
+full support matrix. Numerical trust comes from
+`scripts/validate-model.mjs`, which diffs the browser engine's logits and
+greedy decode against `mlx_lm` on the same checkpoint.
 
 ## The repository as an argument
 
