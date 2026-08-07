@@ -1,5 +1,9 @@
 # Commits — markview
 
+## 2026-08-07
+
+- `00:54` **chore(portfolio): daily sync 2026-08-07** — +292 −277 — [`f2ab305`](https://github.com/abgnydn/markview/commit/f2ab305cc0b238072b293da893dcf250c6f0252f)
+
 ## 2026-08-05
 
 - `21:14` **chore(portfolio): daily sync 2026-08-05** — +1221 −1353 — [`ac6f078`](https://github.com/abgnydn/markview/commit/ac6f0782986617e4c40b96d8f37c2951c72b1541)
@@ -135,7 +139,3 @@
 ## 2026-07-07
 
 - `21:27` **chore(portfolio): daily sync 2026-07-07** — +28 −26 — [`48e07d9`](https://github.com/abgnydn/markview/commit/48e07d952c6a5c0d6673946915fa6ce953d8d325)
-
-## 2026-07-06
-
-- `21:40` **chore(portfolio): daily sync 2026-07-06** — +284 −227 — [`8828040`](https://github.com/abgnydn/markview/commit/88280405d785fc28c1e48fcda103c050e0a8edec)
