@@ -1,5 +1,43 @@
 # Commits — zero-tvm
 
+## 2026-08-09
+
+- `14:24` **sampler: temperature, top-p and min-p** — +572 −5 — [`3e71c4b`](https://github.com/abgnydn/zero-tvm/commit/3e71c4b0d43530c62d0978b21b246329741d15e3)
+- `14:02` **review: four defects an adversarial pass found, three of which I had …** — +55 −10 — [`96046f5`](https://github.com/abgnydn/zero-tvm/commit/96046f53fabddaba664ea9505db203cc3d587399)
+- `13:53` **lib: an entry point someone else can import** — +383 −1 — [`3775ba2`](https://github.com/abgnydn/zero-tvm/commit/3775ba2afc215e39632d18f6506444e0bb6c278b)
+- `12:48` **mla: a whole DeepSeek attention layer, on real weights, seven stages** — +165 −2 — [`689be67`](https://github.com/abgnydn/zero-tvm/commit/689be67442c893c2a68b9c7108154b007d014dd9)
+- `12:26` **mla: DeepSeek's interleaved RoPE costs nothing at runtime** — +36 −0 — [`512c0e0`](https://github.com/abgnydn/zero-tvm/commit/512c0e0cd983e5bbb64922a3d70ddef59d1666d7)
+- `12:22` **mla: a whole DeepSeek layer as a reference, RoPE and all** — +203 −0 — [`fee83cd`](https://github.com/abgnydn/zero-tvm/commit/fee83cd4a27ebc1877fc0a9a3d1bfbbb6b473c39)
+- `12:19` **mla-ref: dequantize without mlx, bit-identically** — +66 −4 — [`8f85ea8`](https://github.com/abgnydn/zero-tvm/commit/8f85ea82e44ffb2e73961bcf70c7fde503459c7e)
+- `12:08` **pull-tensors: resume, and fetch in chunks** — +34 −7 — [`d3937d3`](https://github.com/abgnydn/zero-tvm/commit/d3937d374b660ce3e746204324f50a63d2a4ee2d)
+- `11:56` **spec: a stack can mix dense and MoE layers** — +109 −3 — [`d7810b3`](https://github.com/abgnydn/zero-tvm/commit/d7810b35dc9e96a2363571078bb0b74b9ec8107d)
+- `11:52` **deepseek: the bare router loads, and the chat template renders** — +164 −15 — [`4a064c5`](https://github.com/abgnydn/zero-tvm/commit/4a064c5fa7aaf2aeefab50316c05b428230ce5fb)
+- `11:16` **moe: a router the quantizer skipped** — +115 −21 — [`f8e6a4d`](https://github.com/abgnydn/zero-tvm/commit/f8e6a4da6f71ce27ae0379e9096d93358175ebd2)
+- `11:10` **mla: the whole chain on the GPU, not just the attention** — +104 −5 — [`80eb68b`](https://github.com/abgnydn/zero-tvm/commit/80eb68b0448cfd70ae61d07bacd19b8d996ffc73)
+- `11:02` **rope: yarn, checked against DeepSeek's own helpers** — +301 −12 — [`b6d7da4`](https://github.com/abgnydn/zero-tvm/commit/b6d7da49b5056e1200675f55a07f6521ffa5a56f)
+- `10:49` **mla: the attention kernel, checked against a real DeepSeek layer** — +247 −12 — [`cd79bdb`](https://github.com/abgnydn/zero-tvm/commit/cd79bdb99c6ad9c653bb3fc1341bd62a5b29830a)
+- `10:33` **mla: a real-weights reference, from 7.7 MB instead of 9 GB** — +268 −0 — [`1073c49`](https://github.com/abgnydn/zero-tvm/commit/1073c4962616171d294758f63f3930b61b8a4e82)
+- `09:46` **add-model: describe DeepSeek instead of guessing at it, and stop trea…** — +98 −12 — [`3029dbe`](https://github.com/abgnydn/zero-tvm/commit/3029dbe872f441265bde11a0e01b05292b1a457a)
+- `09:20` **add-model: refuse config fields we do not read** — +85 −1 — [`5fc63c4`](https://github.com/abgnydn/zero-tvm/commit/5fc63c4f00b55088e49c9beeaf865fe2210a2187)
+- `07:26` **rooms: a model can span any number of machines, not two** — +274 −114 — [`dbdf750`](https://github.com/abgnydn/zero-tvm/commit/dbdf750b6ef5ed36ad672c666959a9edd7252932)
+
+## 2026-08-08
+
+- `02:20` **split: there was no bug — the model was undecided** — +67 −18 — [`c32ad33`](https://github.com/abgnydn/zero-tvm/commit/c32ad33604099e49bc6acd16a86546a4a0d9ba52)
+- `02:06` **split: a stage must answer what the whole model answers** — +85 −9 — [`5a42b4f`](https://github.com/abgnydn/zero-tvm/commit/5a42b4f1a5d186ea82f7e5c297de04818a9dbd67)
+- `01:39` **bench: what does cutting a model in half actually cost?** — +170 −0 — [`ad738c9`](https://github.com/abgnydn/zero-tvm/commit/ad738c94af542299e5634768fff49682c5aa3b69)
+- `00:12` **models: Qwen3-30B-A3B — MoE without a shared expert, and a 4-bit router** — +414 −57 — [`6fcda67`](https://github.com/abgnydn/zero-tvm/commit/6fcda675eb58d2d43fc925a125997833518ad05b)
+- `00:11` **mlx-ref: grade in f32 — bf16 was noisier than the engine it graded** — +15 −0 — [`620979d`](https://github.com/abgnydn/zero-tvm/commit/620979d64061f25855becf7f0f34daa6e997489e)
+
+## 2026-08-07
+
+- `11:27` **docs: split serving in CLAUDE.md** — +15 −2 — [`00d6c9f`](https://github.com/abgnydn/zero-tvm/commit/00d6c9fbc7faefcd46b1221e85ce8ddb42b90b51)
+- `11:27` **split serving: two browsers, half a model each, one answer** — +529 −44 — [`b5d13b4`](https://github.com/abgnydn/zero-tvm/commit/b5d13b41d484bb058d9fcecae4cffc0d9888d5cc)
+- `07:43` **loader: a stage loads its own layers, not the whole checkpoint** — +111 −19 — [`f4198a2`](https://github.com/abgnydn/zero-tvm/commit/f4198a2ea05ec6494baf59fff48490a338d2815e)
+- `07:37` **engine: run a layer range as one pipeline stage** — +263 −15 — [`347c006`](https://github.com/abgnydn/zero-tvm/commit/347c00605b2b496b2cf56b0a7512ddad2cb836a6)
+- `07:22` **rooms: many hosts, least-loaded assignment, and takeover when one dies** — +357 −72 — [`95a3654`](https://github.com/abgnydn/zero-tvm/commit/95a36546071496c9ac066f751e0cc4344dd2878e)
+- `06:54` **peer weights: a second device copies the model from the first, not fr…** — +632 −17 — [`c71f14c`](https://github.com/abgnydn/zero-tvm/commit/c71f14cd2489949ba0e40c0930429db85e04a90d)
+
 ## 2026-08-06
 
 - `09:26` **share: the guest IS the chat page — surface extracted into chat-ui.{t…** — +787 −675 — [`e7e5b6c`](https://github.com/abgnydn/zero-tvm/commit/e7e5b6c9cae52ed86b65b56251d4e9d6a834eaac)
@@ -26,35 +64,3 @@
 - `12:07` **Merge moe-affine-int4: Qwen3.6-35B-A3B — first MoE, MLX loader, 3-bit…** — +7899 −187 — [`d602c93`](https://github.com/abgnydn/zero-tvm/commit/d602c9341e76b18b9167b643a672de5463d4aa93)
 - `12:07` **docs(qwen36): CLAUDE.md model section, changelog entry, measured rate…** — +59 −1 — [`0cf4c22`](https://github.com/abgnydn/zero-tvm/commit/0cf4c22bf988ae0364d8fc27b714ac58a0713082)
 - `11:48` **feat(qwen36): 3-bit experts — the 32 GB build. ?model=qwen36q3, answe…** — +346 −43 — [`a69d749`](https://github.com/abgnydn/zero-tvm/commit/a69d749a7f782aea7e2cdf435d70ce47f251b5db)
-- `11:18` **perf(qwen36): KV budget 3072 -> 384 pages — headroom beats context on…** — +7 −4 — [`c8d1234`](https://github.com/abgnydn/zero-tvm/commit/c8d1234e67dcd5c7f1211764a9b00d51bc1747b3)
-- `10:47` **fix(validate): MoE specs boot with subgroup variants on the default path** — +12 −2 — [`29d1c99`](https://github.com/abgnydn/zero-tvm/commit/29d1c99b9e3f45cf6aa33dfa920681c22d72bb07)
-- `10:40` **fix(chat): single-pass warmup for MoE specs** — +8 −6 — [`ef603fd`](https://github.com/abgnydn/zero-tvm/commit/ef603fdbf63f43b8e5fa8b29bbb540e9047fe7e7)
-- `10:30` **fix(chat): the pipeline warmup is now visible in the boot log** — +10 −3 — [`edbe73d`](https://github.com/abgnydn/zero-tvm/commit/edbe73d3f2c1014e61a4738eb8bcc4adb32920fa)
-- `10:22` **test(qwen36): manual start button on the smoke page — decode was gate…** — +7 −4 — [`5735fa4`](https://github.com/abgnydn/zero-tvm/commit/5735fa4f66e2e7231df0751312bb2881fae21343)
-- `10:11` **docs(qwen36): honest RAM requirement in the gate + the decode-thrash …** — +64 −4 — [`63885a2`](https://github.com/abgnydn/zero-tvm/commit/63885a2e216dec12a85cc88a079e1eecd4eb5732)
-- `09:41` **feat(qwen36): the model runs end to end — correct logits, matching ml…** — +558 −46 — [`65f5d48`](https://github.com/abgnydn/zero-tvm/commit/65f5d48031b44b04e757205a57f5d3968e2af96b)
-- `08:18` **feat(qwen36): wire the MoE block into the decode loop, with guards th…** — +266 −24 — [`887e942`](https://github.com/abgnydn/zero-tvm/commit/887e942ac02df665b19924db7df331d1b4295bb7)
-- `07:49` **feat(qwen36): compile the MoE + affine pipelines, and make matmul res…** — +144 −5 — [`addb266`](https://github.com/abgnydn/zero-tvm/commit/addb2660fe6c25b9fa4e8b8f05f98c8d7dd189c4)
-- `07:44` **feat(qwen36): affine embedding kernel, the three missing int4 variant…** — +198 −28 — [`f6bdfa5`](https://github.com/abgnydn/zero-tvm/commit/f6bdfa599d11c7cc8c60cc56eade7f0dd40639c3)
-- `07:22` **test(qwen36): the whole decoder layer against mlx_lm's DecoderLayer** — +233 −2 — [`fb22400`](https://github.com/abgnydn/zero-tvm/commit/fb22400efe197b3921c6df4332530260d21b6478)
-- `07:15` **feat(qwen36): ModelSpec + MLX safetensors repacker, byte-verified aga…** — +597 −19 — [`5a7c469`](https://github.com/abgnydn/zero-tvm/commit/5a7c469de40022f37b374a2aa68ec88193be004a)
-- `07:02` **test(qwen36): layer 3's gated attention against mlx_lm — both layer t…** — +166 −3 — [`460f136`](https://github.com/abgnydn/zero-tvm/commit/460f136f49accc698871f3a5248686cda2b6e1c9)
-- `06:57` **test(qwen36): layer 0's GDN sub-block against mlx_lm's own module** — +408 −10 — [`8099ce9`](https://github.com/abgnydn/zero-tvm/commit/8099ce9c124110b587a2f1b4cc10a6bd0550567d)
-- `06:34` **refactor(int4): affine variant reads MLX's bias verbatim, not 7*scale…** — +38 −28 — [`5eb94a0`](https://github.com/abgnydn/zero-tvm/commit/5eb94a036091c93c221b05f2eeb0f68c0ad25811)
-- `06:29` **perf(moe): 2.3x on the MoE block — parallel router, one stack, 6 disp…** — +337 −236 — [`57ea241`](https://github.com/abgnydn/zero-tvm/commit/57ea241819f2bb10831dd2208cd558cf8adf6c95)
-- `01:31` **docs(tests): the node kernel harness cannot measure time — ~100 ms pe…** — +7 −0 — [`d83cb53`](https://github.com/abgnydn/zero-tvm/commit/d83cb533ff126f1e0d4752fcfc17d564db2adab5)
-
-## 2026-08-04
-
-- `15:08` **perf(moe): expert index as a grid dimension — 37 dispatches per block…** — +166 −162 — [`cc4f308`](https://github.com/abgnydn/zero-tvm/commit/cc4f308e5985e7c0838f4c9bfe81f29b8b8a4620)
-- `14:20` **feat(moe): complete MoE block on GPU — router, experts, shared expert** — +310 −13 — [`b62c774`](https://github.com/abgnydn/zero-tvm/commit/b62c774e6cc46814f6d47bc7f6363f12dd742f80)
-- `13:54` **feat(moe): routed expert path running on GPU, validated against MLX's…** — +211 −5 — [`37b280d`](https://github.com/abgnydn/zero-tvm/commit/37b280d84a4d99c9e0d3135447b74afe53310eca)
-- `13:45` **test(int4): cover the subgroup, tiled and f32 affine variants** — +32 −2 — [`dfe70f9`](https://github.com/abgnydn/zero-tvm/commit/dfe70f92f5076f71ac2825129149ba70554a5d89)
-- `13:40` **feat(int4): affine (MLX) quantization variant + real-weight kernel va…** — +249 −14 — [`24eea55`](https://github.com/abgnydn/zero-tvm/commit/24eea5544902e3b1a00da25cb6650ee74acfa986)
-- `08:14` **docs(1599): the bug is already fixed upstream — reframe the comment e…** — +50 −84 — [`a5c22c8`](https://github.com/abgnydn/zero-tvm/commit/a5c22c81b223ce237eb82912ad0f09197e12549b)
-- `07:57` **docs(1599): build the chunk-level Scan and measure it — 11-13x on WebGPU** — +143 −6 — [`f00c784`](https://github.com/abgnydn/zero-tvm/commit/f00c78465911bfde5053af181cfbd8f5bc139edb)
-- `07:26` **docs(1599): test the "just trace the chunked function" theory — it fails** — +154 −23 — [`746214b`](https://github.com/abgnydn/zero-tvm/commit/746214b3f5efe939335345740df69103b85476b6)
-- `07:18` **docs(1599): name the fix — HF's own chunked fallback, on the wrong br…** — +23 −5 — [`069426b`](https://github.com/abgnydn/zero-tvm/commit/069426bdc47f1cbec46b54655ac2a1329495b23f)
-- `07:07` **docs(1599): rewrite the comment so it reads like a person wrote it** — +47 −110 — [`2856f10`](https://github.com/abgnydn/zero-tvm/commit/2856f10e8b4f00f872203fb3f148b33bbb4aec82)
-- `06:57` **docs(1599): don't assert an untested negative about ORT #27780** — +16 −6 — [`12ea446`](https://github.com/abgnydn/zero-tvm/commit/12ea44642a42eccfd78784986b831854e781cfb0)
-- `06:52` **docs(1599): measure the Scan's share properly — ablation, in situ: 91…** — +194 −34 — [`72ed840`](https://github.com/abgnydn/zero-tvm/commit/72ed840bb67c9e951b1d76f6b7feed02fa37a063)
