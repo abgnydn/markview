@@ -1,7 +1,6 @@
 import { db } from '@/lib/storage/db';
-import { renderMarkdown } from '@/lib/markdown/pipeline';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
-import { triggerDownload } from './export-utils';
+import { triggerDownload, renderMarkdownForExport, escapeHtmlText, katexCssLink, uniqueEntryName } from './export-utils';
 
 /**
  * Export a workspace as a self-contained static HTML site with navigation sidebar.
@@ -31,11 +30,14 @@ export async function downloadAsStaticSite(
 
   // Generate HTML for each file
   const pages: { filename: string; htmlFilename: string; content: string }[] = [];
+  // Duplicate filenames would silently overwrite each other in the zip;
+  // 'index.html' is reserved for the redirect page below.
+  const usedNames = new Set<string>(['index.html']);
   for (const file of files) {
     // Strip YAML frontmatter like the viewer does — a leading `---` block
     // otherwise renders as a stray <hr> + garbled heading.
-    const html = await renderMarkdown(parseFrontmatter(file.content).content);
-    const htmlFilename = file.filename.replace(/\.md$/i, '.html');
+    const html = await renderMarkdownForExport(parseFrontmatter(file.content).content);
+    const htmlFilename = uniqueEntryName(usedNames, file.filename.replace(/\.md$/i, '.html'));
     pages.push({ filename: file.filename, htmlFilename, content: html });
   }
 
@@ -50,9 +52,10 @@ export async function downloadAsStaticSite(
     siteFolder.file(page.htmlFilename, fullHtml);
   }
 
-  // Index.html → redirect to first file
+  // Index.html → redirect to first file (page names never collide with
+  // it — 'index.html' is pre-reserved in usedNames above).
   if (pages.length > 0) {
-    const indexHtml = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${pages[0].htmlFilename}"></head><body></body></html>`;
+    const indexHtml = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${encodeURI(pages[0].htmlFilename)}"></head><body></body></html>`;
     siteFolder.file('index.html', indexHtml);
   }
 
@@ -68,7 +71,7 @@ function buildSidebar(
     .map((p) => {
       const isActive = p.htmlFilename === currentPage;
       const name = p.filename.replace(/\.md$/i, '');
-      return `<a href="${p.htmlFilename}" class="nav-item${isActive ? ' active' : ''}">${name}</a>`;
+      return `<a href="${encodeURI(p.htmlFilename)}" class="nav-item${isActive ? ' active' : ''}">${escapeHtmlText(name)}</a>`;
     })
     .join('\n');
 }
@@ -79,12 +82,13 @@ function buildPageHtml(pageTitle: string, bodyHtml: string, sidebarHtml: string,
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${pageTitle} — ${siteTitle}</title>
+<title>${escapeHtmlText(pageTitle)} — ${escapeHtmlText(siteTitle)}</title>
 <link rel="stylesheet" href="style.css">
+${katexCssLink(bodyHtml)}
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-title">${siteTitle}</div>
+  <div class="sidebar-title">${escapeHtmlText(siteTitle)}</div>
   <nav>${sidebarHtml}</nav>
 </aside>
 <main class="content">

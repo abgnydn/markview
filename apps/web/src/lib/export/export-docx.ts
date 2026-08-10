@@ -1,5 +1,6 @@
 import { renderMarkdown } from '@/lib/markdown/pipeline';
-import { triggerDownload } from './export-utils';
+import { expandWikilinks } from '@/lib/markdown/wikilinks';
+import { triggerDownload, inlineAssetImages } from './export-utils';
 
 /**
  * Export the active markdown as a DOCX Word document.
@@ -25,14 +26,49 @@ export async function buildDocxDocument(content: string, title: string) {
   const {
     Document, Paragraph, TextRun, HeadingLevel,
     Table, TableRow, TableCell, WidthType, BorderStyle, AlignmentType,
-    ExternalHyperlink
+    ExternalHyperlink, ImageRun
   } = await import('docx');
 
-  const html = await renderMarkdown(content);
+  // Wikilinks expanded + asset: images inlined as data URIs so the img
+  // branch below can embed them (math intentionally stays literal LaTeX).
+  const html = await inlineAssetImages(
+    await renderMarkdown(expandWikilinks(content), { codeBlockToolbar: false }),
+  );
 
   // Parse HTML into a temporary DOM
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
+
+  // Pre-measure data-URI images (async) so the synchronous walker below
+  // can emit correctly-proportioned ImageRuns.
+  const imgDims = new Map<string, { width: number; height: number }>();
+  for (const img of Array.from(doc.querySelectorAll('img[src^="data:image/"]'))) {
+    const src = img.getAttribute('src') || '';
+    if (!src || imgDims.has(src)) continue;
+    const dims = await new Promise<{ width: number; height: number } | null>((resolve) => {
+      const probe = new Image();
+      probe.onload = () => resolve({ width: probe.naturalWidth, height: probe.naturalHeight });
+      probe.onerror = () => resolve(null);
+      probe.src = src;
+    });
+    if (dims && dims.width > 0) imgDims.set(src, dims);
+  }
+
+  const DOCX_MAX_IMG_WIDTH = 560; // pt-ish px inside the printable area
+  function imageRunFromDataUri(src: string): InstanceType<typeof ImageRun> | null {
+    const m = /^data:image\/(png|jpeg|jpg|gif|bmp);base64,(.+)$/.exec(src);
+    if (!m) return null; // svg/webp and friends fall back to alt text
+    const dims = imgDims.get(src);
+    if (!dims) return null;
+    const scale = Math.min(1, DOCX_MAX_IMG_WIDTH / dims.width);
+    const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
+    const type = m[1] === 'jpeg' ? 'jpg' : m[1];
+    return new ImageRun({
+      data: bytes,
+      type: type as 'png' | 'jpg' | 'gif' | 'bmp',
+      transformation: { width: Math.round(dims.width * scale), height: Math.round(dims.height * scale) },
+    });
+  }
 
   const children: (InstanceType<typeof Paragraph> | InstanceType<typeof Table>)[] = [];
 
@@ -42,6 +78,9 @@ export async function buildDocxDocument(content: string, title: string) {
       if (node.nodeType === Node.TEXT_NODE) {
         const txt = node.textContent || '';
         if (txt.trim()) runs.push(new TextRun(txt));
+        // Whitespace-only nodes between inline elements still separate
+        // words — dropping them renders "**a** *b*" as "ab".
+        else if (txt.length > 0 && runs.length > 0) runs.push(new TextRun(' '));
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         const child = node as Element;
         const tag = child.tagName.toLowerCase();
@@ -57,6 +96,12 @@ export async function buildDocxDocument(content: string, title: string) {
           runs.push(new ExternalHyperlink({ children: [new TextRun({ text, style: 'Hyperlink' })], link: href }));
         } else if (tag === 'del' || tag === 's') {
           runs.push(new TextRun({ text, strike: true }));
+        } else if (tag === 'img') {
+          const imgRun = imageRunFromDataUri(child.getAttribute('src') || '');
+          if (imgRun) runs.push(imgRun as unknown as InstanceType<typeof TextRun>);
+          else if (child.getAttribute('alt')) {
+            runs.push(new TextRun({ text: `[image: ${child.getAttribute('alt')}]`, italics: true }));
+          }
         } else if (tag === 'ul' || tag === 'ol') {
           // Nested lists are emitted by processList recursion, not inline.
         } else if (tag === 'p' || tag === 'span' || tag === 'div') {

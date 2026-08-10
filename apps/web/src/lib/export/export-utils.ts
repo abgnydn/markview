@@ -1,5 +1,73 @@
 import { db } from '@/lib/storage/db';
 import { renderMarkdown } from '@/lib/markdown/pipeline';
+import { expandWikilinks } from '@/lib/markdown/wikilinks';
+
+// ---------- Shared export rendering ----------
+
+/**
+ * Render markdown the way the viewer does for export surfaces: wikilinks
+ * expanded, math + mermaid actually rendered (not raw `$…$` / diagram
+ * source), and no interactive code-block toolbar (its buttons are dead
+ * markup outside the app).
+ */
+export async function renderMarkdownForExport(content: string): Promise<string> {
+  const html = await renderMarkdown(expandWikilinks(content), {
+    katex: true,
+    mermaid: true,
+    codeBlockToolbar: false,
+    alerts: true,
+  });
+  return inlineAssetImages(html);
+}
+
+/**
+ * Swap `asset:<id>` img srcs for self-contained data: URIs. Done post-
+ * sanitization: the pipeline's schema deliberately strips data: URIs from
+ * user markdown, but these blobs come from the local asset store.
+ */
+export async function inlineAssetImages(html: string): Promise<string> {
+  const srcRe = /src="asset:([\w-]+)"/g;
+  const ids = Array.from(new Set([...html.matchAll(srcRe)].map((m) => m[1])));
+  if (ids.length === 0) return html;
+  const dataUrls = new Map<string, string>();
+  for (const id of ids) {
+    const row = await db.assets.get(id);
+    if (!row) continue;
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result as string);
+      r.onerror = () => reject(r.error ?? new Error('asset read failed'));
+      r.readAsDataURL(row.blob);
+    });
+    dataUrls.set(id, dataUrl);
+  }
+  return html.replace(srcRe, (m, id) => (dataUrls.has(id) ? `src="${dataUrls.get(id)}"` : m));
+}
+
+/** HTML-escape a filename/title for interpolation into markup. */
+export function escapeHtmlText(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/** KaTeX stylesheet link for standalone exported pages, or '' when the
+ *  rendered HTML contains no math. */
+export function katexCssLink(html: string): string {
+  return html.includes('class="katex')
+    ? '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css">'
+    : '';
+}
+
+/** Dedupe an entry name against already-used names (`a.md`, `a (2).md`). */
+export function uniqueEntryName(used: Set<string>, name: string): string {
+  let candidate = name;
+  let n = 2;
+  while (used.has(candidate)) {
+    candidate = name.replace(/(\.[^.]*)?$/, (ext) => ` (${n})${ext}`);
+    n++;
+  }
+  used.add(candidate);
+  return candidate;
+}
 
 // ---------- Copy to Clipboard ----------
 
@@ -8,7 +76,7 @@ export async function copyAsMarkdown(content: string): Promise<void> {
 }
 
 export async function copyAsHtml(content: string): Promise<void> {
-  const html = await renderMarkdown(content);
+  const html = await renderMarkdownForExport(content);
   const styledHtml = wrapWithInlineStyles(html);
 
   const blob = new Blob([styledHtml], { type: 'text/html' });
@@ -39,8 +107,11 @@ export async function downloadWorkspaceZip(workspaceId: string, title: string): 
     .toArray();
 
   const folder = zip.folder(title) || zip;
+  // Workspaces allow duplicate filenames; JSZip silently overwrites, so
+  // a backup zip would otherwise contain fewer files than promised.
+  const used = new Set<string>();
   for (const file of files) {
-    folder.file(file.filename, file.content);
+    folder.file(uniqueEntryName(used, file.filename), file.content);
   }
 
   const blob = await zip.generateAsync({ type: 'blob' });
@@ -52,7 +123,7 @@ export async function downloadAsHtml(
   content: string,
   theme: 'dark' | 'light'
 ): Promise<void> {
-  const html = await renderMarkdown(content);
+  const html = await renderMarkdownForExport(content);
   const title = filename.replace(/\.md$/i, '');
   const fullHtml = buildSelfContainedHtml(title, html, theme);
   const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
@@ -115,7 +186,8 @@ function buildSelfContainedHtml(title: string, bodyHtml: string, theme: 'dark' |
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title} — MarkView</title>
+<title>${escapeHtmlText(title)} — MarkView</title>
+${katexCssLink(bodyHtml)}
 <style>
   /* System font stack — no external dependencies. */
   :root {
