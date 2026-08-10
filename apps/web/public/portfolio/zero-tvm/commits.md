@@ -1,5 +1,11 @@
 # Commits — zero-tvm
 
+## 2026-08-10
+
+- `01:12` **colab: the notebook has now been run, and it found a path bug in this…** — +20 −37 — [`83b8817`](https://github.com/abgnydn/zero-tvm/commit/83b881776501b9520289fff5c1e4996d3f12c3a5)
+- `00:08` **colab: build the MoE-layer bundle where the bandwidth is** — +756 −31 — [`f4ec090`](https://github.com/abgnydn/zero-tvm/commit/f4ec090facf29b2d9434748309ef7de1fcf15130)
+- `00:06` **chat: sampling controls in the header** — +290 −15 — [`e4cdea1`](https://github.com/abgnydn/zero-tvm/commit/e4cdea1b04adc731ef3400ec6d0fd9c55453e2c7)
+
 ## 2026-08-09
 
 - `14:24` **sampler: temperature, top-p and min-p** — +572 −5 — [`3e71c4b`](https://github.com/abgnydn/zero-tvm/commit/3e71c4b0d43530c62d0978b21b246329741d15e3)
@@ -61,6 +67,3 @@
 - `14:20` **Rebuild every surface around one rule: facts live in exactly one place** — +341 −813 — [`acf2bc2`](https://github.com/abgnydn/zero-tvm/commit/acf2bc22ff362a83b2aa55b4874c41a1e73e6165)
 - `12:59` **Merge site-refresh (PR #29) + surface Qwen3.6 everywhere** — +278 −24 — [`d22f516`](https://github.com/abgnydn/zero-tvm/commit/d22f516e7368b47596c75937575be7e749f68c8c)
 - `12:24` **fix(qwen36q3): hfRepo is abgunaydin/… — the HF account, not the GitHu…** — +2 −2 — [`600c1c5`](https://github.com/abgnydn/zero-tvm/commit/600c1c508c3cb1ea31035bd9c507a9e744a49d9a)
-- `12:07` **Merge moe-affine-int4: Qwen3.6-35B-A3B — first MoE, MLX loader, 3-bit…** — +7899 −187 — [`d602c93`](https://github.com/abgnydn/zero-tvm/commit/d602c9341e76b18b9167b643a672de5463d4aa93)
-- `12:07` **docs(qwen36): CLAUDE.md model section, changelog entry, measured rate…** — +59 −1 — [`0cf4c22`](https://github.com/abgnydn/zero-tvm/commit/0cf4c22bf988ae0364d8fc27b714ac58a0713082)
-- `11:48` **feat(qwen36): 3-bit experts — the 32 GB build. ?model=qwen36q3, answe…** — +346 −43 — [`a69d749`](https://github.com/abgnydn/zero-tvm/commit/a69d749a7f782aea7e2cdf435d70ce47f251b5db)
