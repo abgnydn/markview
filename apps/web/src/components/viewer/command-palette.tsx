@@ -34,11 +34,15 @@ export function CommandPalette() {
         setOpen((o) => !o);
       }
       if (e.key === 'Escape' && open) {
+        // Consume in capture phase so lower layers (editor overlay, graph
+        // view…) don't also close on the same keypress.
+        e.preventDefault();
+        e.stopPropagation();
         setOpen(false);
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
   }, [open]);
 
   useEffect(() => {

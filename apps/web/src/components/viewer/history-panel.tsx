@@ -47,13 +47,18 @@ export function HistoryPanel({ fileId, workspaceId, currentContent, onRestore, o
     void refresh();
   }, [fileId]);
 
-  // Esc to close.
+  // Esc to close — consumed in capture phase so the editor overlay
+  // beneath doesn't tear down on the same keypress.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape' && !e.defaultPrevented) {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
   }, [onClose]);
 
   const handleBookmarkCurrent = async () => {

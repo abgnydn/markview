@@ -34,7 +34,7 @@ export function useViewerOverlays() {
         setAiChatOpen((v) => !v);
         return;
       }
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && !e.defaultPrevented) {
         if (vaultOpen) { e.preventDefault(); setVaultOpen(false); }
         else if (aiChatOpen) { e.preventDefault(); setAiChatOpen(false); }
         else if (fileBrowserOpen) { e.preventDefault(); setFileBrowserOpen(false); }

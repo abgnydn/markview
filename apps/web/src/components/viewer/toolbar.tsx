@@ -197,9 +197,11 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                     <hr className="toolbar-overflow-sep" />
                   </div>
 
-                  <button className="toolbar-overflow-item" onClick={() => { onToggleEditor?.(); setShowOverflow(false); }}>
-                    <Edit3 size={16} /> Edit file
-                  </button>
+                  {onToggleEditor && (
+                    <button className="toolbar-overflow-item" onClick={() => { onToggleEditor(); setShowOverflow(false); }}>
+                      <Edit3 size={16} /> Edit file
+                    </button>
+                  )}
                   <button className="toolbar-overflow-item" onClick={() => { onToggleSplitView?.(); setShowOverflow(false); }}>
                     <Columns2 size={16} /> Split view
                   </button>
@@ -301,8 +303,12 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
         cancelText="Cancel"
         tone="danger"
         onConfirm={() => {
-          workspaces.forEach(ws => deleteWorkspace(ws.id));
-          if (onGoHome) onGoHome();
+          // Sequential — parallel deletes race each other's post-delete
+          // switchWorkspace and can resurrect a deleted workspace id.
+          void (async () => {
+            for (const ws of workspaces) await deleteWorkspace(ws.id);
+            if (onGoHome) onGoHome();
+          })();
           setShowClearConfirm(false);
           setShowOverflow(false);
         }}

@@ -90,10 +90,23 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // line in the source when its rendered checkbox is toggled, then persist.
   const handleToggleTask = useCallback((index: number, checked: boolean) => {
     if (activeFileContent == null) return;
-    const taskRe = /^(\s*[-*+]\s+\[)[ xX](\])/;
+    // Count tasks the way the renderer does: skip frontmatter and fenced
+    // code (neither produces a checkbox), and include blockquote-nested
+    // tasks (which do) — otherwise the Nth rendered checkbox maps to the
+    // wrong source line and toggling corrupts a code sample instead.
+    const taskRe = /^(\s*(?:>\s*)*[-*+]\s+\[)[ xX](\])/;
     const lines = activeFileContent.split('\n');
+    let start = 0;
+    if (lines[0]?.trim() === '---') {
+      for (let i = 1; i < lines.length; i++) {
+        if (/^---\s*$/.test(lines[i])) { start = i + 1; break; }
+      }
+    }
+    let inFence = false;
     let n = -1;
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = start; i < lines.length; i++) {
+      if (/^\s*(```|~~~)/.test(lines[i])) { inFence = !inFence; continue; }
+      if (inFence) continue;
       if (taskRe.test(lines[i])) {
         n += 1;
         if (n === index) {
@@ -336,7 +349,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         onTogglePresentation={() => setShowPresentation(true)}
         onToggleSplitView={() => setShowSplitView(!showSplitView)}
         onToggleDiffView={() => setShowDiffView(true)}
-        onToggleEditor={() => setShowEditor(true)}
+        onToggleEditor={isGuestMode ? undefined : () => setShowEditor(true)}
         onToggleVault={() => setVaultOpen(true)}
         onOpenFileBrowser={() => setFileBrowserOpen(true)}
         onOpenAiChat={() => setAiChatOpen(true)}
@@ -474,7 +487,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 <div className="skeleton-line skeleton-long" />
                 <div className="skeleton-line skeleton-short" />
               </div>
-            ) : effectiveContent ? (
+            ) : effectiveContent != null ? (
               <MarkdownRenderer
                 content={frontmatterResult ? frontmatterResult.content : effectiveContent}
                 onHeadingsChange={handleHeadingsChange}
@@ -549,24 +562,28 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         </Suspense>
       )}
 
-      {showEditor && activeFileId && activeFileContent && (() => {
+      {showEditor && !isGuestMode && activeFileId && activeFileContent != null && (() => {
         // When collab is on, hand the editor a Y.Text from the shared
         // doc so edits stream peer-to-peer in real time. Solo mode
         // leaves yText undefined and the editor seeds from `content`.
+        // Guests are view-only and never reach this block. The editor is
+        // keyed by file id and its onSave bound to that same id, so a file
+        // switch while the overlay is open remounts a fresh editor and any
+        // unsaved buffer flushes to the file it belongs to — never to
+        // whichever file happens to be active at save time.
         const collab = useCollabStore.getState();
-        const collabFileId = isGuestMode
-          ? syncedActiveFileId ?? activeFileId
-          : activeFileId;
-        const yText = collabIsActive ? collab.getYText(collabFileId) ?? undefined : undefined;
+        const editorFileId = activeFileId;
+        const yText = collabIsActive ? collab.getYText(editorFileId) ?? undefined : undefined;
         const awareness = collabIsActive ? collab.getAwareness() ?? undefined : undefined;
         return (
           <Suspense fallback={null}>
             <MarkdownEditor
+              key={editorFileId}
               content={activeFileContent}
               filename={activeFile?.filename || 'untitled.md'}
               fileId={activeFile?.id}
               workspaceId={useWorkspaceStore.getState().activeWorkspaceId || undefined}
-              onSave={handleEditorSave}
+              onSave={(newContent) => handleEditorSave(newContent, editorFileId)}
               onClose={() => setShowEditor(false)}
               yText={yText}
               awareness={awareness}

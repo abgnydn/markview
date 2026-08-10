@@ -115,8 +115,12 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         return;
       }
 
-      // Auto-select the most recent workspace
-      const activeWs = workspaces[0];
+      // Auto-select the most recent workspace — skipping the marketing
+      // routes' system workspaces ("portfolio: <slug>" / "the chronicle"),
+      // so browsing /projects or /p/:slug never steals the editor's
+      // default workspace from the user's real notes.
+      const isSystemWs = (t: string) => t.startsWith('portfolio: ') || t === 'the chronicle';
+      const activeWs = workspaces.find((w) => !isSystemWs(w.title)) ?? workspaces[0];
       const dbFiles = await db.files
         .where('workspaceId')
         .equals(activeWs.id)
@@ -134,7 +138,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       let activeFileContent: string | null = null;
       if (files.length > 0) {
         const firstFile = await db.files.get(files[0].id);
-        activeFileContent = firstFile?.content || null;
+        activeFileContent = firstFile?.content ?? null;
       }
 
       set({
@@ -243,7 +247,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     let activeFileContent: string | null = null;
     if (files.length > 0) {
       const firstFile = await db.files.get(files[0].id);
-      activeFileContent = firstFile?.content || null;
+      activeFileContent = firstFile?.content ?? null;
     }
     if (token !== workspaceSwitchToken) return; // superseded by a newer switch
 
@@ -340,7 +344,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const commit = () => {
       set({
         activeFileId: fileId,
-        activeFileContent: dbFile?.content || null,
+        activeFileContent: dbFile?.content ?? null,
         isContentLoading: false,
       });
     };
@@ -430,10 +434,25 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     if (!activeWorkspaceId) return;
 
     const removedFile = files.find((f) => f.id === fileId);
+    const removedDbFile = await db.files.get(fileId);
     await db.files.delete(fileId);
     // Drop embeddings + snapshots so we don't leave orphan rows.
     await db.embeddings.where('fileId').equals(fileId).delete();
     await db.snapshots.where('fileId').equals(fileId).delete();
+    // GC pasted-image assets referenced only by the removed file —
+    // without this they sit in IndexedDB eating quota until the whole
+    // workspace is deleted.
+    const assetRe = /\(asset:([\w-]+)\)/g;
+    const removedAssetIds = [...(removedDbFile?.content.matchAll(assetRe) ?? [])].map((m) => m[1]);
+    if (removedAssetIds.length > 0) {
+      const siblings = await db.files.where('workspaceId').equals(activeWorkspaceId).toArray();
+      const stillReferenced = new Set<string>();
+      for (const f of siblings) {
+        for (const m of f.content.matchAll(assetRe)) stillReferenced.add(m[1]);
+      }
+      const orphans = removedAssetIds.filter((id) => !stillReferenced.has(id));
+      if (orphans.length > 0) await db.assets.bulkDelete(orphans);
+    }
 
     const newFiles = files.filter((f) => f.id !== fileId);
     const removedSize = removedFile?.size || 0;
@@ -450,7 +469,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       let nextContent: string | null = null;
       if (nextFile) {
         const dbFile = await db.files.get(nextFile.id);
-        nextContent = dbFile?.content || null;
+        nextContent = dbFile?.content ?? null;
       }
       set({
         files: newFiles,
@@ -605,6 +624,11 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       // already on the new one. The source workspace's file count gets
       // recomputed lazily on next switchWorkspace.
       await db.files.delete(fileId);
+      // Same orphan cleanup removeFile does — stale embedding rows keep
+      // the source workspaceId and make semantic search surface a
+      // deleted file.
+      await db.embeddings.where('fileId').equals(fileId).delete();
+      await db.snapshots.where('fileId').equals(fileId).delete();
       const sourceWs = get().workspaces.find((w) => w.id === sourceWsId);
       if (sourceWs) {
         await db.workspaces.update(sourceWsId, {

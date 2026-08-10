@@ -139,12 +139,30 @@ function TreeItem({
 export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void; className?: string }) {
   const workspaces = useWorkspaceStore((s) => s.workspaces);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
-  const files = useWorkspaceStore((s) => s.files);
-  const activeFileId = useWorkspaceStore((s) => s.activeFileId);
+  const localFiles = useWorkspaceStore((s) => s.files);
+  const localActiveFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const removeFile = useWorkspaceStore((s) => s.removeFile);
   const reorderFiles = useWorkspaceStore((s) => s.reorderFiles);
   const collabIsActive = useCollabStore((s) => s.isActive);
+  const collabIsHost = useCollabStore((s) => s.isHost);
+  const syncedFiles = useCollabStore((s) => s.syncedFiles);
+  const syncedActiveFileId = useCollabStore((s) => s.syncedActiveFileId);
+  const setSyncedActiveFile = useCollabStore((s) => s.setSyncedActiveFile);
+
+  // Guests browse the SHARED workspace: its files come from the Y.Doc,
+  // and selection routes through the synced store — the local workspace
+  // store knows nothing about shared file ids. Without this a guest is
+  // stuck on whichever file the session opened with.
+  const isGuestMode = collabIsActive && !collabIsHost;
+  const files = isGuestMode
+    ? syncedFiles.map((f) => ({ ...f, displayName: f.displayName || f.filename.replace(/\.md$/i, ''), size: 0 }))
+    : localFiles;
+  const activeFileId = isGuestMode ? syncedActiveFileId : localActiveFileId;
+  const selectFile = useCallback((id: string) => {
+    if (isGuestMode) setSyncedActiveFile(id);
+    else void setActiveFile(id);
+  }, [isGuestMode, setSyncedActiveFile, setActiveFile]);
   const [showShareDialog, setShowShareDialog] = useState(false);
   // Deleting a file is irreversible (content + snapshots + embeddings) —
   // gate it behind the same ConfirmDialog that workspace-close uses.
@@ -167,7 +185,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
     setDragIndex(index);
     e.dataTransfer.effectAllowed = 'move';
     // Plain-text payload = the source index (used by intra-sidebar reorder).
-    e.dataTransfer.setData('text/plain', String(index));
+    e.dataTransfer.setData('application/x-markview-file-index', String(index));
     // Rich payload = the file id (used by workspace tabs to drop the file
     // into a different workspace). A separate MIME type means cross-target
     // drops can recognize "this is a markview file" without confusing the
@@ -210,7 +228,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
 
   const handleDrop = useCallback((e: React.DragEvent, toIndex: number) => {
     e.preventDefault();
-    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    const fromIndex = parseInt(e.dataTransfer.getData('application/x-markview-file-index'), 10);
     if (!isNaN(fromIndex) && fromIndex !== toIndex) {
       reorderFiles(fromIndex, toIndex);
     }
@@ -244,7 +262,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
               node={node}
               depth={0}
               activeFileId={activeFileId}
-              onSelect={(id) => { setActiveFile(id); onFileSelect?.(); }}
+              onSelect={(id) => { selectFile(id); onFileSelect?.(); }}
               onRemove={setFileToRemove}
             />
           ))
@@ -254,12 +272,12 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
             <div
               key={file.id}
               className={`sidebar-item sidebar-item-draggable ${activeFileId === file.id ? 'sidebar-item-active' : ''} ${dragIndex === index ? 'sidebar-item-dragging' : ''} ${dropIndex === index && dragIndex !== index ? 'sidebar-item-drop-target' : ''}`}
-              onClick={() => { setActiveFile(file.id); onFileSelect?.(); }}
+              onClick={() => { selectFile(file.id); onFileSelect?.(); }}
               title={file.filename}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter') setActiveFile(file.id); }}
-              draggable
+              onKeyDown={(e) => { if (e.key === 'Enter') selectFile(file.id); }}
+              draggable={!isGuestMode}
               onDragStart={(e) => handleDragStart(e, index)}
               onDragEnd={handleDragEnd}
               onDragEnter={() => handleDragEnter(index)}
@@ -272,7 +290,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
               </span>
               <FileText size={14} className="sidebar-item-icon" />
               <span className="sidebar-item-name">{file.displayName || file.filename}</span>
-              <button
+              {!isGuestMode && <button
                 className="sidebar-item-remove"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -281,7 +299,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
                 title="Remove file"
               >
                 <Trash2 size={12} />
-              </button>
+              </button>}
             </div>
           ))
         )}

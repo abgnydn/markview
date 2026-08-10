@@ -37,13 +37,17 @@ export function useViewerState() {
     setRenderedHtml(html);
   }, []);
 
-  const handleEditorSave = useCallback(async (newContent: string) => {
-    if (!activeFileId) return;
+  const handleEditorSave = useCallback(async (newContent: string, targetFileId?: string) => {
+    // Save to the file the editor was opened on (passed by the caller),
+    // not whichever file is active by the time the save fires — a file
+    // switch mid-edit must never flush one file's buffer into another.
+    const fileId = targetFileId ?? activeFileId;
+    if (!fileId) return;
     // (Pre-save snapshotting is handled inside MarkdownEditor via the
     // snapshots library — see lib/snapshots.ts createSnapshot calls.)
     const { db } = await import('@/lib/storage/db');
     try {
-      await db.files.update(activeFileId, { content: newContent });
+      await db.files.update(fileId, { content: newContent });
     } catch (err) {
       // The write failed (most likely IndexedDB quota exceeded). Surface it
       // loudly and keep the editor open so the user can copy their work out
@@ -61,12 +65,16 @@ export function useViewerState() {
     // Plus a soft bronze chime through the atmosphere audio bus (only
     // audible if the user already unmuted ambient audio).
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('markview:file-saved', { detail: { fileId: activeFileId } }));
+      window.dispatchEvent(new CustomEvent('markview:file-saved', { detail: { fileId } }));
       void import('@/lib/atmosphere/audio').then(({ playUiSound }) => playUiSound('chime'));
     }
-    // Reload content in store
-    useWorkspaceStore.getState().setActiveFile(activeFileId);
-    setShowEditor(false);
+    // Reload content in store — only when the saved file is still the
+    // active one (an unmount flush may land after a file switch). The
+    // editor stays open; its content prop refreshes and the unsaved dot
+    // clears, so save no longer kicks the user out of the overlay (and a
+    // background tab-hide flush no longer closes it either).
+    const store = useWorkspaceStore.getState();
+    if (store.activeFileId === fileId) void store.setActiveFile(fileId);
 
     // Re-embed the file in the background — fire-and-forget so save UX
     // stays snappy. Failures (e.g. first-load model download still in
@@ -76,7 +84,7 @@ export function useViewerState() {
         const workspaceId = useWorkspaceStore.getState().activeWorkspaceId;
         if (!workspaceId) return;
         const { embedFile } = await import('@/lib/embeddings');
-        await embedFile(activeFileId, workspaceId, newContent);
+        await embedFile(fileId, workspaceId, newContent);
       } catch {
         /* embeddings are best-effort */
       }
