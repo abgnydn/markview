@@ -73,21 +73,27 @@ export function annotationFromSelection(
   const anchorText = sel.toString().trim();
   if (!anchorText) return null;
 
-  const fullText = root.textContent ?? '';
-  const startIdx = locateInText(fullText, anchorText);
+  // Context must be sliced from the SAME normalized string the located
+  // index refers to — slicing the raw text at a normalized index grabs
+  // text from the wrong place, and a trimmed boundary space would glue
+  // context onto the anchor so reanchor's needle never matches. Only the
+  // outer edges are trimmed, keeping the anchor-adjacent whitespace.
+  const fullText = normalizeWS(root.textContent ?? '');
+  const normAnchor = normalizeWS(anchorText);
+  const startIdx = fullText.indexOf(normAnchor);
   const before = startIdx > 0
-    ? fullText.slice(Math.max(0, startIdx - CONTEXT_LEN), startIdx)
+    ? fullText.slice(Math.max(0, startIdx - CONTEXT_LEN), startIdx).replace(/^\s+/, '')
     : '';
   const after = startIdx >= 0
-    ? fullText.slice(startIdx + anchorText.length, startIdx + anchorText.length + CONTEXT_LEN)
+    ? fullText.slice(startIdx + normAnchor.length, startIdx + normAnchor.length + CONTEXT_LEN).replace(/\s+$/, '')
     : '';
 
   return {
     id: cryptoId(),
     fileId,
     anchorText,
-    contextBefore: normalizeWS(before),
-    contextAfter: normalizeWS(after),
+    contextBefore: before,
+    contextAfter: after,
     note,
     color,
     createdAt: Date.now(),
@@ -113,7 +119,9 @@ export function reanchor(root: Element, a: Annotation): Range | null {
   const fullText = normalizeWS(root.textContent ?? '');
   const needle = normalizeWS(a.contextBefore + a.anchorText + a.contextAfter);
   let idx = needle ? fullText.indexOf(needle) : -1;
-  const len = a.anchorText.length;
+  // Offsets/lengths are all in normalized space — rangeAtOffset maps them
+  // back to raw DOM positions.
+  const len = normalizeWS(a.anchorText).length;
   let offset = a.contextBefore.length;
   if (idx === -1) {
     idx = fullText.indexOf(normalizeWS(a.anchorText));
@@ -182,10 +190,6 @@ function mapNormalizedOffsetToRaw(raw: string, normIdx: number): number {
 
 function normalizeWS(s: string): string {
   return s.replace(/\s+/g, ' ').trim();
-}
-
-function locateInText(haystack: string, needle: string): number {
-  return normalizeWS(haystack).indexOf(normalizeWS(needle));
 }
 
 function cryptoId(): string {

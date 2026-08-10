@@ -57,6 +57,7 @@ export function AiChat({ onClose }: AiChatProps) {
   // you did in `research/` survives a context switch to `posts/` and
   // is right there when you come back. We persist only finished turns
   // (no in-flight tokens) to keep the JSON small and resumable.
+  const abortRef = useRef<AbortController | null>(null);
   const memoryKey = activeWorkspaceId ? `mv-ai-chat-${activeWorkspaceId}` : '';
   const [turns, setTurns] = useState<Turn[]>(() => {
     if (typeof window === 'undefined' || !memoryKey) return [];
@@ -67,8 +68,12 @@ export function AiChat({ onClose }: AiChatProps) {
       return Array.isArray(parsed) ? parsed as Turn[] : [];
     } catch { return []; }
   });
-  // Reload thread when the active workspace changes.
+  // Reload thread when the active workspace changes — and abort any
+  // in-flight generation first, or its tokens keep streaming into a
+  // turn list that no longer exists.
   useEffect(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
     if (!memoryKey) { setTurns([]); return; }
     try {
       const raw = localStorage.getItem(memoryKey);
@@ -90,7 +95,6 @@ export function AiChat({ onClose }: AiChatProps) {
   };
   const [optedIn, setOptedIn] = useState<boolean>(() => isGenerativeOptedIn());
   const [status, setStatus] = useState<GenStatus>({ state: 'idle' });
-  const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -146,8 +150,15 @@ export function AiChat({ onClose }: AiChatProps) {
         ? { ...t, answer: result.answer || t.answer, citations: result.citations, status: 'done' }
         : t)));
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      setTurns((all) => all.map((t) => (t.id === id ? { ...t, status: 'error', error: msg } : t)));
+      // A user-initiated Stop is not an error — keep the partial answer
+      // as a finished turn instead of flashing red and dropping it from
+      // the persisted thread.
+      if (e instanceof Error && e.name === 'AbortError') {
+        setTurns((all) => all.map((t) => (t.id === id ? { ...t, status: 'done' } : t)));
+      } else {
+        const msg = e instanceof Error ? e.message : String(e);
+        setTurns((all) => all.map((t) => (t.id === id ? { ...t, status: 'error', error: msg } : t)));
+      }
     } finally {
       abortRef.current = null;
     }

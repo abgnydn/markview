@@ -23,6 +23,10 @@ const TRANSITIONS: Transition[] = ['slide', 'fade', 'zoom', 'flip', 'none'];
 const lsGet = (k: string, d: string) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 const lsSet = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { /* ignore */ } };
 const stripTags = (h: string) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+// deckTitle comes from textContent (raw text) — it must be re-escaped
+// before being interpolated into presenter/export HTML strings.
+const escapeHtml = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 function isCoverSlide(slideHtml: string): boolean {
   const doc = new DOMParser().parseFromString(`<div>${slideHtml}</div>`, 'text/html');
@@ -48,7 +52,7 @@ function parseSlide(slideHtml: string) {
   const notes: string[] = [];
   root.querySelectorAll('blockquote, .markdown-alert-note, .markdown-alert').forEach((el) => {
     const t = (el.textContent || '').trim();
-    if (/^note[:\s]/i.test(t) || el.className.includes('note')) { notes.push(t.replace(/^note[:\s]+/i, '')); el.remove(); }
+    if (/^note:/i.test(t) || el.className.includes('note')) { notes.push(t.replace(/^note:\s*/i, '')); el.remove(); }
   });
   const title = (root.querySelector('h1, h2, h3')?.textContent || 'Slide').trim();
   return { body: root.innerHTML, bg, notes: notes.join('\n\n'), title, words: stripTags(slideHtml).split(' ').length };
@@ -200,7 +204,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   }, [currentSlide, theme]);
 
   const exportHtml = useCallback(() => {
-    const doc = `<!doctype html><meta charset=utf8><title>${deckTitle}</title><style>body{margin:0;background:#0a0b11;color:#eef1f6;font-family:system-ui,sans-serif}section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8% 9%;border-bottom:1px solid #222}h1,h2{font-size:3rem;margin:0 0 .4em}p,li{font-size:1.3rem;line-height:1.6;color:#aeb6c4}code{background:#ffffff14;padding:.1em .4em;border-radius:4px}pre{background:#0008;padding:1em;border-radius:8px;overflow:auto}</style>` +
+    const doc = `<!doctype html><meta charset=utf8><title>${escapeHtml(deckTitle)}</title><style>body{margin:0;background:#0a0b11;color:#eef1f6;font-family:system-ui,sans-serif}section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8% 9%;border-bottom:1px solid #222}h1,h2{font-size:3rem;margin:0 0 .4em}p,li{font-size:1.3rem;line-height:1.6;color:#aeb6c4}code{background:#ffffff14;padding:.1em .4em;border-radius:4px}pre{background:#0008;padding:1em;border-radius:8px;overflow:auto}</style>` +
       slides.map((s) => `<section>${s}</section>`).join('');
     const blob = new Blob([doc], { type: 'text/html' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${deckTitle.replace(/\W+/g, '-').toLowerCase()}.html`; a.click();
@@ -213,7 +217,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     const w = window.open('', 'mv-presenter', 'width=900,height=620');
     if (!w) return;
     presenterWin.current = w;
-    w.document.write(`<!doctype html><meta charset=utf8><title>Presenter — ${deckTitle}</title><style>body{margin:0;background:#07080c;color:#eef1f6;font-family:system-ui,sans-serif;display:grid;grid-template-rows:auto 1fr auto;height:100vh}header{display:flex;justify-content:space-between;padding:10px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-bottom:1px solid #1c1f27}#main{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;padding:14px;min-height:0}.card{background:#13151c;border:1px solid #ffffff14;border-radius:12px;padding:22px;overflow:auto}.card h4{margin:0 0 10px;font:11px ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase;color:#9b7dff}.next{opacity:.7}#notes{font-size:15px;line-height:1.6;white-space:pre-wrap;color:#c7cdd8}footer{padding:8px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-top:1px solid #1c1f27}h1,h2{font-size:1.8rem}p,li{color:#aeb6c4}</style><header><span id=pos></span><span id=time></span></header><div id=main><div class=card><h4>Current</h4><div id=cur></div></div><div style="display:grid;grid-template-rows:1fr 1fr;gap:14px;min-height:0"><div class="card next"><h4>Next</h4><div id=nxt></div></div><div class=card><h4>Notes</h4><div id=notes></div></div></div></div><footer>${deckTitle} · markview.ai</footer><script>const bc=new BroadcastChannel('mv-deck-pv');bc.onmessage=e=>{const d=e.data;document.getElementById('cur').innerHTML=d.cur;document.getElementById('nxt').innerHTML=d.nxt||'<p style=opacity:.5>— end —</p>';document.getElementById('notes').innerText=d.notes||'No notes.';document.getElementById('pos').textContent=d.pos;document.getElementById('time').textContent=d.time;};bc.postMessage({req:1});<\/script>`);
+    w.document.write(`<!doctype html><meta charset=utf8><title>Presenter — ${escapeHtml(deckTitle)}</title><style>body{margin:0;background:#07080c;color:#eef1f6;font-family:system-ui,sans-serif;display:grid;grid-template-rows:auto 1fr auto;height:100vh}header{display:flex;justify-content:space-between;padding:10px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-bottom:1px solid #1c1f27}#main{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;padding:14px;min-height:0}.card{background:#13151c;border:1px solid #ffffff14;border-radius:12px;padding:22px;overflow:auto}.card h4{margin:0 0 10px;font:11px ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase;color:#9b7dff}.next{opacity:.7}#notes{font-size:15px;line-height:1.6;white-space:pre-wrap;color:#c7cdd8}footer{padding:8px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-top:1px solid #1c1f27}h1,h2{font-size:1.8rem}p,li{color:#aeb6c4}</style><header><span id=pos></span><span id=time></span></header><div id=main><div class=card><h4>Current</h4><div id=cur></div></div><div style="display:grid;grid-template-rows:1fr 1fr;gap:14px;min-height:0"><div class="card next"><h4>Next</h4><div id=nxt></div></div><div class=card><h4>Notes</h4><div id=notes></div></div></div></div><footer>${escapeHtml(deckTitle)} · markview.ai</footer><script>const bc=new BroadcastChannel('mv-deck-pv');bc.onmessage=e=>{const d=e.data;document.getElementById('cur').innerHTML=d.cur;document.getElementById('nxt').innerHTML=d.nxt||'<p style=opacity:.5>— end —</p>';document.getElementById('notes').innerText=d.notes||'No notes.';document.getElementById('pos').textContent=d.pos;document.getElementById('time').textContent=d.time;};bc.postMessage({req:1});<\/script>`);
     w.document.close();
   }, [deckTitle]);
 
@@ -374,6 +378,9 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (search != null) { if (e.key === 'Escape') { e.preventDefault(); setSearch(null); } return; }
+      // Never hijack ⌘/Ctrl/⌥ chords — ⌘C must copy, not clear the
+      // drawing; ⌘F must not toggle fullscreen; etc.
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       const k = e.key;
       if (/^[0-9]$/.test(k)) { e.preventDefault(); setNumBuf((b) => (b + k).slice(-3)); window.clearTimeout(numTimer.current); numTimer.current = window.setTimeout(() => setNumBuf(''), 1100); return; }
       if (k === 'Enter' && numBuf) { e.preventDefault(); goTo(+numBuf - 1); setNumBuf(''); return; }

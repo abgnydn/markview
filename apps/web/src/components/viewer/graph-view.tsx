@@ -58,6 +58,8 @@ export function GraphView({ onClose }: GraphViewProps) {
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const constellationKey = activeWorkspaceId ? `mv-constellation-${activeWorkspaceId}` : '';
   const [constellation, setConstellation] = useState(false);
+  // Bumped when the async graph build lands, so ref-driven UI re-renders.
+  const [, setBuiltVersion] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const nodesRef = useRef<Node[]>([]);
   const edgesRef = useRef<Edge[]>([]);
@@ -147,9 +149,30 @@ export function GraphView({ onClose }: GraphViewProps) {
         idx++;
       }
 
+      // Re-apply the saved constellation layout — a rebuild (file save /
+      // rename while the overlay is open) creates freshly randomized
+      // positions, and without this the 2s save-timer would overwrite
+      // the user's hand-arranged layout with them.
+      if (constellation && constellationKey) {
+        try {
+          const raw = localStorage.getItem(constellationKey);
+          if (raw) {
+            const saved = JSON.parse(raw) as Record<string, { x: number; y: number }>;
+            for (const n of nodes) {
+              const p = saved[n.id];
+              if (p) { n.x = p.x; n.y = p.y; n.vx = 0; n.vy = 0; }
+            }
+          }
+        } catch { /* corrupt entry — ignore */ }
+      }
+
       nodesRef.current = nodes;
       edgesRef.current = edges;
       tagPaletteRef.current = palette;
+      // Refs don't trigger renders — bump state so the header stats and
+      // tag legend reflect the built graph instead of showing "0 · 0"
+      // until an unrelated interaction forces a render.
+      setBuiltVersion((v) => v + 1);
     })();
     return () => { cancelled = true; };
   }, [files]);

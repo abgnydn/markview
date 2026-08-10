@@ -219,7 +219,11 @@ export async function generateChat(options: GenerateOptions): Promise<string> {
       skip_prompt: true,
       skip_special_tokens: true,
       callback_function: (chunk: string) => {
-        if (abortRequested) return;
+        // Throwing here unwinds transformers.js's generation loop — the
+        // only way to actually STOP local compute on abort instead of
+        // letting the full max_new_tokens budget burn in the background
+        // with the UI stuck on "busy".
+        if (abortRequested) throw new Error('mv-generation-aborted');
         accumulated += chunk;
         onToken(chunk, accumulated);
       },
@@ -227,14 +231,20 @@ export async function generateChat(options: GenerateOptions): Promise<string> {
   }
 
   try {
-    const output = await pipe(messages, {
-      max_new_tokens: maxNewTokens,
-      temperature,
-      top_p: topP,
-      do_sample: true,
-      return_full_text: false,
-      streamer,
-    });
+    let output: unknown;
+    try {
+      output = await pipe(messages, {
+        max_new_tokens: maxNewTokens,
+        temperature,
+        top_p: topP,
+        do_sample: true,
+        return_full_text: false,
+        streamer,
+      });
+    } catch (err) {
+      if (abortRequested) return accumulated.trim();
+      throw err;
+    }
     if (abortRequested) return accumulated;
     if (accumulated) return accumulated.trim();
     // Fallback for when streaming wasn't requested — extract the
