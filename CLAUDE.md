@@ -49,5 +49,18 @@ and a **native desktop mirror** of it. Two surfaces, one codebase:
 - **Security:** user markdown is sanitized in `packages/core` (rehype-sanitize,
   strict schema — no `style=`, no `data:` image URIs). Any new
   `dangerouslySetInnerHTML` must take pre-sanitized HTML from that pipeline.
+  - **Known trust boundary:** code-fence plugin output (`lib/plugins/*` —
+    tabs, embed, chart, csv, map, timeline, alert) is spliced into the HTML
+    *after* `rehype-sanitize` runs, so it legitimately contains `<iframe>`,
+    inline `style=`, and inline handlers the schema would otherwise strip.
+    That output is therefore **not** covered by the sanitizer: every plugin
+    must escape user-supplied values itself (`escapeHtml`/`escapeAttr`) and
+    must never interpolate raw fence content into markup or a URL. When
+    adding a plugin, treat its fence body as hostile input. Iframes must not
+    combine `allow-scripts` with `allow-same-origin` for arbitrary URLs — a
+    framed page can then remove its own sandbox.
+  - Exports are the same story: `renderMarkdownForExport` inlines local
+    `asset:` blobs as `data:` URIs *after* sanitization, and any filename or
+    title interpolated into exported HTML must go through `escapeHtmlText`.
 - Commit style: lowercase, scope-prefixed subjects (`feat(atmosphere):`,
   `perf(viewer):`). Body explains the *why*.

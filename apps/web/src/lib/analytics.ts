@@ -7,12 +7,20 @@
 // user documents.
 //
 // The token is public by design (it ships in the page HTML). Until one is
-// set, the hook is a no-op. Get a token: Cloudflare dashboard → Analytics
-// & Logs → Web Analytics → Add a site (markview.ai) → copy the token here.
+// set, the hook is a no-op.
+//
+// To enable:
+//   1. Cloudflare dashboard → Analytics & Logs → Web Analytics →
+//      Add a site (markview.ai) → copy the site token.
+//   2. Set VITE_CF_BEACON_TOKEN in the build environment — for the
+//      GitHub Actions deploy, add it as a repo secret and it flows
+//      through deploy.yml's build step. For a local prod build, put it
+//      in apps/web/.env.local (gitignored).
+// No code edit needed; the constant below is only a fallback.
 
 import { useEffect } from 'react';
 
-const BEACON_TOKEN = '';
+const BEACON_TOKEN = import.meta.env.VITE_CF_BEACON_TOKEN ?? '';
 const BEACON_SRC = 'https://static.cloudflareinsights.com/beacon.min.js';
 
 /** Load the Cloudflare Web Analytics beacon once. Call only from marketing
