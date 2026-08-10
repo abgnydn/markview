@@ -43,6 +43,9 @@ interface Envelope {
 }
 
 const PING_INTERVAL_MS = 30_000;
+// Abuse caps: y-webrtc uses one topic per room and small SDP/ICE frames.
+const MAX_TOPICS_PER_PEER = 8;
+const MAX_MESSAGE_BYTES = 64 * 1024;
 
 export class YjsSignalRoom {
   private peers = new Set<PeerState>();
@@ -95,6 +98,9 @@ export class YjsSignalRoom {
       let msg: Envelope | null = null;
       try {
         const raw = typeof ev.data === "string" ? ev.data : new TextDecoder().decode(ev.data as ArrayBuffer);
+        // Size cap — signaling frames are small (SDP/ICE); multi-MB
+        // payloads fanned out to every subscriber are abuse, not Yjs.
+        if (raw.length > MAX_MESSAGE_BYTES) return;
         const parsed = JSON.parse(raw) as unknown;
         if (parsed && typeof parsed === "object") msg = parsed as Envelope;
       } catch {
@@ -120,6 +126,10 @@ export class YjsSignalRoom {
         const topics = Array.isArray(msg.topics) ? msg.topics : [];
         for (const t of topics) {
           if (typeof t !== "string" || t.length === 0 || t.length > 256) continue;
+          // Topic cap per peer — y-webrtc subscribes to one room topic;
+          // unbounded subscriptions are memory-growth abuse in this
+          // always-hot DO.
+          if (!peer.topics.has(t) && peer.topics.size >= MAX_TOPICS_PER_PEER) break;
           peer.topics.add(t);
           let set = this.topics.get(t);
           if (!set) {

@@ -13,14 +13,24 @@ import { useWorkspaceStore } from '@/stores/workspace-store';
  */
 export function PresenceAvatars() {
   const isActive = useCollabStore((s) => s.isActive);
+  const isHost = useCollabStore((s) => s.isHost);
   const peers = useCollabStore((s) => s.peers);
-  const selfName = useCollabStore((s) => s.localUserName);
+  const setSyncedActiveFile = useCollabStore((s) => s.setSyncedActiveFile);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
 
   if (!isActive || peers.length === 0) return null;
 
-  const others = peers.filter((p) => p.name !== selfName);
-  if (others.length === 0) return null;
+  // getConnectedPeers already excludes self by clientID — filtering by
+  // display name here would just hide other peers who share your name.
+  const others = peers;
+
+  // Following a peer means jumping to their file in the SHARED doc: for
+  // guests that's the synced store; for the host the shared ids are their
+  // own local file ids, so the workspace store works directly.
+  const follow = (fileId: string) => {
+    if (isHost) void setActiveFile(fileId);
+    else setSyncedActiveFile(fileId);
+  };
 
   return (
     <div className="mv-presence-cluster" role="group" aria-label="Connected peers">
@@ -37,7 +47,7 @@ export function PresenceAvatars() {
               color: p.color,
             }}
             title={`${p.name}${p.activeFileId ? ' — click to follow' : ''}`}
-            onClick={() => { if (p.activeFileId) void setActiveFile(p.activeFileId); }}
+            onClick={() => { if (p.activeFileId) follow(p.activeFileId); }}
           >
             {initial}
           </button>

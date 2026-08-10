@@ -173,10 +173,11 @@ export function renderMarkdown(md: string): string {
   while (i < lines.length) {
     const line = lines[i] ?? "";
 
-    // fenced code
-    const fence = /^```(\w+)?\s*$/.exec(line);
+    // fenced code — accept full info strings ("```ts twoslash"), keep
+    // only the first word as the language.
+    const fence = /^```(\S+)?(?:\s.*)?$/.exec(line);
     if (fence) {
-      const lang = fence[1] ?? "";
+      const lang = (fence[1] ?? "").replace(/[^\w-]/g, "");
       const buf: string[] = [];
       i++;
       while (i < lines.length && !/^```\s*$/.test(lines[i] ?? "")) {
@@ -247,6 +248,14 @@ export function renderMarkdown(md: string): string {
     // paragraph (collect until blank)
     const buf: string[] = [];
     while (i < lines.length && !/^\s*$/.test(lines[i] ?? "") && !startsBlock(lines[i] ?? "")) {
+      buf.push(lines[i] ?? "");
+      i++;
+    }
+    if (buf.length === 0) {
+      // startsBlock matched a line no block handler above consumed (its
+      // regexes are looser — e.g. "# " with no text, "> "+tab). Without
+      // consuming it the outer loop re-enters at the same index forever
+      // and the Worker burns to the CPU limit.
       buf.push(lines[i] ?? "");
       i++;
     }

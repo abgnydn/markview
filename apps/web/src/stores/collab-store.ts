@@ -91,8 +91,15 @@ export const useCollabStore = create<CollabState>((set, get) => ({
 
   // ---------- Host: Share Workspace ----------
   shareWorkspace: async (workspaceId: string) => {
-    const { _session: existing } = get();
-    if (existing) existing.destroy();
+    const { _session: existing, _unsubAwareness, _unsubFiles } = get();
+    if (existing) {
+      // Full teardown — destroy() alone leaves the old session's
+      // pagehide/observeDeep handlers attached, and their late flush
+      // can write a destroyed Y.Doc's (empty) text over real content.
+      _unsubAwareness?.();
+      _unsubFiles?.();
+      existing.destroy();
+    }
 
     const roomId = generateRoomId();
     // Per-room secret: encrypts all signaling (SDP/ICE) so neither the
@@ -124,6 +131,17 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     // hardcoded "Host" so other peers see them by their real name.
     const hostName = get().localUserName || 'Host';
     setLocalUser(session.provider, hostName);
+
+    // Broadcast the host's active file (now and on every switch) so
+    // guests' "click to follow" has something to follow — guests already
+    // do this via setSyncedActiveFile.
+    const hostActiveId = useWorkspaceStore.getState().activeFileId;
+    if (hostActiveId) setLocalActiveFile(session.provider, hostActiveId);
+    const unsubHostActive = useWorkspaceStore.subscribe((state, prev) => {
+      if (state.activeFileId && state.activeFileId !== prev.activeFileId) {
+        setLocalActiveFile(session.provider, state.activeFileId);
+      }
+    });
 
     // Subscribe to awareness changes
     const unsubAwareness = onAwarenessChange(session.provider, (peers) => {
@@ -170,6 +188,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     const unsubFiles = () => {
       window.removeEventListener('pagehide', onPageHide);
       contents.unobserveDeep(contentHandler);
+      unsubHostActive();
       flushDirty();
     };
 
@@ -192,8 +211,12 @@ export const useCollabStore = create<CollabState>((set, get) => ({
 
   // ---------- Guest: Join Room ----------
   joinRoom: async (roomId: string, userName: string) => {
-    const { _session: existing } = get();
-    if (existing) existing.destroy();
+    const { _session: existing, _unsubAwareness, _unsubFiles } = get();
+    if (existing) {
+      _unsubAwareness?.();
+      _unsubFiles?.();
+      existing.destroy();
+    }
 
     set({ isConnecting: true });
 
@@ -283,7 +306,9 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       isHost: false,
       isConnecting: false,
       roomId,
-      shareUrl: getShareUrl(roomId),
+      // Keep the #k secret in the guest's copyable URL — without it a
+      // re-shared link joins a room nobody can decrypt.
+      shareUrl: getShareUrl(roomId, getRoomSecretFromUrl() ?? undefined),
       localUserName: userName,
       syncedTitle: title,
       syncedFiles: files,
@@ -321,6 +346,18 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       _unsubAwareness: null,
       _unsubFiles: null,
     });
+
+    // Drop ?room= and #k from the URL — otherwise the join dialog
+    // immediately re-opens for the room the user just left, and a
+    // reload re-joins it.
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('room') || url.hash) {
+        url.searchParams.delete('room');
+        url.hash = '';
+        window.history.replaceState(null, '', `${url.pathname}${url.search}`);
+      }
+    }
   },
 
   // ---------- Guest: Switch File ----------

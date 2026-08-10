@@ -21,17 +21,30 @@ export function SplitView({ mainFileId, onClose }: SplitViewProps) {
     [files, mainFileId]
   );
 
-  // Load second file content
+  // Load second file content — and reload it whenever that file is saved
+  // (editor ⌘S, collab mirror flush), so the pane doesn't keep showing a
+  // mount-time snapshot forever.
   useEffect(() => {
     if (!secondFileId) {
       setSecondContent(null);
       return;
     }
     let cancelled = false;
-    db.files.get(secondFileId).then((file) => {
-      if (!cancelled && file) setSecondContent(file.content);
-    });
-    return () => { cancelled = true; };
+    const load = () => {
+      void db.files.get(secondFileId).then((file) => {
+        if (!cancelled && file) setSecondContent(file.content);
+      });
+    };
+    load();
+    const onSaved = (e: Event) => {
+      const savedId = (e as CustomEvent<{ fileId?: string }>).detail?.fileId;
+      if (!savedId || savedId === secondFileId) load();
+    };
+    window.addEventListener('markview:file-saved', onSaved);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('markview:file-saved', onSaved);
+    };
   }, [secondFileId]);
 
   // Default to first other file
