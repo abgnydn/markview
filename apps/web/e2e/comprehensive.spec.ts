@@ -154,6 +154,21 @@ test.describe('Editor Toolbar (WYSIWYG)', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('.editor-overlay')).not.toBeVisible();
   });
+
+  test('editor survives a Preview → Edit mode round-trip', async ({ page }) => {
+    await page.locator(cm).click();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('still here');
+    await page.locator('.editor-mode-btn', { hasText: 'Preview' }).click();
+    await expect(page.locator(cm)).toHaveCount(0);
+    await page.locator('.editor-mode-btn', { hasText: 'Edit' }).click();
+    // The CodeMirror view must re-attach with its buffer intact — not blank.
+    await expect(page.locator(cm)).toBeVisible();
+    expect(await cmText(page)).toContain('still here');
+    await page.locator(cm).click();
+    await page.keyboard.type(' and typing');
+    expect(await cmText(page)).toContain('and typing');
+  });
 });
 
 // ─── Export Menu ─────────────────────────────────────────────────────────────

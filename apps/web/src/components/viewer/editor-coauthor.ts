@@ -86,6 +86,9 @@ function requestGhost(view: EditorView): boolean {
   const line = state.doc.lineAt(pos);
   // Only fire at the END of a line (so Tab still indents mid-line).
   if (pos !== line.to) return false;
+  // A line that's just a list/quote/task marker → Tab should nest the item
+  // (fall through to indentWithTab), not summon the co-author.
+  if (/^\s*(?:[-*+]|\d+[.)]|>)\s*(?:\[[ xX]\]\s*)?$/.test(line.text) && line.text.trim() !== '') return false;
   // Need some preceding text to continue from.
   const before = state.doc.sliceString(0, pos);
   if (before.trim().length < 12) return false;

@@ -71,6 +71,7 @@ function toggleWrap(view: EditorView, marker: string, placeholder: string): void
     if (selected.length >= n * 2 && selected.startsWith(marker) && selected.endsWith(marker)) {
       const inner = selected.slice(n, selected.length - n);
       view.dispatch({ changes: { from: sel.from, to: sel.to, insert: inner }, selection: { anchor: sel.from, head: sel.from + inner.length } });
+      view.focus();
       return;
     }
     const before = state.doc.sliceString(Math.max(0, sel.from - n), sel.from);
@@ -80,10 +81,12 @@ function toggleWrap(view: EditorView, marker: string, placeholder: string): void
         changes: [{ from: sel.from - n, to: sel.from }, { from: sel.to, to: sel.to + n }],
         selection: { anchor: sel.from - n, head: sel.to - n },
       });
+      view.focus();
       return;
     }
     const insert = `${marker}${selected}${marker}`;
     view.dispatch({ changes: { from: sel.from, to: sel.to, insert }, selection: { anchor: sel.from + n, head: sel.from + n + selected.length } });
+    view.focus();
     return;
   }
   const insert = `${marker}${placeholder}${marker}`;
@@ -516,29 +519,65 @@ export function MarkdownEditor({
     [yText, awareness, workspaceId],
   );
 
-  // Boot the CodeMirror view exactly once per overlay open. In collab mode
-  // the doc is empty here because yCollab pulls from the Y.Text on connect.
+  // Destroy the view when the collab/workspace identity changes (extensions
+  // are rebuilt) or the overlay unmounts. Kept separate from the create
+  // effect below so a mode switch never tears the view down.
   useEffect(() => {
-    if (!hostRef.current || viewRef.current) return;
-    viewRef.current = new EditorView({
-      state: EditorState.create({
-        doc: yText ? '' : content,
-        extensions,
-      }),
-      parent: hostRef.current,
-    });
-    viewRef.current.focus();
     return () => {
       viewRef.current?.destroy();
       viewRef.current = null;
     };
   }, [extensions]);
 
+  // Boot the CodeMirror view once per overlay open — and re-attach its DOM
+  // when the edit pane remounts (Preview mode unmounts the pane; without
+  // re-parenting, switching back to Edit/Split shows an empty editor).
+  // In collab mode the doc is empty here because yCollab pulls from the
+  // Y.Text on connect.
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return; // preview mode — pane unmounted, view stays alive
+    const existing = viewRef.current;
+    if (existing) {
+      if (!host.contains(existing.dom)) {
+        host.appendChild(existing.dom);
+        existing.focus();
+      }
+      return;
+    }
+    viewRef.current = new EditorView({
+      state: EditorState.create({
+        doc: yText ? '' : content,
+        extensions,
+      }),
+      parent: host,
+    });
+    viewRef.current.focus();
+  }, [extensions, mode]);
+
+  // A ref holds the latest text/flags so once-registered listeners (flush,
+  // auto-snapshot, close) read fresh state without re-subscribing per
+  // keystroke.
+  const flushState = useRef({ text, hasChanges, onSave, fileId, workspaceId });
+  flushState.current = { text, hasChanges, onSave, fileId, workspaceId };
+
+  // Close the overlay, saving unsaved edits first — the same contract as the
+  // visibilitychange/pagehide flush below, so Esc / ✕ never silently
+  // discards work.
+  const closeWithFlush = useCallback(() => {
+    const s = flushState.current;
+    if (s.hasChanges) {
+      s.onSave(s.text);
+      if (s.fileId && s.workspaceId) void createSnapshot(s.fileId, s.workspaceId, s.text, 'auto');
+    }
+    onClose();
+  }, [onClose]);
+
   // ⌘S to save, Esc to close. Save also drops a `save` snapshot so the
   // user has a clean restore point at every commit.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
         if (hasChanges) {
           onSave(text);
@@ -550,21 +589,22 @@ export function MarkdownEditor({
           }
         }
       } else if (e.key === 'Escape') {
+        // CodeMirror already consumed this Esc (closing an autocomplete
+        // popup, a co-author ghost, the search panel…) — don't tear the
+        // whole editor down on the same keypress.
+        if (e.defaultPrevented) return;
         e.preventDefault();
-        onClose();
+        closeWithFlush();
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [text, hasChanges, onSave, onClose, fileId, workspaceId]);
+  }, [text, hasChanges, onSave, closeWithFlush, fileId, workspaceId]);
 
   // Flush unsaved edits when the tab is hidden or closed. `beforeunload`
   // can't reliably await an async IndexedDB write, but visibilitychange →
   // hidden (and pagehide) fire while the page is still alive, so onSave's
-  // write lands. A ref holds the latest text/flag so the listener stays
-  // registered once instead of re-subscribing on every keystroke.
-  const flushState = useRef({ text, hasChanges, onSave, fileId, workspaceId });
-  flushState.current = { text, hasChanges, onSave, fileId, workspaceId };
+  // write lands.
   useEffect(() => {
     const doFlush = () => {
       const s = flushState.current;
@@ -583,16 +623,18 @@ export function MarkdownEditor({
 
   // Auto-snapshot every 5 minutes if the doc has changed since the last
   // snapshot. Dedup happens in createSnapshot so a quiet doc doesn't pile
-  // up duplicate rows.
+  // up duplicate rows. Reads text through flushState so the interval keeps
+  // ticking while the user types instead of resetting on every keystroke.
   useEffect(() => {
     if (!fileId || !workspaceId) return;
     const handle = window.setInterval(() => {
-      if (text && text.trim().length > 0) {
-        void createSnapshot(fileId, workspaceId, text, 'auto');
+      const current = flushState.current.text;
+      if (current && current.trim().length > 0) {
+        void createSnapshot(fileId, workspaceId, current, 'auto');
       }
     }, 5 * 60 * 1000);
     return () => window.clearInterval(handle);
-  }, [fileId, workspaceId, text]);
+  }, [fileId, workspaceId]);
 
   /**
    * Restore a snapshot back into the editor. In collab mode we push the
@@ -601,6 +643,9 @@ export function MarkdownEditor({
    * a CodeMirror change.
    */
   const restoreSnapshot = useCallback((newContent: string) => {
+    // Capture the pre-restore text first so it can be snapshotted below —
+    // otherwise restoring is a one-way door.
+    const previous = yText ? yText.toString() : viewRef.current?.state.doc.toString() ?? '';
     if (yText) {
       yText.doc?.transact(() => {
         yText.delete(0, yText.length);
@@ -613,8 +658,8 @@ export function MarkdownEditor({
       });
     }
     // Drop a snapshot of the pre-restore state so undo-by-history works.
-    if (fileId && workspaceId) {
-      void createSnapshot(fileId, workspaceId, newContent, 'manual', 'restored');
+    if (fileId && workspaceId && previous.trim() && previous !== newContent) {
+      void createSnapshot(fileId, workspaceId, previous, 'manual', 'before restore');
     }
   }, [yText, fileId, workspaceId]);
 
@@ -629,16 +674,23 @@ export function MarkdownEditor({
       const inEditor = viewRef.current?.dom.contains(e.target as Node);
       if (!inEditor) return;
       let kind: FormatKind | null = null;
-      switch (e.key.toLowerCase()) {
-        case 'b': kind = 'bold'; break;
-        case 'i': kind = 'italic'; break;
-        case 'k': kind = 'link'; break;
-        case 'e': kind = 'code'; break;
-        case 'x': if (e.shiftKey) kind = 'strikethrough'; break;       // ⌘⇧X
-        case 'h': if (e.shiftKey) kind = 'highlight'; break;           // ⌘⇧H
-        case '1': if (e.altKey) kind = 'h1'; break;                    // ⌘⌥1
-        case '2': if (e.altKey) kind = 'h2'; break;                    // ⌘⌥2
-        case '3': if (e.altKey) kind = 'h3'; break;                    // ⌘⌥3
+      // Digits go through e.code — with ⌥ held, e.key is the layout's
+      // Option-glyph ('¡', '™'…) on macOS, so ⌘⌥1 would never match by key.
+      if (e.altKey) {
+        switch (e.code) {
+          case 'Digit1': kind = 'h1'; break;                           // ⌘⌥1
+          case 'Digit2': kind = 'h2'; break;                           // ⌘⌥2
+          case 'Digit3': kind = 'h3'; break;                           // ⌘⌥3
+        }
+      } else {
+        switch (e.key.toLowerCase()) {
+          case 'b': kind = 'bold'; break;
+          case 'i': kind = 'italic'; break;
+          case 'k': kind = 'link'; break;
+          case 'e': kind = 'code'; break;
+          case 'x': if (e.shiftKey) kind = 'strikethrough'; break;     // ⌘⇧X
+          case 'h': if (e.shiftKey) kind = 'highlight'; break;         // ⌘⇧H
+        }
       }
       if (!kind) return;
       e.preventDefault();
@@ -713,7 +765,7 @@ export function MarkdownEditor({
               <Save size={14} />
               Save
             </button>
-            <button className="editor-close-btn" onClick={onClose}>
+            <button className="editor-close-btn" onClick={closeWithFlush} title="Close (Esc)">
               <X size={16} />
             </button>
           </div>
