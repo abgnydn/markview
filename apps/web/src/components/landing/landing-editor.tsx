@@ -35,7 +35,7 @@ const DL = (asset: string) =>
 // `releases/latest/download/` only resolves assets of that release, so a
 // stale/premature version here means every download button 404s. Bump this
 // together with tagging a new desktop release.
-const DESKTOP_VERSION = '0.3.0';
+const DESKTOP_VERSION = '0.3.1';
 const ASSET_MAC_ARM = `MarkView_${DESKTOP_VERSION}_aarch64.dmg`;
 const ASSET_MAC_X64 = `MarkView_${DESKTOP_VERSION}_x64.dmg`;
 const ASSET_WIN_SETUP = `MarkView_${DESKTOP_VERSION}_x64-setup.exe`;
