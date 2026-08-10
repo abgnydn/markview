@@ -287,6 +287,10 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'default'): Pro
           const orphan = document.getElementById(id);
           if (orphan) orphan.remove();
         }
+        // Passthrough entry keeps the sequential replace aligned when a
+        // diagram fails — without it every following diagram shifts into
+        // the wrong slot.
+        replacements.push({ match: m[0], replacement: m[0] });
       }
     }
 
@@ -455,8 +459,12 @@ function injectHeadingIds(html: string): string {
   // jump to the wrong heading or nowhere.
   const used = new Set<string>();
   let counter = 0;
-  return html.replace(/<(h[1-6])>(.*?)<\/\1>/gs, (_match, tag, inner) => {
+  // Tolerate headings that already carry attributes (raw-HTML headings,
+  // sanitizer-retained classes) — an attribute-less-only match would leave
+  // them without an id and their TOC entries scrolling nowhere.
+  return html.replace(/<(h[1-6])((?:\s[^>]*)?)>(.*?)<\/\1>/gs, (match, tag, attrs: string, inner) => {
     counter++;
+    if (/\bid\s*=/i.test(attrs)) return match; // keep an existing anchor
     const text = stripHtmlTags(inner).trim();
     const base = text
       .toLowerCase()
@@ -466,7 +474,7 @@ function injectHeadingIds(html: string): string {
     let n = 1;
     while (used.has(id)) id = `${base}-${n++}`;
     used.add(id);
-    return `<${tag} id="${id}">${inner}</${tag}>`;
+    return `<${tag} id="${id}"${attrs}>${inner}</${tag}>`;
   });
 }
 

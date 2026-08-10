@@ -194,7 +194,10 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
         // Clean up orphaned SVG
         const orphan = document.getElementById(id);
         if (orphan) orphan.remove();
-        // Leave block as-is (will show as code)
+        // Push a passthrough entry so the sequential replace below stays
+        // aligned — otherwise one failed diagram shifts every following
+        // diagram into the wrong slot and drops the last one.
+        replacements.push({ match: m[0], replacement: m[0] });
       }
     }
 
@@ -489,79 +492,6 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     return () => container.removeEventListener('click', handleClick);
   }, [html, onNavigateToFile, workspaceFiles]);
 
-
-  // KaTeX math rendering
-  useEffect(() => {
-    if (!contentRef.current || !html) return;
-    const container = contentRef.current;
-
-    const renderMath = async () => {
-      try {
-        const katex = (await import('katex')).default;
-
-        // Process block math: $$...$$
-        container.querySelectorAll('code').forEach((code) => {
-          const text = code.textContent || '';
-          if (text.startsWith('$$') && text.endsWith('$$')) {
-            const mathText = text.slice(2, -2).trim();
-            const wrapper = document.createElement('div');
-            wrapper.className = 'katex-block';
-            try {
-              katex.render(mathText, wrapper, { displayMode: true, throwOnError: false });
-              const parent = code.closest('pre') || code;
-              parent.replaceWith(wrapper);
-            } catch (e) { /* keep original */ }
-          }
-        });
-
-        // Process inline math in text nodes
-        const walk = (node: Node) => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            const text = node.textContent || '';
-            if (!text.includes('$')) return;
-            const regex = /\$([^$\n]+?)\$/g;
-            let match;
-            const frag = document.createDocumentFragment();
-            let lastIndex = 0;
-            let found = false;
-
-            while ((match = regex.exec(text)) !== null) {
-              found = true;
-              if (match.index > lastIndex) {
-                frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
-              }
-              const span = document.createElement('span');
-              span.className = 'katex-inline';
-              try {
-                katex.render(match[1], span, { displayMode: false, throwOnError: false });
-              } catch (e) {
-                span.textContent = match[0];
-              }
-              frag.appendChild(span);
-              lastIndex = regex.lastIndex;
-            }
-            if (found) {
-              if (lastIndex < text.length) {
-                frag.appendChild(document.createTextNode(text.slice(lastIndex)));
-              }
-              node.parentNode?.replaceChild(frag, node);
-            }
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node as HTMLElement;
-            // Skip code blocks and existing katex
-            if (el.tagName === 'CODE' || el.tagName === 'PRE' || el.classList.contains('katex')) return;
-            Array.from(node.childNodes).forEach(walk);
-          }
-        };
-        walk(container);
-      } catch (e) {
-        console.warn('KaTeX failed to load:', e);
-      }
-    };
-
-    const timer = setTimeout(renderMath, 200);
-    return () => clearTimeout(timer);
-  }, [html]);
 
   // Table sorting
   useEffect(() => {

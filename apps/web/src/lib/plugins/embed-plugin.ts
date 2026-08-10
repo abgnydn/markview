@@ -174,8 +174,11 @@ function renderUrl(url: string, theme: 'dark' | 'light'): string {
   if (!safeUrl) {
     return `<div class="plugin-embed plugin-embed-generic" style="${wrapStyle}"><div style="padding:12px;color:rgba(128,128,128,0.8);font-size:0.85rem;font-style:italic;">Can’t embed this URL.</div></div>`;
   }
+  // No allow-same-origin here: combined with allow-scripts it would let
+  // an arbitrary framed page remove its own sandbox. Known providers that
+  // need it are handled explicitly above; unknown URLs get scripts only.
   return `<div class="plugin-embed plugin-embed-generic" style="${wrapStyle}">
-    <iframe ${iframeBase} height="400" src="${safeUrl}" sandbox="allow-scripts allow-same-origin"></iframe>
+    <iframe ${iframeBase} height="400" src="${safeUrl}" sandbox="allow-scripts"></iframe>
   </div>`;
 }
 
