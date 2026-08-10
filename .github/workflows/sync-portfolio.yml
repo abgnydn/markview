@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # to dispatch deploy.yml after the bot push
 
 concurrency:
   group: sync-portfolio
@@ -50,13 +51,26 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit changes if any
+        id: commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add apps/web/public/portfolio
           if git diff --staged --quiet; then
             echo "no portfolio changes — skipping commit"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "chore(portfolio): daily sync $(date -u +%Y-%m-%d)"
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # Pushes made with GITHUB_TOKEN don't fire push-triggered workflows,
+      # so the site would stay frozen on the last human deploy. Dispatch
+      # deploy.yml explicitly (workflow_dispatch is exempt from that rule).
+      - name: Trigger deploy
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run deploy.yml --ref main
