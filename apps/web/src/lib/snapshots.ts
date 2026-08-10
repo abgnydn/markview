@@ -50,13 +50,17 @@ export async function createSnapshot(
   };
   await db.snapshots.add(row);
 
-  // Trim down to MAX_PER_FILE — drop the oldest first.
+  // Trim down to MAX_PER_FILE — drop the oldest first, but never prune
+  // `manual` bookmarks: those are deliberate restore points, and a burst
+  // of autosaves shouldn't silently evict a snapshot the user made on
+  // purpose. Only auto/save rows count against the cap.
   const all = await db.snapshots
     .where('fileId').equals(fileId)
     .sortBy('createdAt');
-  if (all.length > MAX_PER_FILE) {
-    const excess = all.length - MAX_PER_FILE;
-    const toRemove = all.slice(0, excess).map((s) => s.id);
+  const prunable = all.filter((s) => s.source !== 'manual');
+  if (prunable.length > MAX_PER_FILE) {
+    const excess = prunable.length - MAX_PER_FILE;
+    const toRemove = prunable.slice(0, excess).map((s) => s.id);
     await db.snapshots.bulkDelete(toRemove);
   }
 
