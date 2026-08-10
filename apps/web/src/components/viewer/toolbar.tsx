@@ -1,6 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles, FilePlus, Upload } from 'lucide-react';
+import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles, FilePlus, Upload, RefreshCw } from 'lucide-react';
+import { isTauri } from '@/lib/tauri/tauri-bridge';
 import { useThemeStore } from '@/stores/theme-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useWorkspaceStore } from '@/stores/workspace-store';
@@ -215,6 +216,19 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                   {onToggleVault && (
                     <button className="toolbar-overflow-item" onClick={() => { onToggleVault?.(); setShowOverflow(false); }}>
                       <Network size={16} /> Graph view
+                    </button>
+                  )}
+                  {/* Desktop only, and only on click — the app never checks
+                      for updates on its own (see lib/tauri/update-check). */}
+                  {isTauri() && (
+                    <button
+                      className="toolbar-overflow-item"
+                      onClick={() => {
+                        setShowOverflow(false);
+                        void import('@/lib/tauri/update-check').then((m) => m.checkForUpdates());
+                      }}
+                    >
+                      <RefreshCw size={16} /> Check for updates
                     </button>
                   )}
                   <hr className="toolbar-overflow-sep" />
