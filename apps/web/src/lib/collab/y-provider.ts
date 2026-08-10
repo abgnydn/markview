@@ -65,9 +65,17 @@ export function getShareUrl(roomId: string, secret?: string): string {
 // one that finds a peer wins. Our own DO is the only entry — the public
 // `signaling.yjs.dev` host was deprecated and now refuses connections,
 // so listing it just produces noisy WebSocket errors in the console.
-const SIGNALING_SERVERS = [
-  'wss://markview-yjs.abgunaydin94.workers.dev',
-];
+const SIGNALING_HOST = 'wss://markview-yjs.abgunaydin94.workers.dev';
+
+/** Signaling endpoint for a room. The room id rides the PATH so the
+ *  worker can route each room to its own Durable Object instead of
+ *  funnelling every room in the world through one always-hot instance
+ *  (one busy/abusive room used to degrade signaling for everyone).
+ *  The id is already public in the share link's query string; the
+ *  encrypting secret stays in the fragment and never leaves the browser. */
+function signalingServers(roomId: string): string[] {
+  return [`${SIGNALING_HOST}/r/${encodeURIComponent(roomId)}`];
+}
 
 // Explicit ICE config instead of simple-peer's defaults. STUN handles the
 // ~85-90% of pairs where hole-punching works; the TURN slot is where a
@@ -89,7 +97,7 @@ export function createProvider(roomId: string, secret?: string): CollabSession {
   const ydoc = new Y.Doc();
 
   const provider = new WebrtcProvider(roomId, ydoc, {
-    signaling: SIGNALING_SERVERS,
+    signaling: signalingServers(roomId),
     password: secret ?? null,
     peerOpts: { config: { iceServers: ICE_SERVERS } },
   });
