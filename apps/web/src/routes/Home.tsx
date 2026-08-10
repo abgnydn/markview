@@ -94,12 +94,21 @@ export default function Home() {
     if (target) void setActiveFile(target.id);
   };
 
+  const startingRef = useRef(false);
   const handleStart = async () => {
-    if (workspaces.length === 0) {
-      await createWorkspace("showcase", SHOWCASE_FILES);
+    // A double-click during the awaited create would see the still-empty
+    // list and seed a second showcase workspace.
+    if (startingRef.current) return;
+    startingRef.current = true;
+    try {
+      if (workspaces.length === 0) {
+        await createWorkspace("showcase", SHOWCASE_FILES);
+      }
+      // Clear the ?home=1 flag so the next render shows the editor.
+      setSearchParams({});
+    } finally {
+      startingRef.current = false;
     }
-    // Clear the ?home=1 flag so the next render shows the editor.
-    setSearchParams({});
   };
 
   const handleGoHome = () => {

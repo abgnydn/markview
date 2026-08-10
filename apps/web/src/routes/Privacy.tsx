@@ -48,7 +48,7 @@ export default function PrivacyPage() {
           </ul>
 
           <h2>4. Website Analytics</h2>
-          <p>Our marketing website (markview.ai) uses <a href="https://plausible.io" target="_blank" rel="noopener noreferrer" style={{ color: '#a5b4fc' }}>Plausible Analytics</a>, a privacy-friendly, cookie-free analytics tool. Plausible does not use cookies, does not collect personal data, and is fully GDPR, CCPA, and PECR compliant. Analytics are limited to aggregate page view counts on our marketing pages only.</p>
+          <p>MarkView currently runs <strong>no analytics at all</strong>. If we enable analytics for the marketing pages in the future, it will be Cloudflare Web Analytics — a cookie-free, aggregate-only page view counter — and this policy will be updated first.</p>
           <p><strong>Important:</strong> No analytics or telemetry of any kind runs inside the MarkView editor or desktop app.</p>
 
           <h2>5. Peer-to-Peer Collaboration</h2>
@@ -59,9 +59,9 @@ export default function PrivacyPage() {
 
           <h2>7. Third-Party Services</h2>
           <ul style={{ color: '#a1a1aa', lineHeight: '2', paddingLeft: '20px' }}>
-            <li><strong>Plausible Analytics</strong> — Cookie-free page view counting on marketing pages only</li>
             <li><strong>GitHub API</strong> — Used only when you explicitly import from a GitHub repository</li>
-            <li><strong>KaTeX CDN</strong> — Font stylesheet loaded for math equation rendering</li>
+            <li><strong>Hugging Face</strong> — When you explicitly enable an AI feature (local chat model, painting-atmosphere depth), the model weights are downloaded from Hugging Face&apos;s CDN. Your documents are never uploaded — models run entirely in your browser.</li>
+            <li><strong>Cloud AI (optional)</strong> — If you choose the cloud mode of AI chat or the AI co-author, the relevant text excerpt is sent to our Cloudflare Workers AI endpoint to generate a response. It is processed transiently and not stored or logged. Local mode keeps everything on-device.</li>
           </ul>
 
           <h2>8. Desktop Application</h2>

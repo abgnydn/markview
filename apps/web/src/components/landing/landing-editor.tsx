@@ -123,15 +123,53 @@ export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingE
     e.preventDefault();
     dragCounter.current = 0;
     setIsDragging(false);
-    const dropped = Array.from(e.dataTransfer.files).filter((f) => /\.(md|markdown)$/i.test(f.name));
-    if (dropped.length === 0) {
+    // The hero promises "Drop a folder" — honor it. dataTransfer.files
+    // exposes a directory as a single extension-less File, so folders
+    // must be walked via webkitGetAsEntry (supported by every browser
+    // that runs MarkView).
+    const isMd = (name: string) => /\.(md|markdown)$/i.test(name);
+    const collected: { filename: string; content: string }[] = [];
+    const readEntry = (entry: FileSystemEntry, prefix: string): Promise<void> =>
+      new Promise((resolve) => {
+        if (entry.isFile && isMd(entry.name)) {
+          (entry as FileSystemFileEntry).file(
+            (f) => void f.text().then((content) => {
+              collected.push({ filename: `${prefix}${entry.name}`, content });
+              resolve();
+            }, () => resolve()),
+            () => resolve(),
+          );
+        } else if (entry.isDirectory) {
+          const reader = (entry as FileSystemDirectoryEntry).createReader();
+          const readAll = () => reader.readEntries((entries) => {
+            if (entries.length === 0) return resolve();
+            void Promise.all(entries.map((child) => readEntry(child, `${prefix}${entry.name}/`)))
+              .then(readAll); // readEntries returns batches of ≤100
+          }, () => resolve());
+          readAll();
+        } else {
+          resolve();
+        }
+      });
+
+    const items = Array.from(e.dataTransfer.items ?? []);
+    const entries = items
+      .map((item) => (typeof item.webkitGetAsEntry === 'function' ? item.webkitGetAsEntry() : null))
+      .filter((entry): entry is FileSystemEntry => entry != null);
+    if (entries.length > 0) {
+      await Promise.all(entries.map((entry) => readEntry(entry, '')));
+    } else {
+      const dropped = Array.from(e.dataTransfer.files).filter((f) => isMd(f.name));
+      for (const f of dropped) collected.push({ filename: f.name, content: await f.text() });
+    }
+
+    if (collected.length === 0) {
       // Tell the user why nothing happened instead of silently ignoring.
-      setDropError('Only markdown files (.md, .markdown) can be opened.');
+      setDropError('No markdown files (.md, .markdown) found in the drop.');
       window.setTimeout(() => setDropError(null), 3000);
       return;
     }
-    const files = await Promise.all(dropped.map(async (f) => ({ filename: f.name, content: await f.text() })));
-    onDropFiles(files);
+    onDropFiles(collected);
   }, [onDropFiles]);
 
   return (

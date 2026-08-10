@@ -1382,7 +1382,7 @@ export default function ProjectsConstellation() {
       mouseVec.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       setMouse({ x: e.clientX, y: e.clientY });
       raycaster.setFromCamera(mouseVec, camera);
-      const hits = raycaster.intersectObjects(pickMeshes);
+      const hits = raycaster.intersectObjects(pickMeshes).filter((h) => h.object.parent?.visible !== false); // scrubbed-out cards are hidden, not removed — Raycaster ignores .visible
       if (hits.length > 0) {
         const hitMesh = hits[0].object as THREE.Mesh;
         currentHover = cards.find((c) => c.pickMesh === hitMesh) ?? null;
@@ -1398,7 +1398,7 @@ export default function ProjectsConstellation() {
       touch();
       sfxRef.current?.ensure();           // unlock audio on a user gesture
       raycaster.setFromCamera(mouseVec, camera);
-      const hits = raycaster.intersectObjects(pickMeshes);
+      const hits = raycaster.intersectObjects(pickMeshes).filter((h) => h.object.parent?.visible !== false); // scrubbed-out cards are hidden, not removed — Raycaster ignores .visible
       if (hits.length > 0) {
         const p = (hits[0].object as THREE.Mesh).userData.project as ProjectMin;
         const idx = journeyOrderRef.current.findIndex((x) => x.project.slug === p.slug);

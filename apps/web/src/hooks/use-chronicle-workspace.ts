@@ -52,12 +52,27 @@ export function useChronicleWorkspace(active: boolean, slugs: string[]): Result 
       const store = useWorkspaceStore.getState();
       if (!store.isLoaded) await store.initialize();
 
-      // Reuse an existing chronicle workspace if one exists.
+      // Reuse an existing chronicle workspace — but only while it matches
+      // the currently deployed portfolio snapshot; otherwise the chat
+      // answers from a stale corpus forever (the nightly sync never
+      // reaches an already-built chronicle).
+      let generatedAt = "";
+      try {
+        const idx = await fetch("/portfolio/index.json");
+        if (idx.ok) generatedAt = ((await idx.json()) as { generated_at?: string }).generated_at ?? "";
+      } catch { /* offline — reuse whatever exists */ }
+      if (cancelled) return;
+      const builtAt = (() => {
+        try { return localStorage.getItem("mv-chronicle-built"); } catch { return null; }
+      })();
+
       const existing = useWorkspaceStore
         .getState()
         .workspaces.find((w) => w.title === CHRONICLE_TITLE);
 
-      if (existing) {
+      if (existing && generatedAt && builtAt !== generatedAt) {
+        await store.deleteWorkspace(existing.id);
+      } else if (existing) {
         await store.switchWorkspace(existing.id);
         if (cancelled) return;
         setWorkspaceId(existing.id);
@@ -100,6 +115,9 @@ export function useChronicleWorkspace(active: boolean, slugs: string[]): Result 
 
         await store.createWorkspace(CHRONICLE_TITLE, files);
         const id = useWorkspaceStore.getState().activeWorkspaceId;
+        if (generatedAt) {
+          try { localStorage.setItem("mv-chronicle-built", generatedAt); } catch { /* quota */ }
+        }
         if (cancelled) return;
         setWorkspaceId(id);
         setStatus("ready");
