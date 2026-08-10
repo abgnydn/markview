@@ -1157,6 +1157,14 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .footnote-
   color: #b0392a !important;
   font-weight: 600;
 }
+/* Interactive task checkboxes — the renderer strips GFM's `disabled`
+   attribute when toggling is wired up, so show they are clickable.
+   (Was an inline style set per-element; that didn't survive React
+   re-applying the rendered HTML.) */
+.markdown-content li.task-list-item input[type='checkbox']:not([disabled]) {
+  cursor: pointer;
+}
+
 /* (26) Task checkboxes — vermillion accent on paper. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content input[type='checkbox'] {
   accent-color: #b0392a;

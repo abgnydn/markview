@@ -94,6 +94,27 @@ function yieldToMain(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
+/**
+ * Drop the `disabled` attribute GFM puts on task-list checkboxes, so they
+ * are interactive in the markup ITSELF.
+ *
+ * This used to be done by flipping `box.disabled = false` in an effect,
+ * which silently stopped working: React re-applies `dangerouslySetInnerHTML`
+ * on a later re-commit (the html is set inside `startTransition`), which
+ * rebuilds the inputs from this string — attribute still present — while
+ * the effect does not re-run because its deps never changed. Fixing the
+ * string means any number of re-applications stay enabled.
+ *
+ * Scoped to `li.task-list-item` so a raw `<input disabled>` a user wrote
+ * by hand keeps its own semantics.
+ */
+function enableTaskCheckboxes(html: string): string {
+  return html.replace(
+    /(<li class="task-list-item">\s*<input\b[^>]*?)\s+disabled(\s*\/?>)/g,
+    '$1$2',
+  );
+}
+
 function highlightHtml(html: string, theme: 'dark' | 'light'): string {
   if (!shikiHighlighter) return html;
 
@@ -291,11 +312,12 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         const withMermaid = await renderMermaidInHtml(highlighted, resolved);
 
         if (!cancelled) {
+          const final = onToggleTask ? enableTaskCheckboxes(withMermaid) : withMermaid;
           // Use startTransition so this low-priority update doesn't block interactions
           startTransition(() => {
-            setHtml(withMermaid);
+            setHtml(final);
           });
-          onHtmlRendered?.(withMermaid);
+          onHtmlRendered?.(final);
         }
       } catch (e) {
         console.warn('Markdown processing error:', e);
@@ -545,24 +567,35 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     return () => cleanups.forEach((c) => c());
   }, [html]);
 
-  // Interactive task lists — enable the (otherwise disabled) GFM checkboxes
-  // and report each toggle by its document-order index so the host can flip
-  // the matching `- [ ]` / `- [x]` line in the source.
+  // Interactive task lists — report each toggle by its document-order index
+  // so the host can flip the matching `- [ ]` / `- [x]` line in the source.
+  //
+  // The listener is DELEGATED to the stable container rather than bound per
+  // checkbox: React rebuilds the inner subtree from the html string on
+  // re-commit (see enableTaskCheckboxes), which would silently discard
+  // per-element listeners without re-running this effect. Delegation and
+  // the markup-level `disabled` removal together make toggling survive
+  // any number of re-applications.
+  const toggleRef = useRef(onToggleTask);
+  toggleRef.current = onToggleTask;
   useEffect(() => {
     const root = contentRef.current;
-    if (!root || !onToggleTask) return;
-    const boxes = Array.from(
-      root.querySelectorAll<HTMLInputElement>('li.task-list-item input[type="checkbox"]'),
-    );
-    const cleanups = boxes.map((box, i) => {
-      box.disabled = false;
-      box.style.cursor = 'pointer';
-      const onChange = () => onToggleTask(i, box.checked);
-      box.addEventListener('change', onChange);
-      return () => box.removeEventListener('change', onChange);
-    });
-    return () => cleanups.forEach((c) => c());
-  }, [html, onToggleTask]);
+    if (!root) return;
+    const onChange = (e: Event) => {
+      const cb = toggleRef.current;
+      if (!cb) return;
+      const target = e.target as HTMLInputElement | null;
+      if (!target || target.type !== 'checkbox') return;
+      if (!target.closest('li.task-list-item')) return;
+      const boxes = Array.from(
+        root.querySelectorAll<HTMLInputElement>('li.task-list-item input[type="checkbox"]'),
+      );
+      const index = boxes.indexOf(target);
+      if (index >= 0) cb(index, target.checked);
+    };
+    root.addEventListener('change', onChange);
+    return () => root.removeEventListener('change', onChange);
+  }, []);
 
   return (
     <div className="markdown-content" ref={contentRef} style={{ fontSize: 'var(--content-font-size, 16px)' }}>
