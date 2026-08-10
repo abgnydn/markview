@@ -9,7 +9,7 @@ import { createSnapshot } from '@/lib/snapshots';
 import { HistoryPanel } from './history-panel';
 import { EditorState, type Extension, RangeSetBuilder } from '@codemirror/state';
 import {
-  EditorView, keymap, lineNumbers, highlightActiveLine,
+  EditorView, keymap,
   Decoration, type DecorationSet, ViewPlugin, type ViewUpdate,
 } from '@codemirror/view';
 import { markdown, markdownLanguage, insertNewlineContinueMarkup, deleteMarkupBackward } from '@codemirror/lang-markdown';
@@ -57,6 +57,24 @@ type FormatKind =
   | 'ul' | 'ol' | 'quote' | 'hr';
 
 /**
+ * Is `selected` wrapped in `marker`? For the italic `*` this must be
+ * star-run-aware: `**bold**` starts with `*` but carries no italic — a
+ * leading run of 2 stars is bold, 1 or 3 means italic is present.
+ */
+function wrappedByMarker(selected: string, marker: string): boolean {
+  const n = marker.length;
+  if (selected.length < n * 2 || !selected.startsWith(marker) || !selected.endsWith(marker)) {
+    return false;
+  }
+  if (marker === '*') {
+    const lead = selected.match(/^\*+/)?.[0].length ?? 0;
+    const tail = selected.match(/\*+$/)?.[0].length ?? 0;
+    return lead % 2 === 1 && tail % 2 === 1;
+  }
+  return true;
+}
+
+/**
  * Toggle a symmetric inline marker (`**`, `*`, `~~`, `` ` ``, `==`) around the
  * selection: unwrap if it's already wrapped (markers inside OR just outside
  * the selection), otherwise wrap. With no selection, insert a placeholder.
@@ -68,7 +86,7 @@ function toggleWrap(view: EditorView, marker: string, placeholder: string): void
   const n = marker.length;
 
   if (selected) {
-    if (selected.length >= n * 2 && selected.startsWith(marker) && selected.endsWith(marker)) {
+    if (wrappedByMarker(selected, marker)) {
       const inner = selected.slice(n, selected.length - n);
       view.dispatch({ changes: { from: sel.from, to: sel.to, insert: inner }, selection: { anchor: sel.from, head: sel.from + inner.length } });
       view.focus();
@@ -76,7 +94,14 @@ function toggleWrap(view: EditorView, marker: string, placeholder: string): void
     }
     const before = state.doc.sliceString(Math.max(0, sel.from - n), sel.from);
     const after = state.doc.sliceString(sel.to, Math.min(state.doc.length, sel.to + n));
-    if (before === marker && after === marker) {
+    // Same star-run awareness for markers just outside the selection:
+    // `text` inside `**text**` is flanked by `*`, but those are bold
+    // markers — italic is only present when the adjacent run is odd.
+    const outsideIsItalic = marker !== '*' || (
+      ((/\*+$/.exec(state.doc.sliceString(Math.max(0, sel.from - 3), sel.from))?.[0].length ?? 0) % 2 === 1) &&
+      ((/^\*+/.exec(state.doc.sliceString(sel.to, Math.min(state.doc.length, sel.to + 3)))?.[0].length ?? 0) % 2 === 1)
+    );
+    if (before === marker && after === marker && outsideIsItalic) {
       view.dispatch({
         changes: [{ from: sel.from - n, to: sel.from }, { from: sel.to, to: sel.to + n }],
         selection: { anchor: sel.from - n, head: sel.to - n },
@@ -265,9 +290,6 @@ const markviewTheme = EditorView.theme(
       padding: '6vh 4vw 50vh',
       caretColor: 'var(--zen-accent, #9b7dff)',
     },
-    '.cm-gutters': { display: 'none' },
-    '.cm-activeLine': { backgroundColor: 'transparent' },
-    '.cm-activeLineGutter': { backgroundColor: 'transparent' },
     '.cm-selectionBackground, ::selection': {
       backgroundColor: 'var(--zen-accent-soft, rgba(155, 125, 255, 0.22))',
     },
@@ -364,8 +386,6 @@ function buildExtensions(
   return [
     ...collabExt,
     ...completionExt,
-    lineNumbers(),
-    highlightActiveLine(),
     highlightSelectionMatches(),
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     syntaxHighlighting(markviewHighlight),
@@ -618,6 +638,10 @@ export function MarkdownEditor({
     return () => {
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('pagehide', doFlush);
+      // Unmount flush — the parent keys this editor by file id, so a file
+      // switch remounts it; without this the outgoing buffer's edits are
+      // dropped on the floor. onSave is bound to this instance's file.
+      doFlush();
     };
   }, []);
 
