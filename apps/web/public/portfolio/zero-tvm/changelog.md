@@ -21,7 +21,10 @@ from `0.1.0`.
   3-bit (`scripts/convert-q3-experts.py`, 16 s), resident 15.7 GB. The MLX
   bits=3 layout is a continuous LSB-first bitstream straddling u32 words; the
   `q3` kernel variants walk 8-value/24-bit windows. Chosen over 2-bit by
-  measurement (block cosine 0.936 vs 0.785). ~55 t/s on a quiet 32 GB M2 Max.
+  measurement (block cosine 0.936 vs ~0.79 for 2-bit). ~55 t/s on a quiet 32 GB
+  M2 Max. NOTE 2026-08-10: that block cosine is a FIDELITY number and cannot
+  see quality — see docs/QUALITY.md. The 3-bit-vs-4-bit perplexity that would
+  settle it is unrun.
 - **MLX safetensors loader** — byte-range reads (a 5.3 GB shard is never one
   ArrayBuffer), per-BufferPlan OPFS caching of BUILT buffers, bf16→f16/f32
   conversion with subnormal-exact rounding and hard-error on overflow; 268 KB

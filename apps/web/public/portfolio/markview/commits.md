@@ -2,6 +2,7 @@
 
 ## 2026-08-10
 
+- `20:46` **chore(portfolio): daily sync 2026-08-10** — +408 −440 — [`f09e4f5`](https://github.com/abgnydn/markview/commit/f09e4f587b48e2181c22b38acd3d1e9aa07cfcbc)
 - `11:53` **chore: wire the analytics token to an env var, document the plugin tr…** — +40 −3 — [`c3a4365`](https://github.com/abgnydn/markview/commit/c3a43653863869544a56783dc8dcfdbabce9ccca)
 - `11:53` **feat(desktop): manual 'Check for updates'** — +117 −2 — [`54d5d5e`](https://github.com/abgnydn/markview/commit/54d5d5e78ac5461e7b10069138997a4e68cb0ae9)
 - `11:53` **fix(history): stop pruning manual bookmarks** — +8 −4 — [`1f42195`](https://github.com/abgnydn/markview/commit/1f421959b47b1b5b1a69085f3a3ec5e774028b2b)
@@ -96,4 +97,3 @@
 - `04:40` **ci: add quality gates — typecheck, lint, unit, e2e on every PR and ma…** — +48 −0 — [`4f245e4`](https://github.com/abgnydn/markview/commit/4f245e461f2b76507b047ee53156adad2c4a47aa)
 - `04:40` **test(e2e): revive the entire suite against the current UI (10 → 113 p…** — +266 −367 — [`bfb5af3`](https://github.com/abgnydn/markview/commit/bfb5af30106ff76edde3a79155045acf24db0310)
 - `04:40` **fix(app): honor landing drag-drop, stop silent file loss, fix desktop…** — +83 −9 — [`bd591f8`](https://github.com/abgnydn/markview/commit/bd591f88bb615e84402e780a2d786abe7e96223b)
-- `04:40` **feat(web): marketing-only analytics hook + presentation golden-path e2e** — +143 −0 — [`4e986ee`](https://github.com/abgnydn/markview/commit/4e986ee5513defbda68d660b7b4f465c6592b375)

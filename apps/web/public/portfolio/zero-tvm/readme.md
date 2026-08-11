@@ -75,7 +75,8 @@ Models whose blocks the kernel set already covers are added mechanically:
 npm run add-model -- mlx-community/Qwen3-4B-4bit --param qwen3mlx
 ```
 
-One command probes the checkpoint (a few hundred KB of ranged reads), checks
+One command probes the checkpoint (10-20 MB, nearly all of it tokenizer.json,
+which is fetched whole — the safetensors headers really are ranged reads), checks
 it against the constraint matrix, generates the `ModelSpec`, registers it on
 every surface (landing cards, switcher, `?model=` URL), and compiles every
 kernel under the new dims. If the model needs a kernel that doesn't exist, the
