@@ -218,3 +218,21 @@ test.describe('Presentation mode', () => {
     await expect(deck).toBeVisible();
   });
 });
+
+test.describe('Unsigned-build install guidance', () => {
+  // The desktop builds are ad-hoc signed, so macOS blocks first launch and
+  // (since macOS 15) right-click → Open no longer bypasses it. Without this
+  // note on the landing page the download is a dead end.
+  test.use({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15' });
+
+  test('macOS visitors get Gatekeeper instructions next to the download', async ({ page }) => {
+    await page.goto('/?home=1');
+    const note = page.locator('.ed-install-note');
+    await expect(note).toBeVisible({ timeout: 10000 });
+    await note.locator('summary').click();
+    await expect(note).toContainText('Open Anyway');
+    await expect(note).toContainText('com.apple.quarantine');
+    // Must NOT resurrect the advice that stopped working on macOS 15+.
+    await expect(note).not.toContainText(/right-click/i);
+  });
+});

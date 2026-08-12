@@ -41,7 +41,7 @@ const ASSET_MAC_X64 = `MarkView_${DESKTOP_VERSION}_x64.dmg`;
 const ASSET_WIN_SETUP = `MarkView_${DESKTOP_VERSION}_x64-setup.exe`;
 const ASSET_LINUX_APPIMAGE = `MarkView_${DESKTOP_VERSION}_amd64.AppImage`;
 
-function pickDownload(): { href: string; label: string; tooltip: string } {
+function pickDownload(): { href: string; label: string; tooltip: string; os?: 'mac' | 'windows' | 'linux' } {
   if (typeof navigator === 'undefined') {
     return { href: RELEASES_URL, label: 'Download for desktop', tooltip: '' };
   }
@@ -56,14 +56,14 @@ function pickDownload(): { href: string; label: string; tooltip: string } {
   if (isMac) {
     const looksIntel = /Intel/i.test(ua) && !/Apple/i.test(platform);
     return looksIntel
-      ? { href: DL(ASSET_MAC_X64), label: 'Download for macOS (Intel)', tooltip: `${ASSET_MAC_X64} · 15 MB · Apache-2.0` }
-      : { href: DL(ASSET_MAC_ARM), label: 'Download for macOS', tooltip: `${ASSET_MAC_ARM} · 15 MB · Apache-2.0` };
+      ? { href: DL(ASSET_MAC_X64), label: 'Download for macOS (Intel)', tooltip: `${ASSET_MAC_X64} · 15 MB · Apache-2.0`, os: 'mac' }
+      : { href: DL(ASSET_MAC_ARM), label: 'Download for macOS', tooltip: `${ASSET_MAC_ARM} · 15 MB · Apache-2.0`, os: 'mac' };
   }
   if (isWindows) {
-    return { href: DL(ASSET_WIN_SETUP), label: 'Download for Windows', tooltip: `${ASSET_WIN_SETUP} · 13 MB · Apache-2.0` };
+    return { href: DL(ASSET_WIN_SETUP), label: 'Download for Windows', tooltip: `${ASSET_WIN_SETUP} · 13 MB · Apache-2.0`, os: 'windows' };
   }
   if (isLinux) {
-    return { href: DL(ASSET_LINUX_APPIMAGE), label: 'Download for Linux', tooltip: `${ASSET_LINUX_APPIMAGE} · 85 MB · Apache-2.0` };
+    return { href: DL(ASSET_LINUX_APPIMAGE), label: 'Download for Linux', tooltip: `${ASSET_LINUX_APPIMAGE} · 85 MB · Apache-2.0`, os: 'linux' };
   }
   return { href: RELEASES_URL, label: 'Download for desktop', tooltip: 'Pick the build for your OS' };
 }
@@ -236,6 +236,39 @@ export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingE
             {download.label}
           </a>
         </div>
+        {/* The desktop builds are not code-signed (no Apple Developer
+            account), so macOS blocks the first launch outright — and since
+            macOS 15 the old right-click → Open bypass is gone. Without this
+            note the download is a dead end. Windows SmartScreen shows the
+            equivalent "unrecognized app" prompt. */}
+        {download.os === 'mac' && (
+          <details className="ed-install-note">
+            <summary>macOS says it “can’t verify” the app — what to do</summary>
+            <p>
+              MarkView is open source and unsigned (an Apple Developer ID costs $99/yr,
+              which this project doesn’t have yet), so macOS blocks it on first launch.
+              To open it: <strong>System Settings → Privacy &amp; Security</strong>, scroll to
+              <strong> Security</strong>, then click <strong>Open Anyway</strong> next to MarkView.
+            </p>
+            <p>
+              Prefer the terminal? <code>xattr -dr com.apple.quarantine /Applications/MarkView.app</code>
+            </p>
+            <p>
+              Rather not? The <a href="/">web app</a> is the same editor and needs no install.
+            </p>
+          </details>
+        )}
+        {download.os === 'windows' && (
+          <details className="ed-install-note">
+            <summary>Windows SmartScreen warning — what to do</summary>
+            <p>
+              The installer is unsigned, so SmartScreen shows “Windows protected your PC”.
+              Click <strong>More info</strong> → <strong>Run anyway</strong>. Or use the{' '}
+              <a href="/">web app</a>, which needs no install.
+            </p>
+          </details>
+        )}
+
         <div className="ed-hero-meta">
           <kbd>⌘K</kbd> search · <kbd>⌘B</kbd> bold · <kbd>⌘I</kbd> italic · <kbd>⌘S</kbd> save · drag-drop a <code>.md</code> to start
         </div>

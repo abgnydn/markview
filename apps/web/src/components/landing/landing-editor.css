@@ -221,6 +221,41 @@
   border-color: var(--zen-fg-faint);
   color: var(--zen-fg);
 }
+/* Install note — collapsed by default so it never competes with the CTA,
+   but present because the unsigned builds are otherwise a dead end. */
+.ed-install-note {
+  margin: 14px 0 18px;
+  max-width: 52ch;
+  font-family: var(--zen-mono);
+  font-size: 11px;
+  color: var(--zen-fg-faint);
+  letter-spacing: 0.02em;
+}
+.ed-install-note summary {
+  cursor: pointer;
+  color: var(--zen-fg-soft);
+  border-bottom: 1px dotted var(--zen-fg-faint);
+  display: inline-block;
+  padding-bottom: 1px;
+}
+.ed-install-note summary:hover { color: var(--zen-accent); }
+.ed-install-note p {
+  margin: 10px 0 0;
+  line-height: 1.7;
+  font-family: var(--zen-serif, Georgia, serif);
+  font-size: 13px;
+}
+.ed-install-note code {
+  font-family: var(--zen-mono);
+  font-size: 11px;
+  color: var(--zen-code);
+  background: var(--zen-code-soft);
+  padding: 2px 6px;
+  border-radius: 3px;
+  overflow-wrap: break-word;
+}
+.ed-install-note a { color: var(--zen-accent); }
+
 .ed-hero-meta {
   font-family: var(--zen-mono);
   font-size: 11px;

@@ -17,10 +17,21 @@
 #   Windows x64  → MarkView_<v>_x64-setup.exe + .msi
 #   Linux x64    → markview_<v>_amd64.deb + .AppImage
 #
-# No code signing yet — users will see "unidentified developer" on first
-# launch (macOS: right-click → Open). When we get an Apple Developer
-# account, the commented APPLE_* env vars below activate tauri-action's
-# signing path automatically.
+# No code signing yet: builds are ad-hoc signed (no TeamIdentifier, not
+# notarized). macOS 15+ REMOVED the old right-click → Open bypass, so
+# users hit a hard "Apple could not verify… is free of malware" wall and
+# must go through System Settings → Privacy & Security → Open Anyway.
+# Do not advise right-click → Open anywhere; it no longer works.
+#
+# To ship signed + notarized builds, add these repo secrets and uncomment
+# the APPLE_* block below (tauri-action notarizes automatically once they
+# are present):
+#   APPLE_CERTIFICATE           — base64 of the Developer ID .p12
+#   APPLE_CERTIFICATE_PASSWORD  — its export password
+#   APPLE_SIGNING_IDENTITY      — "Developer ID Application: NAME (TEAMID)"
+#   APPLE_ID / APPLE_PASSWORD   — Apple ID + app-specific password
+#   APPLE_TEAM_ID               — 10-char team id
+# Requires a paid Apple Developer Program membership ($99/yr).
 
 name: release-desktop
 
@@ -116,10 +127,18 @@ jobs:
             ### Install
 
             - **macOS** — Download the `.dmg`, drag MarkView to `/Applications`.
-              First launch: right-click → **Open** (we'll switch to a signed
-              build once we have an Apple Developer account).
-            - **Windows** — Download the `.msi` and run it.
+              These builds are **not code-signed**, so macOS blocks the first
+              launch with “Apple could not verify… is free of malware”. To open:
+              **System Settings → Privacy & Security → Open Anyway** (scroll to
+              the Security section after trying to launch once). Terminal
+              alternative: `xattr -dr com.apple.quarantine /Applications/MarkView.app`.
+              *(Right-click → Open no longer works on macOS 15+.)*
+            - **Windows** — Download the `.msi` and run it. SmartScreen will warn
+              about an unrecognized app: **More info → Run anyway**.
             - **Linux** — Download the `.AppImage` (run directly) or `.deb`.
+
+            Prefer no install? [markview.ai](https://markview.ai) is the same editor
+            in the browser.
 
             ### Set as default markdown editor (macOS)
 
