@@ -13,7 +13,7 @@ const ViewerPage = lazy(() =>
 );
 import { LandingEditor } from "@/components/landing/landing-editor";
 import { JoinDialog } from "@/components/collab/join-dialog";
-import { getRoomIdFromUrl } from "@/lib/collab/y-provider";
+import { getRoomIdFromUrl } from "@/lib/collab/room-url";
 
 // Showcase docs — loaded as raw text. Each file exercises a different
 // renderer feature so the seed workspace doubles as a feature tour.

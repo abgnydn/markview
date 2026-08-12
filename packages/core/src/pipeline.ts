@@ -204,6 +204,8 @@ async function ensureShiki(config?: { theme?: string; langs?: string[] }) {
     try {
       // @ts-ignore — shiki is an optional peer dependency
       const { createHighlighter } = await import('shiki');
+      // @ts-ignore — same optional peer
+      const { createJavaScriptRegexEngine } = await import('shiki/engine/javascript');
       const theme = config?.theme || 'github-dark';
       const themes = theme === 'github-dark'
         ? ['github-dark', 'github-light']
@@ -211,6 +213,11 @@ async function ensureShiki(config?: { theme?: string; langs?: string[] }) {
       shikiHighlighter = await createHighlighter({
         themes,
         langs: config?.langs || DEFAULT_SHIKI_LANGS,
+        // JS regex engine: no 230 KB gz oniguruma WASM in the chunk graph
+        // of anything that imports this module (the web renderer had the
+        // dead chunks emitted on its behalf even though this path has no
+        // callers there).
+        engine: createJavaScriptRegexEngine({ forgiving: true }),
       });
     } catch (e) {
       console.warn('Shiki failed to load:', e);

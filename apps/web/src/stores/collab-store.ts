@@ -1,18 +1,19 @@
 
 import { create } from 'zustand';
 import {
-  createProvider,
   generateRoomId,
   generateRoomSecret,
   getRoomSecretFromUrl,
   getShareUrl,
-  populateYDoc,
-  readFilesFromYDoc,
-  readFileContent,
-  readWorkspaceTitle,
-  type CollabSession,
-  type SyncedFile,
-} from '@/lib/collab/y-provider';
+} from '@/lib/collab/room-url';
+import type { CollabSession, SyncedFile } from '@/lib/collab/y-provider';
+
+// y-provider owns yjs + y-webrtc (~64 KB gz). It loads lazily inside the
+// connect actions, so surfaces that merely subscribe to this store (the
+// landing page, the viewer shell) never pay for the collab stack. `yp` is
+// non-null whenever `_session` is — both are set together below.
+type YProviderModule = typeof import('@/lib/collab/y-provider');
+let yp: YProviderModule | null = null;
 import {
   setLocalUser,
   setLocalActiveFile,
@@ -91,6 +92,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
 
   // ---------- Host: Share Workspace ----------
   shareWorkspace: async (workspaceId: string) => {
+    const y = (yp ??= await import('@/lib/collab/y-provider'));
     const { _session: existing, _unsubAwareness, _unsubFiles } = get();
     if (existing) {
       // Full teardown — destroy() alone leaves the old session's
@@ -106,7 +108,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     // signaling server nor a room-ID guesser can read or MITM the
     // handshake. It travels only in the share link's #fragment.
     const roomSecret = generateRoomSecret();
-    const session = createProvider(roomId, roomSecret);
+    const session = y.createProvider(roomId, roomSecret);
 
     // Load workspace files from IndexedDB
     const wsRecord = await db.workspaces.get(workspaceId);
@@ -115,7 +117,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
       .equals(workspaceId)
       .sortBy('order');
 
-    populateYDoc(
+    y.populateYDoc(
       session.ydoc,
       wsRecord?.title || 'Workspace',
       dbFiles.map((f) => ({
@@ -211,6 +213,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
 
   // ---------- Guest: Join Room ----------
   joinRoom: async (roomId: string, userName: string) => {
+    const y = (yp ??= await import('@/lib/collab/y-provider'));
     const { _session: existing, _unsubAwareness, _unsubFiles } = get();
     if (existing) {
       _unsubAwareness?.();
@@ -222,19 +225,19 @@ export const useCollabStore = create<CollabState>((set, get) => ({
 
     // The room secret rides the link's #fragment (never sent to a server);
     // it decrypts the room's signaling. Old links without one still work.
-    const session = createProvider(roomId, getRoomSecretFromUrl() ?? undefined);
+    const session = y.createProvider(roomId, getRoomSecretFromUrl() ?? undefined);
 
     // Wait for initial sync (Y.js syncs very fast for small docs)
     await new Promise<void>((resolve) => {
       // Check if we already have data
-      const files = readFilesFromYDoc(session.ydoc);
+      const files = y.readFilesFromYDoc(session.ydoc);
       if (files.length > 0) {
         resolve();
         return;
       }
       // Wait for the first update
       const handler = () => {
-        const f = readFilesFromYDoc(session.ydoc);
+        const f = y.readFilesFromYDoc(session.ydoc);
         if (f.length > 0) {
           session.ydoc.off('update', handler);
           resolve();
@@ -251,7 +254,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     // Nothing arrived: the host is offline, the room is stale, or P2P is
     // blocked between the two networks. FAIL here — "joining" into an
     // empty ghost workspace is a dead end that just looks broken.
-    if (readFilesFromYDoc(session.ydoc).length === 0) {
+    if (y.readFilesFromYDoc(session.ydoc).length === 0) {
       session.destroy();
       set({ isConnecting: false });
       throw new Error('room-empty');
@@ -259,11 +262,11 @@ export const useCollabStore = create<CollabState>((set, get) => ({
 
     setLocalUser(session.provider, userName);
 
-    const title = readWorkspaceTitle(session.ydoc);
-    const files = readFilesFromYDoc(session.ydoc);
+    const title = y.readWorkspaceTitle(session.ydoc);
+    const files = y.readFilesFromYDoc(session.ydoc);
     const firstFile = files.length > 0 ? files[0] : null;
     const firstContent = firstFile
-      ? readFileContent(session.ydoc, firstFile.id)
+      ? y.readFileContent(session.ydoc, firstFile.id)
       : null;
 
     // Subscribe to awareness. If every peer disappears after we saw at
@@ -285,7 +288,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     // Subscribe to file list changes
     const fileList = session.ydoc.getArray('files');
     const fileHandler = () => {
-      const updated = readFilesFromYDoc(session.ydoc);
+      const updated = y.readFilesFromYDoc(session.ydoc);
       set({ syncedFiles: updated });
     };
     fileList.observe(fileHandler);
@@ -295,7 +298,7 @@ export const useCollabStore = create<CollabState>((set, get) => ({
     const contentHandler = () => {
       const { syncedActiveFileId } = get();
       if (syncedActiveFileId) {
-        const content = readFileContent(session.ydoc, syncedActiveFileId);
+        const content = y.readFileContent(session.ydoc, syncedActiveFileId);
         set({ syncedActiveFileContent: content });
       }
     };
@@ -363,9 +366,9 @@ export const useCollabStore = create<CollabState>((set, get) => ({
   // ---------- Guest: Switch File ----------
   setSyncedActiveFile: (fileId: string) => {
     const { _session } = get();
-    if (!_session) return;
+    if (!_session || !yp) return;
 
-    const content = readFileContent(_session.ydoc, fileId);
+    const content = yp.readFileContent(_session.ydoc, fileId);
     set({
       syncedActiveFileId: fileId,
       syncedActiveFileContent: content,

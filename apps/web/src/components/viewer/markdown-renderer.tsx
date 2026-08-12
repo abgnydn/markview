@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState, startTransition } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';
-import { createCodeBlockWrapper, decodeHtmlEntities, DEFAULT_SHIKI_LANGS } from '@markview/core';
+import { createCodeBlockWrapper, decodeHtmlEntities } from '@markview/core';
 import { expandTransclusions, hasTransclusion, type TranscludeResolver } from '@/lib/markdown/transclude';
 import { expandWikilinks } from '@/lib/markdown/wikilinks';
 import { useThemeStore } from '@/stores/theme-store';
@@ -40,10 +40,20 @@ async function ensureShiki() {
   }
   shikiPromise = (async () => {
     try {
-      const { createHighlighter } = await import('shiki');
+      const [{ createHighlighter }, { createJavaScriptRegexEngine }] = await Promise.all([
+        import('shiki'),
+        import('shiki/engine/javascript'),
+      ]);
       shikiHighlighter = await createHighlighter({
         themes: ['github-dark', 'github-light'],
-        langs: DEFAULT_SHIKI_LANGS,
+        // Zero eager grammars — the old 28-language preload cost ~250 KB gz
+        // before the first code block could highlight; loadShikiLangs()
+        // fetches exactly the grammars a document actually uses. The JS
+        // regex engine replaces the 230 KB gz oniguruma WASM entirely
+        // (forgiving mode: a rare unsupported grammar degrades to plain
+        // text instead of throwing).
+        langs: [],
+        engine: createJavaScriptRegexEngine({ forgiving: true }),
       });
     } catch (e) {
       console.warn('Shiki failed to load (CSP or env issue), using plain code blocks:', e);
@@ -53,6 +63,30 @@ async function ensureShiki() {
   await shikiPromise;
 }
 
+
+// Grammars that failed to load — don't retry them every render.
+const failedLangs = new Set<string>();
+
+/** Load exactly the grammars `html`'s code fences use, on demand. */
+async function loadShikiLangs(html: string): Promise<void> {
+  if (!shikiHighlighter) return;
+  const wanted = new Set<string>();
+  for (const m of html.matchAll(/<code class="language-([\w+#-]+)">/g)) {
+    if (m[1] !== 'mermaid') wanted.add(m[1]);
+  }
+  if (wanted.size === 0) return;
+  const loaded = new Set(shikiHighlighter.getLoadedLanguages());
+  await Promise.all(
+    [...wanted]
+      .filter((lang) => !loaded.has(lang) && !failedLangs.has(lang))
+      .map((lang) =>
+        shikiHighlighter!.loadLanguage(lang as never).catch(() => {
+          // Unknown / plugin-handled languages render as plain blocks.
+          failedLangs.add(lang);
+        }),
+      ),
+  );
+}
 
 // Mermaid singleton — avoid re-importing on every render
 let mermaidModule: typeof MermaidDefault | null = null;
@@ -259,7 +293,10 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         await yieldToMain();
         if (cancelled) return;
 
-        // Highlight code blocks in HTML string (sync, CPU-heavy)
+        // Fetch any grammars this document needs, then highlight (sync,
+        // CPU-heavy).
+        await loadShikiLangs(rawHtml);
+        if (cancelled) return;
         const highlighted = highlightHtml(rawHtml, resolved);
 
         // Yield again before mermaid rendering

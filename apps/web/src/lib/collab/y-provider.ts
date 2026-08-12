@@ -2,6 +2,11 @@
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 
+// URL/id helpers live in room-url.ts (dependency-light so the landing
+// page can import them without pulling yjs). Re-exported here for the
+// existing import sites and tests.
+export { generateRoomId, generateRoomSecret, getRoomIdFromUrl, getRoomSecretFromUrl, getShareUrl } from './room-url';
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -17,45 +22,10 @@ export interface CollabSession {
 // Room ID generation
 // ---------------------------------------------------------------------------
 
-/** Generate a URL-safe room ID — 12 uniform hex chars (48 bits). The old
- *  base36-from-bytes encoding was biased and effectively weaker. */
-export function generateRoomId(): string {
-  const bytes = new Uint8Array(6);
-  crypto.getRandomValues(bytes);
-  const id = Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
-  return `mkv-${id}`;
-}
 
-/** Generate the room secret carried in the URL *fragment*. Fragments are
- *  never sent to any server (ours included), so only holders of the full
- *  link can decrypt the room's signaling exchange. */
-export function generateRoomSecret(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
 
-/** Extract room ID from URL */
-export function getRoomIdFromUrl(): string | null {
-  if (typeof window === 'undefined') return null;
-  const params = new URLSearchParams(window.location.search);
-  return params.get('room');
-}
 
-/** Extract the room secret from the URL fragment (`#k=...`). Absent on
- *  links minted before secrets existed — those rooms join unencrypted. */
-export function getRoomSecretFromUrl(): string | null {
-  if (typeof window === 'undefined') return null;
-  const m = /(?:^#|&)k=([A-Za-z0-9_-]+)/.exec(window.location.hash);
-  return m ? m[1] : null;
-}
 
-/** Build share URL from room ID + secret. The secret rides the fragment. */
-export function getShareUrl(roomId: string, secret?: string): string {
-  if (typeof window === 'undefined') return '';
-  const base = window.location.origin;
-  return secret ? `${base}?room=${roomId}#k=${secret}` : `${base}?room=${roomId}`;
-}
 
 // ---------------------------------------------------------------------------
 // Provider creation

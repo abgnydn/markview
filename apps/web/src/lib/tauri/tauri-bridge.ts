@@ -16,7 +16,6 @@
  * `window.__TAURI__` and avoid bundling `@tauri-apps/api` into the web build.
  */
 
-import { useWorkspaceStore } from '@/stores/workspace-store';
 
 interface FileOpenedPayload {
   path: string;
@@ -45,9 +44,15 @@ let initialized = false;
 function loadFilePayload(payload: FileOpenedPayload): void {
   if (!payload?.content) return;
   const title = payload.filename.replace(/\.(md|markdown)$/i, '');
-  void useWorkspaceStore.getState().createWorkspace(title, [
-    { filename: payload.filename, content: payload.content },
-  ]);
+  // Lazy: this module is imported unconditionally from main.tsx, and a
+  // static store import would drag dexie + the workspace store into the
+  // entry chunk for every visitor — including /p/:slug readers who never
+  // touch the editor. Only actual Tauri file-opens pay for it.
+  void import('@/stores/workspace-store').then(({ useWorkspaceStore }) =>
+    useWorkspaceStore.getState().createWorkspace(title, [
+      { filename: payload.filename, content: payload.content },
+    ]),
+  );
 }
 
 export async function initTauriBridge(): Promise<void> {
