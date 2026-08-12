@@ -224,7 +224,9 @@
 /* Install note — collapsed by default so it never competes with the CTA,
    but present because the unsigned builds are otherwise a dead end. */
 .ed-install-note {
-  margin: 14px 0 18px;
+  /* auto side margins: the hero is centered, and a bare `0` left this
+     344px block hard against the left edge of the 740px column. */
+  margin: 14px auto 18px;
   max-width: 52ch;
   font-family: var(--zen-mono);
   font-size: 11px;
@@ -296,7 +298,9 @@
   text-transform: uppercase;
   color: var(--zen-fg-faint);
   margin-bottom: 10px;
-  text-align: left;
+  /* centered like the rest of the hero — it was the only left-aligned
+     line in an otherwise centered column. */
+  text-align: center;
 }
 .ed-github-import .github-import {
   margin: 0;
