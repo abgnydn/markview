@@ -247,11 +247,17 @@ export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingE
             <p>
               MarkView is open source and unsigned (an Apple Developer ID costs $99/yr,
               which this project doesn’t have yet), so macOS blocks it on first launch.
-              To open it: <strong>System Settings → Privacy &amp; Security</strong>, scroll to
-              <strong> Security</strong>, then click <strong>Open Anyway</strong> next to MarkView.
             </p>
             <p>
-              Prefer the terminal? <code>xattr -dr com.apple.quarantine /Applications/MarkView.app</code>
+              <strong>Easiest fix — install with Homebrew instead:</strong><br />
+              <code>brew install --cask abgnydn/tap/markview</code><br />
+              The app lands in Applications and opens normally.
+            </p>
+            <p>
+              Already downloaded the .dmg? Open it via <strong>System Settings → Privacy
+              &amp; Security</strong>, scroll to <strong>Security</strong>, then click{' '}
+              <strong>Open Anyway</strong> — or run{' '}
+              <code>xattr -dr com.apple.quarantine /Applications/MarkView.app</code>
             </p>
             <p>
               Rather not? The <a href="/">web app</a> is the same editor and needs no install.

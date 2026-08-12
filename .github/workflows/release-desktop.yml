@@ -126,12 +126,14 @@ jobs:
 
             ### Install
 
-            - **macOS** — Download the `.dmg`, drag MarkView to `/Applications`.
-              These builds are **not code-signed**, so macOS blocks the first
-              launch with “Apple could not verify… is free of malware”. To open:
-              **System Settings → Privacy & Security → Open Anyway** (scroll to
-              the Security section after trying to launch once). Terminal
-              alternative: `xattr -dr com.apple.quarantine /Applications/MarkView.app`.
+            - **macOS (recommended)** — `brew install --cask abgnydn/tap/markview`
+              installs it ready to run, no Gatekeeper detour.
+            - **macOS (.dmg)** — Drag MarkView to `/Applications`. These builds are
+              **not code-signed**, so macOS blocks the first launch with “Apple could
+              not verify… is free of malware”. To open: **System Settings → Privacy &
+              Security → Open Anyway** (scroll to the Security section after trying to
+              launch once). Terminal alternative:
+              `xattr -dr com.apple.quarantine /Applications/MarkView.app`.
               *(Right-click → Open no longer works on macOS 15+.)*
             - **Windows** — Download the `.msi` and run it. SmartScreen will warn
               about an unrecognized app: **More info → Run anyway**.

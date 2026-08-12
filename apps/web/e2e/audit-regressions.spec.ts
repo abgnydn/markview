@@ -236,3 +236,17 @@ test.describe('Unsigned-build install guidance', () => {
     await expect(note).not.toContainText(/right-click/i);
   });
 });
+
+test.describe('Homebrew install path', () => {
+  test.use({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15' });
+
+  test('macOS note leads with the working brew command', async ({ page }) => {
+    await page.goto('/?home=1');
+    const note = page.locator('.ed-install-note');
+    await note.locator('summary').click();
+    // The tap install is the only path that needs no Gatekeeper detour, so
+    // it must be present and correctly spelled — a typo here sends people
+    // to a nonexistent tap.
+    await expect(note).toContainText('brew install --cask abgnydn/tap/markview');
+  });
+});

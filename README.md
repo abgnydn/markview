@@ -32,8 +32,18 @@ whole thing in an optional, gorgeous **atmosphere** reading mode.
 - **Private by default** — no accounts, no telemetry. The only outbound
   features are opt-in: peer-to-peer collaboration and explicit share links.
 
-Try it at **[markview.ai](https://markview.ai)** — no install — or grab a
-[desktop build](https://github.com/abgnydn/markview/releases).
+Try it at **[markview.ai](https://markview.ai)** — no install — or install the
+desktop app:
+
+```sh
+brew install --cask abgnydn/tap/markview   # macOS
+```
+
+Direct downloads for macOS, Windows, and Linux are on the
+[releases page](https://github.com/abgnydn/markview/releases). The builds are
+not code-signed, so a downloaded `.dmg` needs **System Settings → Privacy &
+Security → Open Anyway** on first launch; the Homebrew cask handles that for
+you.
 
 ---
 
