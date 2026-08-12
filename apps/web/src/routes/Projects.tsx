@@ -15,6 +15,7 @@ import { Sparkles } from "lucide-react";
 import { useChronicleWorkspace } from "@/hooks/use-chronicle-workspace";
 import { useMarketingBeacon } from "@/lib/analytics";
 import "./projects.css";
+import { usePageTitle } from '@/hooks/use-page-title';
 
 // Lazy-load the chat — it pulls transformers.js (huge), don't drag it
 // onto the cold path of "just opened /projects to scroll the grid."
@@ -669,6 +670,7 @@ function GridCard({
 // ── route ────────────────────────────────────────────────────────────────
 export default function Projects() {
   useMarketingBeacon();
+  usePageTitle("Projects — markview.ai");
   const [index, setIndex] = useState<PortfolioIndex | null>(null);
   const [error, setError] = useState<string | null>(null);
 

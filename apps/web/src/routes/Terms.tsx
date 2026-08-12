@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Github } from '@/components/ui/brand-icons';
 import { useMarketingBeacon } from '@/lib/analytics';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 
 export default function TermsPage() {
   useMarketingBeacon();
+  usePageTitle("Terms of Service — MarkView");
   return (
     <div className="landing">
       {/* Sticky Nav Bar */}

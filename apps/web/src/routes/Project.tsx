@@ -17,6 +17,7 @@ import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useThemeStore } from "@/stores/theme-store";
 import { ViewerPage } from "@/components/viewer/viewer-page";
 import { useMarketingBeacon } from "@/lib/analytics";
+import { usePageTitle } from '@/hooks/use-page-title';
 
 type Status = "loading" | "ready" | "error";
 
@@ -50,6 +51,7 @@ function CenteredMessage({ children }: { children: React.ReactNode }) {
 export default function Project() {
   useMarketingBeacon();
   const { slug = "" } = useParams<{ slug: string }>();
+  usePageTitle(slug ? `${slug} — projects · markview.ai` : null);
   const navigate = useNavigate();
 
   const [status, setStatus] = useState<Status>("loading");

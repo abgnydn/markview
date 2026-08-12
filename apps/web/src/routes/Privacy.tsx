@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Github } from '@/components/ui/brand-icons';
 import { useMarketingBeacon } from '@/lib/analytics';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 
 export default function PrivacyPage() {
   useMarketingBeacon();
+  usePageTitle("Privacy Policy — MarkView");
   return (
     <div className="landing">
       {/* Sticky Nav Bar */}

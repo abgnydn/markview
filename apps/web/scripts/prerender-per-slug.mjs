@@ -107,13 +107,21 @@ const inlineStyles = `
 
 let okCount = 0;
 const urls = [
-  { loc: `${ORIGIN}/`,         priority: "0.7" },
-  { loc: `${ORIGIN}/projects`, priority: "1.0" },
+  // The product page is what markview.ai is ABOUT — it outranks the
+  // portfolio section for search engines. Privacy is a first-class page
+  // for a product whose entire pitch is privacy.
+  { loc: `${ORIGIN}/`,         priority: "1.0" },
+  { loc: `${ORIGIN}/privacy`,  priority: "0.5" },
+  { loc: `${ORIGIN}/terms`,    priority: "0.3" },
+  { loc: `${ORIGIN}/projects`, priority: "0.7" },
 ];
 
 for (const p of data.projects) {
   const ogTitle = `${p.name} — ${p.tagline ? p.tagline.slice(0, 70) : "project"}`;
-  const ogDesc  = (p.tagline || "").trim();
+  // The lede is the richer sentence when one exists — 'The editor you're
+  // using right now.' is a fine tagline in context and a useless SERP
+  // description out of it.
+  const ogDesc  = ((p.lede && p.lede.length > 40 ? p.lede : p.tagline) || "").trim();
   const ogImage = `${ORIGIN}/og/${p.slug}.png`;
   const canonical = `${ORIGIN}/p/${p.slug}`;
 

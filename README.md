@@ -82,6 +82,7 @@ rotate on a tempo you choose (every visit, hourly, daily, or pinned).
 | **Rendering** | GitHub-flavored markdown, Mermaid diagrams, KaTeX math, Shiki syntax highlighting (140+ languages), tables, alerts, footnotes |
 | **Editing** | CodeMirror 6 surface, WYSIWYG-style toolbar, split view, focus mode, vanishing chrome (hover an edge to reveal toolbar / sidebar / TOC) |
 | **Workspace** | Multi-file trees, IndexedDB persistence, drag-and-drop, GitHub repo import, full-text search |
+| **Presentation** | Press `P` and any document becomes a deck — slide splitting, speaker notes, presenter window, drawing tools, themes, and PPTX/HTML deck export |
 | **Related notes** | On-device semantic search — `all-MiniLM-L6-v2` runs locally (WebGPU/WASM) to surface notes you forgot you wrote. Nothing is uploaded. |
 | **Collaboration** | Real-time multi-user editing over WebRTC (Yjs) — document data goes peer-to-peer, never through a server |
 | **Export** | PDF, Word, PowerPoint, PNG, SVG, HTML, Markdown, RST, AsciiDoc, static site |

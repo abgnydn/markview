@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/prerender-projects.mjs && node scripts/generate-og-images.mjs && node scripts/prerender-per-slug.mjs",
+    "build": "vite build && node scripts/prerender-projects.mjs && node scripts/generate-og-images.mjs && node scripts/prerender-per-slug.mjs && node scripts/prerender-legal.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
