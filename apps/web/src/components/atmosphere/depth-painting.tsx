@@ -472,17 +472,28 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
       // (sky) zone, bottom focuses the near (foreground), so the
       // tilt-shift sweet spot drifts as you read. Eased toward target.
       let rafId = 0;
-      // Frame governor. When nobody's interacting, the *only* thing changing
-      // is the slow (~39s) light orbit — yet we were re-rendering a
-      // full-screen shader at 60fps to inch it along. That's what makes the
-      // whole UI feel heavy: the atmosphere spends the frame's GPU budget
-      // before a hover or scroll ever gets a turn. So render every frame only
-      // while something is genuinely moving (the dissolve-in, scroll-driven
-      // focal easing, or a click ripple); otherwise throttle to ~15fps, which
-      // is imperceptible for a 39s orbit and frees ~4× of the idle GPU for
-      // the actual UI.
+      // Frame governor.
+      //
+      // This used to idle at 15fps on the theory that a full-screen shader
+      // "spends the frame's GPU budget before a hover or scroll gets a
+      // turn". Profiling on real hardware (headed Chromium, ANGLE Metal,
+      // M2 Max) disproved that: with the shader rendering every frame the
+      // page held 120fps / 8.3ms p50. The heaviness people reported was
+      // main-thread ML inference (depth + embeddings), now in workers.
+      //
+      // 15fps is, however, very visible on the ~39s key-light orbit — the
+      // moving light visibly steps. So idle at 60fps: indistinguishable
+      // from 120 for a light that takes half a minute to cross, and still
+      // half the work of rendering uncapped on a ProMotion display.
+      //
+      // Anyone who genuinely needs the GPU back has lite mode, which drops
+      // the shader entirely.
       let lastRender = -1;
-      const IDLE_FRAME_MS = 1000 / 15;
+      // …except under prefers-reduced-motion, where a constantly shifting
+      // light is the thing the setting exists to suppress.
+      const reducedMotion = typeof window.matchMedia === 'function'
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const IDLE_FRAME_MS = reducedMotion ? 1000 / 10 : 1000 / 60;
       const reveal = material.uniforms.uReveal as { value: number };
       const draw = (now: number) => {
         rafId = requestAnimationFrame(draw);
@@ -492,7 +503,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
           reveal.value < 1 ||                            // dissolve-in on mount
           Math.abs(focalTarget - focalCur) > 0.0008 ||   // scroll-focal still easing
           tNow - (material.uniforms.uPulseTime as { value: number }).value < 2.0; // click ripple
-        if (!active && lastRender >= 0 && now - lastRender < IDLE_FRAME_MS) return;
+        // 0.75× the target interval, not the interval itself: on a 120Hz
+        // display frames arrive every 8.3ms, so a strict `< 16.67` test
+        // rejects the 8.3ms gap AND (with any jitter) sometimes the 16.6ms
+        // one too, landing at ~48fps instead of 60. The slack makes the
+        // every-other-frame cadence stable.
+        if (!active && lastRender >= 0 && now - lastRender < IDLE_FRAME_MS * 0.75) return;
         lastRender = now;
 
         (material.uniforms.uTime as { value: number }).value = tNow;
