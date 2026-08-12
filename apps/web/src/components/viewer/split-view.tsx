@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, Columns2 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { MarkdownRenderer } from './markdown-renderer';

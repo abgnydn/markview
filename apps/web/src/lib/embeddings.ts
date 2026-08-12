@@ -234,15 +234,7 @@ export async function relatedToParagraph(
   return searchEmbeddings(workspaceId, queryVec, { topK, excludeFileId: fileId });
 }
 
-/** Drop every embedding for a file (used when the file is deleted). */
-export async function deleteEmbeddingsForFile(fileId: string): Promise<void> {
-  await db.embeddings.where('fileId').equals(fileId).delete();
-}
 
-/** Drop every embedding for a workspace (used when the workspace is deleted). */
-export async function deleteEmbeddingsForWorkspace(workspaceId: string): Promise<void> {
-  await db.embeddings.where('workspaceId').equals(workspaceId).delete();
-}
 
 /**
  * Background-embed every file in the workspace that doesn't yet have

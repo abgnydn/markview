@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { StateField, StateEffect, type Extension } from '@codemirror/state';
-import { EditorView, Decoration, type DecorationSet, WidgetType, keymap } from '@codemirror/view';
+import { EditorView, Decoration, WidgetType, keymap } from '@codemirror/view';
 import { continueWriting } from '@/lib/generation';
 
 /**

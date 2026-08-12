@@ -146,7 +146,7 @@ const remarkAlerts: Plugin<[], Root> = () => {
 
 // ---- Code Block Wrapper ----
 
-function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string): string {
+export function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string): string {
   const escapedCode = rawCode
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -170,7 +170,7 @@ function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string):
 
 // ---- HTML Entity Helpers ----
 
-function decodeHtmlEntities(code: string): string {
+export function decodeHtmlEntities(code: string): string {
   // Decode hex entities FIRST, then named entities, &amp; LAST to prevent double-decoding
   return code
     .replace(/&#x3C;/g, '<')
@@ -188,7 +188,7 @@ let shikiHighlighter: unknown | null = null;
 let shikiPromise: Promise<void> | null = null;
 let shikiFailed = false;
 
-const DEFAULT_SHIKI_LANGS = [
+export const DEFAULT_SHIKI_LANGS = [
   'javascript', 'typescript', 'python', 'bash', 'shell', 'json', 'yaml', 'html', 'css',
   'jsx', 'tsx', 'sql', 'go', 'rust', 'java', 'c', 'cpp', 'ruby', 'php', 'swift',
   'kotlin', 'markdown', 'xml', 'toml', 'ini', 'dockerfile', 'graphql', 'diff',

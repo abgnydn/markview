@@ -88,7 +88,3 @@ export function getTimeTintMode(): TimeTintMode {
   return mode;
 }
 
-export function currentTimeTintPhase(): string {
-  if (mode === 'off') return 'off';
-  return phaseForHour(new Date().getHours());
-}

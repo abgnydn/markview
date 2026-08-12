@@ -324,9 +324,6 @@ export function getRotationTempo(): RotationTempo {
   return 'session';
 }
 
-export function setRotationTempo(t: RotationTempo): void {
-  try { localStorage.setItem(ROTATION_KEY, t); } catch { /* ignore */ }
-}
 
 // Stable session seed for the 'session' tempo so all atmospheres pick
 // the same "slot" within a session but a different one per session.
@@ -393,9 +390,6 @@ export function shufflePaintingFor(id: Exclude<Atmosphere, 'none'>): number {
   return next;
 }
 
-export function resetPaintingFor(id: Exclude<Atmosphere, 'none'>): void {
-  try { sessionStorage.removeItem(`markview-painting-${id}`); } catch { /* ignore */ }
-}
 
 /** Current painting index (pin if set, else the tempo slot) + pack size,
  *  for the "k / n" counter in the atmosphere strip. */

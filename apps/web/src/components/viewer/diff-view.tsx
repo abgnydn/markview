@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, FileCode2 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { db } from '@/lib/storage/db';
@@ -89,7 +89,6 @@ export function DiffView({ fileAId, onClose }: DiffViewProps) {
   );
 
   const fileA = files.find((f) => f.id === fileAId);
-  const fileB = files.find((f) => f.id === fileBId);
 
   useEffect(() => {
     if (!fileBId) { setContentB(null); return; }

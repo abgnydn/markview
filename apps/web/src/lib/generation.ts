@@ -146,7 +146,7 @@ interface PipelineCall {
  * Same streaming + abort contract as generateChat() — caller doesn't
  * need to know which backend ran.
  */
-export async function generateChatCloud(options: GenerateOptions & { model?: string }): Promise<string> {
+async function generateChatCloud(options: GenerateOptions & { model?: string }): Promise<string> {
   const { messages, maxNewTokens = 512, temperature = 0.5, onToken, signal, model } = options;
   const res = await fetch('/api/chat', {
     method: 'POST',
@@ -200,7 +200,7 @@ export async function generateChatCloud(options: GenerateOptions & { model?: str
   return accumulated.trim();
 }
 
-export async function generateChat(options: GenerateOptions): Promise<string> {
+async function generateChat(options: GenerateOptions): Promise<string> {
   const pipe = (await getPipeline()) as PipelineCall;
   const { messages, maxNewTokens = 256, temperature = 0.7, topP = 0.9, onToken, signal } = options;
 

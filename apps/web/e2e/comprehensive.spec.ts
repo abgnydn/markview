@@ -344,9 +344,6 @@ test.describe('Keyboard Shortcuts', () => {
   });
 
   test('Plus key increases font size', async ({ page }) => {
-    const initialSize = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue('--font-size-base').trim()
-    );
     await page.keyboard.press('Equal'); // + key
     const newSize = await page.evaluate(() =>
       getComputedStyle(document.documentElement).getPropertyValue('--font-size-base').trim()

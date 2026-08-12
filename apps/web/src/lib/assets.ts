@@ -16,10 +16,6 @@ function genId(): string {
   return Math.random().toString(36).slice(2, 18);
 }
 
-/** True for an image File/Blob. */
-export function isImageFile(file: { type: string }): boolean {
-  return /^image\//.test(file.type);
-}
 
 /** Persist an image blob; returns its id for an `asset:<id>` reference. */
 export async function storeAsset(blob: Blob, workspaceId: string): Promise<string> {

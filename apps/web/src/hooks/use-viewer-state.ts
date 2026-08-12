@@ -9,7 +9,6 @@ import type { TocHeading } from '@/lib/markdown/pipeline';
  */
 export function useViewerState() {
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
-  const activeFileContent = useWorkspaceStore((s) => s.activeFileContent);
 
   // ── Overlay toggles ────────────────────────────────────────────────
   const [showPresentation, setShowPresentation] = useState(false);

@@ -1,6 +1,7 @@
 import { db } from '@/lib/storage/db';
 import { renderMarkdown } from '@/lib/markdown/pipeline';
 import { expandWikilinks } from '@/lib/markdown/wikilinks';
+import { escapeHtml } from '@/lib/plugins/plugin-registry';
 
 // ---------- Shared export rendering ----------
 
@@ -44,10 +45,10 @@ export async function inlineAssetImages(html: string): Promise<string> {
   return html.replace(srcRe, (m, id) => (dataUrls.has(id) ? `src="${dataUrls.get(id)}"` : m));
 }
 
-/** HTML-escape a filename/title for interpolation into markup. */
-export function escapeHtmlText(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
+/** HTML-escape a filename/title for interpolation into markup.
+ *  (Alias of the canonical escapeHtml in plugin-registry — kept under this
+ *  name for the export modules' call sites.) */
+export const escapeHtmlText = escapeHtml;
 
 /** KaTeX stylesheet link for standalone exported pages, or '' when the
  *  rendered HTML contains no math. */

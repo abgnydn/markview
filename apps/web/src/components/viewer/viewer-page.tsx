@@ -48,7 +48,6 @@ import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
 import { usePolishEffects } from '@/hooks/use-polish-effects';
 import { useTextFragmentShare } from '@/hooks/use-text-fragment-share';
 import { Upload } from 'lucide-react';
-import type { TocHeading } from '@/lib/markdown/pipeline';
 
 function calculateReadingStats(content: string) {
   const text = content.replace(/[#*`\[\]()>-]/g, '').trim();

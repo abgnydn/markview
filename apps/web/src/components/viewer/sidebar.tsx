@@ -167,7 +167,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   // Deleting a file is irreversible (content + snapshots + embeddings) —
   // gate it behind the same ConfirmDialog that workspace-close uses.
   const [fileToRemove, setFileToRemove] = useState<string | null>(null);
-  const { mode, setMode, colorScheme, setColorScheme, atmosphere, setAtmosphere } = useThemeStore();
+  const { mode, setMode, colorScheme, setColorScheme } = useThemeStore();
 
   // Drag state
   const [dragIndex, setDragIndex] = useState<number | null>(null);

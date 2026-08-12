@@ -7,6 +7,10 @@ import {
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { splitSlides } from '@/lib/markdown/slide-split';
+// deckTitle comes from textContent (raw text) — it must be re-escaped
+// before being interpolated into presenter/export HTML strings.
+import { escapeHtml } from '@/lib/plugins/plugin-registry';
+import { getAudioContextCtor } from '@/lib/audio-context';
 
 interface PresentationModeProps {
   html: string;
@@ -23,10 +27,6 @@ const TRANSITIONS: Transition[] = ['slide', 'fade', 'zoom', 'flip', 'none'];
 const lsGet = (k: string, d: string) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 const lsSet = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { /* ignore */ } };
 const stripTags = (h: string) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-// deckTitle comes from textContent (raw text) — it must be re-escaped
-// before being interpolated into presenter/export HTML strings.
-const escapeHtml = (s: string) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 function isCoverSlide(slideHtml: string): boolean {
   const doc = new DOMParser().parseFromString(`<div>${slideHtml}</div>`, 'text/html');
@@ -163,7 +163,9 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const beep = useCallback(() => {
     if (!sound) return;
     try {
-      audioCtx.current ??= new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const AC = getAudioContextCtor();
+      if (!AC) return;
+      audioCtx.current ??= new AC();
       const ctx = audioCtx.current; const o = ctx.createOscillator(); const g = ctx.createGain();
       o.frequency.value = 660; o.type = 'sine'; g.gain.value = 0.04;
       o.connect(g); g.connect(ctx.destination); o.start();
@@ -235,7 +237,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   }, [currentSlide, slides, parsed, elapsed, timerOn, clock]);
 
   // deep link
-  useEffect(() => { const m = window.location.hash.match(/slide-(\d+)/); if (m) { const n = +m[1] - 1; if (n >= 0 && n < slides.length) setCurrentSlide(n); } }, []); // eslint-disable-line
+  useEffect(() => { const m = window.location.hash.match(/slide-(\d+)/); if (m) { const n = +m[1] - 1; if (n >= 0 && n < slides.length) setCurrentSlide(n); } }, []);
   useEffect(() => { try { window.history.replaceState(null, '', `#slide-${currentSlide + 1}`); } catch { /* ignore */ } }, [currentSlide]);
 
   useEffect(() => { const h = () => setIsFullscreen(!!document.fullscreenElement); document.addEventListener('fullscreenchange', h); return () => document.removeEventListener('fullscreenchange', h); }, []);
@@ -505,6 +507,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
               <button className="presentation-more-item" onClick={() => setFilmstrip((v) => !v)}><Film size={14} /> Filmstrip{filmstrip && ' ✓'}</button>
               <hr className="presentation-more-sep" />
               <button className="presentation-more-item" onClick={exportPng}><Image size={14} /> Slide → PNG</button>
+              <button className="presentation-more-item" onClick={exportHtml}><Download size={14} /> Deck → HTML</button>
               <button className="presentation-more-item" onClick={() => window.print()}><Printer size={14} /> Print / PDF</button>
               <button className="presentation-more-item" onClick={copyLink}><Link2 size={14} /> Copy slide link</button>
               <hr className="presentation-more-sep" />

@@ -68,7 +68,7 @@ function cardFor(p) {
     "live ↗"
   ) : null;
 
-  const tagChips = (p.tags || []).slice(0, 4).map((t, i) =>
+  const tagChips = (p.tags || []).slice(0, 4).map((t) =>
     span(
       {
         display: "flex",

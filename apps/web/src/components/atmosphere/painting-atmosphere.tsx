@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ATMOSPHERES, pickPaintingFor, type ParticleKind } from './atmospheres';
+import { ATMOSPHERES, pickPaintingFor } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
 import { WebGLParticles } from './webgl-particles';
@@ -76,11 +76,6 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // Particles + cfg both come from the *displayed* atmosphere so they
   // travel with the painting; the whole layer fades as a unit.
   const displayedCfg = ATMOSPHERES[displayed.atmosphere as Exclude<Atmosphere, 'none'>] ?? cfg;
-  const particles = useMemo(() => {
-    if (!displayedCfg || displayedCfg.particles === 'none') return [];
-    return buildParticles(displayedCfg.particles, displayedCfg.id);
-  }, [displayedCfg]);
-
   // A small flock that drifts across the sky, varied per atmosphere.
   const birds = useMemo(
     () => (displayedCfg ? buildBirds(displayedCfg.id) : []),
@@ -503,103 +498,6 @@ function buildLeaves(atmosphereId: string): ParticleInstance[] {
   });
 }
 
-/**
- * buildParticles — per-kind particle field. Stable seed per atmosphere
- * so re-renders don't reshuffle positions. Each particle gets its own
- * random delay/duration/drift so the field looks organic instead of
- * mechanical.
- */
-function buildParticles(kind: ParticleKind, atmosphereId: string): ParticleInstance[] {
-  // Different seeds per atmosphere → different but stable distributions.
-  const seedByAtmosphere: Record<string, number> = {
-    fuji:   0xfeedface,
-    wave:   0x0c0ffee5,
-    snow:   0xa1b2c3d4,
-    fields: 0xf1e1d50f,
-  };
-  const rng = mulberry32(seedByAtmosphere[atmosphereId] ?? 0x1234abcd);
-
-  switch (kind) {
-    case 'petals':   return petalsField(rng);
-    case 'snow':     return snowField(rng);
-    case 'spray':    return sprayField(rng);
-    case 'motes':    return motesField(rng);
-    default:         return [];
-  }
-}
-
-// ── Petals: pink/violet ellipses drift down with sideways drift + spin ─
-const PETAL_COLORS = ['#fbcfe8', '#fda4af', '#f9a8d4', '#e9d5ff', '#c4b5fd', '#fde2e4'];
-function petalsField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 14 }, (_, i) => ({
-    key: i,
-    style: {
-      left: `${rng() * 100}%`,
-      animationDelay: `${-rng() * 32}s`,
-      animationDuration: `${28 + rng() * 24}s`,
-      background: PETAL_COLORS[i % PETAL_COLORS.length],
-      ['--drift' as string]: `${(rng() - 0.5) * 280}px`,
-      ['--scale' as string]: 0.55 + rng() * 0.7,
-      ['--rot' as string]: `${rng() * 360}deg`,
-    } as React.CSSProperties,
-  }));
-}
-
-// ── Snow: white dots, slow fall, gentle sideways sway, varied sizes ────
-function snowField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 36 }, (_, i) => {
-    const size = 3 + rng() * 6; // 3–9px
-    return {
-      key: i,
-      style: {
-        left: `${rng() * 100}%`,
-        width: `${size}px`,
-        height: `${size}px`,
-        animationDelay: `${-rng() * 40}s`,
-        animationDuration: `${24 + rng() * 22}s`,
-        ['--sway' as string]: `${(rng() - 0.5) * 60}px`,
-        ['--opacity-peak' as string]: String(0.5 + rng() * 0.4),
-      } as React.CSSProperties,
-    };
-  });
-}
-
-// ── Spray: tiny white-blue droplets erupting upward + outward, fade fast
-function sprayField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 22 }, (_, i) => ({
-    key: i,
-    style: {
-      // Spray bursts from the wave-crest area (lower-middle of viewport).
-      left: `${20 + rng() * 60}%`,
-      bottom: `${20 + rng() * 25}%`,
-      animationDelay: `${-rng() * 9}s`,
-      animationDuration: `${4.8 + rng() * 4.4}s`,
-      ['--launch-x' as string]: `${(rng() - 0.5) * 220}px`,
-      ['--launch-y' as string]: `${-(60 + rng() * 180)}px`,
-      ['--scale' as string]: 0.35 + rng() * 0.7,
-    } as React.CSSProperties,
-  }));
-}
-
-// ── Motes: golden sun-dust drifting upward, slow horizontal float, soft glow
-function motesField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 16 }, (_, i) => {
-    const size = 4 + rng() * 5; // 4–9px
-    return {
-      key: i,
-      style: {
-        left: `${rng() * 100}%`,
-        bottom: `-${20 + rng() * 80}px`,
-        width: `${size}px`,
-        height: `${size}px`,
-        animationDelay: `${-rng() * 40}s`,
-        animationDuration: `${32 + rng() * 26}s`,
-        ['--mote-x' as string]: `${(rng() - 0.5) * 140}px`,
-        ['--opacity-peak' as string]: String(0.4 + rng() * 0.45),
-      } as React.CSSProperties,
-    };
-  });
-}
 
 function mulberry32(seed: number): () => number {
   let a = seed;

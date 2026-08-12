@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { X, Pencil } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';

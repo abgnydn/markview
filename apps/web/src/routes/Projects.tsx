@@ -8,7 +8,7 @@
 // burst grouping, and (6) a searchable + sortable + groupable project
 // grid. Per-project deep view lives at /p/:slug.
 
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
@@ -91,11 +91,8 @@ type TypeFilter = (typeof TYPE_FILTERS)[number];
 const DATE_RANGES = ["all", "today", "7d", "30d"] as const;
 type DateRange = (typeof DATE_RANGES)[number];
 
-const GRID_SORTS = ["recent", "commits", "stars", "alpha"] as const;
-type GridSort = (typeof GRID_SORTS)[number];
-
-const GRID_GROUPS = ["none", "language", "live"] as const;
-type GridGroup = (typeof GRID_GROUPS)[number];
+type GridSort = "recent" | "commits" | "stars" | "alpha";
+type GridGroup = "none" | "language" | "live";
 
 // Conventional-commit type → accent color. Falls back to ghost for
 // untyped / "other" / chore-y commits.

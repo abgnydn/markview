@@ -1,6 +1,7 @@
 
-import React, { useEffect, useRef, useState, useCallback, startTransition } from 'react';
+import React, { useEffect, useRef, useState, startTransition } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';
+import { createCodeBlockWrapper, decodeHtmlEntities, DEFAULT_SHIKI_LANGS } from '@markview/core';
 import { expandTransclusions, hasTransclusion, type TranscludeResolver } from '@/lib/markdown/transclude';
 import { expandWikilinks } from '@/lib/markdown/wikilinks';
 import { useThemeStore } from '@/stores/theme-store';
@@ -24,20 +25,6 @@ interface MarkdownRendererProps {
   resolveTransclusion?: TranscludeResolver;
 }
 
-/**
- * Decode the HTML entities the markdown stringifier emits, back to raw text.
- * `&amp;` is decoded LAST so `&amp;lt;` → `&lt;` → `<` doesn't double-decode.
- */
-function decodeHtmlEntities(s: string): string {
-  return s
-    .replace(/&#x3C;/g, '<')
-    .replace(/&#x3E;/g, '>')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&');
-}
 
 // Shiki highlighter singleton
 let shikiHighlighter: Awaited<ReturnType<typeof createHighlighter>> | null = null;
@@ -56,11 +43,7 @@ async function ensureShiki() {
       const { createHighlighter } = await import('shiki');
       shikiHighlighter = await createHighlighter({
         themes: ['github-dark', 'github-light'],
-        langs: [
-          'javascript', 'typescript', 'python', 'bash', 'shell', 'json', 'yaml', 'html', 'css',
-          'jsx', 'tsx', 'sql', 'go', 'rust', 'java', 'c', 'cpp', 'ruby', 'php', 'swift',
-          'kotlin', 'markdown', 'xml', 'toml', 'ini', 'dockerfile', 'graphql', 'diff',
-        ],
+        langs: DEFAULT_SHIKI_LANGS,
       });
     } catch (e) {
       console.warn('Shiki failed to load (CSP or env issue), using plain code blocks:', e);
@@ -70,10 +53,6 @@ async function ensureShiki() {
   await shikiPromise;
 }
 
-/** Call on app mount to preload Shiki before first render */
-export function preloadShiki() {
-  ensureShiki();
-}
 
 // Mermaid singleton — avoid re-importing on every render
 let mermaidModule: typeof MermaidDefault | null = null;
@@ -239,27 +218,6 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
   return html;
 }
 
-function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string) {
-  const escapedCode = rawCode
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-
-  return `<div class="code-block-wrapper" data-code="${escapedCode}">
-    <div class="code-block-toolbar">
-      <span class="code-block-lang">${lang}</span>
-      <button class="code-copy-btn" title="Copy code" data-copy-code>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-        </svg>
-      </button>
-    </div>
-    ${preHtml}
-  </div>`;
-}
 
 export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles, onToggleTask, resolveTransclusion }: MarkdownRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);

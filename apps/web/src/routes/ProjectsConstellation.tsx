@@ -669,7 +669,6 @@ export default function ProjectsConstellation() {
   const [inspectTilt, setInspectTilt] = useState({ x: 0, y: 0 });
   const [photo, setPhoto] = useState(false);
   const [trailer, setTrailer] = useState(false);
-  const [deckMode, setDeckMode] = useState(false);
   const [deck, setDeck] = useState<string[]>([]);
   const [lite, setLite] = useState<boolean>(() => {
     try { return window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency || 8) < 8; }
@@ -1411,7 +1410,6 @@ export default function ProjectsConstellation() {
     // ── animate ──────────────────────────────────────────────────────────
     const clock = new THREE.Clock();
     let raf = 0;
-    let frame = 0;
     const tmpScale = new THREE.Vector3();
     const HOVER_SCALE = 1.16;
     const FOCUS_SCALE = 1.34;
@@ -1456,7 +1454,6 @@ export default function ProjectsConstellation() {
 
     function tick() {
       raf = requestAnimationFrame(tick);
-      frame++;
       const t = clock.getElapsedTime();
 
       if (lastAppliedFocus !== focusedRef.current) {
