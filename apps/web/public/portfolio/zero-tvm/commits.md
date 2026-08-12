@@ -1,7 +1,20 @@
 # Commits — zero-tvm
 
+## 2026-08-12
+
+- `10:05` **native: retract the idle-backoff theory — clean A/B shows no idle/hot…** — +71 −69 — [`d1eb307`](https://github.com/abgnydn/zero-tvm/commit/d1eb3072e1e44bcb51f75d4d7ce50d6f90a271db)
+- `09:15` **lib: timestamp-query is OPT-IN (ZTVM_PROFILE=1) — enabling it cost ~3…** — +7 −2 — [`51b3c1e`](https://github.com/abgnydn/zero-tvm/commit/51b3c1ef2b7a8af0739c24ab918652abcabf0760)
+- `06:57` **sweep: E4 split-K arm — f32 partials + reduce dispatch, gated correct** — +93 −20 — [`a0c5934`](https://github.com/abgnydn/zero-tvm/commit/a0c59342adc92c51028f67ae2e098a0a699f2179)
+- `06:53` **bench: decode-bench-native — idle/hot A/B in one process** — +61 −0 — [`87bfa3e`](https://github.com/abgnydn/zero-tvm/commit/87bfa3e668aeb0d201087843358f51a0e4d5b202)
+- `06:51` **sweep: swizzle (E5) fixed — two real bugs — and the gate made determi…** — +23 −11 — [`688de1c`](https://github.com/abgnydn/zero-tvm/commit/688de1cd56aee58121f90ef2088f10611463e200)
+- `06:47` **native: dawn.node backs off completion delivery when the loop idles —…** — +65 −3 — [`32297e6`](https://github.com/abgnydn/zero-tvm/commit/32297e6bc511efa03abd82001d7a63315c276d5b)
+- `06:47` **sweep: gate graded against a zero reference — raw.* are float VALUES,…** — +19 −10 — [`79aaf24`](https://github.com/abgnydn/zero-tvm/commit/79aaf24771659b42d8ffe9ce9ec5e320254e1c37)
+- `02:11` **sweep: headless E3/E5 harness — WIP, results VOID by its own gate** — +332 −0 — [`38f42dd`](https://github.com/abgnydn/zero-tvm/commit/38f42ddbee70a69f4c9fdf12474bc43a134a7f9a)
+- `00:17` **native: ztvm native — the engine on dawn.node, no browser process at all** — +486 −3 — [`e27d4a3`](https://github.com/abgnydn/zero-tvm/commit/e27d4a3d2526915757d8b9fa8d69d2dc7de3ff4d)
+
 ## 2026-08-11
 
+- `23:41` **dawn: the native-host probe is GO — kernel at unsafe-Chrome parity, n…** — +90 −0 — [`4e7a26a`](https://github.com/abgnydn/zero-tvm/commit/4e7a26ae07dca624b332d0690e65bbb6b87d3f1a)
 - `14:15` **prefill: cut Chrome's tax — ztvm launches its own flagged Chrome, 482…** — +46 −4 — [`49b45fe`](https://github.com/abgnydn/zero-tvm/commit/49b45fef91f996d0cecc44888b425ede9b61f683)
 - `13:44` **prefill: E1 ships — 394 tok/s, the wall was a compiler diagnostic** — +526 −9 — [`67caf64`](https://github.com/abgnydn/zero-tvm/commit/67caf643909da1cab648495a0bfb729951a9dfd7)
 - `13:24` **agent: ztvm — one word** — +25 −2 — [`d73fde1`](https://github.com/abgnydn/zero-tvm/commit/d73fde1ce6f9dfab87f6df08080929ce754b6c21)
@@ -45,16 +58,3 @@
 - `03:15` **bench: report achieved GB/s, and why it cannot answer the question it…** — +73 −2 — [`51ecdac`](https://github.com/abgnydn/zero-tvm/commit/51ecdac3768a360f213915601257c124fe2b7319)
 - `03:04` **spec-sim: the break-even threshold did not follow from the formula ab…** — +16 −3 — [`6c4013f`](https://github.com/abgnydn/zero-tvm/commit/6c4013f59610bb4c94d010191d0975b950e9699a)
 - `03:01` **mla: the prep kernels, on the GPU** — +90 −3 — [`6e38ffa`](https://github.com/abgnydn/zero-tvm/commit/6e38ffabd174afcfb666852e6a8ebbcee5dcce24)
-- `02:33` **mla: loader prep and the three prep kernels** — +784 −15 — [`d4304b3`](https://github.com/abgnydn/zero-tvm/commit/d4304b3eed6d59a0c74273cfaee11b48c63da10c)
-- `02:10` **mla-ref: 20 tokens by default, not 6** — +6 −1 — [`1bc9655`](https://github.com/abgnydn/zero-tvm/commit/1bc96550067ec31364ab9d16bc65fd9ec6e3b9b8)
-- `01:41` **mla: the spec, and the assertion that makes the classic mistake unshi…** — +258 −6 — [`8dc1076`](https://github.com/abgnydn/zero-tvm/commit/8dc10764d25655918f7cf56ea1bde3fcea9635a5)
-- `01:21` **docs: the MLA engine-integration plan, with its false starts kept** — +326 −0 — [`b355cd9`](https://github.com/abgnydn/zero-tvm/commit/b355cd9fbabb8621c5ea127f92a94c9b817d2af9)
-- `01:18` **docs: a day of work that can run unattended** — +166 −0 — [`b501755`](https://github.com/abgnydn/zero-tvm/commit/b501755a13ebdfc069a1fbbb18b52b4b4a772e39)
-- `01:12` **colab: the notebook has now been run, and it found a path bug in this…** — +20 −37 — [`83b8817`](https://github.com/abgnydn/zero-tvm/commit/83b881776501b9520289fff5c1e4996d3f12c3a5)
-- `00:08` **colab: build the MoE-layer bundle where the bandwidth is** — +756 −31 — [`f4ec090`](https://github.com/abgnydn/zero-tvm/commit/f4ec090facf29b2d9434748309ef7de1fcf15130)
-- `00:06` **chat: sampling controls in the header** — +290 −15 — [`e4cdea1`](https://github.com/abgnydn/zero-tvm/commit/e4cdea1b04adc731ef3400ec6d0fd9c55453e2c7)
-
-## 2026-08-09
-
-- `14:24` **sampler: temperature, top-p and min-p** — +572 −5 — [`3e71c4b`](https://github.com/abgnydn/zero-tvm/commit/3e71c4b0d43530c62d0978b21b246329741d15e3)
-- `14:02` **review: four defects an adversarial pass found, three of which I had …** — +55 −10 — [`96046f5`](https://github.com/abgnydn/zero-tvm/commit/96046f53fabddaba664ea9505db203cc3d587399)

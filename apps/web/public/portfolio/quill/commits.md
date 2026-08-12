@@ -1,5 +1,35 @@
 # Commits — quill
 
+## 2026-08-12
+
+- `05:59` **Merge pull request #1 from abgnydn/claude/fix-and-improve** — +5924 −1279 — [`532ae22`](https://github.com/abgnydn/nib/commit/532ae22e69eb95e03c16d97d81f959d7d6ee68d4)
+
+## 2026-08-10
+
+- `06:10` **docs: re-baseline premium tier with the strict scorer (81.1% / 88.9% …** — +2137 −10 — [`7acf28a`](https://github.com/abgnydn/nib/commit/7acf28afa50254edd37f7c95dc7422971396bc62)
+- `03:44` **docs/scripts/site: honest privacy copy, log out of /tmp, doc-reality …** — +82 −38 — [`5ad6e47`](https://github.com/abgnydn/nib/commit/5ad6e47dc95228fa25236e7ba2f054e657781742)
+- `03:44` **train: fix eval-scorer inflation, Modal 1.x port, RSFT dedup + holdou…** — +565 −103 — [`bfd84b1`](https://github.com/abgnydn/nib/commit/bfd84b16db0bce71642eb60062892390fbe274b9)
+- `03:44` **frontend: fix ReferenceError toasts, training-modal re-attach, stale-…** — +156 −53 — [`0569480`](https://github.com/abgnydn/nib/commit/05694806a4d880caca3d8f279ea48360c6a4f96d)
+- `03:44` **shell config: set CSP, split overlay capability, fix stale Full-bundl…** — +44 −8 — [`46d9955`](https://github.com/abgnydn/nib/commit/46d9955360f7fca81f2f5819fec8c79d8786f57c)
+- `03:42` **shell: fix download chain, UI-thread stalls, clipboard races, and dat…** — +1087 −524 — [`5f4e7dc`](https://github.com/abgnydn/nib/commit/5f4e7dc1d11bc772d0653654997bc659b44d295b)
+
+## 2026-06-25
+
+- `03:12` **site: point GitHub links at abgnydn/nib (rename is live)** — +6 −7 — [`511e52e`](https://github.com/abgnydn/nib/commit/511e52e409d121a6d3ed5d0c2941981ab00316d9)
+- `03:11` **site: add nib.pages.dev landing page (static, no build step)** — +632 −0 — [`8c9dce0`](https://github.com/abgnydn/nib/commit/8c9dce071d510f661c1291dcece98fb46ae11c42)
+- `02:58` **docs: point in-repo references at the renamed nib GitHub repo** — +25 −21 — [`a26ec51`](https://github.com/abgnydn/nib/commit/a26ec5145dd8102af1319f3e48c02cbd11c83c02)
+
+## 2026-06-23
+
+- `09:35` **docs: note CI in CLAUDE.md, drop obsolete ci/ staging README** — +8 −33 — [`e59bd40`](https://github.com/abgnydn/nib/commit/e59bd4050a0d64203784ab97da9f6a4187cc60dd)
+- `08:30` **Update CI workflow by removing comments and stubbing resource** — +8 −29 — [`775b42d`](https://github.com/abgnydn/nib/commit/775b42d5ec47919bd555004270c5cc2cba6ce59e)
+- `08:14` **Rename ci.yml to ci.yml** — +0 −0 — [`cdfe59f`](https://github.com/abgnydn/nib/commit/cdfe59fedacdab19464bb77a7d042bb825891f6f)
+- `08:04` **Rename ci/ci.yml to github/workflows/ci.yml** — +0 −0 — [`f5e47a2`](https://github.com/abgnydn/nib/commit/f5e47a263acb1b3278add03c0ece27370c56d24b)
+- `07:44` **ci: stage GitHub Actions workflow under ci/ (workflow path is push-bl…** — +120 −0 — [`879847c`](https://github.com/abgnydn/nib/commit/879847c83450789960ceb8ca34a3c9940e86ddee)
+- `07:33` **eval: add Claude LLM-judge + Modal cloud eval (no Mac needed)** — +471 −42 — [`fac046f`](https://github.com/abgnydn/nib/commit/fac046f20b7ed401fcfb09ae3fc744d6b9f283d4)
+- `06:50` **refactor: complete the quill -> nib internal rename** — +348 −318 — [`de43855`](https://github.com/abgnydn/nib/commit/de438558aac448cc23e83af0ac890a21fcc02f61)
+- `06:33` **docs: sync README/CLAUDE/train to v2.x "Nib" reality; fix stop-marker** — +429 −287 — [`ff0a394`](https://github.com/abgnydn/nib/commit/ff0a3943f934d227d2addd57555ab0448b2c8e91)
+
 ## 2026-06-03
 
 - `06:03` **v2.3 negative control: pure self-resampling plateaus (88.9% -> 87.8%)** — +1093 −69 — [`998fc95`](https://github.com/abgnydn/nib/commit/998fc951ee1bea9f1f5d803626ee0fb0b644a5a3)
@@ -49,30 +79,3 @@
 - `06:25` **v1.0.6: ignore focus-steal events so buttons actually apply** — +21 −4 — [`7eafeff`](https://github.com/abgnydn/nib/commit/7eafefff9f8a99413e67a139414473eed926d272)
 - `06:16` **v1.0.5: remove desktop chip + sweep remaining 'Quill' strings** — +27 −40 — [`1a12c13`](https://github.com/abgnydn/nib/commit/1a12c1392d36cffb3a2dc6441603e113c0674c35)
 - `06:07` **chore(install): auto-cleanup old versions on every build** — +37 −0 — [`466be33`](https://github.com/abgnydn/nib/commit/466be3311f8e07e073c750e90a92d33c08fa7ef6)
-- `06:01` **v1.0.4: popover bottom-right of word + rewrite diagnostics** — +28 −5 — [`f5d6301`](https://github.com/abgnydn/nib/commit/f5d630131767d89bf2153188bc18ca8be89ded72)
-- `05:43` **v1.0.3: fix apply target + popover stickiness + tray labels** — +154 −17 — [`3051795`](https://github.com/abgnydn/nib/commit/30517955c22f902bdf83b7d7b208a34982e4acd1)
-- `05:04` **v1.0.2: real app icon — pen-nib silhouette** — +51 −0 — [`0cd2c00`](https://github.com/abgnydn/nib/commit/0cd2c00fe4f57047b32f42fc49634c0ee36d2122)
-- `04:53` **v1.0.1: rename Quill → Nib in the .app surface** — +16 −13 — [`a96c170`](https://github.com/abgnydn/nib/commit/a96c170c1fb1ef29ee15317da9f8f6fff9f643bc)
-- `03:58` **feat(lints): enable Harper style + clarity rules (BoringWords, Posses…** — +89 −10 — [`be4519e`](https://github.com/abgnydn/nib/commit/be4519e0467e74879c96e9faccbcb3832a13e9da)
-- `03:58` **feat(inference): multi-variant AI rewrite (3 alternatives)** — +363 −0 — [`9ca8ec7`](https://github.com/abgnydn/nib/commit/9ca8ec79b3663ef4623c49b0baa31baae040607d)
-- `03:58` **feat(ui): Settings panel — dictionary + pause + per-app overrides** — +462 −0 — [`700e3e2`](https://github.com/abgnydn/nib/commit/700e3e20b24a2a5c030134ffcf0a935aba043e03)
-- `03:58` **feat(overlay): Why-expansion + Accept all / Dismiss all in popover** — +208 −0 — [`7df887d`](https://github.com/abgnydn/nib/commit/7df887dd7fb8513669a8e80b76cbf14fcf54c7fe)
-- `03:58` **feat(tray): Pause/Resume + Open Settings menu items** — +82 −27 — [`77a43b6`](https://github.com/abgnydn/nib/commit/77a43b649902d9b204783ac1afce625a1c2f4598)
-- `03:34` **feat(tier-a-backend): personal dictionary + pause + per-app overrides** — +297 −26 — [`6c07083`](https://github.com/abgnydn/nib/commit/6c07083cd1f4d310a4528fef95e2477fea69cae2)
-
-## 2026-05-26
-
-- `13:36` **feat(overlay): block URL bars by denying AXTextField in browser bundles** — +71 −0 — [`880fcdb`](https://github.com/abgnydn/nib/commit/880fcdb65b9a12c63e8712680d23116a67e4621f)
-- `13:35` **feat(overlay): engagement filter — only engage where Grammarly engages** — +329 −15 — [`f47bc7c`](https://github.com/abgnydn/nib/commit/f47bc7cc262671d102a45a9eda311b13f426f2fc)
-- `13:34` **v1.0: swap base model to LFM2.5-350M + ChatML template** — +13 −9 — [`674e785`](https://github.com/abgnydn/nib/commit/674e785f3bc275a20aa66a0404704811bc16a639)
-- `13:34` **chore(build): add release-dev profile + install-dev.sh --fast flag** — +40 −3 — [`3b21ba2`](https://github.com/abgnydn/nib/commit/3b21ba2502f71b1599d74bab8ebfc41dff1d9ecb)
-
-## 2026-05-22
-
-- `07:33` **v0.9 phase 2: local LoRA training via bundled llama-finetune-lora** — +444 −15 — [`7fbcaf1`](https://github.com/abgnydn/nib/commit/7fbcaf1d360603276402f8b65c500591048f6f1e)
-- `07:23` **docs: refresh CLAUDE.md Resume block for v0.9 direction** — +35 −22 — [`9ccf3ce`](https://github.com/abgnydn/nib/commit/9ccf3cea259759ef21535535564529b783c95d65)
-- `07:18` **v0.9 phase 1: bundle QVAC Fabric binaries inside Quill.app** — +159 −8 — [`8ddf0a3`](https://github.com/abgnydn/nib/commit/8ddf0a3a87c0912d89197eb01e23ab13dff17f89)
-
-## 2026-05-21
-
-- `12:44` **v0.7 (C+E): menubar mode + background auto-retrain** — +658 −5 — [`500ced3`](https://github.com/abgnydn/nib/commit/500ced33bc62ab1973ea4ad414ae599198d124ad)

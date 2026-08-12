@@ -1,5 +1,17 @@
 # Commits — markview
 
+## 2026-08-12
+
+- `08:28` **perf(atmosphere): render the moving light at 60fps, not 15** — +27 −11 — [`d85223e`](https://github.com/abgnydn/markview/commit/d85223ec757a53a5f3793ea4c3bd5f48ca38b307)
+- `07:54` **perf(atmosphere): move both ML models off the main thread** — +266 −96 — [`494931f`](https://github.com/abgnydn/markview/commit/494931f069a1fca439d57cd5c824c8791bf32456)
+- `07:54` **fix(landing): center the install note and import label** — +6 −2 — [`11c007b`](https://github.com/abgnydn/markview/commit/11c007bf2bb392d3c7a91181c090f2746a7728d3)
+- `06:40` **feat(desktop): Homebrew cask as the working macOS install path** — +43 −11 — [`216ffbc`](https://github.com/abgnydn/markview/commit/216ffbceb18565bd1714678f2d75265320a2dc60)
+- `06:06` **fix(landing): tell macOS/Windows users how to open the unsigned builds** — +117 −12 — [`02ba0fa`](https://github.com/abgnydn/markview/commit/02ba0fafb2463d198fa5eb391b2b5bb7ed0c049f)
+
+## 2026-08-11
+
+- `20:50` **chore(portfolio): daily sync 2026-08-11** — +790 −794 — [`321054a`](https://github.com/abgnydn/markview/commit/321054a6236b5398a41ab69858e1c6b85d9ab891)
+
 ## 2026-08-10
 
 - `20:46` **chore(portfolio): daily sync 2026-08-10** — +408 −440 — [`f09e4f5`](https://github.com/abgnydn/markview/commit/f09e4f587b48e2181c22b38acd3d1e9aa07cfcbc)
@@ -91,9 +103,3 @@
 - `04:40` **fix(pwa): actually cache runtime assets — offline was shell-only** — +12 −2 — [`cc3a3ca`](https://github.com/abgnydn/markview/commit/cc3a3ca5b406b029cabe84096b488eb4404444db)
 - `04:40` **fix(collab): host viewer stays live during sessions; guests told when…** — +22 −2 — [`059ad10`](https://github.com/abgnydn/markview/commit/059ad10fb83cb9df5acb3bb77c550cfc9bf35a3d)
 - `04:40` **fix(app): correctness + UX hardening pass from full-codebase audit** — +241 −31 — [`ab2ac48`](https://github.com/abgnydn/markview/commit/ab2ac48d6b52e74dcc5dbdadb7503463812da59e)
-- `04:40` **test(e2e): ControlOrMeta for editor/search shortcuts — Meta+A isn't s…** — +15 −15 — [`b4d06fe`](https://github.com/abgnydn/markview/commit/b4d06feab2ffac99fcbb9e5251e55e6540447191)
-- `04:40` **test(e2e): deterministic webServer — strict port 3000, bunx, 120s CI …** — +5 −2 — [`0368926`](https://github.com/abgnydn/markview/commit/0368926108df9bda73d35246ff39b078fa75068a)
-- `04:40` **chore(web): make whole-src lint clean for CI** — +7 −15 — [`af0fe05`](https://github.com/abgnydn/markview/commit/af0fe05e8d9ec00a2b802e929290f5cfc809f48d)
-- `04:40` **ci: add quality gates — typecheck, lint, unit, e2e on every PR and ma…** — +48 −0 — [`4f245e4`](https://github.com/abgnydn/markview/commit/4f245e461f2b76507b047ee53156adad2c4a47aa)
-- `04:40` **test(e2e): revive the entire suite against the current UI (10 → 113 p…** — +266 −367 — [`bfb5af3`](https://github.com/abgnydn/markview/commit/bfb5af30106ff76edde3a79155045acf24db0310)
-- `04:40` **fix(app): honor landing drag-drop, stop silent file loss, fix desktop…** — +83 −9 — [`bd591f8`](https://github.com/abgnydn/markview/commit/bd591f88bb615e84402e780a2d786abe7e96223b)
