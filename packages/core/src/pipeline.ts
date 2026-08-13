@@ -129,7 +129,8 @@ const remarkAlerts: Plugin<[], Root> = () => {
       const data = node.data || (node.data = {});
       data.hName = 'div';
       data.hProperties = {
-        className: `gh-alert ${config.className}`,
+        // hast types (bumped transitively) now require className as a list.
+        className: ['gh-alert', config.className],
         'data-alert-type': alertType.toLowerCase(),
       };
 

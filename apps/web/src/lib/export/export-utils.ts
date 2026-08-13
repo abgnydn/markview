@@ -54,7 +54,7 @@ export const escapeHtmlText = escapeHtml;
  *  rendered HTML contains no math. */
 export function katexCssLink(html: string): string {
   return html.includes('class="katex')
-    ? '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css">'
+    ? '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">'
     : '';
 }
 
