@@ -202,21 +202,28 @@ async function ensureShiki(config?: { theme?: string; langs?: string[] }) {
   }
   shikiPromise = (async () => {
     try {
+      // shiki/core — the main 'shiki' entry statically references its
+      // default oniguruma engine, which made bundlers emit 230 KB gz of
+      // WASM chunks on behalf of anything importing this module, even
+      // though this path always uses the JS engine.
       // @ts-ignore — shiki is an optional peer dependency
-      const { createHighlighter } = await import('shiki');
+      const { createHighlighterCore } = await import('shiki/core');
       // @ts-ignore — same optional peer
       const { createJavaScriptRegexEngine } = await import('shiki/engine/javascript');
+      // @ts-ignore — same optional peer
+      const { bundledThemes } = await import('shiki/themes');
+      // @ts-ignore — same optional peer
+      const { bundledLanguages } = await import('shiki/langs');
       const theme = config?.theme || 'github-dark';
-      const themes = theme === 'github-dark'
+      const themeNames = theme === 'github-dark'
         ? ['github-dark', 'github-light']
         : [theme, 'github-dark', 'github-light'];
-      shikiHighlighter = await createHighlighter({
-        themes,
-        langs: config?.langs || DEFAULT_SHIKI_LANGS,
-        // JS regex engine: no 230 KB gz oniguruma WASM in the chunk graph
-        // of anything that imports this module (the web renderer had the
-        // dead chunks emitted on its behalf even though this path has no
-        // callers there).
+      const langNames = config?.langs || DEFAULT_SHIKI_LANGS;
+      const loadAll = async (map: Record<string, () => Promise<{ default: unknown }>>, names: string[]) =>
+        (await Promise.all(names.filter((n) => map[n]).map(async (n) => (await map[n]()).default)));
+      shikiHighlighter = await createHighlighterCore({
+        themes: (await loadAll(bundledThemes, themeNames)) as never[],
+        langs: (await loadAll(bundledLanguages, langNames)) as never[],
         engine: createJavaScriptRegexEngine({ forgiving: true }),
       });
     } catch (e) {

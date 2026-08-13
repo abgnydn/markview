@@ -9,7 +9,7 @@ import { usePluginStore } from '@/lib/plugins/plugin-registry';
 import '@/lib/plugins/embed-plugin';
 import { DOM_ENHANCERS } from '@/lib/markdown/dom-enhancers';
 // Type-only imports — erased at compile time, so shiki/mermaid stay lazy.
-import type { createHighlighter } from 'shiki';
+import type { createHighlighterCore } from 'shiki/core';
 import type MermaidDefault from 'mermaid';
 
 interface MarkdownRendererProps {
@@ -27,7 +27,7 @@ interface MarkdownRendererProps {
 
 
 // Shiki highlighter singleton
-let shikiHighlighter: Awaited<ReturnType<typeof createHighlighter>> | null = null;
+let shikiHighlighter: Awaited<ReturnType<typeof createHighlighterCore>> | null = null;
 let shikiPromise: Promise<void> | null = null;
 
 let shikiFailed = false;
@@ -40,16 +40,25 @@ async function ensureShiki() {
   }
   shikiPromise = (async () => {
     try {
-      const [{ createHighlighter }, { createJavaScriptRegexEngine }] = await Promise.all([
-        import('shiki'),
+      // shiki/core, NOT the main 'shiki' entry: the main entry statically
+      // references its default oniguruma engine, so importing it emits the
+      // 230 KB gz WASM chunks into the build even when they are never
+      // fetched. Core + explicit theme/grammar loaders keeps the graph
+      // clean end to end.
+      const [{ createHighlighterCore }, { createJavaScriptRegexEngine }, { bundledThemes }] = await Promise.all([
+        import('shiki/core'),
         import('shiki/engine/javascript'),
+        import('shiki/themes'),
       ]);
-      shikiHighlighter = await createHighlighter({
-        themes: ['github-dark', 'github-light'],
-        // Zero eager grammars — the old 28-language preload cost ~250 KB gz
-        // before the first code block could highlight; loadShikiLangs()
-        // fetches exactly the grammars a document actually uses. The JS
-        // regex engine replaces the 230 KB gz oniguruma WASM entirely
+      const [darkTheme, lightTheme] = await Promise.all([
+        bundledThemes['github-dark'](),
+        bundledThemes['github-light'](),
+      ]);
+      shikiHighlighter = await createHighlighterCore({
+        themes: [darkTheme.default, lightTheme.default],
+        // Zero eager grammars — loadShikiLangs() fetches exactly the
+        // grammars a document actually uses via the bundledLanguages
+        // loader map. The JS regex engine replaces oniguruma entirely
         // (forgiving mode: a rare unsupported grammar degrades to plain
         // text instead of throwing).
         langs: [],
@@ -76,15 +85,20 @@ async function loadShikiLangs(html: string): Promise<void> {
   }
   if (wanted.size === 0) return;
   const loaded = new Set(shikiHighlighter.getLoadedLanguages());
+  const { bundledLanguages } = await import('shiki/langs');
   await Promise.all(
     [...wanted]
       .filter((lang) => !loaded.has(lang) && !failedLangs.has(lang))
-      .map((lang) =>
-        shikiHighlighter!.loadLanguage(lang as never).catch(() => {
+      .map(async (lang) => {
+        try {
+          const loader = (bundledLanguages as Record<string, () => Promise<{ default: unknown }>>)[lang];
+          if (!loader) throw new Error('unknown language');
+          await shikiHighlighter!.loadLanguage((await loader()).default as never);
+        } catch {
           // Unknown / plugin-handled languages render as plain blocks.
           failedLangs.add(lang);
-        }),
-      ),
+        }
+      }),
   );
 }
 
