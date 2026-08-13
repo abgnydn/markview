@@ -12,6 +12,9 @@ import type { CollabSession, SyncedFile } from '@/lib/collab/y-provider';
 // connect actions, so surfaces that merely subscribe to this store (the
 // landing page, the viewer shell) never pay for the collab stack. `yp` is
 // non-null whenever `_session` is — both are set together below.
+// A value-position dynamic-import type: there is no static-import
+// spelling that keeps the module lazy, so the rule is suppressed here.
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type YProviderModule = typeof import('@/lib/collab/y-provider');
 let yp: YProviderModule | null = null;
 import {
