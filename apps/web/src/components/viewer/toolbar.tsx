@@ -61,8 +61,26 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
         setShowAddMenu(false);
       }
     };
-    if (showOverflow || showThemePicker || showModePicker || showAddMenu) document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    // Esc closes whichever dropdown is open and hands focus back to its
+    // trigger button — they previously only closed on outside mousedown,
+    // stranding keyboard users inside an open menu.
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const restore = (ref: React.RefObject<HTMLDivElement | null>) =>
+        ref.current?.querySelector<HTMLButtonElement>('button[aria-expanded], button')?.focus();
+      if (showOverflow) { e.preventDefault(); e.stopPropagation(); setShowOverflow(false); restore(overflowRef); }
+      else if (showThemePicker) { e.preventDefault(); e.stopPropagation(); setShowThemePicker(false); restore(themePickerRef); }
+      else if (showModePicker) { e.preventDefault(); e.stopPropagation(); setShowModePicker(false); restore(modePickerRef); }
+      else if (showAddMenu) { e.preventDefault(); e.stopPropagation(); setShowAddMenu(false); restore(addMenuRef); }
+    };
+    if (showOverflow || showThemePicker || showModePicker || showAddMenu) {
+      document.addEventListener('mousedown', handleClick);
+      window.addEventListener('keydown', handleKey, true);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      window.removeEventListener('keydown', handleKey, true);
+    };
   }, [showOverflow, showThemePicker, showModePicker, showAddMenu]);
 
 

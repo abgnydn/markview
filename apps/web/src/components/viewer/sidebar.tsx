@@ -87,6 +87,12 @@ function TreeItem({
           onClick={() => setIsOpen((v) => !v)}
           role="button"
           tabIndex={0}
+          aria-expanded={isOpen}
+          onKeyDown={(e) => {
+            // Folders were keyboard-dead — files nested in them were
+            // unreachable without a mouse.
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsOpen((v) => !v); }
+          }}
         >
           {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           {isOpen ? <FolderOpen size={14} className="sidebar-item-icon folder-icon" /> : <Folder size={14} className="sidebar-item-icon folder-icon" />}
@@ -118,7 +124,7 @@ function TreeItem({
       title={node.path}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' && node.fileId) onSelect(node.fileId); }}
+      onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && node.fileId) { e.preventDefault(); onSelect(node.fileId); } }}
     >
       <FileText size={14} className="sidebar-item-icon" />
       <span className="sidebar-item-name">{node.name}</span>
@@ -276,7 +282,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
               title={file.filename}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter') selectFile(file.id); }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectFile(file.id); } }}
               draggable={!isGuestMode}
               onDragStart={(e) => handleDragStart(e, index)}
               onDragEnd={handleDragEnd}

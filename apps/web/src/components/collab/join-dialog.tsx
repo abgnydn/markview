@@ -31,7 +31,7 @@ export function JoinDialog({ roomId, onClose }: { roomId: string; onClose: () =>
         <div className="collab-dialog-header">
           <Users size={18} />
           <span>Join Session</span>
-          <button className="collab-dialog-close" onClick={onClose}>
+          <button className="collab-dialog-close" aria-label="Close" onClick={onClose}>
             <X size={16} />
           </button>
         </div>

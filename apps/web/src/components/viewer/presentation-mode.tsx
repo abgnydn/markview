@@ -11,6 +11,7 @@ import { splitSlides } from '@/lib/markdown/slide-split';
 // before being interpolated into presenter/export HTML strings.
 import { escapeHtml } from '@/lib/plugins/plugin-registry';
 import { getAudioContextCtor } from '@/lib/audio-context';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface PresentationModeProps {
   html: string;
@@ -59,6 +60,7 @@ function parseSlide(slideHtml: string) {
 }
 
 export function PresentationMode({ html, onClose }: PresentationModeProps) {
+  useFocusReturn(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [dir, setDir] = useState<1 | -1>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -571,10 +573,14 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         <button className="presentation-nav-btn is-edge" onClick={() => goTo(0)} disabled={currentSlide === 0} aria-label="First"><SkipBack size={18} /></button>
         <button className="presentation-nav-btn" onClick={goPrev} disabled={currentSlide === 0 && frag === 0} aria-label="Previous"><ChevronLeft size={22} /></button>
         <div className="presentation-dots" role="tablist">
-          {slides.map((_, i) => <button key={i} className={`presentation-dot${i === currentSlide ? ' is-active' : ''}${sections[i] && i > 0 ? ' is-section' : ''}`} onClick={() => goTo(i)} title={parsed[i]?.title} aria-label={parsed[i]?.title || `Slide ${i + 1}`} aria-selected={i === currentSlide} />)}
+          {slides.map((_, i) => <button key={i} className={`presentation-dot${i === currentSlide ? ' is-active' : ''}${sections[i] && i > 0 ? ' is-section' : ''}`} onClick={() => goTo(i)} role="tab" title={parsed[i]?.title} aria-label={parsed[i]?.title || `Slide ${i + 1}`} aria-selected={i === currentSlide} />)}
         </div>
         <button className="presentation-nav-btn" onClick={goNext} disabled={currentSlide === slides.length - 1 && frag >= fragCount} aria-label="Next"><ChevronRight size={22} /></button>
         <button className="presentation-nav-btn is-edge" onClick={() => goTo(slides.length - 1)} disabled={currentSlide === slides.length - 1} aria-label="Last"><SkipForward size={18} /></button>
+      </div>
+
+      <div className="mv-sr-only" role="status">
+        {`Slide ${currentSlide + 1} of ${slides.length}${parsed[currentSlide]?.title ? ` — ${parsed[currentSlide].title}` : ''}`}
       </div>
 
       <div className="presentation-footer">

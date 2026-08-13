@@ -30,6 +30,7 @@ import { slashCommands } from './editor-slash';
 import { clipboardToTable } from './editor-paste';
 import { smartTypography } from './editor-typography';
 import { createFormatBubble } from './editor-bubble';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface MarkdownEditorProps {
   content: string;
@@ -496,6 +497,7 @@ export function MarkdownEditor({
   yText,
   awareness,
 }: MarkdownEditorProps) {
+  useFocusReturn(true);
   // When collab is on, the Y.Text is the source of truth — seed local state
   // from it and let the updateListener mirror future edits back.
   const initialText = yText ? yText.toString() : content;

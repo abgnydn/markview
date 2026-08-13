@@ -61,7 +61,8 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
     [activeFileContent],
   );
 
-  // Close menu on outside click
+  // Close menu on outside click, or Esc (which also refocuses the trigger
+  // so keyboard users aren't stranded).
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: MouseEvent) => {
@@ -69,8 +70,19 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
         setIsOpen(false);
       }
     };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      e.stopPropagation();
+      setIsOpen(false);
+      menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    window.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      window.removeEventListener('keydown', onKey, true);
+    };
   }, [isOpen]);
 
   // Toast auto-dismiss
@@ -401,7 +413,7 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
       )}
 
       {toast && (
-        <div className={`export-toast${toast.startsWith('Failed') ? ' is-error' : ''}`}>
+        <div className={`export-toast${toast.startsWith('Failed') ? ' is-error' : ''}`} role="status">
           {toast.startsWith('Failed') ? <AlertCircle size={14} /> : <Check size={14} />}
           <span>{toast}</span>
         </div>

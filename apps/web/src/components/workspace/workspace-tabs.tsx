@@ -172,12 +172,37 @@ export function WorkspaceTabs() {
   return (
     <>
       <div className="workspace-tabs">
-      <div className="workspace-tabs-scroll">
+      <div className="workspace-tabs-scroll" role="tablist" aria-label="Workspaces">
         {workspaces.map((ws, index) => (
           <div
             key={ws.id}
             className={`workspace-tab${ws.id === activeWorkspaceId ? ' workspace-tab-active' : ''}${dragIndex === index ? ' workspace-tab-dragging' : ''}${dropIndex === index && dragIndex !== index ? ' workspace-tab-drop-target' : ''}${fileDropWsId === ws.id ? ' workspace-tab-file-drop' : ''}${savedPulseWsId === ws.id ? ' ws-tab-saved-pulse' : ''}`}
             onClick={() => switchWorkspace(ws.id)}
+            // Keyboard parity: the tab used to be a bare div while its
+            // inner Rename/Close buttons WERE tabbable — a keyboard user
+            // could delete a workspace they couldn't switch to.
+            role="tab"
+            aria-selected={ws.id === activeWorkspaceId}
+            tabIndex={ws.id === activeWorkspaceId ? 0 : -1}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                void switchWorkspace(ws.id);
+              } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const next = workspaces[(index + (e.key === 'ArrowRight' ? 1 : workspaces.length - 1)) % workspaces.length];
+                if (next) {
+                  void switchWorkspace(next.id);
+                  // Move roving focus to the newly active tab. Capture the
+                  // tablist now — React nulls currentTarget after the
+                  // handler returns, before the rAF fires.
+                  const tablist = e.currentTarget.parentElement;
+                  requestAnimationFrame(() => {
+                    (tablist?.querySelector('[aria-selected="true"]') as HTMLElement | null)?.focus();
+                  });
+                }
+              }
+            }}
             title={`${ws.title} — ${ws.fileCount} files, ${formatSize(ws.totalSize)}\nDrop a file here to move it into this workspace.`}
             draggable={editingId !== ws.id}
             onDragStart={(e) => handleDragStart(e, index)}

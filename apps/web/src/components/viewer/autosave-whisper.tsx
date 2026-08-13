@@ -44,7 +44,11 @@ export function AutosaveWhisper() {
   return (
     <div
       className={`mv-saved-whisper${visible ? ' mv-saved-whisper-show' : ''}`}
-      aria-hidden="true"
+      // role=status (implicit polite live region) — this pill is the sink
+      // for every markview:toast, i.e. real feedback like "Save failed" and
+      // "Only markdown files can be opened". aria-hidden made all of it
+      // silent to screen readers.
+      role="status"
     >
       {label}
     </div>

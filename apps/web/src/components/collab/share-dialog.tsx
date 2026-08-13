@@ -1,10 +1,12 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Share2, Copy, Check, X } from 'lucide-react';
 import { useCollabStore } from '@/stores/collab-store';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 export function ShareDialog({ onClose }: { onClose: () => void }) {
+  useFocusReturn(true);
   const { shareWorkspace, isActive, shareUrl, leaveSession, peers } = useCollabStore();
   const { activeWorkspaceId } = useWorkspaceStore();
   const [copied, setCopied] = useState(false);
@@ -38,13 +40,26 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
     onClose();
   };
 
+  // Esc closes — JoinDialog already had this; ShareDialog didn't.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !e.defaultPrevented) {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, [onClose]);
+
   return (
     <div className="collab-dialog-overlay" onClick={onClose}>
-      <div className="collab-dialog" onClick={(e) => e.stopPropagation()}>
+      <div className="collab-dialog" role="dialog" aria-modal="true" aria-label="Share workspace" onClick={(e) => e.stopPropagation()}>
         <div className="collab-dialog-header">
           <Share2 size={18} />
           <span>Share Workspace</span>
-          <button className="collab-dialog-close" onClick={onClose}>
+          <button className="collab-dialog-close" onClick={onClose} aria-label="Close">
             <X size={16} />
           </button>
         </div>

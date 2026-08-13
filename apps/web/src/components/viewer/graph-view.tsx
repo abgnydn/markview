@@ -5,6 +5,7 @@ import { X, Search as SearchIcon, GitMerge, Tag as TagIcon, Sparkles } from 'luc
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { db } from '@/lib/storage/db';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface GraphViewProps {
   onClose: () => void;
@@ -40,6 +41,7 @@ interface Edge {
  * Pure-JS Verlet simulation, Canvas-2D render, no external libs.
  */
 export function GraphView({ onClose }: GraphViewProps) {
+  useFocusReturn(true);
   const files = useWorkspaceStore((s) => s.files);
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);

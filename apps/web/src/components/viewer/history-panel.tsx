@@ -9,6 +9,7 @@ import {
   createSnapshot,
 } from '@/lib/snapshots';
 import type { DBSnapshot } from '@/lib/storage/db';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface HistoryPanelProps {
   fileId: string;
@@ -35,6 +36,7 @@ const SOURCE_LABEL = {
 } as const;
 
 export function HistoryPanel({ fileId, workspaceId, currentContent, onRestore, onClose }: HistoryPanelProps) {
+  useFocusReturn(true);
   const [snapshots, setSnapshots] = useState<DBSnapshot[]>([]);
   const [previewId, setPreviewId] = useState<string | null>(null);
 

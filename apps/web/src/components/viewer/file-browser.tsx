@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, ChevronDown, FileText, FolderOpen, X, Search as SearchIcon, ArrowRight } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { db, type DBFile } from '@/lib/storage/db';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface FileBrowserProps {
   onClose: () => void;
@@ -19,6 +20,7 @@ interface FileBrowserProps {
  * workspace tabs row is tight on horizontal space.
  */
 export function FileBrowser({ onClose }: FileBrowserProps) {
+  useFocusReturn(true);
   const workspaces = useWorkspaceStore((s) => s.workspaces);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const activeFiles = useWorkspaceStore((s) => s.files);

@@ -1401,15 +1401,41 @@ html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-tok-m
 html[data-atmosphere]:not([data-atmosphere='none']) .editor-format-bar { background: rgba(245, 238, 224, 0.7) !important; }
 
 /* ── Accessibility ────────────────────────────────────────────── */
+/* Visually-hidden live/status text for screen readers. */
+.mv-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 /* (69) Visible keyboard focus ring in the appearance ink. */
 .markdown-content a:focus-visible,
 .toolbar-btn:focus-visible,
 button:focus-visible,
+/* div-based interactive rows (sidebar files/folders, workspace tabs) —
+   tabbing through them showed no ring at all. */
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+.workspace-tab:focus-visible,
 .cm-format-bubble-btn:focus-visible {
   outline: 2px solid var(--zen-accent) !important;
   outline-offset: 2px;
   border-radius: 3px;
 }
+/* (69b) Reduced motion — stop the pulsing carets the CM theme applies
+   from JS (the CSS-declared mv-caret-breath is already gated; the editor
+   theme's zen-caret-breath and the collab peer-cursor pulse were not). */
+@media (prefers-reduced-motion: reduce) {
+  .cm-cursor, .cm-cursor-primary,
+  .cm-ySelectionCaret, .zen-peer-caret {
+    animation: none !important;
+    box-shadow: none !important;
+  }
+}
+
 /* (70) Respect prefers-contrast — drop the halo, deepen the ink. */
 @media (prefers-contrast: more) {
   html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content { color: #000 !important; }

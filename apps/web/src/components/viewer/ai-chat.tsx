@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Send, Sparkles, Square, FileText, Cpu, Cloud } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 import {
   answerQuestionInWorkspace,
   warmGenerative,
@@ -48,6 +49,7 @@ interface Turn {
  * downloads once. After that the panel just works.
  */
 export function AiChat({ onClose }: AiChatProps) {
+  useFocusReturn(true);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const files = useWorkspaceStore((s) => s.files);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
@@ -99,6 +101,10 @@ export function AiChat({ onClose }: AiChatProps) {
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => onGenStatus(setStatus), []);
+
+  // Focus the question box on open — ⌘J used to leave focus behind the
+  // overlay, so typing went nowhere.
+  useEffect(() => { inputRef.current?.focus(); }, []);
 
   useEffect(() => {
     // Warm SmolLM2 only if the user is in local mode AND opted in.
@@ -256,6 +262,9 @@ export function AiChat({ onClose }: AiChatProps) {
           </div>
         ) : (
           <>
+            <div className="mv-sr-only" role="status">
+              {busy ? 'Generating answer…' : turns.length > 0 ? 'Answer ready' : ''}
+            </div>
             <div className="ai-chat-turns" ref={scrollRef}>
               {turns.length === 0 && (
                 <div className="ai-chat-empty">
