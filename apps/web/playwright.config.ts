@@ -5,7 +5,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // 2 workers: each test gets an isolated context (fresh IndexedDB), so
+  // the old 'IndexedDB timing is flaky in parallel' single-worker rule
+  // was superstition — and it serialized a 5-minute suite.
+  workers: process.env.CI ? 2 : undefined,
   reporter: 'list',
   use: {
     baseURL: 'http://localhost:3000',

@@ -52,6 +52,20 @@ export default defineConfig({
   server: {
     port: 3001,
     strictPort: true,
+    // Pre-transform the lazy overlay chunks at dev-server start. Without
+    // this, the FIRST click on Presentation/Edit/Split in a fresh dev
+    // server triggers an on-demand esbuild transform of the whole chunk
+    // graph (CodeMirror for the editor is the worst) — which is exactly
+    // what made e2e's 5s overlay waits flake on loaded machines.
+    warmup: {
+      clientFiles: [
+        "./src/components/viewer/presentation-mode.tsx",
+        "./src/components/viewer/markdown-editor.tsx",
+        "./src/components/viewer/split-view.tsx",
+        "./src/components/viewer/diff-view.tsx",
+        "./src/components/viewer/file-browser.tsx",
+      ],
+    },
   },
   optimizeDeps: {
     // pdf.js + transformers.js ship large wasm/worker bundles — let Vite

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { uploadMultipleFiles, uploadFile, clickOverflowItem } from './helpers';
 
 // End-to-end coverage for the 2026-08-10 audit wave. These flows had NO
@@ -19,7 +19,7 @@ test.describe('Editor ↔ file switching', () => {
 
     // Edit whichever file opened first, and replace its whole body.
     await clickOverflowItem(page, 'Edit file');
-    await page.waitForSelector('.editor-overlay', { timeout: 10000 });
+    await page.waitForSelector('.editor-overlay', { timeout: 15000 });
     // Remember WHICH file this editor was opened on — the whole point is
     // that its buffer must land here and nowhere else.
     const editedName = (await page.locator('.editor-filename').innerText()).trim();
@@ -36,7 +36,7 @@ test.describe('Editor ↔ file switching', () => {
     await page.locator('.mv-palette-input').fill('Go to');
     const target = page.locator('.mv-palette-item', { hasText: /Go to · (alpha|beta)/ }).last();
     await target.click();
-    await page.waitForTimeout(800);
+    await expect(page.locator('.mv-palette-overlay')).not.toBeVisible({ timeout: 5000 });
 
     // Close the editor (flushing whatever buffer it holds) and read both
     // documents back from storage.
@@ -86,15 +86,15 @@ test.describe('Editor ↔ file switching', () => {
     await page.waitForSelector('.toolbar', { timeout: 15000 });
 
     await clickOverflowItem(page, 'Edit file');
-    await page.waitForSelector('.editor-overlay', { timeout: 10000 });
+    await page.waitForSelector('.editor-overlay', { timeout: 15000 });
     const cm = '.editor-codemirror .cm-content';
     await page.locator(cm).click();
     await page.keyboard.press('ControlOrMeta+a');
     await page.keyboard.press('Backspace');
     await page.keyboard.press('ControlOrMeta+s');
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(600); // db write settle — no observable signal
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(400);
+    await expect(page.locator('.editor-overlay')).not.toBeVisible({ timeout: 5000 });
 
     // Re-opening the editor must still work — the file used to become
     // permanently un-editable ("No document open").
@@ -110,7 +110,7 @@ test.describe('Stacked overlays', () => {
     await page.waitForSelector('.toolbar', { timeout: 15000 });
 
     await clickOverflowItem(page, 'Edit file');
-    await page.waitForSelector('.editor-overlay', { timeout: 10000 });
+    await page.waitForSelector('.editor-overlay', { timeout: 15000 });
 
     // Command palette on top of the editor.
     await page.keyboard.press('ControlOrMeta+p');

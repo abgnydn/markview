@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { uploadFile, uploadMultipleFiles, revealSidebar, openExportMenu } from './helpers';
 
 
@@ -168,7 +168,6 @@ test.describe('URL Share Roundtrip', () => {
     // empty. (Deleting DBs from the live page can hang: Dexie holds open
     // connections and deleteDatabase blocks on them.)
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
 
     // Build the share hash
     const shareHash = await page.evaluate(async () => {

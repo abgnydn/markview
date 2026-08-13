@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // The landing hero promises "drag-drop a .md to start". Pin that the
 // promise is real: dropping a markdown file on the landing seeds a

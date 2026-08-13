@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { uploadFile, uploadMultipleFiles, clickOverflowItem, openExportMenu, revealSidebar } from './helpers';
 
 // ─── Shared Helpers ──────────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ test.describe('Editor Toolbar (WYSIWYG)', () => {
     await page.waitForSelector('.toolbar', { timeout: 10000 });
     // Editor lives in the "More actions" overflow menu now
     await clickOverflowItem(page, 'Edit file');
-    await page.waitForSelector('.editor-overlay', { timeout: 5000 });
+    await page.waitForSelector('.editor-overlay', { timeout: 15000 });
   });
 
   test('editor overlay displays a CodeMirror surface', async ({ page }) => {
@@ -240,7 +240,7 @@ test.describe('Split View', () => {
   test('clicking split view shows two panes', async ({ page }) => {
     await clickOverflowItem(page, 'Split view');
     // Should show split layout
-    await expect(page.locator('.split-view, .viewer-split, .split-pane')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.split-view, .viewer-split, .split-pane')).toBeVisible({ timeout: 15000 });
   });
 });
 
@@ -326,19 +326,19 @@ test.describe('Keyboard Shortcuts', () => {
 
   test('edit action opens editor', async ({ page }) => {
     await clickOverflowItem(page, 'Edit file');
-    await expect(page.locator('.editor-overlay')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.editor-overlay')).toBeVisible({ timeout: 15000 });
   });
 
   test('P key or presentation button opens presentation', async ({ page }) => {
     const presBtn = page.locator('button[title="Presentation mode (P)"]');
     await presBtn.click();
-    await expect(page.locator('.presentation-overlay')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.presentation-overlay')).toBeVisible({ timeout: 15000 });
   });
 
   test('Escape closes presentation mode', async ({ page }) => {
     const presBtn = page.locator('button[title="Presentation mode (P)"]');
     await presBtn.click();
-    await expect(page.locator('.presentation-overlay')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.presentation-overlay')).toBeVisible({ timeout: 15000 });
     await page.keyboard.press('Escape');
     await expect(page.locator('.presentation-overlay')).not.toBeVisible();
   });
@@ -448,7 +448,7 @@ test.describe('Presentation Mode Navigation', () => {
     // Use toolbar button to open presentation mode (more reliable)
     const presBtn = page.locator('button[title="Presentation mode (P)"]');
     await presBtn.click();
-    await page.waitForSelector('.presentation-overlay', { timeout: 5000 });
+    await page.waitForSelector('.presentation-overlay', { timeout: 15000 });
   });
 
   test('presentation shows first slide', async ({ page }) => {
@@ -457,15 +457,13 @@ test.describe('Presentation Mode Navigation', () => {
 
   test('arrow right advances to next slide', async ({ page }) => {
     await page.keyboard.press('ArrowRight');
-    await page.waitForTimeout(300);
     await expect(page.locator('.presentation-overlay')).toContainText('Slide 2');
   });
 
   test('arrow left goes to previous slide', async ({ page }) => {
     await page.keyboard.press('ArrowRight');
-    await page.waitForTimeout(300);
+    await expect(page.locator('.presentation-overlay')).toContainText('Slide 2');
     await page.keyboard.press('ArrowLeft');
-    await page.waitForTimeout(300);
     await expect(page.locator('.presentation-overlay')).toContainText('Slide 1');
   });
 
@@ -492,12 +490,9 @@ test.describe('Search Functionality', () => {
     await page.waitForSelector('.search-dialog', { timeout: 3000 });
     const input = page.locator('.search-dialog input');
     await input.fill('needle');
-    await page.waitForTimeout(500);
-
-    // Should show search results
-    const results = page.locator('.search-result-item, .search-result');
-    const count = await results.count();
-    expect(count).toBeGreaterThanOrEqual(1);
+    // The result list renders after the debounced search — the visibility
+    // assertion retries, no fixed sleep needed.
+    await expect(page.locator('.search-result-item, .search-result').first()).toBeVisible({ timeout: 5000 });
   });
 
   test('clicking search result navigates to file', async ({ page }) => {
@@ -505,12 +500,10 @@ test.describe('Search Functionality', () => {
     await page.waitForSelector('.search-dialog', { timeout: 3000 });
     const input = page.locator('.search-dialog input');
     await input.fill('needle');
-    await page.waitForTimeout(500);
-
     const firstResult = page.locator('.search-result-item, .search-result').first();
-    if (await firstResult.isVisible()) {
+    await expect(firstResult).toBeVisible({ timeout: 5000 });
+    {
       await firstResult.click();
-      await page.waitForTimeout(300);
       // Search dialog should close
       await expect(page.locator('.search-dialog')).not.toBeVisible();
     }
@@ -546,9 +539,9 @@ test.describe('Workspace Persistence', () => {
 
     // Reload
     await page.reload();
-    await page.waitForTimeout(2000);
+    // Wait for either surface to render rather than sleeping a fixed 2s.
+    await page.locator('.viewer-layout, .ed-landing').first().waitFor({ state: 'visible', timeout: 15000 });
 
-    // Should either show viewer or landing with back-to-workspace option
     const hasViewer = await page.locator('.viewer-layout').isVisible().catch(() => false);
     const hasBackBtn = await page.locator('text=Back to workspace').isVisible().catch(() => false);
     expect(hasViewer || hasBackBtn).toBeTruthy();

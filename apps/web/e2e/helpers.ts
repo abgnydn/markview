@@ -96,7 +96,9 @@ export async function clickToolbar(page: Page, title: string) {
 /** Reveal the hover-hidden sidebar and keep it open (cursor stays on it). */
 export async function revealSidebar(page: Page) {
   await page.hover('.zen-zone-left');
-  await page.waitForTimeout(350); // slide-in transition
+  // Wait for the slide-in to settle: clicks auto-wait for a stable
+  // bounding box, so visibility is the only condition we need.
+  await expect(page.locator('.sidebar').first()).toBeVisible({ timeout: 5000 });
 }
 
 /** Editor / split view / diff / file browser live in the "More actions" (⋮)
@@ -112,4 +114,16 @@ export async function clickOverflowItem(page: Page, label: string) {
 export async function openExportMenu(page: Page) {
   await clickOverflowItem(page, 'Export…');
   await expect(page.locator('.export-dropdown')).toBeVisible({ timeout: 3000 });
+}
+
+/** Open presentation mode via the hover-revealed toolbar button and wait
+ *  for the lazy overlay chunk. 15s budget: PresentationMode is lazy and a
+ *  loaded machine can exceed 5s on the first transform even with vite
+ *  server.warmup. */
+export async function openPresentation(page: Page) {
+  await page.hover('.zen-zone-top');
+  const presBtn = page.locator('button[title="Presentation mode (P)"]');
+  await expect(presBtn).toBeVisible();
+  await presBtn.click();
+  await expect(page.locator('.presentation-overlay')).toBeVisible({ timeout: 15_000 });
 }

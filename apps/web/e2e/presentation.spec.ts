@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
-import { test, expect } from '@playwright/test';
-import { openWithFiles } from './helpers';
+import { test, expect } from './fixtures';
+import { openWithFiles, openPresentation } from './helpers';
 
 // Golden path: markdown in → correct deck out. Pins the slide-splitting
 // contract (see src/lib/markdown/slide-split.ts) end-to-end so the most
@@ -9,14 +9,7 @@ import { openWithFiles } from './helpers';
 // Flow mirrors a real first session: land → "Open editor" → drag-drop a
 // .md into the viewer → open the file → present.
 
-async function openPresentation(page: Page) {
-  // The toolbar is hover-revealed via the top edge zone (zen.css).
-  await page.hover('.zen-zone-top');
-  const presBtn = page.locator('button[title="Presentation mode (P)"]');
-  await expect(presBtn).toBeVisible();
-  await presBtn.click();
-  await expect(page.locator('.presentation-overlay')).toBeVisible({ timeout: 5000 });
-}
+
 
 test.describe('presentation golden path', () => {
   // Cold sessions compile Shiki/Mermaid WASM on the main thread before the
@@ -25,7 +18,6 @@ test.describe('presentation golden path', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
   });
 
   test('heading-structured markdown becomes one slide per h1/h2', async ({ page }) => {

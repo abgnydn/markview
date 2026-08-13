@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // Landing = LandingEditor (components/landing/landing-editor.tsx), shown at
 // `/` when no workspace exists. Selectors are the ed-* namespace; the old

@@ -80,7 +80,17 @@ export function annotationFromSelection(
   // outer edges are trimmed, keeping the anchor-adjacent whitespace.
   const fullText = normalizeWS(root.textContent ?? '');
   const normAnchor = normalizeWS(anchorText);
-  const startIdx = fullText.indexOf(normAnchor);
+  // Locate the anchor by the SELECTION'S normalized offset — a plain
+  // indexOf always found the FIRST occurrence, so annotating the second
+  // instance of a repeated phrase stored the first one's context.
+  const pre = document.createRange();
+  pre.selectNodeContents(root);
+  pre.setEnd(range.startContainer, range.startOffset);
+  const preRaw = pre.toString();
+  const preNorm = normalizeWS(preRaw);
+  // A trailing space in the raw pre-text is collapsed into the single
+  // boundary space that precedes the anchor in the normalized stream.
+  const startIdx = preNorm.length + (preNorm.length > 0 && /\s$/.test(preRaw) ? 1 : 0);
   const before = startIdx > 0
     ? fullText.slice(Math.max(0, startIdx - CONTEXT_LEN), startIdx).replace(/^\s+/, '')
     : '';
@@ -132,60 +142,51 @@ export function reanchor(root: Element, a: Annotation): Range | null {
   return rangeAtOffset(root, target, len);
 }
 
-/** Build a DOM Range from a normalized-whitespace offset. */
+/** Build a DOM Range from a normalized-whitespace offset.
+ *
+ * Walks every text node once, emitting the SAME normalized stream
+ * normalizeWS produces on the concatenated text (runs of whitespace —
+ * including across node boundaries — collapse to one space; leading
+ * whitespace is skipped). The previous implementation normalized each
+ * node independently, which dropped the boundary space between nodes and drifted
+ * one character per paragraph.
+ */
 function rangeAtOffset(root: Element, start: number, length: number): Range | null {
-  const range = document.createRange();
-  let remaining = start;
-  let endRemaining = length;
+  const end = start + length;
+  let normPos = 0;          // normalized chars emitted so far
+  let pendingSpace = false; // a collapsed space is owed before the next word char
   let startNode: Text | null = null;
   let startOff = 0;
   let endNode: Text | null = null;
   let endOff = 0;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let n: Node | null;
-  while ((n = walker.nextNode())) {
+  outer: while ((n = walker.nextNode())) {
     const t = n as Text;
-    const txt = normalizeWS(t.data);
-    if (!startNode) {
-      if (remaining <= txt.length) {
-        startNode = t;
-        startOff = mapNormalizedOffsetToRaw(t.data, remaining);
-        endRemaining = length;
-      } else {
-        remaining -= txt.length;
+    const data = t.data;
+    for (let i = 0; i < data.length; i++) {
+      if (/\s/.test(data[i]!)) {
+        if (normPos > 0) pendingSpace = true; // leading whitespace never emits
         continue;
       }
-    }
-    if (startNode) {
-      const here = startNode === t ? txt.length - startOff : txt.length;
-      if (endRemaining <= here) {
-        endNode = t;
-        const fromOffset = startNode === t ? mapNormalizedOffsetToRaw(t.data, remaining + endRemaining) : mapNormalizedOffsetToRaw(t.data, endRemaining);
-        endOff = fromOffset;
-        break;
-      } else {
-        endRemaining -= here;
+      if (pendingSpace) {
+        // Emit the owed boundary space at normPos.
+        if (startNode && normPos + 1 >= end) { endNode = t; endOff = i; break outer; }
+        normPos++;
+        pendingSpace = false;
       }
+      if (!startNode && normPos >= start) { startNode = t; startOff = i; }
+      normPos++; // this word character
+      if (startNode && normPos >= end) { endNode = t; endOff = i + 1; break outer; }
     }
   }
   if (!startNode || !endNode) return null;
   try {
+    const range = document.createRange();
     range.setStart(startNode, startOff);
     range.setEnd(endNode, endOff);
     return range;
   } catch { return null; }
-}
-
-function mapNormalizedOffsetToRaw(raw: string, normIdx: number): number {
-  let n = 0;
-  for (let i = 0; i < raw.length; i++) {
-    if (n === normIdx) return i;
-    const c = raw[i]!;
-    const prev = raw[i - 1] ?? '';
-    if (/\s/.test(c) && /\s/.test(prev)) continue;
-    n++;
-  }
-  return raw.length;
 }
 
 function normalizeWS(s: string): string {
