@@ -33,7 +33,7 @@
     "jszip": "^3.10.1",
     "katex": "^0.16.38",
     "lucide-react": "^1.16.0",
-    "mermaid": "^11.13.0",
+    "mermaid": "^11.16.1",
     "pptxgenjs": "^4.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
