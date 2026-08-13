@@ -321,6 +321,15 @@ export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingE
           >
             Apache-2.0 on GitHub
           </a>
+          <span className="ed-foot-sep">·</span>
+          <a
+            href="https://github.com/abgnydn/markview/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ed-foot-link"
+          >
+            Changelog
+          </a>
         </div>
         <div className="ed-foot-credit">
           <span className="ed-foot-credit-by">By</span>

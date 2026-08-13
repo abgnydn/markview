@@ -67,6 +67,14 @@ export default defineConfig({
       ],
     },
   },
+  worker: {
+    // ES-format workers share split chunks with each other — the default
+    // iife format bundled transformers.js + onnxruntime into BOTH the
+    // depth worker and the embeddings worker (~154 KB gz duplicated when
+    // the second one spins up). Both target browsers already run module
+    // workers (the app requires es2022).
+    format: "es",
+  },
   optimizeDeps: {
     // pdf.js + transformers.js ship large wasm/worker bundles — let Vite
     // pre-bundle them so the dev server doesn't choke on first request.

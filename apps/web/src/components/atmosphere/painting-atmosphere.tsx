@@ -178,29 +178,10 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     return () => document.body.classList.remove('mv-lite');
   }, [lite]);
 
-  // ── Particle backend — 'webgl' (CPU sim, universal) or 'webgpu'
-  // (TSL compute sim, opt-in). Toggled with `b`; requires navigator.gpu.
-  // Any WebGPU init failure flips back to WebGL via onFallback.
-  //
-  // DELIBERATELY NOT persisted: the WebGPU path is experimental and a
-  // heavy GPU load, so a page reload always starts on the safe WebGL
-  // backend. It only ever turns on via an explicit `b` press in-session.
-  // The WebGPU compute backend is SHELVED: on Three 0.184's WebGPU renderer
-  // the instanced Sprite (`sprite.count`) draws zero instances here — device,
-  // shaders, and compute all run clean, but nothing rasterizes, and it can't be
-  // diagnosed without live GPU inspection. It also offers no visible benefit
-  // over the WebGL field (which already runs on the GPU). So `b` is now a no-op
-  // that just confirms the WebGL backend rather than switching to a dead path.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'b' && e.key !== 'B') return;
-      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
-      if (isTypingTarget(e.target)) return;
-      flashHint('Particles · WebGL (WebGPU compute shelved)');
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [flashHint]);
+  // The WebGPU-compute particle backend was deleted 2026-08-13 (shelved
+  // since Three 0.184: instanced Sprite drew zero instances; no visible
+  // benefit over the WebGL field, which already renders on the GPU).
+  // Recoverable from git history as webgpu-particles.tsx.
 
   // ── #14 Caption flourish — show the painting's title bottom-left
   // for 2s on swap. Re-fires whenever the displayed painting changes
@@ -302,7 +283,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       {!lite && displayedCfg.particles !== 'none' && (
         /* GPU-rendered, CPU-simulated particle field — curl-noise wind,
            cursor force, gravity, life/respawn, per-atmosphere sprite. The
-           WebGPU-compute variant is shelved (see the `b` handler above). */
+           (A WebGPU-compute variant was shelved and later deleted.) */
         <WebGLParticles kind={displayedCfg.particles} />
       )}
 

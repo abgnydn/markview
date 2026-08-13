@@ -125,6 +125,14 @@ function TreeItem({
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && node.fileId) { e.preventDefault(); onSelect(node.fileId); } }}
+      // Tree leaves carry the same rich payload as flat rows, so files in
+      // imported repos (which always render as trees) can be dragged onto
+      // a workspace tab too. Intra-tree reorder stays unsupported — order
+      // inside a tree comes from the path structure.
+      draggable={!!node.fileId}
+      onDragStart={(e) => {
+        if (node.fileId) e.dataTransfer.setData('application/x-markview-file', node.fileId);
+      }}
     >
       <FileText size={14} className="sidebar-item-icon" />
       <span className="sidebar-item-name">{node.name}</span>

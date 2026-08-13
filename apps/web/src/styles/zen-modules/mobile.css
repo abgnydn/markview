@@ -88,12 +88,6 @@
   /* Collab share / presence — always visible while sharing. */
   .collab-share-btn,
   .collab-presence-bar { opacity: 1 !important; }
-  .collab-presence-bar {
-    top: calc(48px + env(safe-area-inset-top, 0px)) !important;
-  }
-  body:has(.collab-presence-bar) .workspace-tabs {
-    top: calc(48px + env(safe-area-inset-top, 0px) + 32px) !important;
-  }
   /* Hide the hover-zone strips — they consume tap targets at the edges. */
   .zen-zone-top,
   .zen-zone-left,
