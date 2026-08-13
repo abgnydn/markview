@@ -17,6 +17,14 @@ export function useViewerOverlays() {
   const [fileBrowserOpen, setFileBrowserOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
 
+  // The command palette's "Browse all workspaces & files" entry — the
+  // browser was previously reachable only through the ⋮ overflow menu.
+  useEffect(() => {
+    const open = () => setFileBrowserOpen(true);
+    window.addEventListener('markview:open-file-browser', open);
+    return () => window.removeEventListener('markview:open-file-browser', open);
+  }, []);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase();

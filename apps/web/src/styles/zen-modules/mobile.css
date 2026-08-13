@@ -210,8 +210,10 @@
     width: 100% !important;
   }
   .editor-mode-split .editor-preview-pane { display: none !important; }
-  /* Hide the mode pills entirely since split is disabled. */
-  .editor-toolbar-center { display: none !important; }
+  /* Keep the Edit/Preview pills — hiding the whole row locked phone
+     users into raw markdown with no way to see rendered output. Only
+     Split (the middle pill) is meaningless on a phone. */
+  .editor-toolbar-center .editor-mode-btn:nth-child(2) { display: none !important; }
   .editor-toolbar { padding: 10px 12px !important; }
   .editor-format-bar {
     /* Always visible on touch; no hover. Compact + horizontally scrollable. */

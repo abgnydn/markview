@@ -281,6 +281,25 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
     return () => window.removeEventListener('keydown', onKey);
   }, [showPresentation, showEditor, setShowPresentation]);
 
+  // E opens the editor — the welcome doc has promised this key since day
+  // one but no handler existed, and the real path (hover the top edge →
+  // ⋮ → Edit file) is three hidden steps for the product's primary verb.
+  // Guests are view-only, so the key is inert for them.
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.key !== 'e' && e.key !== 'E') || e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return;
+      // collabIsActive/collabIsHost are used directly — isGuestMode is
+      // declared further down and would TDZ in this deps array.
+      if (showPresentation || showEditor || (collabIsActive && !collabIsHost)) return;
+      e.preventDefault();
+      setShowEditor(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showPresentation, showEditor, collabIsActive, collabIsHost, setShowEditor]);
+
   // Guest mode: collab viewer without edit rights
   const isGuestMode = collabIsActive && !collabIsHost;
   const activeFile = files.find((f) => f.id === activeFileId);

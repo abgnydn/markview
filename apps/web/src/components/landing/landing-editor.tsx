@@ -93,8 +93,8 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   },
   {
     label: 'Collab',
-    title: 'One URL, two cursors',
-    body: 'Real-time multiplayer editing over WebRTC. Zero server, no account, no trail.',
+    title: 'One link, follow along live',
+    body: 'Share a live link over WebRTC — guests follow along and read in real time. Zero server, no account, no trail.',
   },
   {
     label: 'AI',

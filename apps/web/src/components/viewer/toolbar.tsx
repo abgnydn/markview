@@ -138,6 +138,7 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                 window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
               }}
               title="Search (⌘K)"
+              data-keyhint="⌘K"
             >
               <Search size={18} />
             </button>
@@ -145,6 +146,7 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
               className="toolbar-btn toolbar-desktop-only"
               onClick={onTogglePresentation}
               title="Presentation mode (P)"
+              data-keyhint="P"
             >
               <Presentation size={18} />
             </button>
@@ -217,7 +219,7 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                   </div>
 
                   {onToggleEditor && (
-                    <button className="toolbar-overflow-item" onClick={() => { onToggleEditor(); setShowOverflow(false); }}>
+                    <button className="toolbar-overflow-item" data-keyhint="E" onClick={() => { onToggleEditor(); setShowOverflow(false); }}>
                       <Edit3 size={16} /> Edit file
                     </button>
                   )}

@@ -103,6 +103,11 @@ export function CommandPalette() {
         run: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: '\\' })),
       },
       {
+        id: 'browse-files',
+        label: 'Browse all workspaces & files',
+        run: () => window.dispatchEvent(new CustomEvent('markview:open-file-browser')),
+      },
+      {
         id: 'toggle-ai',
         label: 'Open AI chat',
         hint: '⌘J',

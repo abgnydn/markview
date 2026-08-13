@@ -149,6 +149,8 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   const localActiveFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const removeFile = useWorkspaceStore((s) => s.removeFile);
+  const renameFile = useWorkspaceStore((s) => s.renameFile);
+  const renameWorkspace = useWorkspaceStore((s) => s.renameWorkspace);
   const reorderFiles = useWorkspaceStore((s) => s.reorderFiles);
   const collabIsActive = useCollabStore((s) => s.isActive);
   const collabIsHost = useCollabStore((s) => s.isHost);
@@ -173,6 +175,22 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
   // Deleting a file is irreversible (content + snapshots + embeddings) —
   // gate it behind the same ConfirmDialog that workspace-close uses.
   const [fileToRemove, setFileToRemove] = useState<string | null>(null);
+  // Inline rename — double-click a file row or the workspace title. Files
+  // could never be renamed before, and a single-workspace user had no
+  // rename affordance at all (the tabs bar hides itself below 2).
+  const [editingFileId, setEditingFileId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState<string | null>(null);
+  const [draftName, setDraftName] = useState('');
+  const commitFileRename = () => {
+    if (editingFileId && draftName.trim()) void renameFile(editingFileId, draftName);
+    setEditingFileId(null);
+  };
+  const commitTitleRename = () => {
+    if (editingTitle !== null && activeWorkspaceId && draftName.trim()) {
+      void renameWorkspace(activeWorkspaceId, draftName.trim());
+    }
+    setEditingTitle(null);
+  };
   const { mode, setMode, colorScheme, setColorScheme } = useThemeStore();
 
   // Drag state
@@ -249,7 +267,29 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
     <>
     <aside className={`sidebar ${className || ''}`}>
       <div className="sidebar-header">
-        <h2 className="sidebar-title">{activeWorkspace.title}</h2>
+        {editingTitle !== null && !isGuestMode ? (
+          <input
+            className="sidebar-title sidebar-rename-input"
+            value={draftName}
+            autoFocus
+            onChange={(e) => setDraftName(e.target.value)}
+            onBlur={commitTitleRename}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') commitTitleRename();
+              if (e.key === 'Escape') setEditingTitle(null);
+            }}
+          />
+        ) : (
+          <h2
+            className="sidebar-title"
+            title={isGuestMode ? activeWorkspace.title : 'Double-click to rename'}
+            onDoubleClick={() => {
+              if (isGuestMode) return;
+              setDraftName(activeWorkspace.title);
+              setEditingTitle(activeWorkspace.title);
+            }}
+          >{activeWorkspace.title}</h2>
+        )}
         <button
           className={`collab-share-btn ${collabIsActive ? 'collab-sharing' : ''}`}
           onClick={() => setShowShareDialog(true)}
@@ -295,7 +335,31 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
                 <GripVertical size={12} />
               </span>
               <FileText size={14} className="sidebar-item-icon" />
-              <span className="sidebar-item-name">{file.displayName || file.filename}</span>
+              {editingFileId === file.id ? (
+                <input
+                  className="sidebar-rename-input"
+                  value={draftName}
+                  autoFocus
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setDraftName(e.target.value)}
+                  onBlur={commitFileRename}
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                    if (e.key === 'Enter') commitFileRename();
+                    if (e.key === 'Escape') setEditingFileId(null);
+                  }}
+                />
+              ) : (
+                <span
+                  className="sidebar-item-name"
+                  onDoubleClick={(e) => {
+                    if (isGuestMode) return;
+                    e.stopPropagation();
+                    setDraftName(file.displayName || file.filename);
+                    setEditingFileId(file.id);
+                  }}
+                >{file.displayName || file.filename}</span>
+              )}
               {!isGuestMode && <button
                 className="sidebar-item-remove"
                 onClick={(e) => {

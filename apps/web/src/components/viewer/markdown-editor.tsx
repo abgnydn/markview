@@ -510,7 +510,10 @@ export function MarkdownEditor({
     const id = window.setTimeout(() => setPreviewText(text), 180);
     return () => window.clearTimeout(id);
   }, [text]);
-  const [mode, setMode] = useState<'edit' | 'preview' | 'split'>('split');
+  const [mode, setMode] = useState<'edit' | 'preview' | 'split'>(() =>
+    typeof window !== 'undefined' && window.matchMedia('(hover: none) and (pointer: coarse), (max-width: 768px)').matches
+      ? 'edit'   // mobile hides the split pane; start honest
+      : 'split');
   const [showHistory, setShowHistory] = useState(false);
   // #15 Cursor halo — add .editor-typing class while the user is
   // actively typing (decays 800ms after the last keystroke), so the
@@ -780,6 +783,7 @@ export function MarkdownEditor({
             )}
             <button
               className="editor-save-btn"
+              title="⌘S — save + drop a restore point in History. Closing also autosaves; nothing is lost on Esc."
               onClick={() => {
                 onSave(text);
                 if (fileId && workspaceId) {

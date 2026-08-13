@@ -70,6 +70,10 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
               Share your workspace via peer-to-peer connection.
               No server — documents transfer directly between browsers.
             </p>
+            <p className="collab-dialog-desc">
+              People with the link <strong>follow along live and read
+              everything</strong> — editing stays with you.
+            </p>
             <button
               className="collab-btn-primary"
               onClick={handleShare}

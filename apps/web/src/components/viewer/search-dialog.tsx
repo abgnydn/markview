@@ -238,6 +238,12 @@ export function SearchDialog() {
             <p>Embedding query…</p>
           </div>
         )}
+        {/* Three nav surfaces exist (⌘K search, ⌘P commands/files,
+            file browser) with no cross-signposting — one quiet footer
+            line makes the split learnable. */}
+        <div className="search-dialog-footer">
+          <kbd>Tab</kbd> exact ↔ meaning · <kbd>⌘P</kbd> commands &amp; file jump
+        </div>
       </div>
     </div>
   );

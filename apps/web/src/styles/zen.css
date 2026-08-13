@@ -1400,6 +1400,19 @@ html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-tok-m
 /* (68) Format bar reads on paper. */
 html[data-atmosphere]:not([data-atmosphere='none']) .editor-format-bar { background: rgba(245, 238, 224, 0.7) !important; }
 
+/* Inline rename inputs (sidebar file rows + workspace title). */
+.sidebar-rename-input {
+  font: inherit;
+  color: var(--text-primary, inherit);
+  background: var(--bg-secondary, rgba(128, 128, 128, 0.12));
+  border: 1px solid var(--zen-accent, #9b7dff);
+  border-radius: 3px;
+  padding: 1px 6px;
+  min-width: 0;
+  width: 100%;
+  outline: none;
+}
+
 /* ── Accessibility ────────────────────────────────────────────── */
 /* Visually-hidden live/status text for screen readers. */
 .mv-sr-only {

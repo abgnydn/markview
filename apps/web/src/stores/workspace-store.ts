@@ -45,6 +45,9 @@ interface WorkspaceState {
   switchWorkspace: (workspaceId: string) => Promise<void>;
   deleteWorkspace: (workspaceId: string) => Promise<void>;
   renameWorkspace: (workspaceId: string, title: string) => Promise<void>;
+  /** Rename a file in the active workspace. Updates filename (keeping the
+      extension if the user omits one) and displayName together. */
+  renameFile: (fileId: string, newName: string) => Promise<void>;
   setActiveFile: (fileId: string) => Promise<void>;
   /** Update the active file's content in place + persist (no scroll/view
       transition) — used by inline edits like task-list checkbox toggles. */
@@ -316,6 +319,21 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     set((state) => ({
       workspaces: state.workspaces.map((ws) =>
         ws.id === workspaceId ? { ...ws, title, updatedAt: new Date() } : ws
+      ),
+    }));
+  },
+
+  // ---------- Rename File ----------
+  renameFile: async (fileId, newName) => {
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+    // Preserve an extension: "notes" → "notes.md", "notes.markdown" kept.
+    const filename = /\.(md|markdown)$/i.test(trimmed) ? trimmed : `${trimmed}.md`;
+    const displayName = filename.replace(/\.(md|markdown)$/i, '');
+    await db.files.update(fileId, { filename, displayName });
+    set((state) => ({
+      files: state.files.map((f) =>
+        f.id === fileId ? { ...f, filename, displayName } : f
       ),
     }));
   },
