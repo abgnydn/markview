@@ -23,7 +23,9 @@
 import { pipeline, RawImage } from '@huggingface/transformers';
 
 const MODEL_ID = 'onnx-community/depth-anything-v2-small';
-const CACHE_NAME = 'mv-depth-v1';
+// v2: paintings moved from .jpg to .webp URLs, so every v1 key is an
+// orphan — new name lets the browser GC the old cache wholesale.
+const CACHE_NAME = 'mv-depth-v2';
 const DEPTH_SIZE = 384;
 
 interface DepthRequest {

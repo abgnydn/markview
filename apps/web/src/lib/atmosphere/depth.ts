@@ -14,7 +14,9 @@
  * download when ensureDepth() is called for the first time, and only
  * if the requested painting isn't already cached.
  */
-const CACHE_NAME = 'mv-depth-v1';
+// v2: paintings moved from .jpg to .webp URLs, so every v1 key is an
+// orphan — new name lets the browser GC the old cache wholesale.
+const CACHE_NAME = 'mv-depth-v2';
 
 // ── Worker plumbing ──────────────────────────────────────────────────
 //
