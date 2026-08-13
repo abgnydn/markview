@@ -5,6 +5,26 @@ format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/) starting
 from `0.1.0`.
 
+## [0.2.0] — 2026-07-28
+
+### Added
+
+- **Cross-API Acrobot artifact published** — the code behind the headline
+  T4 numbers now lives in `benchmarks/colab/acrobot_impls.py` (NumPy
+  reference, per-step PyTorch baseline, JAX `lax.scan`, hand-fused CUDA via
+  CuPy, Triton) with a CI-gated float64 equivalence test and a Colab
+  notebook runner.
+- **Re-measured on Colab T4 (2026-07-28)** with verified-equivalent
+  kernels: fused CUDA 176x, JAX 33.5x over per-step PyTorch (torch
+  2.11.0+cu128). v1's 720x/172x reflected a ~3x-slower torch of spring
+  2026 — ratios compress as frameworks improve; qualitative result
+  unchanged. Data in `benchmarks/results/2026-07-28_t4_colab/`.
+
+### Fixed
+
+- Acrobot tables were labeled "RK4"; the integrator is explicit Euler at
+  dt=0.05 (corrected in README, PAPER.md, paper.tex + artifact note).
+
 ## [0.1.0] — 2026-05-04
 
 First public release of the kernel-fusion benchmark suite + paper companion.

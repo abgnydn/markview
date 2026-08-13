@@ -1,3 +1,4 @@
+import { getAudioContextCtor } from '@/lib/audio-context';
 // SPDX-License-Identifier: Apache-2.0
 //
 // Synthesized sound effects for the 3D constellation — all generated at
@@ -15,7 +16,8 @@ export class ConstellationSfx {
   ensure() {
     if (typeof window === "undefined") return;
     if (!this.ctx) {
-      const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AC = getAudioContextCtor();
+      if (!AC) return;
       if (!AC) return;
       this.ctx = new AC();
       this.master = this.ctx.createGain();

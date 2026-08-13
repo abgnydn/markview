@@ -48,7 +48,6 @@ import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
 import { usePolishEffects } from '@/hooks/use-polish-effects';
 import { useTextFragmentShare } from '@/hooks/use-text-fragment-share';
 import { Upload } from 'lucide-react';
-import type { TocHeading } from '@/lib/markdown/pipeline';
 
 function calculateReadingStats(content: string) {
   const text = content.replace(/[#*`\[\]()>-]/g, '').trim();
@@ -90,10 +89,23 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // line in the source when its rendered checkbox is toggled, then persist.
   const handleToggleTask = useCallback((index: number, checked: boolean) => {
     if (activeFileContent == null) return;
-    const taskRe = /^(\s*[-*+]\s+\[)[ xX](\])/;
+    // Count tasks the way the renderer does: skip frontmatter and fenced
+    // code (neither produces a checkbox), and include blockquote-nested
+    // tasks (which do) — otherwise the Nth rendered checkbox maps to the
+    // wrong source line and toggling corrupts a code sample instead.
+    const taskRe = /^(\s*(?:>\s*)*[-*+]\s+\[)[ xX](\])/;
     const lines = activeFileContent.split('\n');
+    let start = 0;
+    if (lines[0]?.trim() === '---') {
+      for (let i = 1; i < lines.length; i++) {
+        if (/^---\s*$/.test(lines[i])) { start = i + 1; break; }
+      }
+    }
+    let inFence = false;
     let n = -1;
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = start; i < lines.length; i++) {
+      if (/^\s*(```|~~~)/.test(lines[i])) { inFence = !inFence; continue; }
+      if (inFence) continue;
       if (taskRe.test(lines[i])) {
         n += 1;
         if (n === index) {
@@ -150,6 +162,11 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   // dispatches markview:enter-painting; we resolve the current
   // painting's image URL and mount the walkable PaintingWorld.
   const [world, setWorld] = useState<{ src: string; splat: boolean } | null>(null);
+  // Stable identity matters: onClose is in the world components' effect
+  // deps — an inline closure would tear down and rebuild the entire 3D
+  // scene (terrain, 24 page textures, creatures) on every ViewerPage
+  // re-render while a world is open.
+  const closeWorld = React.useCallback(() => setWorld(null), []);
   React.useEffect(() => {
     const onEnter = () => {
       if (atmosphere === 'none') return;
@@ -214,6 +231,12 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
     }
     if (results.length > 0) {
       addFiles(results);
+    } else {
+      // The drop contained no readable markdown — say so instead of the
+      // overlay just vanishing (looks broken otherwise).
+      window.dispatchEvent(new CustomEvent('markview:toast', {
+        detail: { message: 'Only markdown files (.md, .markdown) can be opened.' },
+      }));
     }
   }, [addFiles]);
 
@@ -243,19 +266,56 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
     if (contentRef.current) contentRef.current.scrollTop = 0;
   }, [activeFileId]);
 
+  // P opens presentation mode — the toolbar tooltip has always advertised
+  // "(P)"; make the key real. Guarded like the other single-key shortcuts.
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.key !== 'p' && e.key !== 'P') || e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return;
+      if (showPresentation || showEditor) return;
+      e.preventDefault();
+      setShowPresentation(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showPresentation, showEditor, setShowPresentation]);
+
+  // E opens the editor — the welcome doc has promised this key since day
+  // one but no handler existed, and the real path (hover the top edge →
+  // ⋮ → Edit file) is three hidden steps for the product's primary verb.
+  // Guests are view-only, so the key is inert for them.
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.key !== 'e' && e.key !== 'E') || e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return;
+      // collabIsActive/collabIsHost are used directly — isGuestMode is
+      // declared further down and would TDZ in this deps array.
+      if (showPresentation || showEditor || (collabIsActive && !collabIsHost)) return;
+      e.preventDefault();
+      setShowEditor(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showPresentation, showEditor, collabIsActive, collabIsHost, setShowEditor]);
+
   // Guest mode: collab viewer without edit rights
   const isGuestMode = collabIsActive && !collabIsHost;
-  const effectiveContent = isGuestMode ? syncedActiveFileContent : activeFileContent;
   const activeFile = files.find((f) => f.id === activeFileId);
   const effectiveActiveFile = isGuestMode
     ? syncedFiles.find((f) => f.id === syncedActiveFileId)
     : activeFile;
+  // Guests have no LOCAL files — their document arrives over the wire.
+  // Everything below (frontmatter, render, stats) must read this, not
+  // activeFileContent, or a guest sees a blank pane despite a live session.
+  const effectiveContent = isGuestMode ? syncedActiveFileContent : activeFileContent;
 
   // Derived values
   const frontmatterResult = useMemo(() => {
-    if (!activeFileContent) return null;
-    return parseFrontmatter(activeFileContent);
-  }, [activeFileContent]);
+    if (!effectiveContent) return null;
+    return parseFrontmatter(effectiveContent);
+  }, [effectiveContent]);
 
   const workspaceFileNames = useMemo(
     () => files.map((f) => f.filename.split('/').pop() || f.filename),
@@ -263,9 +323,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   );
 
   const readingStats = useMemo(() => {
-    if (!activeFileContent) return null;
-    return calculateReadingStats(activeFileContent);
-  }, [activeFileContent]);
+    if (!effectiveContent) return null;
+    return calculateReadingStats(effectiveContent);
+  }, [effectiveContent]);
 
   const displayFilename = effectiveActiveFile?.filename || 'untitled';
 
@@ -307,7 +367,7 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         onTogglePresentation={() => setShowPresentation(true)}
         onToggleSplitView={() => setShowSplitView(!showSplitView)}
         onToggleDiffView={() => setShowDiffView(true)}
-        onToggleEditor={() => setShowEditor(true)}
+        onToggleEditor={isGuestMode ? undefined : () => setShowEditor(true)}
         onToggleVault={() => setVaultOpen(true)}
         onOpenFileBrowser={() => setFileBrowserOpen(true)}
         onOpenAiChat={() => setAiChatOpen(true)}
@@ -320,9 +380,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       {world && (
         <Suspense fallback={null}>
           {world.splat ? (
-            <SplatWorld src={world.src} kind={atmosphere} onClose={() => setWorld(null)} />
+            <SplatWorld src={world.src} kind={atmosphere} onClose={closeWorld} />
           ) : (
-            <PaintingWorld src={world.src} kind={atmosphere} onClose={() => setWorld(null)} />
+            <PaintingWorld src={world.src} kind={atmosphere} onClose={closeWorld} />
           )}
         </Suspense>
       )}
@@ -445,9 +505,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 <div className="skeleton-line skeleton-long" />
                 <div className="skeleton-line skeleton-short" />
               </div>
-            ) : activeFileContent ? (
+            ) : effectiveContent != null ? (
               <MarkdownRenderer
-                content={frontmatterResult ? frontmatterResult.content : activeFileContent}
+                content={frontmatterResult ? frontmatterResult.content : effectiveContent}
                 onHeadingsChange={handleHeadingsChange}
                 onHtmlRendered={handleHtmlRendered}
                 onNavigateToFile={onNavigateToFile}
@@ -456,9 +516,20 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
                 resolveTransclusion={resolveTransclusion}
               />
             ) : (
-              <div className="viewer-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh', opacity: 0.15, userSelect: 'none', pointerEvents: 'none' }}>
-                <img src="/icon-512.png" alt="" style={{ width: 120, height: 120, filter: 'grayscale(100%) drop-shadow(0 0 40px rgba(255,255,255,0.1))' }} />
-                <h3 style={{ marginTop: 24, fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em' }}>MarkView</h3>
+              // Actionable empty state — the toolbar is hover-hidden, so
+              // without an in-content CTA there is no discoverable next step
+              // after deleting the last file.
+              <div className="viewer-empty-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '60vh', userSelect: 'none' }}>
+                <img src="/icon-512.png" alt="" style={{ width: 96, height: 96, opacity: 0.25, filter: 'grayscale(100%) drop-shadow(0 0 40px rgba(255,255,255,0.1))' }} />
+                <h3 style={{ marginTop: 20, fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', opacity: 0.5 }}>No document open</h3>
+                <p style={{ marginTop: 6, fontSize: 14, opacity: 0.45 }}>Drop a .md file anywhere, or</p>
+                <button
+                  className="viewer-empty-add-btn"
+                  onClick={() => addFilesInputRef.current?.click()}
+                  style={{ marginTop: 14, padding: '10px 22px', borderRadius: 10, border: '1px solid var(--border-muted, #333)', background: 'transparent', color: 'inherit', fontSize: 14, cursor: 'pointer' }}
+                >
+                  Add markdown files…
+                </button>
               </div>
             )}
             {activeFileId && (
@@ -491,10 +562,10 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
       <SearchDialog />
 
       {/* Overlays */}
-      {showPresentation && effectiveContent && (
+      {showPresentation && renderedHtml && (
         <Suspense fallback={null}>
           <PresentationMode
-            html={renderedHtml || effectiveContent}
+            html={renderedHtml}
             onClose={() => setShowPresentation(false)}
           />
         </Suspense>
@@ -509,24 +580,28 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         </Suspense>
       )}
 
-      {showEditor && activeFileId && activeFileContent && (() => {
+      {showEditor && !isGuestMode && activeFileId && activeFileContent != null && (() => {
         // When collab is on, hand the editor a Y.Text from the shared
         // doc so edits stream peer-to-peer in real time. Solo mode
         // leaves yText undefined and the editor seeds from `content`.
+        // Guests are view-only and never reach this block. The editor is
+        // keyed by file id and its onSave bound to that same id, so a file
+        // switch while the overlay is open remounts a fresh editor and any
+        // unsaved buffer flushes to the file it belongs to — never to
+        // whichever file happens to be active at save time.
         const collab = useCollabStore.getState();
-        const collabFileId = isGuestMode
-          ? syncedActiveFileId ?? activeFileId
-          : activeFileId;
-        const yText = collabIsActive ? collab.getYText(collabFileId) ?? undefined : undefined;
+        const editorFileId = activeFileId;
+        const yText = collabIsActive ? collab.getYText(editorFileId) ?? undefined : undefined;
         const awareness = collabIsActive ? collab.getAwareness() ?? undefined : undefined;
         return (
           <Suspense fallback={null}>
             <MarkdownEditor
+              key={editorFileId}
               content={activeFileContent}
               filename={activeFile?.filename || 'untitled.md'}
               fileId={activeFile?.id}
               workspaceId={useWorkspaceStore.getState().activeWorkspaceId || undefined}
-              onSave={handleEditorSave}
+              onSave={(newContent) => handleEditorSave(newContent, editorFileId)}
               onClose={() => setShowEditor(false)}
               yText={yText}
               awareness={awareness}

@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -45,6 +45,11 @@ jobs:
 
       - name: Build (runs prebuild → prerender-projects + vite build)
         working-directory: apps/web
+        env:
+          # Optional: set the CF_BEACON_TOKEN repo secret to turn on
+          # Cloudflare Web Analytics for the marketing pages. Unset =
+          # analytics stay off (see lib/analytics.ts).
+          VITE_CF_BEACON_TOKEN: ${{ secrets.CF_BEACON_TOKEN }}
         run: bun run build
 
       - name: Deploy to Cloudflare Pages

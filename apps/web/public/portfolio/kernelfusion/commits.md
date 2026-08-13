@@ -1,5 +1,9 @@
 # Commits — kernelfusion
 
+## 2026-06-30
+
+- `10:23` **docs: add CITATION.cff with Zenodo concept DOI** — +15 −0 — [`701bf49`](https://github.com/abgnydn/kernelfusion/commit/701bf49fd0c51d56e3472c43a80325ab5717144e)
+
 ## 2026-05-15
 
 - `03:39` **chore: update contact email to hi@barisgunaydin.com** — +1 −1 — [`c7a7148`](https://github.com/abgnydn/kernelfusion/commit/c7a71480b59cb09d3a56ad5dfa4a06577492a4eb)

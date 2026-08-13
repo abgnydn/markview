@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ATMOSPHERES, pickPaintingFor, type ParticleKind } from './atmospheres';
+import { ATMOSPHERES, pickPaintingFor } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
 import { WebGLParticles } from './webgl-particles';
@@ -35,7 +35,6 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // forces a re-pick when the user manually advances.
   const painting = useMemo(
     () => pickPaintingFor(atmosphere),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [atmosphere, paintingNonce],
   );
 
@@ -77,11 +76,6 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // Particles + cfg both come from the *displayed* atmosphere so they
   // travel with the painting; the whole layer fades as a unit.
   const displayedCfg = ATMOSPHERES[displayed.atmosphere as Exclude<Atmosphere, 'none'>] ?? cfg;
-  const particles = useMemo(() => {
-    if (!displayedCfg || displayedCfg.particles === 'none') return [];
-    return buildParticles(displayedCfg.particles, displayedCfg.id);
-  }, [displayedCfg]);
-
   // A small flock that drifts across the sky, varied per atmosphere.
   const birds = useMemo(
     () => (displayedCfg ? buildBirds(displayedCfg.id) : []),
@@ -155,7 +149,13 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   // sessions; toggled from the atmosphere dots and synced via a custom
   // event (+ the storage event for other tabs).
   const [lite, setLite] = useState(() => {
-    try { return localStorage.getItem('mv-atmosphere-lite') === '1'; } catch { return false; }
+    // Explicit user choice wins; otherwise default to lite when the OS
+    // asks for reduced motion (static painting, no particle sim).
+    try {
+      const stored = localStorage.getItem('mv-atmosphere-lite');
+      if (stored !== null) return stored === '1';
+    } catch { /* ignore */ }
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
   });
   useEffect(() => {
     const sync = () => {
@@ -178,29 +178,10 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     return () => document.body.classList.remove('mv-lite');
   }, [lite]);
 
-  // ── Particle backend — 'webgl' (CPU sim, universal) or 'webgpu'
-  // (TSL compute sim, opt-in). Toggled with `b`; requires navigator.gpu.
-  // Any WebGPU init failure flips back to WebGL via onFallback.
-  //
-  // DELIBERATELY NOT persisted: the WebGPU path is experimental and a
-  // heavy GPU load, so a page reload always starts on the safe WebGL
-  // backend. It only ever turns on via an explicit `b` press in-session.
-  // The WebGPU compute backend is SHELVED: on Three 0.184's WebGPU renderer
-  // the instanced Sprite (`sprite.count`) draws zero instances here — device,
-  // shaders, and compute all run clean, but nothing rasterizes, and it can't be
-  // diagnosed without live GPU inspection. It also offers no visible benefit
-  // over the WebGL field (which already runs on the GPU). So `b` is now a no-op
-  // that just confirms the WebGL backend rather than switching to a dead path.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'b' && e.key !== 'B') return;
-      if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
-      if (isTypingTarget(e.target)) return;
-      flashHint('Particles · WebGL (WebGPU compute shelved)');
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [flashHint]);
+  // The WebGPU-compute particle backend was deleted 2026-08-13 (shelved
+  // since Three 0.184: instanced Sprite drew zero instances; no visible
+  // benefit over the WebGL field, which already renders on the GPU).
+  // Recoverable from git history as webgpu-particles.tsx.
 
   // ── #14 Caption flourish — show the painting's title bottom-left
   // for 2s on swap. Re-fires whenever the displayed painting changes
@@ -302,7 +283,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
       {!lite && displayedCfg.particles !== 'none' && (
         /* GPU-rendered, CPU-simulated particle field — curl-noise wind,
            cursor force, gravity, life/respawn, per-atmosphere sprite. The
-           WebGPU-compute variant is shelved (see the `b` handler above). */
+           (A WebGPU-compute variant was shelved and later deleted.) */
         <WebGLParticles kind={displayedCfg.particles} />
       )}
 
@@ -498,103 +479,6 @@ function buildLeaves(atmosphereId: string): ParticleInstance[] {
   });
 }
 
-/**
- * buildParticles — per-kind particle field. Stable seed per atmosphere
- * so re-renders don't reshuffle positions. Each particle gets its own
- * random delay/duration/drift so the field looks organic instead of
- * mechanical.
- */
-function buildParticles(kind: ParticleKind, atmosphereId: string): ParticleInstance[] {
-  // Different seeds per atmosphere → different but stable distributions.
-  const seedByAtmosphere: Record<string, number> = {
-    fuji:   0xfeedface,
-    wave:   0x0c0ffee5,
-    snow:   0xa1b2c3d4,
-    fields: 0xf1e1d50f,
-  };
-  const rng = mulberry32(seedByAtmosphere[atmosphereId] ?? 0x1234abcd);
-
-  switch (kind) {
-    case 'petals':   return petalsField(rng);
-    case 'snow':     return snowField(rng);
-    case 'spray':    return sprayField(rng);
-    case 'motes':    return motesField(rng);
-    default:         return [];
-  }
-}
-
-// ── Petals: pink/violet ellipses drift down with sideways drift + spin ─
-const PETAL_COLORS = ['#fbcfe8', '#fda4af', '#f9a8d4', '#e9d5ff', '#c4b5fd', '#fde2e4'];
-function petalsField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 14 }, (_, i) => ({
-    key: i,
-    style: {
-      left: `${rng() * 100}%`,
-      animationDelay: `${-rng() * 32}s`,
-      animationDuration: `${28 + rng() * 24}s`,
-      background: PETAL_COLORS[i % PETAL_COLORS.length],
-      ['--drift' as string]: `${(rng() - 0.5) * 280}px`,
-      ['--scale' as string]: 0.55 + rng() * 0.7,
-      ['--rot' as string]: `${rng() * 360}deg`,
-    } as React.CSSProperties,
-  }));
-}
-
-// ── Snow: white dots, slow fall, gentle sideways sway, varied sizes ────
-function snowField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 36 }, (_, i) => {
-    const size = 3 + rng() * 6; // 3–9px
-    return {
-      key: i,
-      style: {
-        left: `${rng() * 100}%`,
-        width: `${size}px`,
-        height: `${size}px`,
-        animationDelay: `${-rng() * 40}s`,
-        animationDuration: `${24 + rng() * 22}s`,
-        ['--sway' as string]: `${(rng() - 0.5) * 60}px`,
-        ['--opacity-peak' as string]: String(0.5 + rng() * 0.4),
-      } as React.CSSProperties,
-    };
-  });
-}
-
-// ── Spray: tiny white-blue droplets erupting upward + outward, fade fast
-function sprayField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 22 }, (_, i) => ({
-    key: i,
-    style: {
-      // Spray bursts from the wave-crest area (lower-middle of viewport).
-      left: `${20 + rng() * 60}%`,
-      bottom: `${20 + rng() * 25}%`,
-      animationDelay: `${-rng() * 9}s`,
-      animationDuration: `${4.8 + rng() * 4.4}s`,
-      ['--launch-x' as string]: `${(rng() - 0.5) * 220}px`,
-      ['--launch-y' as string]: `${-(60 + rng() * 180)}px`,
-      ['--scale' as string]: 0.35 + rng() * 0.7,
-    } as React.CSSProperties,
-  }));
-}
-
-// ── Motes: golden sun-dust drifting upward, slow horizontal float, soft glow
-function motesField(rng: () => number): ParticleInstance[] {
-  return Array.from({ length: 16 }, (_, i) => {
-    const size = 4 + rng() * 5; // 4–9px
-    return {
-      key: i,
-      style: {
-        left: `${rng() * 100}%`,
-        bottom: `-${20 + rng() * 80}px`,
-        width: `${size}px`,
-        height: `${size}px`,
-        animationDelay: `${-rng() * 40}s`,
-        animationDuration: `${32 + rng() * 26}s`,
-        ['--mote-x' as string]: `${(rng() - 0.5) * 140}px`,
-        ['--opacity-peak' as string]: String(0.4 + rng() * 0.45),
-      } as React.CSSProperties,
-    };
-  });
-}
 
 function mulberry32(seed: number): () => number {
   let a = seed;

@@ -1,5 +1,74 @@
 import { db } from '@/lib/storage/db';
 import { renderMarkdown } from '@/lib/markdown/pipeline';
+import { expandWikilinks } from '@/lib/markdown/wikilinks';
+import { escapeHtml } from '@/lib/plugins/plugin-registry';
+
+// ---------- Shared export rendering ----------
+
+/**
+ * Render markdown the way the viewer does for export surfaces: wikilinks
+ * expanded, math + mermaid actually rendered (not raw `$…$` / diagram
+ * source), and no interactive code-block toolbar (its buttons are dead
+ * markup outside the app).
+ */
+export async function renderMarkdownForExport(content: string): Promise<string> {
+  const html = await renderMarkdown(expandWikilinks(content), {
+    katex: true,
+    mermaid: true,
+    codeBlockToolbar: false,
+    alerts: true,
+  });
+  return inlineAssetImages(html);
+}
+
+/**
+ * Swap `asset:<id>` img srcs for self-contained data: URIs. Done post-
+ * sanitization: the pipeline's schema deliberately strips data: URIs from
+ * user markdown, but these blobs come from the local asset store.
+ */
+export async function inlineAssetImages(html: string): Promise<string> {
+  const srcRe = /src="asset:([\w-]+)"/g;
+  const ids = Array.from(new Set([...html.matchAll(srcRe)].map((m) => m[1])));
+  if (ids.length === 0) return html;
+  const dataUrls = new Map<string, string>();
+  for (const id of ids) {
+    const row = await db.assets.get(id);
+    if (!row) continue;
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result as string);
+      r.onerror = () => reject(r.error ?? new Error('asset read failed'));
+      r.readAsDataURL(row.blob);
+    });
+    dataUrls.set(id, dataUrl);
+  }
+  return html.replace(srcRe, (m, id) => (dataUrls.has(id) ? `src="${dataUrls.get(id)}"` : m));
+}
+
+/** HTML-escape a filename/title for interpolation into markup.
+ *  (Alias of the canonical escapeHtml in plugin-registry — kept under this
+ *  name for the export modules' call sites.) */
+export const escapeHtmlText = escapeHtml;
+
+/** KaTeX stylesheet link for standalone exported pages, or '' when the
+ *  rendered HTML contains no math. */
+export function katexCssLink(html: string): string {
+  return html.includes('class="katex')
+    ? '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">'
+    : '';
+}
+
+/** Dedupe an entry name against already-used names (`a.md`, `a (2).md`). */
+export function uniqueEntryName(used: Set<string>, name: string): string {
+  let candidate = name;
+  let n = 2;
+  while (used.has(candidate)) {
+    candidate = name.replace(/(\.[^.]*)?$/, (ext) => ` (${n})${ext}`);
+    n++;
+  }
+  used.add(candidate);
+  return candidate;
+}
 
 // ---------- Copy to Clipboard ----------
 
@@ -8,7 +77,7 @@ export async function copyAsMarkdown(content: string): Promise<void> {
 }
 
 export async function copyAsHtml(content: string): Promise<void> {
-  const html = await renderMarkdown(content);
+  const html = await renderMarkdownForExport(content);
   const styledHtml = wrapWithInlineStyles(html);
 
   const blob = new Blob([styledHtml], { type: 'text/html' });
@@ -39,8 +108,11 @@ export async function downloadWorkspaceZip(workspaceId: string, title: string): 
     .toArray();
 
   const folder = zip.folder(title) || zip;
+  // Workspaces allow duplicate filenames; JSZip silently overwrites, so
+  // a backup zip would otherwise contain fewer files than promised.
+  const used = new Set<string>();
   for (const file of files) {
-    folder.file(file.filename, file.content);
+    folder.file(uniqueEntryName(used, file.filename), file.content);
   }
 
   const blob = await zip.generateAsync({ type: 'blob' });
@@ -52,7 +124,7 @@ export async function downloadAsHtml(
   content: string,
   theme: 'dark' | 'light'
 ): Promise<void> {
-  const html = await renderMarkdown(content);
+  const html = await renderMarkdownForExport(content);
   const title = filename.replace(/\.md$/i, '');
   const fullHtml = buildSelfContainedHtml(title, html, theme);
   const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
@@ -115,7 +187,8 @@ function buildSelfContainedHtml(title: string, bodyHtml: string, theme: 'dark' |
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title} — MarkView</title>
+<title>${escapeHtmlText(title)} — MarkView</title>
+${katexCssLink(bodyHtml)}
 <style>
   /* System font stack — no external dependencies. */
   :root {
@@ -188,24 +261,26 @@ function buildSelfContainedHtml(title: string, bodyHtml: string, theme: 'dark' |
 
   input[type="checkbox"] { margin-right: 8px; accent-color: ${colors.accent}; }
 
-  .markdown-alert {
+  /* Class names must match what the core pipeline actually emits:
+     gh-alert / alert-<type> / gh-alert-title (NOT .markdown-alert-*). */
+  .gh-alert {
     margin: 1em 0; padding: 12px 16px;
     border-radius: 6px; border-left: 4px solid;
   }
-  .markdown-alert-note { border-color: ${colors.noteB}; background: ${colors.noteBg}; }
-  .markdown-alert-tip { border-color: ${colors.tipB}; background: ${colors.tipBg}; }
-  .markdown-alert-important { border-color: ${colors.impB}; background: ${colors.impBg}; }
-  .markdown-alert-warning { border-color: ${colors.warnB}; background: ${colors.warnBg}; }
-  .markdown-alert-caution { border-color: ${colors.cautB}; background: ${colors.cautBg}; }
-  .markdown-alert-title {
+  .gh-alert.alert-note { border-color: ${colors.noteB}; background: ${colors.noteBg}; }
+  .gh-alert.alert-tip { border-color: ${colors.tipB}; background: ${colors.tipBg}; }
+  .gh-alert.alert-important { border-color: ${colors.impB}; background: ${colors.impBg}; }
+  .gh-alert.alert-warning { border-color: ${colors.warnB}; background: ${colors.warnBg}; }
+  .gh-alert.alert-caution { border-color: ${colors.cautB}; background: ${colors.cautBg}; }
+  .gh-alert-title {
     font-weight: 600; font-size: 14px; margin-bottom: 4px;
     display: flex; align-items: center; gap: 6px;
   }
-  .markdown-alert-note .markdown-alert-title { color: ${colors.noteT}; }
-  .markdown-alert-tip .markdown-alert-title { color: ${colors.tipT}; }
-  .markdown-alert-important .markdown-alert-title { color: ${colors.impT}; }
-  .markdown-alert-warning .markdown-alert-title { color: ${colors.warnT}; }
-  .markdown-alert-caution .markdown-alert-title { color: ${colors.cautT}; }
+  .alert-note .gh-alert-title { color: ${colors.noteT}; }
+  .alert-tip .gh-alert-title { color: ${colors.tipT}; }
+  .alert-important .gh-alert-title { color: ${colors.impT}; }
+  .alert-warning .gh-alert-title { color: ${colors.warnT}; }
+  .alert-caution .gh-alert-title { color: ${colors.cautT}; }
 
   footer {
     margin-top: 60px; padding-top: 16px;

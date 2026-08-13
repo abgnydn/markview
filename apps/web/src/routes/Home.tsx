@@ -13,7 +13,7 @@ const ViewerPage = lazy(() =>
 );
 import { LandingEditor } from "@/components/landing/landing-editor";
 import { JoinDialog } from "@/components/collab/join-dialog";
-import { getRoomIdFromUrl } from "@/lib/collab/y-provider";
+import { getRoomIdFromUrl } from "@/lib/collab/room-url";
 
 // Showcase docs — loaded as raw text. Each file exercises a different
 // renderer feature so the seed workspace doubles as a feature tour.
@@ -94,12 +94,21 @@ export default function Home() {
     if (target) void setActiveFile(target.id);
   };
 
+  const startingRef = useRef(false);
   const handleStart = async () => {
-    if (workspaces.length === 0) {
-      await createWorkspace("showcase", SHOWCASE_FILES);
+    // A double-click during the awaited create would see the still-empty
+    // list and seed a second showcase workspace.
+    if (startingRef.current) return;
+    startingRef.current = true;
+    try {
+      if (workspaces.length === 0) {
+        await createWorkspace("showcase", SHOWCASE_FILES);
+      }
+      // Clear the ?home=1 flag so the next render shows the editor.
+      setSearchParams({});
+    } finally {
+      startingRef.current = false;
     }
-    // Clear the ?home=1 flag so the next render shows the editor.
-    setSearchParams({});
   };
 
   const handleGoHome = () => {
@@ -120,6 +129,16 @@ export default function Home() {
   ) => {
     if (files.length === 0) return;
     await createWorkspace(repoName || "github-import", files);
+    setSearchParams({});
+  };
+
+  /**
+   * Landing drag-drop → seed a workspace from the dropped .md files and
+   * drop the user straight into it (the hero promises this flow).
+   */
+  const handleDropFiles = async (files: { filename: string; content: string }[]) => {
+    if (files.length === 0) return;
+    await createWorkspace(files[0].filename.replace(/\.(md|markdown)$/i, ""), files);
     setSearchParams({});
   };
 
@@ -159,11 +178,15 @@ export default function Home() {
   }
 
   // Landing if: no workspace yet OR user explicitly asked for it via ?home=1.
-  if (workspaces.length === 0 || showLanding) {
+  // EXCEPT for connected collab guests — they have no *local* workspace by
+  // design (everything arrives over the wire into ViewerPage's guest mode),
+  // so the landing gate must not swallow them after a successful join.
+  if ((workspaces.length === 0 || showLanding) && !collabIsActive) {
     return (
       <LandingEditor
         onStart={() => void handleStart()}
         onImportGithub={(files, repoName) => void handleImportGithub(files, repoName)}
+        onDropFiles={(files) => void handleDropFiles(files)}
       />
     );
   }

@@ -9,6 +9,9 @@ interface GitHubImportProps {
 export function GitHubImport({ onFilesLoaded }: GitHubImportProps) {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // "Fetching 40/300" — a 300-file docs repo used to be a mute spinner
+  // for a minute, which reads as hung.
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleImport = useCallback(async () => {
@@ -74,6 +77,7 @@ export function GitHubImport({ onFilesLoaded }: GitHubImportProps) {
         const files: { filename: string; content: string }[] = [];
         const batchSize = 5;
 
+        setProgress({ done: 0, total: mdFiles.length });
         for (let i = 0; i < mdFiles.length; i += batchSize) {
           const batch = mdFiles.slice(i, i + batchSize);
           const results = await Promise.all(
@@ -88,16 +92,25 @@ export function GitHubImport({ onFilesLoaded }: GitHubImportProps) {
             })
           );
           files.push(...results.filter(Boolean) as { filename: string; content: string }[]);
+          setProgress({ done: Math.min(i + batchSize, mdFiles.length), total: mdFiles.length });
         }
+        setProgress(null);
 
-        if (files.length > 0) {
-          onFilesLoaded(files, repoName);
+        if (files.length === 0) {
+          // Every raw-file fetch failed — without this the spinner just
+          // stops and nothing happens, which reads as "import is broken".
+          throw new Error("Found markdown files but couldn't fetch their contents — GitHub may be rate-limiting. Try again in a minute.");
         }
+        if (files.length < mdFiles.length) {
+          console.warn(`[github-import] ${mdFiles.length - files.length} of ${mdFiles.length} files failed to fetch`);
+        }
+        onFilesLoaded(files, repoName);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to import from GitHub');
     } finally {
       setIsLoading(false);
+      setProgress(null);
     }
   }, [url, onFilesLoaded]);
 
@@ -119,7 +132,11 @@ export function GitHubImport({ onFilesLoaded }: GitHubImportProps) {
           onClick={handleImport}
           disabled={isLoading || !url.trim()}
         >
-          {isLoading ? <Loader2 size={16} className="spin" /> : 'Import'}
+          {isLoading
+            ? (progress && progress.total > 10
+                ? <span className="github-import-progress">{progress.done}/{progress.total}</span>
+                : <Loader2 size={16} className="spin" />)
+            : 'Import'}
         </button>
       </div>
       {error && (

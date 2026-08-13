@@ -189,46 +189,9 @@
   margin: 0;
 }
 
-/* ---------- Presence Bar ---------- */
-
-.collab-presence-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 12px;
-  background: rgba(129, 140, 248, 0.08);
-  border-bottom: 1px solid rgba(129, 140, 248, 0.15);
-}
-
-.collab-presence-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.collab-presence-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #34d399;
-  animation: collabPulse 2s infinite;
-}
-
 @keyframes collabPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
-}
-
-.collab-presence-label {
-  font-size: 11px;
-  color: #a1a1aa;
-  font-weight: 500;
-}
-
-.collab-presence-avatars {
-  display: flex;
-  gap: 4px;
-  margin-left: auto;
 }
 
 .collab-avatar {

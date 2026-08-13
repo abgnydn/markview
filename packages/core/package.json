@@ -1,7 +1,7 @@
 {
   "name": "@markview/core",
   "version": "0.1.0",
-  "description": "Markview's markdown rendering pipeline — Shiki, Mermaid, KaTeX, GFM",
+  "description": "Markview's markdown rendering pipeline \u2014 Shiki, Mermaid, KaTeX, GFM",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -25,19 +25,25 @@
     "unist-util-visit": "^5.0.0"
   },
   "peerDependencies": {
-    "katex": "^0.16.0",
+    "katex": "^0.16.0 || ^0.17.0",
     "mermaid": "^11.0.0",
     "shiki": "^4.0.0"
   },
   "peerDependenciesMeta": {
-    "katex": { "optional": true },
-    "mermaid": { "optional": true },
-    "shiki": { "optional": true }
+    "katex": {
+      "optional": true
+    },
+    "mermaid": {
+      "optional": true
+    },
+    "shiki": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/mdast": "^4.0.4",
-    "@types/node": "^22.10.5",
-    "typescript": "^5.7.2",
-    "vitest": "^4.1.8"
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   }
 }

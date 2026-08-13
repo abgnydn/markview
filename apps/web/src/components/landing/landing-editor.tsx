@@ -9,14 +9,17 @@
  * landing reads as a single chapter in the same book.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GitHubImport } from '@/components/workspace/github-import';
+import { useMarketingBeacon } from '@/lib/analytics';
+import { DESKTOP_VERSION } from '@/lib/version';
 import './landing-editor.css';
 
 interface LandingEditorProps {
   onStart: () => void;
   onImportGithub: (files: { filename: string; content: string }[], repoName: string) => void;
+  onDropFiles: (files: { filename: string; content: string }[]) => void;
 }
 
 /**
@@ -29,12 +32,16 @@ const RELEASES_URL = 'https://github.com/abgnydn/markview/releases/latest';
 const DL = (asset: string) =>
   `https://github.com/abgnydn/markview/releases/latest/download/${asset}`;
 
-const ASSET_MAC_ARM = 'MarkView_0.3.0_aarch64.dmg';
-const ASSET_MAC_X64 = 'MarkView_0.3.0_x64.dmg';
-const ASSET_WIN_SETUP = 'MarkView_0.3.0_x64-setup.exe';
-const ASSET_LINUX_APPIMAGE = 'MarkView_0.3.0_amd64.AppImage';
+// MUST match the version of the latest published desktop-v* release —
+// `releases/latest/download/` only resolves assets of that release, so a
+// stale/premature version here means every download button 404s. Bump this
+// together with tagging a new desktop release.
+const ASSET_MAC_ARM = `MarkView_${DESKTOP_VERSION}_aarch64.dmg`;
+const ASSET_MAC_X64 = `MarkView_${DESKTOP_VERSION}_x64.dmg`;
+const ASSET_WIN_SETUP = `MarkView_${DESKTOP_VERSION}_x64-setup.exe`;
+const ASSET_LINUX_APPIMAGE = `MarkView_${DESKTOP_VERSION}_amd64.AppImage`;
 
-function pickDownload(): { href: string; label: string; tooltip: string } {
+function pickDownload(): { href: string; label: string; tooltip: string; os?: 'mac' | 'windows' | 'linux' } {
   if (typeof navigator === 'undefined') {
     return { href: RELEASES_URL, label: 'Download for desktop', tooltip: '' };
   }
@@ -49,14 +56,14 @@ function pickDownload(): { href: string; label: string; tooltip: string } {
   if (isMac) {
     const looksIntel = /Intel/i.test(ua) && !/Apple/i.test(platform);
     return looksIntel
-      ? { href: DL(ASSET_MAC_X64), label: 'Download for macOS (Intel)', tooltip: `${ASSET_MAC_X64} · 15 MB · Apache-2.0` }
-      : { href: DL(ASSET_MAC_ARM), label: 'Download for macOS', tooltip: `${ASSET_MAC_ARM} · 15 MB · Apache-2.0` };
+      ? { href: DL(ASSET_MAC_X64), label: 'Download for macOS (Intel)', tooltip: `${ASSET_MAC_X64} · 15 MB · Apache-2.0`, os: 'mac' }
+      : { href: DL(ASSET_MAC_ARM), label: 'Download for macOS', tooltip: `${ASSET_MAC_ARM} · 15 MB · Apache-2.0`, os: 'mac' };
   }
   if (isWindows) {
-    return { href: DL(ASSET_WIN_SETUP), label: 'Download for Windows', tooltip: `${ASSET_WIN_SETUP} · 13 MB · Apache-2.0` };
+    return { href: DL(ASSET_WIN_SETUP), label: 'Download for Windows', tooltip: `${ASSET_WIN_SETUP} · 13 MB · Apache-2.0`, os: 'windows' };
   }
   if (isLinux) {
-    return { href: DL(ASSET_LINUX_APPIMAGE), label: 'Download for Linux', tooltip: `${ASSET_LINUX_APPIMAGE} · 85 MB · Apache-2.0` };
+    return { href: DL(ASSET_LINUX_APPIMAGE), label: 'Download for Linux', tooltip: `${ASSET_LINUX_APPIMAGE} · 85 MB · Apache-2.0`, os: 'linux' };
   }
   return { href: RELEASES_URL, label: 'Download for desktop', tooltip: 'Pick the build for your OS' };
 }
@@ -86,8 +93,8 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   },
   {
     label: 'Collab',
-    title: 'One URL, two cursors',
-    body: 'Real-time multiplayer editing over WebRTC. Zero server, no account, no trail.',
+    title: 'One link, follow along live',
+    body: 'Share a live link over WebRTC — guests follow along and read in real time. Zero server, no account, no trail.',
   },
   {
     label: 'AI',
@@ -101,12 +108,88 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   },
 ];
 
-export function LandingEditor({ onStart, onImportGithub }: LandingEditorProps) {
+export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingEditorProps) {
+  useMarketingBeacon();
   const start = useCallback(() => onStart(), [onStart]);
   const download = useMemo(() => pickDownload(), []);
 
+  // The hero promises "drag-drop a .md to start" — honor it right here on
+  // the landing, mirroring the viewer's drop handling. dragCounter tracks
+  // enter/leave pairs so child elements don't flicker the overlay off.
+  const [isDragging, setIsDragging] = useState(false);
+  const [dropError, setDropError] = useState<string | null>(null);
+  const dragCounter = useRef(0);
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
+    // The hero promises "Drop a folder" — honor it. dataTransfer.files
+    // exposes a directory as a single extension-less File, so folders
+    // must be walked via webkitGetAsEntry (supported by every browser
+    // that runs MarkView).
+    const isMd = (name: string) => /\.(md|markdown)$/i.test(name);
+    const collected: { filename: string; content: string }[] = [];
+    const readEntry = (entry: FileSystemEntry, prefix: string): Promise<void> =>
+      new Promise((resolve) => {
+        if (entry.isFile && isMd(entry.name)) {
+          (entry as FileSystemFileEntry).file(
+            (f) => void f.text().then((content) => {
+              collected.push({ filename: `${prefix}${entry.name}`, content });
+              resolve();
+            }, () => resolve()),
+            () => resolve(),
+          );
+        } else if (entry.isDirectory) {
+          const reader = (entry as FileSystemDirectoryEntry).createReader();
+          const readAll = () => reader.readEntries((entries) => {
+            if (entries.length === 0) return resolve();
+            void Promise.all(entries.map((child) => readEntry(child, `${prefix}${entry.name}/`)))
+              .then(readAll); // readEntries returns batches of ≤100
+          }, () => resolve());
+          readAll();
+        } else {
+          resolve();
+        }
+      });
+
+    const items = Array.from(e.dataTransfer.items ?? []);
+    const entries = items
+      .map((item) => (typeof item.webkitGetAsEntry === 'function' ? item.webkitGetAsEntry() : null))
+      .filter((entry): entry is FileSystemEntry => entry != null);
+    if (entries.length > 0) {
+      await Promise.all(entries.map((entry) => readEntry(entry, '')));
+    } else {
+      const dropped = Array.from(e.dataTransfer.files).filter((f) => isMd(f.name));
+      for (const f of dropped) collected.push({ filename: f.name, content: await f.text() });
+    }
+
+    if (collected.length === 0) {
+      // Tell the user why nothing happened instead of silently ignoring.
+      setDropError('No markdown files (.md, .markdown) found in the drop.');
+      window.setTimeout(() => setDropError(null), 3000);
+      return;
+    }
+    onDropFiles(collected);
+  }, [onDropFiles]);
+
   return (
-    <div className="ed-landing">
+    <div
+      className={`ed-landing${isDragging ? ' is-dragover' : ''}`}
+      onDragOver={(e) => e.preventDefault()}
+      onDragEnter={(e) => { e.preventDefault(); dragCounter.current++; setIsDragging(true); }}
+      onDragLeave={() => { dragCounter.current--; if (dragCounter.current <= 0) { dragCounter.current = 0; setIsDragging(false); } }}
+      onDrop={(e) => void handleDrop(e)}
+    >
+      {isDragging && (
+        <div className="ed-drop-overlay" aria-hidden>
+          <div className="ed-drop-overlay-card">Drop your <code>.md</code> — it opens right here</div>
+        </div>
+      )}
+      {dropError && (
+        <div className="ed-drop-overlay" role="alert" style={{ background: 'transparent', backdropFilter: 'none', alignItems: 'flex-end', paddingBottom: 48 }}>
+          <div className="ed-drop-overlay-card" style={{ borderStyle: 'solid', borderColor: '#ff5f57' }}>{dropError}</div>
+        </div>
+      )}
       <header className="ed-nav">
         <div className="ed-nav-brand">
           <span className="ed-nav-mark" aria-hidden="true">
@@ -153,6 +236,45 @@ export function LandingEditor({ onStart, onImportGithub }: LandingEditorProps) {
             {download.label}
           </a>
         </div>
+        {/* The desktop builds are not code-signed (no Apple Developer
+            account), so macOS blocks the first launch outright — and since
+            macOS 15 the old right-click → Open bypass is gone. Without this
+            note the download is a dead end. Windows SmartScreen shows the
+            equivalent "unrecognized app" prompt. */}
+        {download.os === 'mac' && (
+          <details className="ed-install-note">
+            <summary>macOS says it “can’t verify” the app — what to do</summary>
+            <p>
+              MarkView is open source and unsigned (an Apple Developer ID costs $99/yr,
+              which this project doesn’t have yet), so macOS blocks it on first launch.
+            </p>
+            <p>
+              <strong>Easiest fix — install with Homebrew instead:</strong><br />
+              <code>brew install --cask abgnydn/tap/markview</code><br />
+              The app lands in Applications and opens normally.
+            </p>
+            <p>
+              Already downloaded the .dmg? Open it via <strong>System Settings → Privacy
+              &amp; Security</strong>, scroll to <strong>Security</strong>, then click{' '}
+              <strong>Open Anyway</strong> — or run{' '}
+              <code>xattr -dr com.apple.quarantine /Applications/MarkView.app</code>
+            </p>
+            <p>
+              Rather not? The <a href="/">web app</a> is the same editor and needs no install.
+            </p>
+          </details>
+        )}
+        {download.os === 'windows' && (
+          <details className="ed-install-note">
+            <summary>Windows SmartScreen warning — what to do</summary>
+            <p>
+              The installer is unsigned, so SmartScreen shows “Windows protected your PC”.
+              Click <strong>More info</strong> → <strong>Run anyway</strong>. Or use the{' '}
+              <a href="/">web app</a>, which needs no install.
+            </p>
+          </details>
+        )}
+
         <div className="ed-hero-meta">
           <kbd>⌘K</kbd> search · <kbd>⌘B</kbd> bold · <kbd>⌘I</kbd> italic · <kbd>⌘S</kbd> save · drag-drop a <code>.md</code> to start
         </div>
@@ -198,6 +320,15 @@ export function LandingEditor({ onStart, onImportGithub }: LandingEditorProps) {
             className="ed-foot-link"
           >
             Apache-2.0 on GitHub
+          </a>
+          <span className="ed-foot-sep">·</span>
+          <a
+            href="https://github.com/abgnydn/markview/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ed-foot-link"
+          >
+            Changelog
           </a>
         </div>
         <div className="ed-foot-credit">

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Send, Sparkles, Square, FileText, Cpu, Cloud } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 import {
   answerQuestionInWorkspace,
   warmGenerative,
@@ -48,6 +49,7 @@ interface Turn {
  * downloads once. After that the panel just works.
  */
 export function AiChat({ onClose }: AiChatProps) {
+  useFocusReturn(true);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const files = useWorkspaceStore((s) => s.files);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
@@ -57,6 +59,7 @@ export function AiChat({ onClose }: AiChatProps) {
   // you did in `research/` survives a context switch to `posts/` and
   // is right there when you come back. We persist only finished turns
   // (no in-flight tokens) to keep the JSON small and resumable.
+  const abortRef = useRef<AbortController | null>(null);
   const memoryKey = activeWorkspaceId ? `mv-ai-chat-${activeWorkspaceId}` : '';
   const [turns, setTurns] = useState<Turn[]>(() => {
     if (typeof window === 'undefined' || !memoryKey) return [];
@@ -67,8 +70,12 @@ export function AiChat({ onClose }: AiChatProps) {
       return Array.isArray(parsed) ? parsed as Turn[] : [];
     } catch { return []; }
   });
-  // Reload thread when the active workspace changes.
+  // Reload thread when the active workspace changes — and abort any
+  // in-flight generation first, or its tokens keep streaming into a
+  // turn list that no longer exists.
   useEffect(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
     if (!memoryKey) { setTurns([]); return; }
     try {
       const raw = localStorage.getItem(memoryKey);
@@ -90,11 +97,14 @@ export function AiChat({ onClose }: AiChatProps) {
   };
   const [optedIn, setOptedIn] = useState<boolean>(() => isGenerativeOptedIn());
   const [status, setStatus] = useState<GenStatus>({ state: 'idle' });
-  const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => onGenStatus(setStatus), []);
+
+  // Focus the question box on open — ⌘J used to leave focus behind the
+  // overlay, so typing went nowhere.
+  useEffect(() => { inputRef.current?.focus(); }, []);
 
   useEffect(() => {
     // Warm SmolLM2 only if the user is in local mode AND opted in.
@@ -146,8 +156,15 @@ export function AiChat({ onClose }: AiChatProps) {
         ? { ...t, answer: result.answer || t.answer, citations: result.citations, status: 'done' }
         : t)));
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      setTurns((all) => all.map((t) => (t.id === id ? { ...t, status: 'error', error: msg } : t)));
+      // A user-initiated Stop is not an error — keep the partial answer
+      // as a finished turn instead of flashing red and dropping it from
+      // the persisted thread.
+      if (e instanceof Error && e.name === 'AbortError') {
+        setTurns((all) => all.map((t) => (t.id === id ? { ...t, status: 'done' } : t)));
+      } else {
+        const msg = e instanceof Error ? e.message : String(e);
+        setTurns((all) => all.map((t) => (t.id === id ? { ...t, status: 'error', error: msg } : t)));
+      }
     } finally {
       abortRef.current = null;
     }
@@ -245,6 +262,9 @@ export function AiChat({ onClose }: AiChatProps) {
           </div>
         ) : (
           <>
+            <div className="mv-sr-only" role="status">
+              {busy ? 'Generating answer…' : turns.length > 0 ? 'Answer ready' : ''}
+            </div>
             <div className="ai-chat-turns" ref={scrollRef}>
               {turns.length === 0 && (
                 <div className="ai-chat-empty">

@@ -50,13 +50,17 @@ export async function createSnapshot(
   };
   await db.snapshots.add(row);
 
-  // Trim down to MAX_PER_FILE — drop the oldest first.
+  // Trim down to MAX_PER_FILE — drop the oldest first, but never prune
+  // `manual` bookmarks: those are deliberate restore points, and a burst
+  // of autosaves shouldn't silently evict a snapshot the user made on
+  // purpose. Only auto/save rows count against the cap.
   const all = await db.snapshots
     .where('fileId').equals(fileId)
     .sortBy('createdAt');
-  if (all.length > MAX_PER_FILE) {
-    const excess = all.length - MAX_PER_FILE;
-    const toRemove = all.slice(0, excess).map((s) => s.id);
+  const prunable = all.filter((s) => s.source !== 'manual');
+  if (prunable.length > MAX_PER_FILE) {
+    const excess = prunable.length - MAX_PER_FILE;
+    const toRemove = prunable.slice(0, excess).map((s) => s.id);
     await db.snapshots.bulkDelete(toRemove);
   }
 
@@ -71,21 +75,12 @@ export async function listSnapshotsForFile(fileId: string): Promise<DBSnapshot[]
   return all.reverse();
 }
 
-/** Look up a single snapshot by id. */
-export async function getSnapshot(snapshotId: string): Promise<DBSnapshot | undefined> {
-  return db.snapshots.get(snapshotId);
-}
 
 /** Delete one snapshot. */
 export async function deleteSnapshot(snapshotId: string): Promise<void> {
   await db.snapshots.delete(snapshotId);
 }
 
-/** Clear every snapshot belonging to a file (used when the file is removed). */
-export async function deleteSnapshotsForFile(fileId: string): Promise<void> {
-  const ids = (await db.snapshots.where('fileId').equals(fileId).primaryKeys());
-  await db.snapshots.bulkDelete(ids as string[]);
-}
 
 /** Pretty short timestamp like "2 min ago" / "Yesterday 14:32". */
 export function formatSnapshotTime(ts: number): string {

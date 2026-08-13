@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, FileCode2 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { db } from '@/lib/storage/db';
@@ -89,10 +89,8 @@ export function DiffView({ fileAId, onClose }: DiffViewProps) {
   );
 
   const fileA = files.find((f) => f.id === fileAId);
-  const fileB = files.find((f) => f.id === fileBId);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!fileBId) { setContentB(null); return; }
     let cancelled = false;
     db.files.get(fileBId).then((f) => {
@@ -103,7 +101,6 @@ export function DiffView({ fileAId, onClose }: DiffViewProps) {
 
   useEffect(() => {
     if (!fileBId && otherFiles.length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFileBId(otherFiles[0].id);
     }
   }, [otherFiles, fileBId]);

@@ -230,9 +230,7 @@ export const csvPlugin: CodeFencePlugin = {
     const textColor = theme === 'dark' ? '#c9d1d9' : '#24292f';
     const mutedColor = theme === 'dark' ? '#8b949e' : '#656d76';
 
-    const tableId = `csv-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`;
-
-    const thCells = headers.map((h, i) =>
+    const thCells = headers.map((h) =>
       `<th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: ${textColor}; border-bottom: 2px solid ${borderColor}; cursor: pointer; user-select: none;" title="Click to sort">${escapeHtml(h)} <span style="opacity: 0.3; font-size: 10px;">⇅</span></th>`
     ).join('');
 

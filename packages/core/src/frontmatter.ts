@@ -28,13 +28,17 @@ export function parseFrontmatter(raw: string): FrontmatterResult {
     return { data: {}, content: raw };
   }
 
-  const endIdx = trimmed.indexOf('\n---', 3);
-  if (endIdx === -1) {
+  // The closing delimiter must be a standalone `---` line — a bare
+  // indexOf('\n---') would match `\n---anything` (e.g. a YAML value or a
+  // 4-dash rule) and split the document in the wrong place.
+  const closeMatch = /\n---[ \t]*(?:\n|$)/.exec(trimmed.slice(3));
+  if (!closeMatch) {
     return { data: {}, content: raw };
   }
+  const endIdx = 3 + closeMatch.index;
 
   const yamlBlock = trimmed.slice(4, endIdx).trim();
-  const content = trimmed.slice(endIdx + 4).trimStart();
+  const content = trimmed.slice(endIdx + closeMatch[0].length).trimStart();
   const data: Record<string, string | string[] | number | boolean> = {};
 
   for (const line of yamlBlock.split('\n')) {

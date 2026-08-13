@@ -22,12 +22,9 @@
 import { db, type DBEmbedding } from '@/lib/storage/db';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 
-type Pipeline = (text: string | string[], options?: { pooling?: string; normalize?: boolean }) => Promise<{ data: Float32Array; dims: number[] }>;
-
-const MODEL_ID = 'Xenova/all-MiniLM-L6-v2';
+// MODEL_ID lives in embeddings-worker.ts, which owns the pipeline.
 const DIM = 384;
 
-let pipelinePromise: Promise<Pipeline> | null = null;
 const warmStatusCallbacks: Set<(s: ModelStatus) => void> = new Set();
 
 export interface ModelStatus {
@@ -49,32 +46,61 @@ function setStatus(s: ModelStatus) {
   warmStatusCallbacks.forEach((cb) => cb(s));
 }
 
-async function getPipeline(): Promise<Pipeline> {
-  if (pipelinePromise) return pipelinePromise;
-  pipelinePromise = (async () => {
-    try {
-      setStatus({ state: 'loading', progress: 0 });
-      const { pipeline, env } = await import('@huggingface/transformers');
-      // Allow remote loading but use the Hugging Face CDN.
-      env.allowLocalModels = false;
-      env.allowRemoteModels = true;
-      const pipe = (await pipeline('feature-extraction', MODEL_ID, {
-        progress_callback: (p: { status: string; progress?: number }) => {
-          if (p.status === 'progress' && typeof p.progress === 'number') {
-            setStatus({ state: 'loading', progress: p.progress });
-          }
-        },
-      })) as unknown as Pipeline;
-      setStatus({ state: 'ready' });
-      return pipe;
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      setStatus({ state: 'failed', error: msg });
-      pipelinePromise = null;
-      throw e;
+// ── Inference worker ─────────────────────────────────────────────────
+//
+// The model runs in embeddings-worker.ts, NOT here. On the main thread it
+// blocked rendering hard: measured on an M2 Max, embedding a
+// 120-paragraph file froze the UI for ~1.5s while an atmosphere was
+// animating. Chunking, storage, and similarity math stay on this side —
+// only `pipe(texts)` crosses the boundary.
+
+let worker: Worker | null = null;
+let nextRequestId = 1;
+const pending = new Map<number, { resolve: (v: Float32Array) => void; reject: (e: Error) => void }>();
+
+function getWorker(): Worker {
+  if (worker) return worker;
+  setStatus({ state: 'loading', progress: 0 });
+  worker = new Worker(new URL('./embeddings-worker.ts', import.meta.url), { type: 'module' });
+  worker.onmessage = (
+    e: MessageEvent<{ type?: 'status'; progress?: number; id?: number; ok?: boolean; data?: Float32Array; error?: string }>,
+  ) => {
+    const msg = e.data;
+    if (msg.type === 'status') {
+      setStatus({ state: 'loading', progress: msg.progress });
+      return;
     }
-  })();
-  return pipelinePromise;
+    if (typeof msg.id !== 'number') return;
+    const entry = pending.get(msg.id);
+    if (!entry) return;
+    pending.delete(msg.id);
+    if (msg.ok && msg.data) {
+      setStatus({ state: 'ready' });
+      entry.resolve(msg.data);
+    } else {
+      setStatus({ state: 'failed', error: msg.error });
+      entry.reject(new Error(msg.error ?? 'embedding failed'));
+    }
+  };
+  worker.onerror = (err) => {
+    const error = new Error(`embedding worker crashed: ${err.message}`);
+    setStatus({ state: 'failed', error: error.message });
+    for (const [, entry] of pending) entry.reject(error);
+    pending.clear();
+    worker?.terminate();
+    worker = null;
+  };
+  return worker;
+}
+
+/** Run the model over `texts`, returning the raw concatenated vectors. */
+function embedTexts(texts: string[]): Promise<Float32Array> {
+  const w = getWorker();
+  const id = nextRequestId++;
+  return new Promise<Float32Array>((resolve, reject) => {
+    pending.set(id, { resolve, reject });
+    w.postMessage({ id, texts });
+  });
 }
 
 /**
@@ -105,13 +131,6 @@ export async function embedFile(fileId: string, workspaceId: string, content: st
     await db.embeddings.where('fileId').equals(fileId).delete();
     return 0;
   }
-  let pipe: Awaited<ReturnType<typeof getPipeline>>;
-  try {
-    pipe = await getPipeline();
-  } catch (err) {
-    console.warn('[embeddings] model unavailable — skipping', err);
-    return 0;
-  }
   // Embed in small batches. Passing every paragraph at once builds one tensor
   // of (N · seqLen · dim); on a large file that overflowed int32 inside ONNX
   // Runtime ("Integer overflow" → an uncaught rejection). Batching keeps each
@@ -121,9 +140,9 @@ export async function embedFile(fileId: string, workspaceId: string, content: st
   try {
     for (let start = 0; start < chunks.length; start += BATCH) {
       const batch = chunks.slice(start, start + BATCH).map((c) => c.text);
-      const result = await pipe(batch, { pooling: 'mean', normalize: true });
+      const data = await embedTexts(batch);
       for (let i = 0; i < batch.length; i++) {
-        vectors.push(result.data.slice(i * DIM, (i + 1) * DIM));
+        vectors.push(data.slice(i * DIM, (i + 1) * DIM));
       }
     }
   } catch (err) {
@@ -149,10 +168,9 @@ export async function embedFile(fileId: string, workspaceId: string, content: st
 /** Embed a single query string (for search) — returns the unit vector.
  *  Caps the query length so an oversized input can't overflow the model. */
 export async function embedQuery(query: string): Promise<Float32Array> {
-  const pipe = await getPipeline();
   const text = query.length > 600 ? query.slice(0, 600) : query;
-  const result = await pipe(text, { pooling: 'mean', normalize: true });
-  return new Float32Array(result.data.slice(0, DIM));
+  const data = await embedTexts([text]);
+  return new Float32Array(data.slice(0, DIM));
 }
 
 export interface SimilarityHit {
@@ -216,15 +234,7 @@ export async function relatedToParagraph(
   return searchEmbeddings(workspaceId, queryVec, { topK, excludeFileId: fileId });
 }
 
-/** Drop every embedding for a file (used when the file is deleted). */
-export async function deleteEmbeddingsForFile(fileId: string): Promise<void> {
-  await db.embeddings.where('fileId').equals(fileId).delete();
-}
 
-/** Drop every embedding for a workspace (used when the workspace is deleted). */
-export async function deleteEmbeddingsForWorkspace(workspaceId: string): Promise<void> {
-  await db.embeddings.where('workspaceId').equals(workspaceId).delete();
-}
 
 /**
  * Background-embed every file in the workspace that doesn't yet have

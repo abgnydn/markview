@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { X, Pencil } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -37,16 +37,23 @@ export function WorkspaceTabs() {
   // #12 Save dot pulse — when a file save lands, briefly flag the
   // active workspace tab so the CSS animation runs. 800ms then clear.
   const [savedPulseWsId, setSavedPulseWsId] = useState<string | null>(null);
+  const pulseTimerRef = useRef<number | null>(null);
   useEffect(() => {
     const onSaved = () => {
       const wsId = useWorkspaceStore.getState().activeWorkspaceId;
       if (!wsId) return;
       setSavedPulseWsId(wsId);
-      const t = window.setTimeout(() => setSavedPulseWsId(null), 900);
-      return () => window.clearTimeout(t);
+      // An event handler's return value is discarded — the timer must be
+      // tracked in a ref so back-to-back saves restart the pulse instead
+      // of the first timeout cutting the second pulse short.
+      if (pulseTimerRef.current !== null) window.clearTimeout(pulseTimerRef.current);
+      pulseTimerRef.current = window.setTimeout(() => setSavedPulseWsId(null), 900);
     };
     window.addEventListener('markview:file-saved', onSaved);
-    return () => window.removeEventListener('markview:file-saved', onSaved);
+    return () => {
+      window.removeEventListener('markview:file-saved', onSaved);
+      if (pulseTimerRef.current !== null) window.clearTimeout(pulseTimerRef.current);
+    };
   }, []);
 
   if (workspaces.length <= 1) return null;
@@ -80,7 +87,9 @@ export function WorkspaceTabs() {
     if (editingId) return;
     setDragIndex(index);
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', String(index));
+    // Typed payload so a tab dropped on the sidebar (or vice versa)
+    // can't be mistaken for a file-reorder index.
+    e.dataTransfer.setData('application/x-markview-tab', String(index));
     (e.currentTarget as HTMLElement).style.opacity = '0.4';
   };
 
@@ -129,7 +138,8 @@ export function WorkspaceTabs() {
       setDropIndex(null);
       return;
     }
-    const fromIndex = Number(e.dataTransfer.getData('text/plain'));
+    const raw = e.dataTransfer.getData('application/x-markview-tab');
+    const fromIndex = raw === '' ? NaN : Number(raw);
     dragCounter.current = 0;
     setDragIndex(null);
     setDropIndex(null);
@@ -162,12 +172,37 @@ export function WorkspaceTabs() {
   return (
     <>
       <div className="workspace-tabs">
-      <div className="workspace-tabs-scroll">
+      <div className="workspace-tabs-scroll" role="tablist" aria-label="Workspaces">
         {workspaces.map((ws, index) => (
           <div
             key={ws.id}
             className={`workspace-tab${ws.id === activeWorkspaceId ? ' workspace-tab-active' : ''}${dragIndex === index ? ' workspace-tab-dragging' : ''}${dropIndex === index && dragIndex !== index ? ' workspace-tab-drop-target' : ''}${fileDropWsId === ws.id ? ' workspace-tab-file-drop' : ''}${savedPulseWsId === ws.id ? ' ws-tab-saved-pulse' : ''}`}
             onClick={() => switchWorkspace(ws.id)}
+            // Keyboard parity: the tab used to be a bare div while its
+            // inner Rename/Close buttons WERE tabbable — a keyboard user
+            // could delete a workspace they couldn't switch to.
+            role="tab"
+            aria-selected={ws.id === activeWorkspaceId}
+            tabIndex={ws.id === activeWorkspaceId ? 0 : -1}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                void switchWorkspace(ws.id);
+              } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const next = workspaces[(index + (e.key === 'ArrowRight' ? 1 : workspaces.length - 1)) % workspaces.length];
+                if (next) {
+                  void switchWorkspace(next.id);
+                  // Move roving focus to the newly active tab. Capture the
+                  // tablist now — React nulls currentTarget after the
+                  // handler returns, before the rAF fires.
+                  const tablist = e.currentTarget.parentElement;
+                  requestAnimationFrame(() => {
+                    (tablist?.querySelector('[aria-selected="true"]') as HTMLElement | null)?.focus();
+                  });
+                }
+              }
+            }}
             title={`${ws.title} — ${ws.fileCount} files, ${formatSize(ws.totalSize)}\nDrop a file here to move it into this workspace.`}
             draggable={editingId !== ws.id}
             onDragStart={(e) => handleDragStart(e, index)}

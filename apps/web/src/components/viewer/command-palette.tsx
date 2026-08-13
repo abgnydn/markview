@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useThemeStore, type Atmosphere } from '@/stores/theme-store';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface Command {
   id: string;
@@ -22,6 +23,7 @@ interface Command {
  */
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
+  useFocusReturn(open);
   const [query, setQuery] = useState('');
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -34,11 +36,15 @@ export function CommandPalette() {
         setOpen((o) => !o);
       }
       if (e.key === 'Escape' && open) {
+        // Consume in capture phase so lower layers (editor overlay, graph
+        // view…) don't also close on the same keypress.
+        e.preventDefault();
+        e.stopPropagation();
         setOpen(false);
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
   }, [open]);
 
   useEffect(() => {
@@ -97,6 +103,11 @@ export function CommandPalette() {
         run: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: '\\' })),
       },
       {
+        id: 'browse-files',
+        label: 'Browse all workspaces & files',
+        run: () => window.dispatchEvent(new CustomEvent('markview:open-file-browser')),
+      },
+      {
         id: 'toggle-ai',
         label: 'Open AI chat',
         hint: '⌘J',
@@ -151,33 +162,44 @@ export function CommandPalette() {
       className="mv-palette-overlay"
       onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
     >
-      <div className="mv-palette">
+      <div className="mv-palette" role="dialog" aria-modal="true" aria-label="Command palette">
         <input
           ref={inputRef}
           className="mv-palette-input"
           placeholder="Run a command or jump to a file…"
+          aria-label="Run a command or jump to a file"
+          role="combobox"
+          aria-expanded="true"
+          aria-controls="mv-palette-listbox"
+          aria-activedescendant={filtered.length > 0 ? `mv-palette-opt-${activeIdx}` : undefined}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'ArrowDown') {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
               e.preventDefault();
-              setActiveIdx((i) => Math.min(i + 1, filtered.length - 1));
-            } else if (e.key === 'ArrowUp') {
-              e.preventDefault();
-              setActiveIdx((i) => Math.max(i - 1, 0));
+              setActiveIdx((i) => {
+                const next = e.key === 'ArrowDown' ? Math.min(i + 1, filtered.length - 1) : Math.max(i - 1, 0);
+                requestAnimationFrame(() => {
+                  document.getElementById(`mv-palette-opt-${next}`)?.scrollIntoView({ block: 'nearest' });
+                });
+                return next;
+              });
             } else if (e.key === 'Enter') {
               e.preventDefault();
               runActive();
             }
           }}
         />
-        <div className="mv-palette-list">
+        <div className="mv-palette-list" id="mv-palette-listbox" role="listbox">
           {filtered.length === 0 ? (
             <div className="mv-palette-item" style={{ opacity: 0.5 }}>no matches</div>
           ) : (
             filtered.map((cmd, i) => (
               <div
                 key={cmd.id}
+                id={`mv-palette-opt-${i}`}
+                role="option"
+                aria-selected={i === activeIdx}
                 className={`mv-palette-item${i === activeIdx ? ' mv-palette-item-active' : ''}`}
                 onMouseEnter={() => setActiveIdx(i)}
                 onClick={() => { cmd.run(); setOpen(false); }}

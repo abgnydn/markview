@@ -595,9 +595,22 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
         canvas.removeEventListener('click', onClick);
         window.removeEventListener('resize', resize);
         loop.stop();
-        geom.dispose(); mat.dispose(); paintTex.dispose(); depthTex?.dispose();
-        skyGeo.dispose(); skyMat.dispose();
-        waterMat?.dispose();
+        // Dispose EVERYTHING the scene holds — renderer.dispose() does not
+        // free geometries/materials/textures, and hand-listing them missed
+        // the 24 waypoint page textures, orb spheres, creatures, trail
+        // decals, and the water geometry (GPU leak per mount).
+        type Disposable = { dispose?: () => void };
+        type MatLike = Disposable & { map?: Disposable | null };
+        scene.traverse((obj) => {
+          const o = obj as { geometry?: Disposable; material?: MatLike | MatLike[] };
+          o.geometry?.dispose?.();
+          const mats = Array.isArray(o.material) ? o.material : o.material ? [o.material] : [];
+          for (const mm of mats) {
+            mm.map?.dispose?.();
+            mm.dispose?.();
+          }
+        });
+        paintTex.dispose(); depthTex?.dispose();
         renderer.dispose();
       };
     })().catch(() => { if (!cancelled) setStatus('error'); });

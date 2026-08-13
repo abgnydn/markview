@@ -4,23 +4,23 @@ _Synthesized from tags + conventional commits. No CHANGELOG.md in the repo yet._
 
 ## Tags
 
+- `desktop-v0.3.1`
 - `desktop-v0.3.0`
 - `desktop-v0.2.0`
 - `desktop-v0.1.4`
 - `desktop-v0.1.1`
-- `v1.0.1`
 
 ## Recent highlights
 
-- **feat**: feat(toolbar): consolidate secondary actions into a "More" menu (#105) — [`1d229c7`](https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96)
-- **fix**: fix(presentation): hide next-slide peek on laptop/middle screens — [`8961b01`](https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9)
-- **feat**: feat(atmosphere): lite mode — static painting, zero WebGL — [`bb9a9dd`](https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0)
-- **feat**: feat(presentation): responsive deck layout for narrow + touch screens — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
-- **fix**: fix(editor): paste, slide fill, html export, new-file menu, dropdown … — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
-- **feat**: feat(presentation): rebuild presentation mode into a full deck engine — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
-- **fix**: fix(deps): bump vitest 2→4 to clear the critical UI-server advisory — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
-- **feat**: feat(projects): 3d constellation route + per-slug & OG prerender — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
-- **fix**: fix(webgpu): particles were fully transparent — read alpha as a verte… — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
-- **fix**: fix(embeddings): batch model inputs to stop the ONNX integer-overflow… — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)
-- **fix**: fix: vermillion lede drop-cap + graceful WebGPU-particle fallback — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
-- **feat**: feat(world): aged-parchment page cards in the 3D world (not basic cards) — [`8bd448a`](https://github.com/abgnydn/markview/commit/8bd448a906b33402975340f1fa0fb888b6f028a4)
+- **fix**: fix(landing): center the install note and import label — [`11c007b`](https://github.com/abgnydn/markview/commit/11c007bf2bb392d3c7a91181c090f2746a7728d3)
+- **feat**: feat(desktop): Homebrew cask as the working macOS install path — [`216ffbc`](https://github.com/abgnydn/markview/commit/216ffbceb18565bd1714678f2d75265320a2dc60)
+- **fix**: fix(landing): tell macOS/Windows users how to open the unsigned builds — [`02ba0fa`](https://github.com/abgnydn/markview/commit/02ba0fafb2463d198fa5eb391b2b5bb7ed0c049f)
+- **feat**: feat(desktop): manual 'Check for updates' — [`54d5d5e`](https://github.com/abgnydn/markview/commit/54d5d5e78ac5461e7b10069138997a4e68cb0ae9)
+- **fix**: fix(history): stop pruning manual bookmarks — [`1f42195`](https://github.com/abgnydn/markview/commit/1f421959b47b1b5b1a69085f3a3ec5e774028b2b)
+- **fix**: fix(collab): give each room its own signaling Durable Object — [`917eebf`](https://github.com/abgnydn/markview/commit/917eebfb0d9f2fc7ac1f7e71133a30b1e3d05924)
+- **fix**: fix(render): task-list checkboxes were dead — enable in markup, deleg… — [`c18029b`](https://github.com/abgnydn/markview/commit/c18029b5166a5a68641958ee0ebc2d76439a0010)
+- **fix**: fix(routes): portfolio workspace pollution, honest privacy policy, fo… — [`bb2bd24`](https://github.com/abgnydn/markview/commit/bb2bd24d2771c8a5866bb25c37b81683630c85f5)
+- **fix**: fix(collab): share links that decrypt, worker DoS, guest UX — [`c74b87f`](https://github.com/abgnydn/markview/commit/c74b87f1c907524778bb0a37d4ce0ee33401da93)
+- **fix**: fix(export): code-safe RST/AsciiDoc, real math+diagrams+images in ren… — [`e2c48c4`](https://github.com/abgnydn/markview/commit/e2c48c473e167b320e9258ca926f9728daa74828)
+- **fix**: fix(features): presentation chord hijack + title injection, annotatio… — [`00d62a4`](https://github.com/abgnydn/markview/commit/00d62a4a3f2cac0ed9327613325df5a8b98d9bc8)
+- **fix**: fix(render): currency-mangling double KaTeX pass, mermaid slot drift,… — [`a5c7eb1`](https://github.com/abgnydn/markview/commit/a5c7eb1c26f835e8aa48e9a2ca1b1603971e0793)

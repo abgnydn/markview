@@ -10,7 +10,10 @@ export async function downloadAsPptx(
   theme: 'dark' | 'light'
 ): Promise<void> {
   const PptxGenJS = (await import('pptxgenjs')).default;
-  const html = await renderMarkdown(content);
+  // No toolbar wrapper — with it, language-tagged fences land in a
+  // <div class="code-block-wrapper"> and the generic text branch mushes
+  // the language label onto the code instead of hitting the <pre> branch.
+  const html = await renderMarkdown(content, { codeBlockToolbar: false });
   const title = filename.replace(/\.md$/i, '');
 
   const isDark = theme === 'dark';
@@ -35,6 +38,14 @@ export async function downloadAsPptx(
 
   Array.from(doc.body.children).forEach((el) => {
     const tag = el.tagName.toLowerCase();
+
+    // Match the presentation-mode convention (lib/markdown/slide-split.ts):
+    // a top-level `---` is an explicit slide boundary, not content.
+    if (tag === 'hr') {
+      if (currentSlide) slides.push(currentSlide);
+      currentSlide = null;
+      return;
+    }
 
     if (tag === 'h1' || tag === 'h2') {
       if (currentSlide) slides.push(currentSlide);
@@ -62,7 +73,16 @@ export async function downloadAsPptx(
       if (rows.length > 0) slide.tables.push(rows);
     } else if (tag === 'ul' || tag === 'ol') {
       el.querySelectorAll(':scope > li').forEach((li) => {
-        slide.content.push('• ' + (li.textContent || '').trim());
+        // Take the item's own text minus nested lists — raw textContent
+        // concatenates sub-items with no separator ("Item 1Sub aSub b").
+        const clone = li.cloneNode(true) as Element;
+        clone.querySelectorAll(':scope > ul, :scope > ol').forEach((n) => n.remove());
+        slide.content.push('• ' + (clone.textContent || '').trim());
+        li.querySelectorAll(':scope > ul > li, :scope > ol > li').forEach((sub) => {
+          const subClone = sub.cloneNode(true) as Element;
+          subClone.querySelectorAll(':scope > ul, :scope > ol').forEach((n) => n.remove());
+          slide.content.push('    – ' + (subClone.textContent || '').trim());
+        });
       });
     } else if (tag === 'pre') {
       const code = el.querySelector('code')?.textContent || el.textContent || '';

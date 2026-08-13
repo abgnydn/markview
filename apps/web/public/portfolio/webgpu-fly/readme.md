@@ -23,9 +23,13 @@
 
 You control a fly by firing real **descending neurons** in the
 [FlyWire](https://flywire.ai) connectome. The spike cascade propagates through
-the real wiring; the fly walks because the connectome says so. There is no
-scripted animation — every step you see is an LIF cascade through a real fly's
-brain map, into a real fly's spinal cord, driving a physically simulated body.
+the real wiring, into a real fly's spinal cord, and what comes out of the spine
+is a walking magnitude and a turn bias. Those two numbers modulate a hand-written
+tripod gait and — with the kinematic assist that ships on by default — are also
+written straight into the body's velocity. The connectome simulation is real and
+runs on the GPU every frame; the locomotion layered on top of it is an
+approximation, and every approximation and shortcut is inventoried in
+[`LIMITATIONS.md`](./LIMITATIONS.md).
 
 ---
 
@@ -36,9 +40,9 @@ brain map, into a real fly's spinal cord, driving a physically simulated body.
 **What this is**
 
 - A whole-animal *Drosophila* nervous system — brain, spinal cord, and body — running end-to-end in a browser tab on WebGPU, no install and no server.
-- Two real connectomes (FlyWire brain + Janelia MANC spine) simulated as leaky integrate-and-fire networks, one fused GPU dispatch per timestep.
-- A physically simulated fly body (TuragaLab flybody in MuJoCo/WASM) driven by the spine's motor neurons, with a retina feeding vision back into the brain.
-- A game with **replay-as-URL**: a shared link deterministically re-executes the identical neuron cascade against the same connectome.
+- Two real connectomes (FlyWire brain + Janelia MANC spine) simulated as leaky integrate-and-fire networks, with gather, integrate, threshold and reset fused into a single LIF kernel per timestep.
+- A physically simulated fly body (TuragaLab flybody in MuJoCo/WASM) driven by a hand-written tripod gait that the spine's motor output scales, with a retina feeding vision back into the brain.
+- A game with **replay-as-URL**: a shared link re-fires your keystrokes at the same simulation steps, so the identical neuron cascade re-runs against the same connectome and the same seeded target.
 
 </td>
 <td valign="top" width="33%">
@@ -47,7 +51,7 @@ brain map, into a real fly's spinal cord, driving a physically simulated body.
 
 - **Not a scientific simulator replacement.** NEST / Brian2 / NEURON are faster, biophysically detailed, and validated. For real fly-brain dynamics research, use those.
 - **Not biophysically detailed.** Neurons are LIF with a two-state alpha synapse — no ion channels, dendritic compartments, or neuromodulation.
-- **Not quantitatively validated** whole-brain. The dynamics check is qualitative (Kenyon-cell sparsity matches Shiu et al. 2024), not a cell-type-resolved rate match.
+- **Not quantitatively validated** whole-brain. The one dynamics check is Kenyon-cell sparsity in the canonical 5–15% band — and `w_syn` was tuned to land it there (`src/sim.ts:25-30`), so it is a calibration target, not an independent validation of Shiu et al. 2024.
 - **Not faster than the reference.** It runs *slower* than real time. The win is reachability, not throughput. See [`LIMITATIONS.md`](./LIMITATIONS.md).
 
 </td>
@@ -57,7 +61,7 @@ brain map, into a real fly's spinal cord, driving a physically simulated body.
 
 - **The curious public.** A real animal brain you can poke, with a 30-second time-to-first-spike and no setup.
 - **Educators.** Every key fires a named command neuron and you watch the consequence ripple to the legs — the connectome made tangible.
-- **Connectome / WebGPU folks.** A real ~140k-neuron LIF kernel benchmarked honestly in the browser, with the brain→spine→body path wired from real biology.
+- **Connectome / WebGPU folks.** A real ~140k-neuron LIF kernel benchmarked honestly in the browser, with the brain→spine path wired from real biology.
 - **Anyone who wants reproducibility.** Runs are URLs; a replay link is a verifiable brain trace, not a video.
 
 </td>
@@ -80,9 +84,12 @@ R DNg13    turning         F MDN      backward
                                                        M         science view
 ```
 
-Win → copy the replay URL. The recipient sees the **identical** simulation —
-deterministic seeded target + recorded keystrokes against the same connectome.
-Daily-challenge mode uses the same target seed for everyone on the same UTC day.
+Win → copy the replay URL. The recipient's brain re-runs the **identical**
+cascade — your keystrokes replayed at the same simulation steps, against the
+same connectome and the same seeded target. The body trajectory can drift: the
+physics advances a fixed number of substeps per animation frame, so it depends
+on display refresh rate. Daily-challenge mode uses the same target seed for
+everyone on the same UTC day.
 
 The landing page at [`/`](https://webgpu-fly.pages.dev) explains the project in
 plain language; the simulator itself lives at
@@ -100,14 +107,36 @@ mode, ARS evolver, raw spike-rate log.
 | **Spine** | [Janelia MANC](https://www.janelia.org/project-team/flyem/manc-connectome) connectome (Takemura et al. 2024) | 23,188 VNC neurons, 5.2M edges, second WebGPU LIF instance |
 | **Body** | [TuragaLab/flybody](https://github.com/TuragaLab/flybody) MJCF (Vaxenburg et al. 2025, *Nature*) | 67 bodies, 111 actuators, real physics in MuJoCo/WASM |
 | **Eyes** | offscreen render-to-texture from fly head pose | 64×16 retinal sample fed to brain optic neurons |
-| **Walker** | trained RL policy ([Vaxenburg et al. 2025 Figshare](https://janelia.figshare.com/articles/dataset/25309105)) | LayerNormMLP, 741-dim obs → 59 actions, pure-TS forward pass, verified element-wise vs the published checkpoint |
+| **Walker** | trained RL policy ([Vaxenburg et al. 2025 Figshare](https://janelia.figshare.com/articles/dataset/25309105)) | LayerNormMLP, 741-dim obs → 59 actions, pure-TS forward pass. Translates the body under physics with the kinematic assist **off** — 2.004–2.021 cm per simulated second against a 2.0 cm/s command. It stays upright (+0.997) only with the pitch/roll damper on; with the damper off it capsizes and covers 0.068 cm/sim s. Checked element-wise against a numpy re-run of the same extracted weights (`tools/verify_walking_policy.py`) — that validates the port's arithmetic, not the assumed architecture against the original SavedModel |
 
 Brain → spine wiring is by **cell-type name match** (`DNa01` in the brain is the
 same neuron as `DNa01` in the VNC — brain side has the soma, VNC side the axon).
-VNC motor neurons drive the leg actuators. Wire-by-wire from real biology, no
-learned shortcuts in the brain→spine path. (Caveat: it's a name join across two
-*different* animals' connectomes, not a reconstructed synaptic bridge — see
+That path — sensory drive → brain LIF → named DNs → VNC LIF — is a real spike
+cascade across two real connectomes, with nothing learned or scripted in it.
+Below the spine it is an approximation: the VNC's 369 leg motor neurons are
+averaged into six leg-group means, and those become a walking magnitude and a
+turn bias (the forward/backward sign is not MANC's — it comes from the
+hand-wired synthetic spine in `src/vnc.ts`). Those two scalars scale a
+hand-written tripod CPG (`driveLegs`, `src/physics.ts`) that writes the leg
+actuators. The connectome scales that gait; it does not generate its rhythm, and
+the leg phase itself is `sin(sim_time · freq)`. (Caveat: it's a name join across two *different* animals'
+connectomes, not a reconstructed synaptic bridge — see
 [`LIMITATIONS.md`](./LIMITATIONS.md) §5.)
+
+The **trained RL walking policy** is a separate path, and its *translation* is
+earned: with the kinematic assist off nothing on that path writes the body's
+translational velocity, so the 2.004–2.021 cm per simulated second it covers
+against a 2.0 cm/s command comes from leg actuation and ground reaction, while a
+run with the policy never enabled travels 0.032 cm/sim s. Its *attitude* is not
+earned. A pitch/roll damper that sits outside the assist multiplies the body's
+pitch and roll angular velocity by 0.85 every substep (`src/physics.ts:663-666`,
+×0.039 per control tick); with that damper off the same policy capsizes and
+covers 0.068 cm/sim s. So the +0.997 uprightness is the damper's doing, not the
+policy's.
+That path also bypasses the brain and the spine entirely — it is Vaxenburg et
+al.'s published policy walking the fly, not the connectome.
+[`LIMITATIONS.md`](./LIMITATIONS.md) §4.1 has the damper A/B, the numbers, and
+the four port defects that had to be fixed to get there.
 
 ---
 
@@ -142,16 +171,19 @@ Roughly the same idea as:
 Differentiators: **(1)** a browser-tab game with a URL — the others need Python,
 a GPU, and a setup hour; **(2)** all three layers (brain + spine + body) wired
 together, not just brain+body; **(3)** replay-as-URL — every shared run is a
-deterministic re-execution anyone can verify, study, or remix.
+re-executable brain trace, not a video.
 
 ---
 
 ## ⏱️ Quickstart (local dev)
 
 ```bash
+# One-time Python env (numpy/pandas/pyarrow for the connectomes, TF for the policy)
+uv venv .venv-tf && uv pip install --python .venv-tf/bin/python numpy pandas pyarrow tensorflow
+
 # Brain (~855 MB FlyWire pull from Zenodo)
 bash tools/download_data.sh
-python3 tools/build_csr.py                    # → public/brain.bin (120 MB)
+.venv-tf/bin/python tools/build_csr.py        # → public/brain.bin (120 MB)
 
 # Spine (~88 MB MANC pull from Janelia GCS)
 bash tools/download_manc.sh
@@ -161,7 +193,10 @@ bash tools/download_manc.sh
 bash tools/download_flybody_policies.sh
 .venv-tf/bin/python tools/extract_walking_policy.py
 
-# TuragaLab flybody MJCF + 85 OBJ meshes (~149 MB) — see public/flybody/meshes.txt
+# TuragaLab flybody MJCF + 85 OBJ meshes (~149 MB) — not redistributed here (Apache-2.0, see NOTICE)
+git clone --depth 1 https://github.com/TuragaLab/flybody /tmp/flybody
+cp /tmp/flybody/flybody/fruitfly/assets/*.obj public/flybody/
+.venv-tf/bin/python tools/bake_flybody_bundle.py   # → public/flybody.bundle.bin
 
 npm install
 npm run dev          # http://localhost:8766

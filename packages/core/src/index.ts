@@ -18,7 +18,7 @@
  * @packageDocumentation
  */
 
-export { renderMarkdown, type RenderOptions } from './pipeline.js';
+export { renderMarkdown, createCodeBlockWrapper, decodeHtmlEntities, DEFAULT_SHIKI_LANGS, type RenderOptions } from './pipeline.js';
 export { parseFrontmatter, type FrontmatterResult } from './frontmatter.js';
 export { extractHeadings, type TocHeading } from './headings.js';
 export { searchFiles, type SearchResult } from './search.js';

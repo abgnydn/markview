@@ -1,7 +1,7 @@
 version: 2
 updates:
   # Root workspace
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -15,7 +15,7 @@ updates:
           - "@changesets/*"
 
   # Web app (Vite + React SPA)
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/apps/web"
     schedule:
       interval: "weekly"
@@ -44,14 +44,14 @@ updates:
           - "@vitejs/*"
 
   # Share worker (Cloudflare Worker)
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/apps/share-worker"
     schedule:
       interval: "weekly"
       day: "monday"
 
   # Core package (markdown engine)
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/packages/core"
     schedule:
       interval: "weekly"

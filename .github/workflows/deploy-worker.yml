@@ -1,0 +1,58 @@
+name: Deploy share-worker → Cloudflare
+
+# Ships the two Cloudflare Workers (markview-share renderer + markview-yjs
+# signaling DO) whenever their source changes on main. Before this, the
+# only way they reached production was `bun run deploy` from a laptop — so
+# a worker fix could silently never deploy (same class of gap the nightly
+# portfolio sync had).
+#
+# Requires repo secrets CF_API_TOKEN + CF_ACCOUNT_ID. NOTE: the token must
+# carry the "Workers Scripts:Edit" permission (the Pages-only token used by
+# deploy.yml is not enough) — use the "Edit Cloudflare Workers" template,
+# or add Workers Scripts:Edit to the existing token.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/share-worker/**"
+      - ".github/workflows/deploy-worker.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Deploy share renderer
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: apps/share-worker
+          command: deploy --env share
+
+      - name: Deploy yjs signaling
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          workingDirectory: apps/share-worker
+          command: deploy --env yjs

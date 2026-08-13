@@ -175,7 +175,10 @@ export function SplatWorld({ src, onClose }: SplatWorldProps) {
         splat.dispose();
         renderer.dispose();
       };
-    })();
+      // Surface init failures (e.g. WebGLRenderer throwing where WebGL2 is
+      // unavailable) — without this the promise rejects unhandled and the
+      // user is stuck on the "Lifting the painting…" spinner forever.
+    })().catch(() => { if (!cancelled) setStatus('error'); });
 
     return () => {
       cancelled = true;

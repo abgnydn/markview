@@ -1,4 +1,4 @@
-const CACHE_NAME = 'markview-v4';
+const CACHE_NAME = 'markview-v5';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -46,9 +46,29 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match('/'))
     );
   } else {
+    // Cache-first with RUNTIME CACHING: hashed chunks are immutable, so
+    // store each successful response. Without the put(), only the shell
+    // was ever cached and offline loads died on their first chunk request
+    // — "offline-ready" in name only.
     event.respondWith(
       caches.match(event.request).then((cached) => {
-        return cached || fetch(event.request).catch((err) => {
+        return cached || fetch(event.request).then((res) => {
+          if (res.ok) {
+            // Bounded runtime cache: hashed /assets are always worth
+            // keeping (immutable), everything else only under 2 MB with a
+            // known size — an unbounded put() of every ok response grew
+            // storage forever on long-lived installs (full-res paintings,
+            // OG cards, model shards…).
+            const path = new URL(event.request.url).pathname;
+            const len = Number(res.headers.get('content-length') || 0);
+            const cacheable = path.startsWith('/assets/') || (len > 0 && len < 2 * 1024 * 1024);
+            if (cacheable) {
+              const copy = res.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+            }
+          }
+          return res;
+        }).catch((err) => {
           console.error('[SW] Fetch failed:', event.request.url, err);
           throw err;
         });

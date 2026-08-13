@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # to dispatch deploy.yml after the bot push
 
 concurrency:
   group: sync-portfolio
@@ -21,9 +22,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
@@ -32,14 +33,44 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node apps/web/scripts/sync-portfolio.mjs
 
+      - name: Maintenance radar → job summary
+        run: |
+          F=apps/web/public/portfolio/index.json
+          {
+            echo "## 🚦 Portfolio maintenance radar"
+            echo ""
+            echo "_$(jq -r .generated_at "$F") · $(jq -r .project_count "$F") projects_"
+            echo ""
+            echo "| signal | projects |"
+            echo "|---|---|"
+            echo "| 🔴 live URL down | $(jq -rc '.health.live_down' "$F") |"
+            echo "| 🟡 open issues | $(jq -rc '.health.open_issues' "$F") |"
+            echo "| 📄 DOI, no CITATION.cff | $(jq -rc '.health.doi_no_citation' "$F") |"
+            echo "| 💤 stale > 60d | $(jq -rc '.health.stale_60d' "$F") |"
+            echo "| 🏷️ untagged | $(jq -rc '.health.untagged' "$F") |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Commit changes if any
+        id: commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add apps/web/public/portfolio
           if git diff --staged --quiet; then
             echo "no portfolio changes — skipping commit"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "chore(portfolio): daily sync $(date -u +%Y-%m-%d)"
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # Pushes made with GITHUB_TOKEN don't fire push-triggered workflows,
+      # so the site would stay frozen on the last human deploy. Dispatch
+      # deploy.yml explicitly (workflow_dispatch is exempt from that rule).
+      - name: Trigger deploy
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run deploy.yml --ref main

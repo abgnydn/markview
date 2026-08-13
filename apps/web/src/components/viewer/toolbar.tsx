@@ -1,6 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles, FilePlus, Upload } from 'lucide-react';
+import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles, FilePlus, Upload, RefreshCw } from 'lucide-react';
+import { isTauri } from '@/lib/tauri/tauri-bridge';
 import { useThemeStore } from '@/stores/theme-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useWorkspaceStore } from '@/stores/workspace-store';
@@ -60,8 +61,26 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
         setShowAddMenu(false);
       }
     };
-    if (showOverflow || showThemePicker || showModePicker || showAddMenu) document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    // Esc closes whichever dropdown is open and hands focus back to its
+    // trigger button — they previously only closed on outside mousedown,
+    // stranding keyboard users inside an open menu.
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const restore = (ref: React.RefObject<HTMLDivElement | null>) =>
+        ref.current?.querySelector<HTMLButtonElement>('button[aria-expanded], button')?.focus();
+      if (showOverflow) { e.preventDefault(); e.stopPropagation(); setShowOverflow(false); restore(overflowRef); }
+      else if (showThemePicker) { e.preventDefault(); e.stopPropagation(); setShowThemePicker(false); restore(themePickerRef); }
+      else if (showModePicker) { e.preventDefault(); e.stopPropagation(); setShowModePicker(false); restore(modePickerRef); }
+      else if (showAddMenu) { e.preventDefault(); e.stopPropagation(); setShowAddMenu(false); restore(addMenuRef); }
+    };
+    if (showOverflow || showThemePicker || showModePicker || showAddMenu) {
+      document.addEventListener('mousedown', handleClick);
+      window.addEventListener('keydown', handleKey, true);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      window.removeEventListener('keydown', handleKey, true);
+    };
   }, [showOverflow, showThemePicker, showModePicker, showAddMenu]);
 
 
@@ -119,6 +138,7 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                 window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
               }}
               title="Search (⌘K)"
+              data-keyhint="⌘K"
             >
               <Search size={18} />
             </button>
@@ -126,6 +146,7 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
               className="toolbar-btn toolbar-desktop-only"
               onClick={onTogglePresentation}
               title="Presentation mode (P)"
+              data-keyhint="P"
             >
               <Presentation size={18} />
             </button>
@@ -197,9 +218,11 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                     <hr className="toolbar-overflow-sep" />
                   </div>
 
-                  <button className="toolbar-overflow-item" onClick={() => { onToggleEditor?.(); setShowOverflow(false); }}>
-                    <Edit3 size={16} /> Edit file
-                  </button>
+                  {onToggleEditor && (
+                    <button className="toolbar-overflow-item" data-keyhint="E" onClick={() => { onToggleEditor(); setShowOverflow(false); }}>
+                      <Edit3 size={16} /> Edit file
+                    </button>
+                  )}
                   <button className="toolbar-overflow-item" onClick={() => { onToggleSplitView?.(); setShowOverflow(false); }}>
                     <Columns2 size={16} /> Split view
                   </button>
@@ -213,6 +236,19 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                   {onToggleVault && (
                     <button className="toolbar-overflow-item" onClick={() => { onToggleVault?.(); setShowOverflow(false); }}>
                       <Network size={16} /> Graph view
+                    </button>
+                  )}
+                  {/* Desktop only, and only on click — the app never checks
+                      for updates on its own (see lib/tauri/update-check). */}
+                  {isTauri() && (
+                    <button
+                      className="toolbar-overflow-item"
+                      onClick={() => {
+                        setShowOverflow(false);
+                        void import('@/lib/tauri/update-check').then((m) => m.checkForUpdates());
+                      }}
+                    >
+                      <RefreshCw size={16} /> Check for updates
                     </button>
                   )}
                   <hr className="toolbar-overflow-sep" />
@@ -301,8 +337,12 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
         cancelText="Cancel"
         tone="danger"
         onConfirm={() => {
-          workspaces.forEach(ws => deleteWorkspace(ws.id));
-          if (onGoHome) onGoHome();
+          // Sequential — parallel deletes race each other's post-delete
+          // switchWorkspace and can resurrect a deleted workspace id.
+          void (async () => {
+            for (const ws of workspaces) await deleteWorkspace(ws.id);
+            if (onGoHome) onGoHome();
+          })();
           setShowClearConfirm(false);
           setShowOverflow(false);
         }}

@@ -1157,6 +1157,14 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .footnote-
   color: #b0392a !important;
   font-weight: 600;
 }
+/* Interactive task checkboxes — the renderer strips GFM's `disabled`
+   attribute when toggling is wired up, so show they are clickable.
+   (Was an inline style set per-element; that didn't survive React
+   re-applying the rendered HTML.) */
+.markdown-content li.task-list-item input[type='checkbox']:not([disabled]) {
+  cursor: pointer;
+}
+
 /* (26) Task checkboxes — vermillion accent on paper. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content input[type='checkbox'] {
   accent-color: #b0392a;
@@ -1324,13 +1332,6 @@ html[data-atmosphere]:not([data-atmosphere='none']) .table-of-contents,
 html[data-atmosphere]:not([data-atmosphere='none']) .toc {
   border-left: 1px solid rgba(176, 57, 42, 0.3);
 }
-/* (51) Footnote margin notes / popovers — ink on a paper card. */
-html[data-atmosphere]:not([data-atmosphere='none']) .mv-footnote-pop,
-html[data-atmosphere]:not([data-atmosphere='none']) .mv-margin-note {
-  background: linear-gradient(180deg, #f3ead7, #ece1ca) !important;
-  color: #2c2418 !important;
-  border: 1px solid rgba(80, 62, 38, 0.2) !important;
-}
 /* (52) Wide tables / code never break the paper — they scroll within. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content pre,
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .table-wrap,
@@ -1392,16 +1393,55 @@ html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-tok-m
 /* (68) Format bar reads on paper. */
 html[data-atmosphere]:not([data-atmosphere='none']) .editor-format-bar { background: rgba(245, 238, 224, 0.7) !important; }
 
+/* Inline rename inputs (sidebar file rows + workspace title). */
+.sidebar-rename-input {
+  font: inherit;
+  color: var(--text-primary, inherit);
+  background: var(--bg-secondary, rgba(128, 128, 128, 0.12));
+  border: 1px solid var(--zen-accent, #9b7dff);
+  border-radius: 3px;
+  padding: 1px 6px;
+  min-width: 0;
+  width: 100%;
+  outline: none;
+}
+
 /* ── Accessibility ────────────────────────────────────────────── */
+/* Visually-hidden live/status text for screen readers. */
+.mv-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 /* (69) Visible keyboard focus ring in the appearance ink. */
 .markdown-content a:focus-visible,
 .toolbar-btn:focus-visible,
 button:focus-visible,
+/* div-based interactive rows (sidebar files/folders, workspace tabs) —
+   tabbing through them showed no ring at all. */
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+.workspace-tab:focus-visible,
 .cm-format-bubble-btn:focus-visible {
   outline: 2px solid var(--zen-accent) !important;
   outline-offset: 2px;
   border-radius: 3px;
 }
+/* (69b) Reduced motion — stop the pulsing carets the CM theme applies
+   from JS (the CSS-declared mv-caret-breath is already gated; the editor
+   theme's zen-caret-breath and the collab peer-cursor pulse were not). */
+@media (prefers-reduced-motion: reduce) {
+  .cm-cursor, .cm-cursor-primary,
+  .cm-ySelectionCaret, .zen-peer-caret {
+    animation: none !important;
+    box-shadow: none !important;
+  }
+}
+
 /* (70) Respect prefers-contrast — drop the halo, deepen the ink. */
 @media (prefers-contrast: more) {
   html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content { color: #000 !important; }
@@ -1965,11 +2005,6 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
   color: var(--zen-fg) !important;
 }
 
-/* Cursor (renderer view) — fluid, slow blink */
-@keyframes zen-blink {
-  0%, 50%  { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
 
 /* Editor caret — a slow breath rather than a hard blink. Pairs with the
    box-shadow glow set in markdown-editor.tsx's CM theme. */
@@ -3244,38 +3279,6 @@ body::after {
   transform: translate(-50%, 0);
 }
 
-/* #7 Sticky H1 mini-title — a 12px small-caps whisper-bar that appears
-   at the top of the page after the user scrolls past the H1. Component
-   (sticky-title.tsx) renders it; CSS handles the visual + transition. */
-.sticky-title {
-  position: fixed;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-8px);
-  z-index: 4;
-  pointer-events: none;
-  font-family: var(--zen-serif, Georgia, serif);
-  font-size: 12px;
-  font-variant: small-caps;
-  letter-spacing: 0.14em;
-  color: var(--zen-soft, rgba(255,255,255,0.55));
-  background: var(--zen-bg, rgba(11, 10, 13, 0.72));
-  padding: 6px 14px;
-  border-radius: 999px;
-  opacity: 0;
-  transition: opacity 220ms ease, transform 220ms ease;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  max-width: 60vw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.sticky-title.sticky-title-show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
 /* #3 Paragraph scroll-reveal — soft settle on entry. Initial state is
    ALWAYS readable (opacity 1) — only translateY lifts. This way if the
    observer never fires (mid-render, JS disabled, route quirk) the page
@@ -3565,16 +3568,6 @@ html { transition: background-color 4s ease; }
   .viewer-main::after { display: none; }
 }
 
-/* N10 Word-count milestone pulse — class added by markdown-editor for
-   800ms after a milestone (500, 1000, 2500 words) is crossed. */
-@keyframes mv-wc-pulse {
-  0%, 100% { color: var(--zen-muted, rgba(255,255,255,0.4)); transform: scale(1); }
-  50%      { color: var(--zen-accent, #b9a4ff); transform: scale(1.08); }
-}
-.editor-wordcount.mv-wc-pulse {
-  animation: mv-wc-pulse 800ms ease-out;
-  display: inline-block;
-}
 
 /* N9 Autosave whisper — tiny mono "saved · just now" bottom-right that
    appears 3s after the last keystroke. Component (autosave-whisper.tsx)
@@ -3629,34 +3622,6 @@ html { transition: background-color 4s ease; }
 body.mv-keyhint-show [data-keyhint]::after {
   opacity: 1;
   transform: translateY(-50%) scale(1);
-}
-
-/* N3 Inline footnote popovers — clicking [1] opens a small floating
-   card next to the marker. Renderer adds .mv-fn-marker class to footnote
-   refs and the click handler positions .mv-fn-popover. */
-.mv-fn-popover {
-  position: fixed;
-  z-index: 1001;
-  max-width: 360px;
-  padding: 10px 12px;
-  font-family: var(--zen-serif, Georgia, serif);
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: var(--zen-soft, rgba(255, 255, 255, 0.78));
-  background: var(--zen-bg, rgba(11, 10, 13, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity 180ms ease, transform 180ms ease;
-  pointer-events: auto;
-}
-.mv-fn-popover.mv-fn-popover-show {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* B1 Margin footnotes — wide-viewport variant of the footnote popover.
@@ -3899,42 +3864,6 @@ body.mv-keyhint-show [data-keyhint]::after {
   animation: mv-fade-in 280ms ease both;
   font-family: var(--zen-serif, Georgia, serif);
 }
-.mv-cards-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 28px 0;
-  font-family: var(--zen-mono, ui-monospace, monospace);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--zen-muted, rgba(255, 255, 255, 0.45));
-}
-.mv-cards-file { color: var(--zen-soft, rgba(255, 255, 255, 0.78)); }
-.mv-cards-spacer { flex: 1; }
-.mv-cards-close {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--zen-muted, rgba(255, 255, 255, 0.55));
-  font: inherit;
-  padding: 5px 11px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color 180ms ease, border-color 180ms ease;
-}
-.mv-cards-close:hover {
-  color: var(--zen-fg, rgba(255, 255, 255, 0.95));
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
-.mv-cards-stage {
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4vh 6vw;
-}
 .mv-card {
   width: min(720px, 100%);
   max-height: 80vh;
@@ -3949,8 +3878,6 @@ body.mv-keyhint-show [data-keyhint]::after {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
-.mv-cards-body { color: var(--zen-fg, rgba(255, 255, 255, 0.92)); }
-.mv-cards-body h2:first-child { margin-top: 0; }
 
 /* Ken Burns — cross-fade + 0.97→1 scale; lateral slide hints direction. */
 @keyframes mv-card-in-right {
@@ -3965,83 +3892,12 @@ body.mv-keyhint-show [data-keyhint]::after {
   .mv-card-enter-right { animation: mv-card-in-right 520ms cubic-bezier(0.22, 1, 0.36, 1) both; }
   .mv-card-enter-left  { animation: mv-card-in-left  520ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 }
-
-.mv-cards-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 14px 28px calc(env(safe-area-inset-bottom, 0px) + 18px);
-}
-.mv-cards-arrow {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--zen-soft, rgba(255, 255, 255, 0.7));
-  font-size: 18px;
-  line-height: 1;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 180ms ease, border-color 180ms ease, opacity 180ms ease;
-}
-.mv-cards-arrow:hover { color: var(--zen-fg); border-color: rgba(255, 255, 255, 0.35); }
-.mv-cards-arrow:disabled { opacity: 0.25; cursor: default; }
-.mv-cards-pips { display: flex; gap: 8px; align-items: center; }
-.mv-cards-pip {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: background 180ms ease, transform 180ms ease;
-}
-.mv-cards-pip:hover { background: rgba(255, 255, 255, 0.5); transform: scale(1.4); }
-.mv-cards-pip.is-current {
-  background: var(--zen-accent, #b9a4ff);
-  transform: scale(1.6);
-  box-shadow: 0 0 8px rgba(185, 164, 255, 0.5);
-}
-.mv-cards-counter {
-  font-family: var(--zen-mono, ui-monospace, monospace);
-  font-size: 10.5px;
-  letter-spacing: 0.16em;
-  color: var(--zen-muted, rgba(255, 255, 255, 0.4));
-  margin: 0 6px;
-  min-width: 56px;
-  text-align: center;
-}
-.mv-cards-counter-sep { margin: 0 4px; opacity: 0.5; }
-
-.mv-cards-empty {
-  margin: auto;
-  font-family: var(--zen-serif, Georgia, serif);
-  font-style: italic;
-  color: var(--zen-muted, rgba(255, 255, 255, 0.5));
-  font-size: 15px;
-}
-
-/* Light theme variant */
-:root:not(.dark):not([data-theme='dark']) .mv-cards-overlay {
-  background: linear-gradient(180deg,
-    rgba(250, 246, 238, 0.7) 0%,
-    rgba(250, 246, 238, 0.4) 40%,
-    rgba(250, 246, 238, 0.7) 100%);
-}
 :root:not(.dark):not([data-theme='dark']) .mv-card {
   background: linear-gradient(180deg,
     rgba(255, 252, 246, 0.92) 0%,
     rgba(250, 246, 238, 0.92) 100%);
   border-color: rgba(40, 30, 20, 0.10);
   box-shadow: 0 28px 64px rgba(40, 30, 20, 0.20);
-}
-:root:not(.dark):not([data-theme='dark']) .mv-cards-body {
-  color: var(--zen-fg);
 }
 
 /* Mobile — narrower padding, smaller card. */
@@ -4069,9 +3925,6 @@ body.mv-spotlight .markdown-content blockquote,
 body.mv-spotlight .markdown-content pre {
   transition: opacity 320ms ease;
   opacity: 0.18;
-}
-body.mv-spotlight .markdown-content .mv-spotlight-focus {
-  opacity: 1;
 }
 
 /* R6 — Magazine lead-in. The H1 + first paragraph render slightly
@@ -4245,37 +4098,6 @@ html.mv-vertical .markdown-content table {
 }
 .mv-heading-anchor:hover { opacity: 1 !important; color: var(--zen-accent, #b9a4ff); }
 
-/* R12 — Reading depth dial. Slim vertical thermometer bottom-right
-   showing how deep in the doc you are. Filled portion uses the
-   atmosphere accent color. */
-.mv-depth-dial {
-  position: fixed;
-  right: calc(env(safe-area-inset-right, 0px) + 14px);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 14vh);
-  z-index: 4;
-  width: 3px;
-  height: 26vh;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 2px;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 320ms ease;
-  pointer-events: none;
-}
-body:hover .mv-depth-dial { opacity: 0.7; }
-.mv-depth-dial-fill {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(180deg,
-    rgba(185, 164, 255, 0) 0%,
-    rgba(185, 164, 255, 0.55) 60%,
-    rgba(185, 164, 255, 0.95) 100%);
-  border-radius: 2px;
-  transition: height 140ms ease;
-}
-
 /* R14 — External link tooltip with favicon. Hovering an external link
    shows a tiny mono pill below with host + favicon image. */
 .mv-link-tooltip {
@@ -4309,21 +4131,6 @@ body:hover .mv-depth-dial { opacity: 0.7; }
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
-}
-
-/* R9 — Live heading breadcrumb. Extends the existing .sticky-title
-   pattern: instead of a single H1 mini-title, render H1 › H2 › H3 as
-   the user scrolls deeper. Pipe separator in mono. */
-.sticky-title-crumbs {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.sticky-title-sep {
-  color: var(--zen-muted, rgba(255, 255, 255, 0.3));
-  font-family: var(--zen-mono, ui-monospace, monospace);
-  font-size: 10px;
-  opacity: 0.6;
 }
 
 /* R2 — Mini-map. Sits under the TOC in the right rail. Hidden on
@@ -4387,20 +4194,6 @@ body:hover .mv-depth-dial { opacity: 0.7; }
   color: var(--zen-muted, rgba(255, 255, 255, 0.5));
   width: 80px;
   text-align: right;
-}
-
-/* R18 — Cursor trail. Per-character ghost decorations in the editor
-   that fade out over 200ms. Class .mv-cursor-ghost applied to spans
-   inserted by the CodeMirror decoration. */
-@keyframes mv-cursor-ghost-fade {
-  from { opacity: 0.5; }
-  to   { opacity: 0; }
-}
-.mv-cursor-ghost {
-  display: inline-block;
-  color: var(--zen-accent, #b9a4ff);
-  animation: mv-cursor-ghost-fade 220ms ease-out forwards;
-  pointer-events: none;
 }
 
 /* R19 — Mini presence avatars. Cluster of italic-serif initials above
@@ -4689,65 +4482,6 @@ body.mv-fast-scroll .atmosphere-cursor-canvas { opacity: 0.4; }
   letter-spacing: 0.12em;
   color: var(--zen-muted, rgba(255, 255, 255, 0.35));
   text-transform: uppercase;
-}
-
-/* N15 Atmosphere thumbnail preview — fades in on hover of the
-   atmosphere-picker option. .atm-thumb is positioned absolutely. */
-.atm-thumb {
-  position: fixed;
-  z-index: 999;
-  width: 240px;
-  height: 150px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  transition: opacity 240ms ease;
-  pointer-events: none;
-}
-.atm-thumb.atm-thumb-show { opacity: 1; }
-
-/* N18 Activity log drawer (⌘⇧H) — flush-right sheet listing recent
-   events (save / share / export / switch). Quieter than toasts. */
-.mv-activity {
-  position: fixed;
-  top: 0; right: 0; bottom: 0;
-  width: min(340px, 88vw);
-  z-index: 7;
-  background: var(--zen-bg-deep, rgba(7, 6, 9, 0.95));
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 22px 22px;
-  overflow-y: auto;
-  transform: translateX(100%);
-  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-.mv-activity.mv-activity-show { transform: translateX(0); }
-.mv-activity-header {
-  font-family: var(--zen-mono, ui-monospace, monospace);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--zen-accent, #b9a4ff);
-  margin-bottom: 18px;
-}
-.mv-activity-item {
-  display: grid;
-  grid-template-columns: 60px 1fr;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  font-family: var(--zen-serif, Georgia, serif);
-  font-size: 13px;
-  color: var(--zen-soft, rgba(255, 255, 255, 0.68));
-}
-.mv-activity-time {
-  font-family: var(--zen-mono, ui-monospace, monospace);
-  font-size: 10.5px;
-  color: var(--zen-muted, rgba(255, 255, 255, 0.35));
-  letter-spacing: 0.08em;
 }
 
 /* ────────────────────────────────────────────────────────────────────────

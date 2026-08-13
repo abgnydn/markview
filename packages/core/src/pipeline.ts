@@ -129,7 +129,8 @@ const remarkAlerts: Plugin<[], Root> = () => {
       const data = node.data || (node.data = {});
       data.hName = 'div';
       data.hProperties = {
-        className: `gh-alert ${config.className}`,
+        // hast types (bumped transitively) now require className as a list.
+        className: ['gh-alert', config.className],
         'data-alert-type': alertType.toLowerCase(),
       };
 
@@ -146,7 +147,7 @@ const remarkAlerts: Plugin<[], Root> = () => {
 
 // ---- Code Block Wrapper ----
 
-function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string): string {
+export function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string): string {
   const escapedCode = rawCode
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -170,7 +171,7 @@ function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string):
 
 // ---- HTML Entity Helpers ----
 
-function decodeHtmlEntities(code: string): string {
+export function decodeHtmlEntities(code: string): string {
   // Decode hex entities FIRST, then named entities, &amp; LAST to prevent double-decoding
   return code
     .replace(/&#x3C;/g, '<')
@@ -188,7 +189,7 @@ let shikiHighlighter: unknown | null = null;
 let shikiPromise: Promise<void> | null = null;
 let shikiFailed = false;
 
-const DEFAULT_SHIKI_LANGS = [
+export const DEFAULT_SHIKI_LANGS = [
   'javascript', 'typescript', 'python', 'bash', 'shell', 'json', 'yaml', 'html', 'css',
   'jsx', 'tsx', 'sql', 'go', 'rust', 'java', 'c', 'cpp', 'ruby', 'php', 'swift',
   'kotlin', 'markdown', 'xml', 'toml', 'ini', 'dockerfile', 'graphql', 'diff',
@@ -202,15 +203,29 @@ async function ensureShiki(config?: { theme?: string; langs?: string[] }) {
   }
   shikiPromise = (async () => {
     try {
+      // shiki/core — the main 'shiki' entry statically references its
+      // default oniguruma engine, which made bundlers emit 230 KB gz of
+      // WASM chunks on behalf of anything importing this module, even
+      // though this path always uses the JS engine.
       // @ts-ignore — shiki is an optional peer dependency
-      const { createHighlighter } = await import('shiki');
+      const { createHighlighterCore } = await import('shiki/core');
+      // @ts-ignore — same optional peer
+      const { createJavaScriptRegexEngine } = await import('shiki/engine/javascript');
+      // @ts-ignore — same optional peer
+      const { bundledThemes } = await import('shiki/themes');
+      // @ts-ignore — same optional peer
+      const { bundledLanguages } = await import('shiki/langs');
       const theme = config?.theme || 'github-dark';
-      const themes = theme === 'github-dark'
+      const themeNames = theme === 'github-dark'
         ? ['github-dark', 'github-light']
         : [theme, 'github-dark', 'github-light'];
-      shikiHighlighter = await createHighlighter({
-        themes,
-        langs: config?.langs || DEFAULT_SHIKI_LANGS,
+      const langNames = config?.langs || DEFAULT_SHIKI_LANGS;
+      const loadAll = async (map: Record<string, () => Promise<{ default: unknown }>>, names: string[]) =>
+        (await Promise.all(names.filter((n) => map[n]).map(async (n) => (await map[n]()).default)));
+      shikiHighlighter = await createHighlighterCore({
+        themes: (await loadAll(bundledThemes, themeNames)) as never[],
+        langs: (await loadAll(bundledLanguages, langNames)) as never[],
+        engine: createJavaScriptRegexEngine({ forgiving: true }),
       });
     } catch (e) {
       console.warn('Shiki failed to load:', e);
@@ -287,6 +302,10 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'default'): Pro
           const orphan = document.getElementById(id);
           if (orphan) orphan.remove();
         }
+        // Passthrough entry keeps the sequential replace aligned when a
+        // diagram fails — without it every following diagram shifts into
+        // the wrong slot.
+        replacements.push({ match: m[0], replacement: m[0] });
       }
     }
 
@@ -338,13 +357,31 @@ function extractMath(content: string): MathExtract {
       return key;
     });
 
-    // Inline math — $...$ on one line, no `$` or newline in body.
-    seg = seg.replace(/\$([^\s$][^$\n]*?)\$/g, (m, math) => {
-      if (/^\d/.test(math)) return m; // looks like currency
-      const key = `MATHINLINE${counter++}KEY`;
-      blocks.push({ key, math, display: false });
-      return key;
-    });
+    // Inline math — $...$ on one line, no `$` or newline in body. Manual
+    // scan instead of String.replace: when a match looks like currency
+    // ("$5 for $"), the closing `$` we matched may actually be the OPENING
+    // delimiter of a real math span right after it ("$5 for $x$"), so we
+    // must resume scanning just past the `$digits`, not past the match.
+    {
+      const re = /\$([^\s$][^$\n]*?)\$/g;
+      let out = '';
+      let last = 0;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(seg)) !== null) {
+        if (/^\d/.test(m[1])) {
+          const currency = /^\$\d+(?:[.,]\d+)*/.exec(m[0])![0];
+          out += seg.slice(last, m.index) + currency;
+          last = m.index + currency.length;
+          re.lastIndex = last;
+          continue;
+        }
+        const key = `MATHINLINE${counter++}KEY`;
+        blocks.push({ key, math: m[1], display: false });
+        out += seg.slice(last, m.index) + key;
+        last = m.index + m[0].length;
+      }
+      seg = out + seg.slice(last);
+    }
 
     return seg;
   });
@@ -389,6 +426,18 @@ async function restoreMathInHtml(
           html = html.split(wrapped).join(replacement);
           continue;
         }
+        // $$…$$ used mid-paragraph: the placeholder shares a <p> with other
+        // text. A <div> here would make the browser auto-close the <p> and
+        // split the paragraph — use a span (block styling comes from the
+        // class, which is element-agnostic).
+        html = html.split(key).join(
+          replacement
+            .replace(/^<div class="katex-block">/, '<span class="katex-block">')
+            .replace(/<\/div>$/, '</span>')
+            .replace(/^<pre><code>/, '<code>')
+            .replace(/<\/code><\/pre>$/, '</code>'),
+        );
+        continue;
       }
       // Plain string replace — keys are unique and contain no regex metas.
       html = html.split(key).join(replacement);
@@ -425,8 +474,12 @@ function injectHeadingIds(html: string): string {
   // jump to the wrong heading or nowhere.
   const used = new Set<string>();
   let counter = 0;
-  return html.replace(/<(h[1-6])>(.*?)<\/\1>/gs, (_match, tag, inner) => {
+  // Tolerate headings that already carry attributes (raw-HTML headings,
+  // sanitizer-retained classes) — an attribute-less-only match would leave
+  // them without an id and their TOC entries scrolling nowhere.
+  return html.replace(/<(h[1-6])((?:\s[^>]*)?)>(.*?)<\/\1>/gs, (match, tag, attrs: string, inner) => {
     counter++;
+    if (/\bid\s*=/i.test(attrs)) return match; // keep an existing anchor
     const text = stripHtmlTags(inner).trim();
     const base = text
       .toLowerCase()
@@ -436,7 +489,7 @@ function injectHeadingIds(html: string): string {
     let n = 1;
     while (used.has(id)) id = `${base}-${n++}`;
     used.add(id);
-    return `<${tag} id="${id}">${inner}</${tag}>`;
+    return `<${tag} id="${id}"${attrs}>${inner}</${tag}>`;
   });
 }
 

@@ -5,7 +5,11 @@ import { Routes, Route } from "react-router-dom";
 // Lazy-load route surfaces so the initial bundle is small.
 // The editor pulls in CodeMirror, Shiki, Mermaid, KaTeX — none of which
 // should land until the user is actually on /.
-const Home = lazy(() => import("./routes/Home"));
+// Home is static: it is the always-hit route, and with the collab stack
+// now lazy inside collab-store the landing costs ~20 KB gz here — cheaper
+// than the extra round trip + "loading…" flash the lazy() split caused on
+// every cold visit. Marketing/legal routes stay lazy.
+import Home from "./routes/Home";
 const Privacy = lazy(() => import("./routes/Privacy"));
 const Terms = lazy(() => import("./routes/Terms"));
 const Projects = lazy(() => import("./routes/Projects"));

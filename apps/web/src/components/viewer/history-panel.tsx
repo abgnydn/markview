@@ -9,6 +9,7 @@ import {
   createSnapshot,
 } from '@/lib/snapshots';
 import type { DBSnapshot } from '@/lib/storage/db';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface HistoryPanelProps {
   fileId: string;
@@ -35,6 +36,7 @@ const SOURCE_LABEL = {
 } as const;
 
 export function HistoryPanel({ fileId, workspaceId, currentContent, onRestore, onClose }: HistoryPanelProps) {
+  useFocusReturn(true);
   const [snapshots, setSnapshots] = useState<DBSnapshot[]>([]);
   const [previewId, setPreviewId] = useState<string | null>(null);
 
@@ -45,16 +47,20 @@ export function HistoryPanel({ fileId, workspaceId, currentContent, onRestore, o
 
   useEffect(() => {
     void refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileId]);
 
-  // Esc to close.
+  // Esc to close — consumed in capture phase so the editor overlay
+  // beneath doesn't tear down on the same keypress.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape' && !e.defaultPrevented) {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
   }, [onClose]);
 
   const handleBookmarkCurrent = async () => {

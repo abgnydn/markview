@@ -1,84 +1,60 @@
 # Commits — zero-tvm
 
-## 2026-06-25
+## 2026-08-12
 
-- `03:44` **docs: add Zenodo DOI badge + CITATION.cff identifier (#15)** — +9 −9 — [`32406c8`](https://github.com/abgnydn/zero-tvm/commit/32406c88acc201694df83a4e22df64bf4391d380)
-- `03:14` **docs(zenodo): tighten deposit metadata for a clean DOI record (#14)** — +2 −4 — [`1c8ce0f`](https://github.com/abgnydn/zero-tvm/commit/1c8ce0f03d6c8b7ad63fff508f2aeb91514a1eb4)
-- `03:05` **chore: bump to 0.2.0 for a fresh release (#13)** — +37 −2 — [`7f2d6f2`](https://github.com/abgnydn/zero-tvm/commit/7f2d6f2c65524448a46a9c96208dc28e3907b94b)
-- `03:02` **docs: add Zenodo .zenodo.json + CITATION.cff for a citable DOI (#12)** — +64 −3 — [`bda3f67`](https://github.com/abgnydn/zero-tvm/commit/bda3f6777a3180bbeb20a7d6c48d67af789f0361)
-- `02:58` **docs(readme): replace stale v1 screenshot with current hero (#11)** — +1 −1 — [`9bf9fef`](https://github.com/abgnydn/zero-tvm/commit/9bf9fef60d2fd55fd8a2d40a9eef2a9c285e6ffe)
-- `02:47` **docs(readme): lead with the comparison table + headline number (#10)** — +11 −15 — [`dc21078`](https://github.com/abgnydn/zero-tvm/commit/dc21078010d280becd6f694d454a74f750383169)
-- `02:40` **docs(readme): fix stale main.ts ref, document test suite + bench (#9)** — +17 −5 — [`9661b9b`](https://github.com/abgnydn/zero-tvm/commit/9661b9ba351347c2c555ae569f6fdf20f0ee0b25)
+- `10:05` **native: retract the idle-backoff theory — clean A/B shows no idle/hot…** — +71 −69 — [`d1eb307`](https://github.com/abgnydn/zero-tvm/commit/d1eb3072e1e44bcb51f75d4d7ce50d6f90a271db)
+- `09:15` **lib: timestamp-query is OPT-IN (ZTVM_PROFILE=1) — enabling it cost ~3…** — +7 −2 — [`51b3c1e`](https://github.com/abgnydn/zero-tvm/commit/51b3c1ef2b7a8af0739c24ab918652abcabf0760)
+- `06:57` **sweep: E4 split-K arm — f32 partials + reduce dispatch, gated correct** — +93 −20 — [`a0c5934`](https://github.com/abgnydn/zero-tvm/commit/a0c59342adc92c51028f67ae2e098a0a699f2179)
+- `06:53` **bench: decode-bench-native — idle/hot A/B in one process** — +61 −0 — [`87bfa3e`](https://github.com/abgnydn/zero-tvm/commit/87bfa3e668aeb0d201087843358f51a0e4d5b202)
+- `06:51` **sweep: swizzle (E5) fixed — two real bugs — and the gate made determi…** — +23 −11 — [`688de1c`](https://github.com/abgnydn/zero-tvm/commit/688de1cd56aee58121f90ef2088f10611463e200)
+- `06:47` **native: dawn.node backs off completion delivery when the loop idles —…** — +65 −3 — [`32297e6`](https://github.com/abgnydn/zero-tvm/commit/32297e6bc511efa03abd82001d7a63315c276d5b)
+- `06:47` **sweep: gate graded against a zero reference — raw.* are float VALUES,…** — +19 −10 — [`79aaf24`](https://github.com/abgnydn/zero-tvm/commit/79aaf24771659b42d8ffe9ce9ec5e320254e1c37)
+- `02:11` **sweep: headless E3/E5 harness — WIP, results VOID by its own gate** — +332 −0 — [`38f42dd`](https://github.com/abgnydn/zero-tvm/commit/38f42ddbee70a69f4c9fdf12474bc43a134a7f9a)
+- `00:17` **native: ztvm native — the engine on dawn.node, no browser process at all** — +486 −3 — [`e27d4a3`](https://github.com/abgnydn/zero-tvm/commit/e27d4a3d2526915757d8b9fa8d69d2dc7de3ff4d)
 
-## 2026-06-23
+## 2026-08-11
 
-- `07:47` **fix(bench): WebGPU adapter on T4 — disable Dawn adapter blocklist (#8)** — +22 −14 — [`35955bd`](https://github.com/abgnydn/zero-tvm/commit/35955bd3e2ff50a6cca69bf42c774aae73613300)
-- `07:06` **fix(bench): instrument boot to pinpoint the hang (#7)** — +53 −11 — [`4b8f833`](https://github.com/abgnydn/zero-tvm/commit/4b8f8334e1ade0f64c917b6ac56c6ece933443b2)
-- `03:49` **fix(bench): bind dev server to 127.0.0.1 — Colab localhost/IPv6 timeo…** — +12 −4 — [`95e7e03`](https://github.com/abgnydn/zero-tvm/commit/95e7e0386d67657fcc51294e211fc027577502a7)
-- `03:28` **fix(bench): clean Colab re-run — fresh clone + T4-only (#5)** — +2 −2 — [`d7dc57d`](https://github.com/abgnydn/zero-tvm/commit/d7dc57d648dedf2862472849fb5913a3baa44937)
-- `03:08` **fix(bench): get the real T4 on Colab — libnvidia-gl + ANGLE/Vulkan fl…** — +12 −4 — [`2a9dd1e`](https://github.com/abgnydn/zero-tvm/commit/2a9dd1e3f1ec3f833b0d066392ce2d0f8ba5a1a0)
-- `03:01` **fix(bench): abort on software GPU, use hf instead of huggingface-cli …** — +22 −7 — [`be8dacf`](https://github.com/abgnydn/zero-tvm/commit/be8dacf1999fc51e7787c05957305fa5f6c70d84)
-- `02:49` **Add one-click Colab notebook for the GPU bench (#2)** — +36 −0 — [`6a32c63`](https://github.com/abgnydn/zero-tvm/commit/6a32c638033e73872a2f031730c5a6238a532c8b)
-- `02:23` **Critique fixes: prune dead code, headless WebGPU kernel tests, bench …** — +1108 −1142 — [`2d8c839`](https://github.com/abgnydn/zero-tvm/commit/2d8c839e11986b7ac196328ccfd8cce444a241df)
+- `23:41` **dawn: the native-host probe is GO — kernel at unsafe-Chrome parity, n…** — +90 −0 — [`4e7a26a`](https://github.com/abgnydn/zero-tvm/commit/4e7a26ae07dca624b332d0690e65bbb6b87d3f1a)
+- `14:15` **prefill: cut Chrome's tax — ztvm launches its own flagged Chrome, 482…** — +46 −4 — [`49b45fe`](https://github.com/abgnydn/zero-tvm/commit/49b45fef91f996d0cecc44888b425ede9b61f683)
+- `13:44` **prefill: E1 ships — 394 tok/s, the wall was a compiler diagnostic** — +526 −9 — [`67caf64`](https://github.com/abgnydn/zero-tvm/commit/67caf643909da1cab648495a0bfb729951a9dfd7)
+- `13:24` **agent: ztvm — one word** — +25 −2 — [`d73fde1`](https://github.com/abgnydn/zero-tvm/commit/d73fde1ce6f9dfab87f6df08080929ce754b6c21)
+- `13:22` **agent: one-command launcher — npm run agent -- <model>** — +146 −3 — [`d700a1c`](https://github.com/abgnydn/zero-tvm/commit/d700a1c6d4d20c8b19201f43bdc6f2b2c6d1b933)
+- `11:37` **prefill: cap 256 under sgmat — best numbers ever, tokens identical** — +29 −6 — [`eb1c245`](https://github.com/abgnydn/zero-tvm/commit/eb1c245576ba68b34fa53f3e83107d6b1f66aef2)
+- `09:30` **prefill: the matrix unit is DEFAULT — sgmat passes token-identity eve…** — +66 −11 — [`0c6b912`](https://github.com/abgnydn/zero-tvm/commit/0c6b912ef00db0d6bad3f023f823190d98587adc)
+- `09:19` **paging phase 1: the persistent KV pool ships — restore is token-ident…** — +462 −0 — [`5b5b001`](https://github.com/abgnydn/zero-tvm/commit/5b5b001148ff0aca465ad220890cf67138932882)
+- `07:42` **prefill: subgroup-matrix GEMM graduated — the matrix unit works from …** — +220 −30 — [`0ef9491`](https://github.com/abgnydn/zero-tvm/commit/0ef94917f3a61282aa67b60fc06a586a324f3bae)
+- `07:27` **prefill: measured kernel iteration — v2 wins, v1 demoted, sgmat door …** — +428 −6 — [`be46e1c`](https://github.com/abgnydn/zero-tvm/commit/be46e1c4b6ba53aa2820f33b69a59b5a6250d79f)
+- `07:17` **prefill: tiled batched GEMM — correct at every edge, opt-in until mea…** — +271 −9 — [`2e7b67b`](https://github.com/abgnydn/zero-tvm/commit/2e7b67b32b427994925b1df773139c50fb703458)
+- `06:57` **context: 262,144 tokens — 1.32x LM Studio's ceiling on the same model** — +399 −6 — [`bb20f3b`](https://github.com/abgnydn/zero-tvm/commit/bb20f3bfc726375337435ee71c1ad5b620bb5e60)
+- `06:30` **docs+build: agent-host ships, CLAUDE.md current, no top-level await** — +56 −16 — [`e8c4872`](https://github.com/abgnydn/zero-tvm/commit/e8c48728e4cbcdd8663cfc339dd340c5ff53a177)
+- `06:23` **prefill: plain-attention + affine chunking lands — 3.3-3.6x, token-id…** — +72 −21 — [`c90870f`](https://github.com/abgnydn/zero-tvm/commit/c90870f277b2672b9fb21ceed7664137f55bfb7e)
+- `06:16` **prefill: affine GEMM wired, plain-attention chunking found broken and…** — +160 −18 — [`0b01cc7`](https://github.com/abgnydn/zero-tvm/commit/0b01cc75d93f3ceb76a569e159e1012bee6d3a4e)
+- `06:01` **add-model: match nested vision towers, found by a real checkpoint** — +6 −1 — [`05100b5`](https://github.com/abgnydn/zero-tvm/commit/05100b5c9f259dbd732d1d2e0edd08b66e683fa4)
+- `06:00` **prefill: a batched affine GEMM, so MLX checkpoints can chunk** — +100 −14 — [`e4abe95`](https://github.com/abgnydn/zero-tvm/commit/e4abe950dda6a3377ee12d489849a4d819721a61)
+- `04:21` **deno: measure the non-browser runtimes before porting anything** — +198 −0 — [`459b6dc`](https://github.com/abgnydn/zero-tvm/commit/459b6dc6ca96cf87d30a273cfd1c288596c2af2a)
+- `04:09` **agent: fixes from reading pi's actual source and running it** — +73 −11 — [`97ad703`](https://github.com/abgnydn/zero-tvm/commit/97ad70349724bab73d57f9d364d9341842a5106d)
+- `04:07` **agent: an OpenAI front door, so pi and Cline can drive the browser en…** — +807 −0 — [`0422632`](https://github.com/abgnydn/zero-tvm/commit/0422632b23506fdbaacb07adcfe4334116eaadee)
 
-## 2026-05-15
+## 2026-08-10
 
-- `03:40` **chore: update contact email to hi@barisgunaydin.com** — +1 −1 — [`9c2d099`](https://github.com/abgnydn/zero-tvm/commit/9c2d099bef976c25b763eab490704843e64247ac)
-
-## 2026-05-14
-
-- `13:50` **docs(readme): link RESEARCH_STANDARDS.md (shared canonical discipline…** — +1 −1 — [`05ef338`](https://github.com/abgnydn/zero-tvm/commit/05ef338e203041d8f4becf2cdba29883c6fa3a8f)
-- `13:49` **docs: add canonical RESEARCH_STANDARDS.md (mirror of webgpu-q/RESEARC…** — +407 −0 — [`b4b0b4d`](https://github.com/abgnydn/zero-tvm/commit/b4b0b4ddbbfb63e6017eb49b99a8d35cbdc85aed)
-
-## 2026-05-05
-
-- `07:31` **feat(boot): unified weight-cache SW + download gate across chat templ…** — +958 −45 — [`9fe1cd2`](https://github.com/abgnydn/zero-tvm/commit/9fe1cd22c6c859d4b5ed764cf931060eb11725fc)
-- `07:24` **feat(footer): add Star CTA + LinkedIn + personal-site links** — +35 −14 — [`211c92c`](https://github.com/abgnydn/zero-tvm/commit/211c92c123ec412d9db9034f06807bb80a938c2f)
-
-## 2026-05-04
-
-- `10:55` **Add CI, CHANGELOG, README badges** — +84 −0 — [`fd2ffff`](https://github.com/abgnydn/zero-tvm/commit/fd2ffffc7d044a38e7e3a0dd40682d1ad5bebfc9)
-
-## 2026-04-22
-
-- `07:04` **Link companion projects (kernelfusion, gpubench, webgpu-dna)** — +157 −0 — [`5ec0834`](https://github.com/abgnydn/zero-tvm/commit/5ec0834561bd203949691022f7059e8a1ce22ffd)
-- `06:12` **Harden weight loader: persist, bounded concurrency, retry, version key** — +203 −47 — [`84cf90b`](https://github.com/abgnydn/zero-tvm/commit/84cf90bc6006abddb1a8d7df736cebf73f3004bb)
-- `05:08` **Center start dialog and darken its backdrop** — +8 −4 — [`68645ac`](https://github.com/abgnydn/zero-tvm/commit/68645ac11addc4517dd531435d28cfe526e36fae)
-- `04:34` **Polish /zero-tvm chat: markdown rendering, code blocks, regenerate** — +598 −112 — [`e9b918d`](https://github.com/abgnydn/zero-tvm/commit/e9b918d9be6cd0ae2b6ef43dd99bfaa6054c0e13)
-- `04:07` **Revamp /zero-tvm chat UI — pre-download dialog + modern streaming layout** — +969 −85 — [`6f439bd`](https://github.com/abgnydn/zero-tvm/commit/6f439bd39615d6d0c268a6a773090bc3cab20c4f)
-
-## 2026-04-21
-
-- `14:15` **Rewrite /docs with honest post-fusion numbers** — +144 −122 — [`6219884`](https://github.com/abgnydn/zero-tvm/commit/62198849c6cbab7e8b693889f4fadaa7e712fc62)
-- `14:08` **Update /demo with honest post-fusion numbers** — +43 −22 — [`f727e69`](https://github.com/abgnydn/zero-tvm/commit/f727e69b7f30b077c0670356859ff436f345a0be)
-- `13:06` **Add shaders.html to production build and Tools grid** — +18 −3 — [`7780f6b`](https://github.com/abgnydn/zero-tvm/commit/7780f6bd09ae396ce99db5ff2172b47d65d4305a)
-- `11:52` **Restore Share modal, dump.html, and back links to secondary pages** — +242 −4 — [`c3f1db7`](https://github.com/abgnydn/zero-tvm/commit/c3f1db75ab0ca754ab900ce08a891be186a22508)
-- `11:39` **Move landing page to / — it was the landing all along** — +818 −1169 — [`37da17a`](https://github.com/abgnydn/zero-tvm/commit/37da17a513aa7d13735dffe5a295c3340da61075)
-- `11:29` **OG/Twitter meta tags: honest social copy across all pages** — +71 −11 — [`f264f30`](https://github.com/abgnydn/zero-tvm/commit/f264f3047efb18cd8a4eef102fd6a75dfc8cd8da)
-- `11:21` **Landing page: honest numbers, post-fusion shader grid, .vercelignore** — +71 −60 — [`8237f3e`](https://github.com/abgnydn/zero-tvm/commit/8237f3ed680a1a1b704c88229862faa7dc7a227e)
-- `11:07` **Update README: shader count, dispatch counts, perf, honest head-to-head** — +134 −62 — [`2bc0d01`](https://github.com/abgnydn/zero-tvm/commit/2bc0d017bf80ec25628d4c071c871bd7656e6586)
-- `10:47` **Post-merge fixups: restore our chat.ts + zero-tvm.html, union vite en…** — +48 −240 — [`b980d4c`](https://github.com/abgnydn/zero-tvm/commit/b980d4c955a7f61a681136855f265a0d88c1dc3f)
-- `10:39` **Merge zero-tvm/main into master; take our side on conflicts** — +2402 −4046 — [`ea7d6be`](https://github.com/abgnydn/zero-tvm/commit/ea7d6be154f273608ceec6ed2ca567b5dac67326)
-- `10:31` **Remove accidentally-committed public/town.html symlink** — +0 −1 — [`7d1cf28`](https://github.com/abgnydn/zero-tvm/commit/7d1cf2860e97dd6fc50c49f8daca7523ab629ab1)
-- `10:30` **Docs + deploy: landing/architecture/docs pages, BENCH, Vercel config** — +3049 −0 — [`7e6aa92`](https://github.com/abgnydn/zero-tvm/commit/7e6aa92ebb676de0cc9038ff102825e4e17e3208)
-- `10:30` **Head-to-head WebLLM bench + local-mirror dev middleware** — +398 −0 — [`4bdd17c`](https://github.com/abgnydn/zero-tvm/commit/4bdd17cc1dcf25232d5b43f92c1fead2ff212019)
-- `10:29` **Zero-TVM decode: progressive weights, fused QKV, int8 KV, PLD sim** — +1122 −358 — [`fcefff3`](https://github.com/abgnydn/zero-tvm/commit/fcefff3a958630806a98802d88a1752411c47898)
-- `10:29` **Add fused shader variants + subgroup kernels; wire into compiler** — +2345 −1 — [`f65ed50`](https://github.com/abgnydn/zero-tvm/commit/f65ed50a03dc423a9e934ccb7ec088ce053894cc)
-
-## 2026-04-11
-
-- `14:48` **Add Vercel Web Analytics script to user-facing pages** — +5 −0 — [`c00e1e1`](https://github.com/abgnydn/zero-tvm/commit/c00e1e195db547dfc1a0aec0f9f3e1db2a5ae567)
-
-## 2026-04-10
-
-- `14:09` **Fix mismatched units in landing-page bundle comparison** — +1 −1 — [`24d200a`](https://github.com/abgnydn/zero-tvm/commit/24d200ac74a0c5db3c47ae8842fe6395d28d11cd)
-- `08:45` **Extract decode engine, add validate page, add e2e tests** — +1536 −432 — [`d5cfe86`](https://github.com/abgnydn/zero-tvm/commit/d5cfe86ae4ec9788545644ff128de060ead40c3c)
-
-## 2026-04-08
-
-- `14:40` **Remove placeholder benchmarks section from README** — +2 −7 — [`1aabf4b`](https://github.com/abgnydn/zero-tvm/commit/1aabf4bc1e423ef5089ff36f4ccec2003ee28aa7)
-- `11:41` **Move input-wrap/input-inner to shared style.css, remove duplicate fro…** — +14 −31 — [`312a77d`](https://github.com/abgnydn/zero-tvm/commit/312a77df1762773a261a92869ea1c07f1d090344)
-- `11:38` **Fix compiler-chat input alignment: use same input-wrap pattern as zer…** — +25 −28 — [`7a8cf64`](https://github.com/abgnydn/zero-tvm/commit/7a8cf64e5135f9b7551dbea7a321f81015ffe541)
-- `11:33` **Add zerotvm.com link to README** — +3 −1 — [`10f3a6b`](https://github.com/abgnydn/zero-tvm/commit/10f3a6b8ab6088afefea2b24dc8de7f439b8c386)
-- `11:29` **Replace image in README.md** — +1 −1 — [`2870fe9`](https://github.com/abgnydn/zero-tvm/commit/2870fe9e2d250ea5967180478d7ff6581e1aa4f9)
-- `11:29` **Update OG meta tags to use zerotvm.com domain** — +11 −6 — [`6d95de3`](https://github.com/abgnydn/zero-tvm/commit/6d95de348d4edb4b3e34fbc948f05628ce980770)
+- `13:27` **gpu-free batch: chat templates, tool calls, prefix pool, and the smal…** — +3062 −93 — [`2453fa3`](https://github.com/abgnydn/zero-tvm/commit/2453fa364da1b7f8f0d130f0c37ac60d79b02595)
+- `11:48` **quality: a real MoE in the suite, and the paired test that makes it work** — +86 −31 — [`053c987`](https://github.com/abgnydn/zero-tvm/commit/053c987d9935a27c80bd26366cef1f5bebfc214a)
+- `11:22` **quality: a sensitivity ladder, and a guard for a converter that could…** — +199 −10 — [`62fa4df`](https://github.com/abgnydn/zero-tvm/commit/62fa4df23cb93a92b83cb7af988a867d5a78880d)
+- `10:07` **colab: the 35B 3-bit vs 4-bit A/B, without uploading anything** — +307 −3 — [`b4ac7af`](https://github.com/abgnydn/zero-tvm/commit/b4ac7af25a0dcdbeef9240a294fcd137bd6b8ebf)
+- `09:55` **docs: retire the 0.936 block cosine as a quality claim** — +105 −10 — [`1e9de6b`](https://github.com/abgnydn/zero-tvm/commit/1e9de6bfad6e49efe13b46f3c16c04aab2462af5)
+- `09:25` **quality: a checkpoint A/B with error bars, and corrections from an audit** — +828 −0 — [`494eb76`](https://github.com/abgnydn/zero-tvm/commit/494eb761b9acb128c025a7a29d384eaa7cfa9eb9)
+- `06:39` **docs: correct Qwen3.5's maxContext — 32768, not 7168** — +10 −2 — [`5577be7`](https://github.com/abgnydn/zero-tvm/commit/5577be75d4ad6df1177afebdadd2535d956ce523)
+- `05:04` **paging §0.4 + §0.1: the falsifier fails on HEAD, and the reuse rules …** — +432 −23 — [`7254afc`](https://github.com/abgnydn/zero-tvm/commit/7254afc347410a5b55ead8869016616f8f19d58b)
+- `04:51` **paging §0.3: the three measurements, and writeBuffer is the bottleneck** — +328 −3 — [`de398d4`](https://github.com/abgnydn/zero-tvm/commit/de398d421231da06b897ddc5abc645cbe59a938b)
+- `04:46` **paging §0.2: the gate is GREEN — agent prompts are append-only in tok…** — +334 −1 — [`6fbfbf8`](https://github.com/abgnydn/zero-tvm/commit/6fbfbf881e31f8b2b39cf4e1e374b6e6fcc1ca8c)
+- `04:35` **docs: the paging plan, and add-model reads attn_output_gate** — +269 −1 — [`0f62440`](https://github.com/abgnydn/zero-tvm/commit/0f624401b84e018a64f15ced1bd0be45ba7c940e)
+- `04:32` **add-model: count only the text tower's biases — the survey's top kern…** — +76 −3 — [`13fe2c5`](https://github.com/abgnydn/zero-tvm/commit/13fe2c577e364d2f1024348e5316a7fce1cba21d)
+- `04:25` **add-model: read rope_parameters, and read ranges from a local dir** — +45 −4 — [`61b6a77`](https://github.com/abgnydn/zero-tvm/commit/61b6a7749c04155c02a1630941170d7a233d755e)
+- `04:16` **mla: the engine's own layer, against real weights** — +189 −0 — [`c6acb45`](https://github.com/abgnydn/zero-tvm/commit/c6acb4560e43a3795afeb219d378bb63e4b5bc39)
+- `03:36` **docs: the porting survey, and it refutes the headline I was ready to …** — +480 −8 — [`09faeee`](https://github.com/abgnydn/zero-tvm/commit/09faeeeba7068b61420e5fcd2150e53c3b1e637a)
+- `03:34` **mla: the engine, wired** — +173 −10 — [`7eaabd8`](https://github.com/abgnydn/zero-tvm/commit/7eaabd8c2740a3c1bf300c216e64276d106a49ae)
+- `03:24` **embed: Qwen3-Embedding runs, verified against mlx on the GPU** — +67 −1 — [`7e4fcba`](https://github.com/abgnydn/zero-tvm/commit/7e4fcba23b407b35782cfb0cde1e0e15ea7ee83c)
+- `03:17` **embed: a pooled-hidden-state path, and the pooling trap made concrete** — +210 −0 — [`3ba0a43`](https://github.com/abgnydn/zero-tvm/commit/3ba0a4374b7ed6e20fb27f7c222144b313fc618f)
+- `03:15` **bench: report achieved GB/s, and why it cannot answer the question it…** — +73 −2 — [`51ecdac`](https://github.com/abgnydn/zero-tvm/commit/51ecdac3768a360f213915601257c124fe2b7319)
+- `03:04` **spec-sim: the break-even threshold did not follow from the formula ab…** — +16 −3 — [`6c4013f`](https://github.com/abgnydn/zero-tvm/commit/6c4013f59610bb4c94d010191d0975b950e9699a)
+- `03:01` **mla: the prep kernels, on the GPU** — +90 −3 — [`6e38ffa`](https://github.com/abgnydn/zero-tvm/commit/6e38ffabd174afcfb666852e6a8ebbcee5dcce24)

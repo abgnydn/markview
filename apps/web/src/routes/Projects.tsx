@@ -8,12 +8,14 @@
 // burst grouping, and (6) a searchable + sortable + groupable project
 // grid. Per-project deep view lives at /p/:slug.
 
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { useChronicleWorkspace } from "@/hooks/use-chronicle-workspace";
+import { useMarketingBeacon } from "@/lib/analytics";
 import "./projects.css";
+import { usePageTitle } from '@/hooks/use-page-title';
 
 // Lazy-load the chat — it pulls transformers.js (huge), don't drag it
 // onto the cold path of "just opened /projects to scroll the grid."
@@ -90,11 +92,8 @@ type TypeFilter = (typeof TYPE_FILTERS)[number];
 const DATE_RANGES = ["all", "today", "7d", "30d"] as const;
 type DateRange = (typeof DATE_RANGES)[number];
 
-const GRID_SORTS = ["recent", "commits", "stars", "alpha"] as const;
-type GridSort = (typeof GRID_SORTS)[number];
-
-const GRID_GROUPS = ["none", "language", "live"] as const;
-type GridGroup = (typeof GRID_GROUPS)[number];
+type GridSort = "recent" | "commits" | "stars" | "alpha";
+type GridGroup = "none" | "language" | "live";
 
 // Conventional-commit type → accent color. Falls back to ghost for
 // untyped / "other" / chore-y commits.
@@ -670,6 +669,8 @@ function GridCard({
 
 // ── route ────────────────────────────────────────────────────────────────
 export default function Projects() {
+  useMarketingBeacon();
+  usePageTitle("Projects — markview.ai");
   const [index, setIndex] = useState<PortfolioIndex | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -857,7 +858,7 @@ export default function Projects() {
   const toggleBurst = (key: string) => {
     setExpandedBursts((s) => {
       const next = new Set(s);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key); else next.add(key);
       return next;
     });
   };
@@ -927,7 +928,10 @@ export default function Projects() {
       {heatmap && (
         <section className="proj-section proj-section-tight">
           <h2 className="proj-section-title">90 days across all repos</h2>
-          <div className="proj-heatmap" role="img" aria-label="commit activity heatmap">
+          {/* role=group (not img): the cells are focusable buttons, and an
+              img role must not contain interactive descendants (axe
+              nested-interactive). */}
+          <div className="proj-heatmap" role="group" aria-label="commit activity heatmap">
             {heatmap.cols.map((col, ci) => (
               <div className="proj-heatmap-col" key={ci}>
                 {col.map((cell, ri) =>

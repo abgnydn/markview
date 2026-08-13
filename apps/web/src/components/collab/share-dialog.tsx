@@ -1,20 +1,28 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Share2, Copy, Check, X } from 'lucide-react';
 import { useCollabStore } from '@/stores/collab-store';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 export function ShareDialog({ onClose }: { onClose: () => void }) {
-  const { shareWorkspace, isActive, shareUrl, leaveSession } = useCollabStore();
+  useFocusReturn(true);
+  const { shareWorkspace, isActive, shareUrl, leaveSession, peers } = useCollabStore();
   const { activeWorkspaceId } = useWorkspaceStore();
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleShare = async () => {
     if (!activeWorkspaceId) return;
     setLoading(true);
+    setError(null);
     try {
       await shareWorkspace(activeWorkspaceId);
+    } catch (e) {
+      // Without this, a failed WebRTC start just flips the button back
+      // to "Start Sharing" with no explanation.
+      setError(e instanceof Error ? e.message : 'Could not start the sharing session. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -32,13 +40,26 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
     onClose();
   };
 
+  // Esc closes — JoinDialog already had this; ShareDialog didn't.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !e.defaultPrevented) {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, [onClose]);
+
   return (
     <div className="collab-dialog-overlay" onClick={onClose}>
-      <div className="collab-dialog" onClick={(e) => e.stopPropagation()}>
+      <div className="collab-dialog" role="dialog" aria-modal="true" aria-label="Share workspace" onClick={(e) => e.stopPropagation()}>
         <div className="collab-dialog-header">
           <Share2 size={18} />
           <span>Share Workspace</span>
-          <button className="collab-dialog-close" onClick={onClose}>
+          <button className="collab-dialog-close" onClick={onClose} aria-label="Close">
             <X size={16} />
           </button>
         </div>
@@ -49,6 +70,10 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
               Share your workspace via peer-to-peer connection.
               No server — documents transfer directly between browsers.
             </p>
+            <p className="collab-dialog-desc">
+              People with the link <strong>follow along live and read
+              everything</strong> — editing stays with you.
+            </p>
             <button
               className="collab-btn-primary"
               onClick={handleShare}
@@ -56,6 +81,7 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
             >
               {loading ? 'Starting…' : 'Start Sharing'}
             </button>
+            {error && <p className="collab-error" role="alert">{error}</p>}
           </div>
         ) : (
           <div className="collab-dialog-body">
@@ -68,6 +94,11 @@ export function ShareDialog({ onClose }: { onClose: () => void }) {
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </button>
             </div>
+            <p className="collab-dialog-desc" aria-live="polite">
+              {peers.length > 0
+                ? `${peers.length} ${peers.length === 1 ? 'person' : 'people'} connected · end-to-end encrypted`
+                : 'Waiting for someone to open the link… (the whole link matters — the part after # is the encryption key)'}
+            </p>
             <button className="collab-btn-danger" onClick={handleStop}>
               Stop Sharing
             </button>

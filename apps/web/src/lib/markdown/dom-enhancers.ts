@@ -19,11 +19,13 @@
  */
 
 import { getAssetUrl } from '@/lib/assets';
+import { getAudioContextCtor } from '@/lib/audio-context';
+import { escapeHtml } from '@/lib/plugins/plugin-registry';
 
 type Cleanup = (() => void) | void;
 
 // ── Local image assets — swap `asset:<id>` srcs for object URLs ──────────
-export function resolveAssets(root: HTMLElement): Cleanup {
+function resolveAssets(root: HTMLElement): Cleanup {
   const imgs = root.querySelectorAll<HTMLImageElement>('img[src^="asset:"]');
   imgs.forEach((img) => {
     const id = (img.getAttribute('src') || '').slice('asset:'.length);
@@ -40,7 +42,7 @@ export function resolveAssets(root: HTMLElement): Cleanup {
 }
 
 // ── Paragraph scroll-reveal ─────────────────────────────────────────────
-export function revealOnScroll(root: HTMLElement): Cleanup {
+function revealOnScroll(root: HTMLElement): Cleanup {
   if (typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     root.querySelectorAll('p,li,blockquote,pre,table')
@@ -65,7 +67,7 @@ export function revealOnScroll(root: HTMLElement): Cleanup {
 }
 
 // ── Margin footnotes ────────────────────────────────────────────────────
-export function marginFootnotes(root: HTMLElement): Cleanup {
+function marginFootnotes(root: HTMLElement): Cleanup {
   if (window.innerWidth < 1180) return;
   const refs = root.querySelectorAll<HTMLAnchorElement>('a[href^="#user-content-fn-"], a.footnote-ref');
   if (refs.length === 0) return;
@@ -170,13 +172,11 @@ export function marginFootnotes(root: HTMLElement): Cleanup {
 }
 
 // ── ⌘-click wikilink → fly-in pane ──────────────────────────────────────
-export function wikilinkFlyIn(root: HTMLElement): Cleanup {
+function wikilinkFlyIn(root: HTMLElement): Cleanup {
   const links = root.querySelectorAll<HTMLAnchorElement>('a.internal-link');
   if (links.length === 0) return;
   let pane: HTMLDivElement | null = null;
   let backdrop: HTMLDivElement | null = null;
-  const escapeHtml = (s: string) => s
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const close = () => {
     if (!pane) return;
     pane.classList.remove('mv-flyin-show');
@@ -236,7 +236,7 @@ export function wikilinkFlyIn(root: HTMLElement): Cleanup {
 }
 
 // ── Long code-block collapse ────────────────────────────────────────────
-export function collapseLongCode(root: HTMLElement): Cleanup {
+function collapseLongCode(root: HTMLElement): Cleanup {
   const blocks = root.querySelectorAll<HTMLPreElement>('pre');
   blocks.forEach((pre) => {
     if (pre.classList.contains('mv-code-collapsible')) return;
@@ -258,7 +258,7 @@ export function collapseLongCode(root: HTMLElement): Cleanup {
 }
 
 // ── Image ken-burns lightbox ────────────────────────────────────────────
-export function imageLightbox(root: HTMLElement): Cleanup {
+function imageLightbox(root: HTMLElement): Cleanup {
   const imgs = root.querySelectorAll<HTMLImageElement>('img');
   if (imgs.length === 0) return;
   let overlay: HTMLDivElement | null = null;
@@ -298,7 +298,7 @@ export function imageLightbox(root: HTMLElement): Cleanup {
 }
 
 // ── Heading anchors ─────────────────────────────────────────────────────
-export function headingAnchors(root: HTMLElement): Cleanup {
+function headingAnchors(root: HTMLElement): Cleanup {
   const headings = root.querySelectorAll<HTMLHeadingElement>('h1[id], h2[id], h3[id]');
   headings.forEach((h) => {
     if (h.querySelector('.mv-heading-anchor')) return;
@@ -321,7 +321,7 @@ export function headingAnchors(root: HTMLElement): Cleanup {
 }
 
 // ── Audio waveform players ──────────────────────────────────────────────
-export function audioWaveforms(root: HTMLElement): Cleanup {
+function audioWaveforms(root: HTMLElement): Cleanup {
   const audios = root.querySelectorAll<HTMLAudioElement>('audio:not([data-mv-enhanced])');
   // The per-audio canvas/element listeners die with their DOM nodes on
   // re-render, but the window 'resize' listener does not — collect those
@@ -374,7 +374,8 @@ export function audioWaveforms(root: HTMLElement): Cleanup {
       try {
         const resp = await fetch(src);
         const buf = await resp.arrayBuffer();
-        const AC = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext);
+        const AC = getAudioContextCtor();
+        if (!AC) return;
         const ac = new AC();
         const decoded = await ac.decodeAudioData(buf);
         const ch = decoded.getChannelData(0);
@@ -434,7 +435,7 @@ export function audioWaveforms(root: HTMLElement): Cleanup {
 }
 
 // ── External link tooltips (host + favicon) ─────────────────────────────
-export function externalLinkTooltips(root: HTMLElement): Cleanup {
+function externalLinkTooltips(root: HTMLElement): Cleanup {
   const links = root.querySelectorAll<HTMLAnchorElement>('a[href^="http://"], a[href^="https://"]');
   if (links.length === 0) return;
   let tip: HTMLDivElement | null = null;

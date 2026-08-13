@@ -20,7 +20,7 @@ export function ShareStatus() {
   const isActive = useCollabStore((s) => s.isActive);
   const isHost = useCollabStore((s) => s.isHost);
   const peers = useCollabStore((s) => s.peers);
-  const roomId = useCollabStore((s) => s.roomId);
+  const storeShareUrl = useCollabStore((s) => s.shareUrl);
   const localUserName = useCollabStore((s) => s.localUserName);
   const setLocalUserName = useCollabStore((s) => s.setLocalUserName);
   const leaveSession = useCollabStore((s) => s.leaveSession);
@@ -49,7 +49,9 @@ export function ShareStatus() {
 
   if (!isActive) return null;
   const peopleCount = peers.length + 1;
-  const shareUrl = roomId ? `${window.location.origin}/?room=${roomId}` : '';
+  // The store URL carries the #k room secret — rebuilding from roomId
+  // alone hands out a link recipients can never decrypt.
+  const shareUrl = storeShareUrl ?? '';
 
   const handleCopy = async () => {
     if (!shareUrl) return;

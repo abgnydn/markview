@@ -15,8 +15,10 @@ import {
   FileCode,
   LayoutDashboard,
   Link2,
+  AlertCircle,
 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
+import { parseFrontmatter } from '@/lib/markdown/frontmatter';
 import { useThemeStore } from '@/stores/theme-store';
 import {
   copyAsMarkdown,
@@ -50,7 +52,17 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
   const activeFile = files.find((f) => f.id === activeFileId);
   const activeWorkspace = workspaces.find((ws) => ws.id === activeWorkspaceId);
 
-  // Close menu on outside click
+  // Rendered exports must match the on-screen document: the viewer strips
+  // YAML frontmatter before rendering, so exports must too — otherwise a
+  // leading `---` block turns into a stray <hr> + garbled heading in the
+  // output. Raw markdown copy/download intentionally keeps frontmatter.
+  const renderableContent = React.useMemo(
+    () => (activeFileContent ? parseFrontmatter(activeFileContent).content : null),
+    [activeFileContent],
+  );
+
+  // Close menu on outside click, or Esc (which also refocuses the trigger
+  // so keyboard users aren't stranded).
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: MouseEvent) => {
@@ -58,8 +70,19 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
         setIsOpen(false);
       }
     };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      e.stopPropagation();
+      setIsOpen(false);
+      menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    window.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      window.removeEventListener('keydown', onKey, true);
+    };
   }, [isOpen]);
 
   // Toast auto-dismiss
@@ -85,6 +108,8 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
         } catch (e) {
           console.error(`Export error (${label}):`, e);
           showToast(`Failed: ${label}`);
+        } finally {
+          setLoading(null);
         }
       };
     },
@@ -102,10 +127,10 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
 
   const handleCopyHtml = useCallback(
     withLoading('Copied as rich HTML', async () => {
-      if (!activeFileContent) return;
-      await copyAsHtml(activeFileContent);
+      if (!renderableContent) return;
+      await copyAsHtml(renderableContent);
     }),
-    [activeFileContent]
+    [renderableContent]
   );
 
   const handleCopyImage = useCallback(
@@ -135,37 +160,37 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
 
   const handleDownloadHtml = useCallback(
     withLoading('Downloaded .html', async () => {
-      if (!activeFile || !activeFileContent) return;
-      await downloadAsHtml(activeFile.filename, activeFileContent, resolved);
+      if (!activeFile || !renderableContent) return;
+      await downloadAsHtml(activeFile.filename, renderableContent, resolved);
     }),
-    [activeFile, activeFileContent, resolved]
+    [activeFile, renderableContent, resolved]
   );
 
   const handleDownloadPdf = useCallback(
     withLoading('Downloaded PDF', async () => {
-      if (!activeFile || !activeFileContent) return;
+      if (!activeFile || !renderableContent) return;
       const { downloadAsPdf } = await import('@/lib/export/export-pdf');
-      await downloadAsPdf(activeFile.filename, activeFileContent, resolved);
+      await downloadAsPdf(activeFile.filename, renderableContent, resolved);
     }),
-    [activeFile, activeFileContent, resolved]
+    [activeFile, renderableContent, resolved]
   );
 
   const handleDownloadDocx = useCallback(
     withLoading('Downloaded .docx', async () => {
-      if (!activeFile || !activeFileContent) return;
+      if (!activeFile || !renderableContent) return;
       const { downloadAsDocx } = await import('@/lib/export/export-docx');
-      await downloadAsDocx(activeFile.filename, activeFileContent);
+      await downloadAsDocx(activeFile.filename, renderableContent);
     }),
-    [activeFile, activeFileContent]
+    [activeFile, renderableContent]
   );
 
   const handleDownloadPptx = useCallback(
     withLoading('Downloaded .pptx', async () => {
-      if (!activeFile || !activeFileContent) return;
+      if (!activeFile || !renderableContent) return;
       const { downloadAsPptx } = await import('@/lib/export/export-pptx');
-      await downloadAsPptx(activeFile.filename, activeFileContent, resolved);
+      await downloadAsPptx(activeFile.filename, renderableContent, resolved);
     }),
-    [activeFile, activeFileContent, resolved]
+    [activeFile, renderableContent, resolved]
   );
 
   const handleDownloadPng = useCallback(
@@ -189,20 +214,20 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
   // ── Convert handlers ────────────────────────────────────────────────
   const handleDownloadRst = useCallback(
     withLoading('Downloaded .rst', async () => {
-      if (!activeFile || !activeFileContent) return;
+      if (!activeFile || !renderableContent) return;
       const { downloadAsRst } = await import('@/lib/export/export-convert');
-      downloadAsRst(activeFile.filename, activeFileContent);
+      downloadAsRst(activeFile.filename, renderableContent);
     }),
-    [activeFile, activeFileContent]
+    [activeFile, renderableContent]
   );
 
   const handleDownloadAdoc = useCallback(
     withLoading('Downloaded .adoc', async () => {
-      if (!activeFile || !activeFileContent) return;
+      if (!activeFile || !renderableContent) return;
       const { downloadAsAsciidoc } = await import('@/lib/export/export-convert');
-      downloadAsAsciidoc(activeFile.filename, activeFileContent);
+      downloadAsAsciidoc(activeFile.filename, renderableContent);
     }),
-    [activeFile, activeFileContent]
+    [activeFile, renderableContent]
   );
 
   // ── Workspace handlers ──────────────────────────────────────────────
@@ -266,7 +291,15 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
       )}
 
       {isOpen && (
-        <div className="export-dropdown">
+        <div className={`export-dropdown${loading ? ' is-busy' : ''}`}>
+          {/* Busy banner: heavy exports (pptx, pdf, static site) take
+              seconds — without this the menu looks inert and users
+              re-click, firing the export twice (is-busy also blocks that). */}
+          {loading && (
+            <div className="export-busy" role="status">
+              <span className="export-spinner" /> Working — {loading.replace(/^(Copied|Downloaded) /, '')}…
+            </div>
+          )}
           {/* Copy */}
           <div className="export-dropdown-section">
             <div className="export-dropdown-label">Copy</div>
@@ -380,8 +413,8 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
       )}
 
       {toast && (
-        <div className="export-toast">
-          <Check size={14} />
+        <div className={`export-toast${toast.startsWith('Failed') ? ' is-error' : ''}`} role="status">
+          {toast.startsWith('Failed') ? <AlertCircle size={14} /> : <Check size={14} />}
           <span>{toast}</span>
         </div>
       )}

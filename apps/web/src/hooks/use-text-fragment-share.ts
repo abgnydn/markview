@@ -36,7 +36,14 @@ export function useTextFragmentShare(): void {
 
       e.preventDefault();
 
-      const base = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+      // Strip collab params: a highlight link is a text pointer, not a
+      // room invite — keeping ?room= would drop the recipient into a
+      // join dialog for a room they can't decrypt (the #k secret is
+      // deliberately never copied).
+      const params = new URLSearchParams(window.location.search);
+      params.delete('room');
+      const search = params.toString() ? `?${params.toString()}` : '';
+      const base = `${window.location.origin}${window.location.pathname}${search}`;
       // For text-fragment URLs, the spec only requires the substring;
       // we trim to MAX_TEXT_FRAG chars and split start/end if the
       // selection is long so the directive stays scannable.

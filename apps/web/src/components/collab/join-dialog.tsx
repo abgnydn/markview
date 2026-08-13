@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Users, X } from 'lucide-react';
 import { useCollabStore } from '@/stores/collab-store';
 
@@ -8,23 +8,30 @@ export function JoinDialog({ roomId, onClose }: { roomId: string; onClose: () =>
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  // Escape dismisses, matching every other dialog in the app.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
   const handleJoin = async () => {
     const userName = name.trim() || 'Guest';
     setError(null);
     try {
       await joinRoom(roomId, userName);
-    } catch (e) {
-      setError('Failed to connect. The host may have stopped sharing.');
+    } catch {
+      setError('Couldn’t reach the host — they may have stopped sharing, or a firewall on either side is blocking the peer-to-peer connection.');
     }
   };
 
   return (
-    <div className="collab-dialog-overlay">
+    <div className="collab-dialog-overlay" onClick={onClose}>
       <div className="collab-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="collab-dialog-header">
           <Users size={18} />
           <span>Join Session</span>
-          <button className="collab-dialog-close" onClick={onClose}>
+          <button className="collab-dialog-close" aria-label="Close" onClick={onClose}>
             <X size={16} />
           </button>
         </div>

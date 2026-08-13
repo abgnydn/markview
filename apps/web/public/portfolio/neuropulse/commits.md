@@ -1,5 +1,40 @@
 # Commits — neuropulse
 
+## 2026-07-28
+
+- `09:58` **Add Hugging Face Space link to landing footer (#21)** — +1 −0 — [`7eb2500`](https://github.com/abgnydn/neuropulse/commit/7eb2500f97f6091d60015786218719b27a768e93)
+
+## 2026-07-06
+
+- `13:12` **feat(lessons/tours): slower default, tours hold at the end, cleaner s…** — +93 −12 — [`ef37d49`](https://github.com/abgnydn/neuropulse/commit/ef37d4950dae28db1d7a155319b7a7db87053f09)
+- `07:56` **feat(lessons): completion share card — canvas PNG, real tensors as th…** — +137 −2 — [`0840471`](https://github.com/abgnydn/neuropulse/commit/08404712e9c4f84f4d6a51d0dc09ce42380f635b)
+- `07:04` **feat(demo): recording gallery + pre-recorded ablation + token deep-li…** — +221 −12 — [`5faefc7`](https://github.com/abgnydn/neuropulse/commit/5faefc7747b6f453f9431813d4c2a0b8570e470b)
+- `06:11` **feat(tours): story-style step progress segments in the transport bar …** — +86 −11 — [`54436b3`](https://github.com/abgnydn/neuropulse/commit/54436b3da0dc166bf59dca7829f2d705f9b91c52)
+- `05:37` **fix(ux): tour camera actually flies + demo resume + boot/icon polish …** — +83 −40 — [`cdc2468`](https://github.com/abgnydn/neuropulse/commit/cdc2468f9ad9fcd9a21f4488eadabb0d40a5b368)
+
+## 2026-07-03
+
+- `07:18` **feat(lessons): teaching quizzes, next-lesson flow, IA consolidation (…** — +209 −57 — [`3f3f529`](https://github.com/abgnydn/neuropulse/commit/3f3f529f26eb884fff39e6170bc77fc324bdfe81)
+- `07:10` **feat(levels): Kid / Explorer / Expert presentation presets (#14)** — +154 −5 — [`353df5a`](https://github.com/abgnydn/neuropulse/commit/353df5ac2c4e2f7468307dea95eca623aec97b65)
+- `07:02` **feat(demo): recorded-run demo mode + education boot fork (#13)** — +437 −158 — [`09aeafc`](https://github.com/abgnydn/neuropulse/commit/09aeafccd8114024347f944469c58b62761b4bbd)
+- `06:44` **feat(recording): capture real runs to compact JSON + CI validation (#12)** — +403 −2 — [`8ba7ed7`](https://github.com/abgnydn/neuropulse/commit/8ba7ed703043ddcadbac6866ae0d4e27bcee37dc)
+- `06:25` **Tour transport controls (pause/play/prev/next/counter) (#11)** — +226 −37 — [`c7170e5`](https://github.com/abgnydn/neuropulse/commit/c7170e5704164a4797548c8090e17a6d46a4a9e9)
+- `03:45` **feat(lessons): Phase-1 learning path — 📚 Learn overlay with checks (#9)** — +402 −0 — [`d5c7973`](https://github.com/abgnydn/neuropulse/commit/d5c7973405ac89bf8c94cfbdddc1c7966fcfab9b)
+
+## 2026-07-02
+
+- `07:15` **fix(tours): actually fly the camera during guided tours (#8)** — +15 −16 — [`3161986`](https://github.com/abgnydn/neuropulse/commit/3161986be9df90ff7eb7628a1b812c14aea17bd6)
+
+## 2026-07-01
+
+- `11:39` **fix(ui): tile expanded panels into side gutters, never over the answe…** — +50 −36 — [`2ba4072`](https://github.com/abgnydn/neuropulse/commit/2ba4072c2027888fcf52f242b68a28e003f82b9b)
+- `11:16` **feat(panels): wire every panel "i" caption to the Glossary via "Learn…** — +40 −18 — [`71cd5ed`](https://github.com/abgnydn/neuropulse/commit/71cd5ed98365125ee1121ada12231cd68c127066)
+- `11:12` **Ablation explainability: info button + Glossary entries + deep-link (#5)** — +79 −0 — [`df800c2`](https://github.com/abgnydn/neuropulse/commit/df800c2e19eae8b3704795e0ca096cde73806109)
+- `09:57` **fix(ablation): use the real prompt, and keep the head strip inside th…** — +9 −3 — [`49bef53`](https://github.com/abgnydn/neuropulse/commit/49bef53464d3c347961cd584882a160ea5aa246b)
+- `08:51` **Cancellable inference + stop double-caching weights (~4GB→~2GB) (#3)** — +66 −13 — [`f64fcb5`](https://github.com/abgnydn/neuropulse/commit/f64fcb50180ad76def08249147fee07c3eb0c6d0)
+- `08:28` **fix(ui): tile expanded panels so they never overlap each other or the…** — +82 −2 — [`800c2c4`](https://github.com/abgnydn/neuropulse/commit/800c2c4ce38f291c0ca3d499d3f15353d14ff2e7)
+- `07:20` **Consistency + research-grade pass on docs and CI (#1)** — +718 −393 — [`2e0c7f0`](https://github.com/abgnydn/neuropulse/commit/2e0c7f0c45ba3e88963cffb247c5ad6b38e08b69)
+
 ## 2026-06-02
 
 - `07:29` **docs: wire Zenodo DOI 10.5281/zenodo.20505470 into CITATION.cff + REA…** — +7 −2 — [`3a1d6cf`](https://github.com/abgnydn/neuropulse/commit/3a1d6cf23afcaf19f7b27e3e1a9bdd2360da045e)
@@ -59,41 +94,3 @@
 ## 2026-05-12
 
 - `11:09` **fix(butterfly): hardened sweep harness + real v2.5 regression fix** — +129 −34 — [`4c90a3d`](https://github.com/abgnydn/neuropulse/commit/4c90a3d2a3d5fddce54324c387c3a3358ddb7e06)
-- `10:33` **test(butterfly): two-track sweep harness — Playwright + paste-in-console** — +635 −1 — [`ae617dd`](https://github.com/abgnydn/neuropulse/commit/ae617dd6884279c06aae5c69bf3b8682460c95ed)
-- `10:02` **feat(butterfly): v2.5 — push to research state (4 transcripts, picker…** — +270 −49 — [`706f1a7`](https://github.com/abgnydn/neuropulse/commit/706f1a7d75df688503dd9889c2d5f985eea43ce0)
-- `09:44` **fix(readme): correct mode taxonomy — 5 views + 4 overlays, not 7 modes** — +162 −156 — [`4f6d81e`](https://github.com/abgnydn/neuropulse/commit/4f6d81e2c1d428632478b2db7fef0a2ed3ae4a96)
-- `09:27` **docs(readme): accurate Butterfly description after reading the source** — +17 −3 — [`d347565`](https://github.com/abgnydn/neuropulse/commit/d34756525c7a3749b09b6c26ba6fdc9bed5b62d4)
-- `09:17` **fix(readme): stack card overflow + correct Butterfly description** — +63 −63 — [`63311b2`](https://github.com/abgnydn/neuropulse/commit/63311b23eb181b2ea261a614911be38db3a11d5f)
-- `09:13` **docs(readme): redesigned stack quadrants + panel inventory + controls…** — +837 −42 — [`5a08431`](https://github.com/abgnydn/neuropulse/commit/5a08431efd21918026e8cac753b63bf8465648a8)
-- `09:02` **fix(readme): XML-escape kernel + validation SVGs · add run-locally image** — +303 −307 — [`2a19835`](https://github.com/abgnydn/neuropulse/commit/2a19835de932e507d2278d3631114eae5676e648)
-- `07:46` **docs(readme): comparison grid + 32-layer anatomy + kernel rack + OG card** — +456 −1 — [`8ded096`](https://github.com/abgnydn/neuropulse/commit/8ded09660acd17e549698142eb4c7fcbc66de077)
-- `07:37` **docs(readme): app preview, architecture diagram, validation table, mo…** — +687 −34 — [`474e6c3`](https://github.com/abgnydn/neuropulse/commit/474e6c3a0d9bde7d40948c0474632345861dee7f)
-- `07:31` **docs(readme): richer hero + stats strip + annotated scene diagram** — +205 −97 — [`ec2eb3b`](https://github.com/abgnydn/neuropulse/commit/ec2eb3be3a05b6160ae2120607e7dae696390e37)
-- `07:26` **docs: add MIT LICENSE + refresh README with hero SVG and tighter UI** — +296 −60 — [`9582596`](https://github.com/abgnydn/neuropulse/commit/9582596ea1a3b11eb0d2ef288279abef063ee28d)
-
-## 2026-05-09
-
-- `07:28` **feat(lab): empirical-lab gates, fingerprint footer, storage modal, au…** — +1761 −62 — [`24e6014`](https://github.com/abgnydn/neuropulse/commit/24e6014cca4ee1041ff5f3f1e96a1aff928682cd)
-
-## 2026-05-05
-
-- `07:04` **feat(footer): add Star CTA + LinkedIn + personal-site links** — +8 −1 — [`9c1444a`](https://github.com/abgnydn/neuropulse/commit/9c1444ad75f0f2dbdb663d35b8c4d54c78a11b8c)
-
-## 2026-05-04
-
-- `09:37` **fix(ui): byte-fallback decode, draggable panels, working speed slider** — +203 −55 — [`7276913`](https://github.com/abgnydn/neuropulse/commit/7276913d3f3bea194181b43faa05e2dd1d9d6b35)
-
-## 2026-04-27
-
-- `07:22` **feat(butterfly-mode): wire ablation panel into tagger / chrysalis / a…** — +95 −9 — [`6d4520a`](https://github.com/abgnydn/neuropulse/commit/6d4520a78488173c15a3f29bc84b1b133afb434d)
-
-## 2026-04-26
-
-- `04:01` **feat(butterfly-mode): tier B — editable, pausable, accumulative (v2.3)** — +6 −0 — [`3b78f0c`](https://github.com/abgnydn/neuropulse/commit/3b78f0cfb316913e904aba6f4b8e487a7c2dbae9)
-- `03:29` **feat(edu): Phi the Storyteller — kid-mode narration overlay** — +451 −12 — [`8c5632d`](https://github.com/abgnydn/neuropulse/commit/8c5632d3f72e2d38bbbc1ab4e70f94ca104fc056)
-- `03:22` **feat(butterfly-mode): tier A — make the WHY visible (v2.2)** — +129 −17 — [`e197021`](https://github.com/abgnydn/neuropulse/commit/e19702137fb59db83e1c038a4040b9e0b5e2054d)
-
-## 2026-04-25
-
-- `10:31` **feat(ui): top-anchored input + answer card · bottom orb rail · color-…** — +247 −65 — [`66c8399`](https://github.com/abgnydn/neuropulse/commit/66c8399712411fa1512a9c991b895570cfab1401)
-- `10:10` **feat(butterfly-mode): rubric self-judge + tighter tagger + sharper qu…** — +41 −19 — [`951bcfc`](https://github.com/abgnydn/neuropulse/commit/951bcfc84ee49ce2d3179acb98cada77c9b45118)

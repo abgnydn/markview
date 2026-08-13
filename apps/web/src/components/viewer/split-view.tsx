@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, Columns2 } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { MarkdownRenderer } from './markdown-renderer';
@@ -21,24 +21,35 @@ export function SplitView({ mainFileId, onClose }: SplitViewProps) {
     [files, mainFileId]
   );
 
-  // Load second file content
+  // Load second file content — and reload it whenever that file is saved
+  // (editor ⌘S, collab mirror flush), so the pane doesn't keep showing a
+  // mount-time snapshot forever.
   useEffect(() => {
     if (!secondFileId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSecondContent(null);
       return;
     }
     let cancelled = false;
-    db.files.get(secondFileId).then((file) => {
-      if (!cancelled && file) setSecondContent(file.content);
-    });
-    return () => { cancelled = true; };
+    const load = () => {
+      void db.files.get(secondFileId).then((file) => {
+        if (!cancelled && file) setSecondContent(file.content);
+      });
+    };
+    load();
+    const onSaved = (e: Event) => {
+      const savedId = (e as CustomEvent<{ fileId?: string }>).detail?.fileId;
+      if (!savedId || savedId === secondFileId) load();
+    };
+    window.addEventListener('markview:file-saved', onSaved);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('markview:file-saved', onSaved);
+    };
   }, [secondFileId]);
 
   // Default to first other file
   useEffect(() => {
     if (!secondFileId && otherFiles.length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSecondFileId(otherFiles[0].id);
     }
   }, [otherFiles, secondFileId]);

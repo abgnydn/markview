@@ -112,6 +112,14 @@ export function AnnotationToolbar({ fileId, containerRef }: AnnotationToolbarPro
       ref={toolbarRef}
       className="annotation-toolbar"
       style={{ top: position.top, left: position.left }}
+      // Keep the text selection alive — mousedown on a toolbar button
+      // would collapse it, and the selectionchange handler would unmount
+      // this toolbar before the click ever lands. Form fields are exempt
+      // so the note input can still take focus.
+      onMouseDown={(e) => {
+        const t = e.target as HTMLElement;
+        if (t.tagName !== 'INPUT' && t.tagName !== 'TEXTAREA') e.preventDefault();
+      }}
     >
       {!showNoteInput ? (
         <div className="annotation-toolbar-buttons">

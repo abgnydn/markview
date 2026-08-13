@@ -5,6 +5,7 @@ import { X, Search as SearchIcon, GitMerge, Tag as TagIcon, Sparkles } from 'luc
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { db } from '@/lib/storage/db';
 import { parseFrontmatter } from '@/lib/markdown/frontmatter';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface GraphViewProps {
   onClose: () => void;
@@ -40,6 +41,7 @@ interface Edge {
  * Pure-JS Verlet simulation, Canvas-2D render, no external libs.
  */
 export function GraphView({ onClose }: GraphViewProps) {
+  useFocusReturn(true);
   const files = useWorkspaceStore((s) => s.files);
   const activeFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
@@ -58,6 +60,8 @@ export function GraphView({ onClose }: GraphViewProps) {
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
   const constellationKey = activeWorkspaceId ? `mv-constellation-${activeWorkspaceId}` : '';
   const [constellation, setConstellation] = useState(false);
+  // Bumped when the async graph build lands, so ref-driven UI re-renders.
+  const [, setBuiltVersion] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const nodesRef = useRef<Node[]>([]);
   const edgesRef = useRef<Edge[]>([]);
@@ -147,12 +151,32 @@ export function GraphView({ onClose }: GraphViewProps) {
         idx++;
       }
 
+      // Re-apply the saved constellation layout — a rebuild (file save /
+      // rename while the overlay is open) creates freshly randomized
+      // positions, and without this the 2s save-timer would overwrite
+      // the user's hand-arranged layout with them.
+      if (constellation && constellationKey) {
+        try {
+          const raw = localStorage.getItem(constellationKey);
+          if (raw) {
+            const saved = JSON.parse(raw) as Record<string, { x: number; y: number }>;
+            for (const n of nodes) {
+              const p = saved[n.id];
+              if (p) { n.x = p.x; n.y = p.y; n.vx = 0; n.vy = 0; }
+            }
+          }
+        } catch { /* corrupt entry — ignore */ }
+      }
+
       nodesRef.current = nodes;
       edgesRef.current = edges;
       tagPaletteRef.current = palette;
+      // Refs don't trigger renders — bump state so the header stats and
+      // tag legend reflect the built graph instead of showing "0 · 0"
+      // until an unrelated interaction forces a render.
+      setBuiltVersion((v) => v + 1);
     })();
     return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   // Compute focus neighborhood whenever focusId changes.
@@ -164,7 +188,6 @@ export function GraphView({ onClose }: GraphViewProps) {
       if (e.b === focusId) set.add(e.a);
     }
     return set;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusId, edgesRef.current.length]);
 
   const searchMatches = useMemo(() => {
@@ -295,7 +318,6 @@ export function GraphView({ onClose }: GraphViewProps) {
       window.removeEventListener('mouseup', onMouseUp);
       canvas.removeEventListener('wheel', onWheel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFileId, focusId, focusNeighborhood, searchMatches, constellation]);
 
   // Constellation persistence — when nodes are arranged manually, save

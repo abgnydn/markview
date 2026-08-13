@@ -20,8 +20,11 @@
  * and re-subscribe — y-webrtc handles that.
  *
  * Routing model:
- *   - The DO id is derived from the room id via `idFromName(roomId)`,
- *     so all peers in a room land on the same instance.
+ *   - Clients connect to `wss://…/r/<roomId>`; the DO id is derived from
+ *     that path via `idFromName("room:" + roomId)`, so all peers in a
+ *     room share one instance and rooms are isolated from each other.
+ *     A pathless connection (older client bundles) falls back to a single
+ *     shared instance — see the note on the fetch handler.
  *   - Within an instance we still keep a topic→Set<WebSocket> index so
  *     clients can multiplex multiple Yjs rooms over one socket if they
  *     want (matches y-webrtc-server reference behaviour).
@@ -43,6 +46,9 @@ interface Envelope {
 }
 
 const PING_INTERVAL_MS = 30_000;
+// Abuse caps: y-webrtc uses one topic per room and small SDP/ICE frames.
+const MAX_TOPICS_PER_PEER = 8;
+const MAX_MESSAGE_BYTES = 64 * 1024;
 
 export class YjsSignalRoom {
   private peers = new Set<PeerState>();
@@ -95,6 +101,9 @@ export class YjsSignalRoom {
       let msg: Envelope | null = null;
       try {
         const raw = typeof ev.data === "string" ? ev.data : new TextDecoder().decode(ev.data as ArrayBuffer);
+        // Size cap — signaling frames are small (SDP/ICE); multi-MB
+        // payloads fanned out to every subscriber are abuse, not Yjs.
+        if (raw.length > MAX_MESSAGE_BYTES) return;
         const parsed = JSON.parse(raw) as unknown;
         if (parsed && typeof parsed === "object") msg = parsed as Envelope;
       } catch {
@@ -120,6 +129,10 @@ export class YjsSignalRoom {
         const topics = Array.isArray(msg.topics) ? msg.topics : [];
         for (const t of topics) {
           if (typeof t !== "string" || t.length === 0 || t.length > 256) continue;
+          // Topic cap per peer — y-webrtc subscribes to one room topic;
+          // unbounded subscriptions are memory-growth abuse in this
+          // always-hot DO.
+          if (!peer.topics.has(t) && peer.topics.size >= MAX_TOPICS_PER_PEER) break;
           peer.topics.add(t);
           let set = this.topics.get(t);
           if (!set) {
@@ -221,7 +234,20 @@ export default {
         headers: { "content-type": "text/plain; charset=utf-8" },
       });
     }
-    const id = env.YJS_ROOMS.idFromName("signal-v1");
+    // Route each room to its OWN Durable Object instance: /r/<roomId>.
+    // Previously every room in the world shared one always-hot instance,
+    // so a single abusive peer (or a very busy room) degraded signaling
+    // globally. Room ids are opaque and already unguessable; signaling
+    // payloads stay E2E-encrypted either way.
+    //
+    // Legacy fallback: clients on an older bundle connect to the bare
+    // origin with no path. They keep landing on the shared instance so a
+    // session spanning the rollout still works. Safe to delete once no
+    // pre-2026-08-10 bundles are in use.
+    const path = new URL(request.url).pathname;
+    const m = /^\/r\/([A-Za-z0-9_-]{1,64})$/.exec(path);
+    const doName = m ? `room:${m[1]}` : "signal-v1";
+    const id = env.YJS_ROOMS.idFromName(doName);
     const stub = env.YJS_ROOMS.get(id);
     return stub.fetch(request);
   },

@@ -6,6 +6,7 @@ import { useCollabStore } from '@/stores/collab-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { THEME_PRESETS } from '@/lib/themes/presets';
 import { ShareDialog } from '@/components/collab/share-dialog';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import '@/components/collab/collab.css';
 
 // Atmosphere / audio / time-of-day controls used to live in this file
@@ -86,6 +87,12 @@ function TreeItem({
           onClick={() => setIsOpen((v) => !v)}
           role="button"
           tabIndex={0}
+          aria-expanded={isOpen}
+          onKeyDown={(e) => {
+            // Folders were keyboard-dead — files nested in them were
+            // unreachable without a mouse.
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsOpen((v) => !v); }
+          }}
         >
           {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           {isOpen ? <FolderOpen size={14} className="sidebar-item-icon folder-icon" /> : <Folder size={14} className="sidebar-item-icon folder-icon" />}
@@ -117,7 +124,15 @@ function TreeItem({
       title={node.path}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' && node.fileId) onSelect(node.fileId); }}
+      onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && node.fileId) { e.preventDefault(); onSelect(node.fileId); } }}
+      // Tree leaves carry the same rich payload as flat rows, so files in
+      // imported repos (which always render as trees) can be dragged onto
+      // a workspace tab too. Intra-tree reorder stays unsupported — order
+      // inside a tree comes from the path structure.
+      draggable={!!node.fileId}
+      onDragStart={(e) => {
+        if (node.fileId) e.dataTransfer.setData('application/x-markview-file', node.fileId);
+      }}
     >
       <FileText size={14} className="sidebar-item-icon" />
       <span className="sidebar-item-name">{node.name}</span>
@@ -138,14 +153,53 @@ function TreeItem({
 export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void; className?: string }) {
   const workspaces = useWorkspaceStore((s) => s.workspaces);
   const activeWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
-  const files = useWorkspaceStore((s) => s.files);
-  const activeFileId = useWorkspaceStore((s) => s.activeFileId);
+  const localFiles = useWorkspaceStore((s) => s.files);
+  const localActiveFileId = useWorkspaceStore((s) => s.activeFileId);
   const setActiveFile = useWorkspaceStore((s) => s.setActiveFile);
   const removeFile = useWorkspaceStore((s) => s.removeFile);
+  const renameFile = useWorkspaceStore((s) => s.renameFile);
+  const renameWorkspace = useWorkspaceStore((s) => s.renameWorkspace);
   const reorderFiles = useWorkspaceStore((s) => s.reorderFiles);
   const collabIsActive = useCollabStore((s) => s.isActive);
+  const collabIsHost = useCollabStore((s) => s.isHost);
+  const syncedFiles = useCollabStore((s) => s.syncedFiles);
+  const syncedActiveFileId = useCollabStore((s) => s.syncedActiveFileId);
+  const setSyncedActiveFile = useCollabStore((s) => s.setSyncedActiveFile);
+
+  // Guests browse the SHARED workspace: its files come from the Y.Doc,
+  // and selection routes through the synced store — the local workspace
+  // store knows nothing about shared file ids. Without this a guest is
+  // stuck on whichever file the session opened with.
+  const isGuestMode = collabIsActive && !collabIsHost;
+  const files = isGuestMode
+    ? syncedFiles.map((f) => ({ ...f, displayName: f.displayName || f.filename.replace(/\.md$/i, ''), size: 0 }))
+    : localFiles;
+  const activeFileId = isGuestMode ? syncedActiveFileId : localActiveFileId;
+  const selectFile = useCallback((id: string) => {
+    if (isGuestMode) setSyncedActiveFile(id);
+    else void setActiveFile(id);
+  }, [isGuestMode, setSyncedActiveFile, setActiveFile]);
   const [showShareDialog, setShowShareDialog] = useState(false);
-  const { mode, setMode, colorScheme, setColorScheme, atmosphere, setAtmosphere } = useThemeStore();
+  // Deleting a file is irreversible (content + snapshots + embeddings) —
+  // gate it behind the same ConfirmDialog that workspace-close uses.
+  const [fileToRemove, setFileToRemove] = useState<string | null>(null);
+  // Inline rename — double-click a file row or the workspace title. Files
+  // could never be renamed before, and a single-workspace user had no
+  // rename affordance at all (the tabs bar hides itself below 2).
+  const [editingFileId, setEditingFileId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState<string | null>(null);
+  const [draftName, setDraftName] = useState('');
+  const commitFileRename = () => {
+    if (editingFileId && draftName.trim()) void renameFile(editingFileId, draftName);
+    setEditingFileId(null);
+  };
+  const commitTitleRename = () => {
+    if (editingTitle !== null && activeWorkspaceId && draftName.trim()) {
+      void renameWorkspace(activeWorkspaceId, draftName.trim());
+    }
+    setEditingTitle(null);
+  };
+  const { mode, setMode, colorScheme, setColorScheme } = useThemeStore();
 
   // Drag state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -163,7 +217,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
     setDragIndex(index);
     e.dataTransfer.effectAllowed = 'move';
     // Plain-text payload = the source index (used by intra-sidebar reorder).
-    e.dataTransfer.setData('text/plain', String(index));
+    e.dataTransfer.setData('application/x-markview-file-index', String(index));
     // Rich payload = the file id (used by workspace tabs to drop the file
     // into a different workspace). A separate MIME type means cross-target
     // drops can recognize "this is a markview file" without confusing the
@@ -206,7 +260,7 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
 
   const handleDrop = useCallback((e: React.DragEvent, toIndex: number) => {
     e.preventDefault();
-    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    const fromIndex = parseInt(e.dataTransfer.getData('application/x-markview-file-index'), 10);
     if (!isNaN(fromIndex) && fromIndex !== toIndex) {
       reorderFiles(fromIndex, toIndex);
     }
@@ -221,7 +275,29 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
     <>
     <aside className={`sidebar ${className || ''}`}>
       <div className="sidebar-header">
-        <h2 className="sidebar-title">{activeWorkspace.title}</h2>
+        {editingTitle !== null && !isGuestMode ? (
+          <input
+            className="sidebar-title sidebar-rename-input"
+            value={draftName}
+            autoFocus
+            onChange={(e) => setDraftName(e.target.value)}
+            onBlur={commitTitleRename}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') commitTitleRename();
+              if (e.key === 'Escape') setEditingTitle(null);
+            }}
+          />
+        ) : (
+          <h2
+            className="sidebar-title"
+            title={isGuestMode ? activeWorkspace.title : 'Double-click to rename'}
+            onDoubleClick={() => {
+              if (isGuestMode) return;
+              setDraftName(activeWorkspace.title);
+              setEditingTitle(activeWorkspace.title);
+            }}
+          >{activeWorkspace.title}</h2>
+        )}
         <button
           className={`collab-share-btn ${collabIsActive ? 'collab-sharing' : ''}`}
           onClick={() => setShowShareDialog(true)}
@@ -240,8 +316,8 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
               node={node}
               depth={0}
               activeFileId={activeFileId}
-              onSelect={(id) => { setActiveFile(id); onFileSelect?.(); }}
-              onRemove={removeFile}
+              onSelect={(id) => { selectFile(id); onFileSelect?.(); }}
+              onRemove={setFileToRemove}
             />
           ))
         ) : (
@@ -250,12 +326,12 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
             <div
               key={file.id}
               className={`sidebar-item sidebar-item-draggable ${activeFileId === file.id ? 'sidebar-item-active' : ''} ${dragIndex === index ? 'sidebar-item-dragging' : ''} ${dropIndex === index && dragIndex !== index ? 'sidebar-item-drop-target' : ''}`}
-              onClick={() => { setActiveFile(file.id); onFileSelect?.(); }}
+              onClick={() => { selectFile(file.id); onFileSelect?.(); }}
               title={file.filename}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter') setActiveFile(file.id); }}
-              draggable
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectFile(file.id); } }}
+              draggable={!isGuestMode}
               onDragStart={(e) => handleDragStart(e, index)}
               onDragEnd={handleDragEnd}
               onDragEnter={() => handleDragEnter(index)}
@@ -267,17 +343,41 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
                 <GripVertical size={12} />
               </span>
               <FileText size={14} className="sidebar-item-icon" />
-              <span className="sidebar-item-name">{file.displayName || file.filename}</span>
-              <button
+              {editingFileId === file.id ? (
+                <input
+                  className="sidebar-rename-input"
+                  value={draftName}
+                  autoFocus
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setDraftName(e.target.value)}
+                  onBlur={commitFileRename}
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                    if (e.key === 'Enter') commitFileRename();
+                    if (e.key === 'Escape') setEditingFileId(null);
+                  }}
+                />
+              ) : (
+                <span
+                  className="sidebar-item-name"
+                  onDoubleClick={(e) => {
+                    if (isGuestMode) return;
+                    e.stopPropagation();
+                    setDraftName(file.displayName || file.filename);
+                    setEditingFileId(file.id);
+                  }}
+                >{file.displayName || file.filename}</span>
+              )}
+              {!isGuestMode && <button
                 className="sidebar-item-remove"
                 onClick={(e) => {
                   e.stopPropagation();
-                  removeFile(file.id);
+                  setFileToRemove(file.id);
                 }}
                 title="Remove file"
               >
                 <Trash2 size={12} />
-              </button>
+              </button>}
             </div>
           ))
         )}
@@ -315,6 +415,18 @@ export function Sidebar({ onFileSelect, className }: { onFileSelect?: () => void
       </div>
     </aside>
     {showShareDialog && <ShareDialog onClose={() => setShowShareDialog(false)} />}
+    <ConfirmDialog
+      isOpen={fileToRemove !== null}
+      title="Delete file"
+      description={`Delete "${files.find((f) => f.id === fileToRemove)?.displayName ?? 'this file'}"? Its content, snapshots, and search index are removed permanently.`}
+      confirmText="Delete file"
+      tone="danger"
+      onConfirm={() => {
+        if (fileToRemove) void removeFile(fileToRemove);
+        setFileToRemove(null);
+      }}
+      onCancel={() => setFileToRemove(null)}
+    />
     </>
   );
 }

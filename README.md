@@ -32,8 +32,18 @@ whole thing in an optional, gorgeous **atmosphere** reading mode.
 - **Private by default** — no accounts, no telemetry. The only outbound
   features are opt-in: peer-to-peer collaboration and explicit share links.
 
-Try it at **[markview.ai](https://markview.ai)** — no install — or grab a
-[desktop build](https://github.com/abgnydn/markview/releases).
+Try it at **[markview.ai](https://markview.ai)** — no install — or install the
+desktop app:
+
+```sh
+brew install --cask abgnydn/tap/markview   # macOS
+```
+
+Direct downloads for macOS, Windows, and Linux are on the
+[releases page](https://github.com/abgnydn/markview/releases). The builds are
+not code-signed, so a downloaded `.dmg` needs **System Settings → Privacy &
+Security → Open Anyway** on first launch; the Homebrew cask handles that for
+you.
 
 ---
 
@@ -72,6 +82,7 @@ rotate on a tempo you choose (every visit, hourly, daily, or pinned).
 | **Rendering** | GitHub-flavored markdown, Mermaid diagrams, KaTeX math, Shiki syntax highlighting (140+ languages), tables, alerts, footnotes |
 | **Editing** | CodeMirror 6 surface, WYSIWYG-style toolbar, split view, focus mode, vanishing chrome (hover an edge to reveal toolbar / sidebar / TOC) |
 | **Workspace** | Multi-file trees, IndexedDB persistence, drag-and-drop, GitHub repo import, full-text search |
+| **Presentation** | Press `P` and any document becomes a deck — slide splitting, speaker notes, presenter window, drawing tools, themes, and PPTX/HTML deck export |
 | **Related notes** | On-device semantic search — `all-MiniLM-L6-v2` runs locally (WebGPU/WASM) to surface notes you forgot you wrote. Nothing is uploaded. |
 | **Collaboration** | Real-time multi-user editing over WebRTC (Yjs) — document data goes peer-to-peer, never through a server |
 | **Export** | PDF, Word, PowerPoint, PNG, SVG, HTML, Markdown, RST, AsciiDoc, static site |

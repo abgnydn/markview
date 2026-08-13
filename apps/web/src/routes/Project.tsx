@@ -16,6 +16,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useThemeStore } from "@/stores/theme-store";
 import { ViewerPage } from "@/components/viewer/viewer-page";
+import { useMarketingBeacon } from "@/lib/analytics";
+import { usePageTitle } from '@/hooks/use-page-title';
 
 type Status = "loading" | "ready" | "error";
 
@@ -47,7 +49,9 @@ function CenteredMessage({ children }: { children: React.ReactNode }) {
 }
 
 export default function Project() {
+  useMarketingBeacon();
   const { slug = "" } = useParams<{ slug: string }>();
+  usePageTitle(slug ? `${slug} — projects · markview.ai` : null);
   const navigate = useNavigate();
 
   const [status, setStatus] = useState<Status>("loading");
@@ -81,9 +85,12 @@ export default function Project() {
   useEffect(() => {
     if (!isLoaded) return;
     if (hydratedSlugRef.current === slug) return;
-    hydratedSlugRef.current = slug;
     setStatus("loading");
 
+    // Cancellation guard — navigating /p/a → /p/b before a's fetches
+    // resolve must not let a's hydration land last and win the active
+    // workspace while the URL says b.
+    let cancelled = false;
     void (async () => {
       try {
         // Pull the bundle. Vite serves /public verbatim so this URL is
@@ -107,6 +114,7 @@ export default function Project() {
           commitsRes.ok ? commitsRes.text() : Promise.resolve(""),
         ]);
 
+        if (cancelled) return;
         const title = `portfolio: ${slug}`;
         // Latest store snapshot (workspaces from selector may be stale
         // between rapid navigations).
@@ -116,6 +124,7 @@ export default function Project() {
         if (existing) {
           await deleteWorkspace(existing.id);
         }
+        if (cancelled) return;
 
         const newFiles = [
           { filename: "README.md", content: readme },
@@ -125,14 +134,41 @@ export default function Project() {
           ...(commits ? [{ filename: "commits.md", content: commits }] : []),
         ];
         await createWorkspace(title, newFiles);
+        if (cancelled) return;
 
+        // createWorkspace opens the alphabetically-first file, which is
+        // CHANGELOG.md whenever one exists — the route is designed
+        // around the README.
+        const st = useWorkspaceStore.getState();
+        const readmeFile = st.files.find((f) => f.filename === "README.md");
+        if (readmeFile && readmeFile.id !== st.activeFileId) {
+          await st.setActiveFile(readmeFile.id);
+        }
+        if (cancelled) return;
+
+        hydratedSlugRef.current = slug;
         setStatus("ready");
       } catch (e) {
+        if (cancelled) return;
         setErrorMsg(e instanceof Error ? e.message : String(e));
         setStatus("error");
       }
     })();
+    return () => { cancelled = true; };
   }, [isLoaded, slug, createWorkspace, deleteWorkspace]);
+
+  // Portfolio workspaces are transient view state, not user data — clean
+  // them out of the workspace list when leaving the route.
+  useEffect(() => {
+    return () => {
+      void (async () => {
+        const store = useWorkspaceStore.getState();
+        for (const w of store.workspaces.filter((ws) => ws.title.startsWith("portfolio: "))) {
+          await store.deleteWorkspace(w.id);
+        }
+      })();
+    };
+  }, []);
 
   const handleGoHome = () => {
     navigate("/projects");

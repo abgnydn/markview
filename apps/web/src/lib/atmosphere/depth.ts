@@ -14,40 +14,48 @@
  * download when ensureDepth() is called for the first time, and only
  * if the requested painting isn't already cached.
  */
-// transformers.js v4 doesn't export a top-level Pipeline type; we
-// keep it loosely typed (the only thing we call is the pipeline as
-// a function returning `{ depth: RawImage }`).
-type DepthPipeline = (img: unknown) => Promise<{ depth: { toCanvas: () => HTMLCanvasElement } }>;
+// v2: paintings moved from .jpg to .webp URLs, so every v1 key is an
+// orphan — new name lets the browser GC the old cache wholesale.
+const CACHE_NAME = 'mv-depth-v2';
 
-const MODEL_ID = 'onnx-community/depth-anything-v2-small';
-const CACHE_NAME = 'mv-depth-v1';
+// ── Worker plumbing ──────────────────────────────────────────────────
+//
+// Inference runs in depth-worker.ts. It used to run here, on the main
+// thread: measured on an M2 Max that was a 1.7s long task — a hard UI
+// freeze — every time a painting's depth was computed, and the
+// atmosphere rotates paintings, so it recurred all session. The
+// ML_TIMEOUT_MS race below only chose which RESULT to use; the freeze
+// happened either way.
 
-let pipelinePromise: Promise<DepthPipeline> | null = null;
-let pipelineFailed = false;
+let worker: Worker | null = null;
+let workerFailed = false;
+let nextRequestId = 1;
+const pending = new Map<number, (r: { ok: boolean; bitmap?: ImageBitmap }) => void>();
 
-async function getPipeline(): Promise<DepthPipeline | null> {
-  if (pipelineFailed) return null;
-  if (pipelinePromise) return pipelinePromise;
-  pipelinePromise = (async () => {
-    const tx = await import('@huggingface/transformers');
-    const pipelineFn = tx.pipeline as unknown as (
-      task: string,
-      model: string,
-      opts?: Record<string, unknown>,
-    ) => Promise<DepthPipeline>;
-    try {
-      return await pipelineFn('depth-estimation', MODEL_ID, { device: 'webgpu' });
-    } catch {
-      // WebGPU init refused — fall back to WASM (default).
-      return await pipelineFn('depth-estimation', MODEL_ID);
-    }
-  })();
+function getWorker(): Worker | null {
+  if (workerFailed) return null;
+  if (worker) return worker;
   try {
-    return await pipelinePromise;
+    worker = new Worker(new URL('./depth-worker.ts', import.meta.url), { type: 'module' });
+    worker.onmessage = (e: MessageEvent<{ id: number; ok: boolean; bitmap?: ImageBitmap; error?: string }>) => {
+      const resolve = pending.get(e.data.id);
+      if (!resolve) return;
+      pending.delete(e.data.id);
+      if (!e.data.ok) console.warn('[depth] worker inference failed:', e.data.error);
+      resolve({ ok: e.data.ok, bitmap: e.data.bitmap });
+    };
+    worker.onerror = (err) => {
+      console.warn('[depth] worker crashed — falling back to procedural depth', err);
+      workerFailed = true;
+      for (const [, resolve] of pending) resolve({ ok: false });
+      pending.clear();
+      worker?.terminate();
+      worker = null;
+    };
+    return worker;
   } catch (err) {
-    console.warn('[depth] pipeline init failed — atmospheres will fall back to flat <img>', err);
-    pipelineFailed = true;
-    pipelinePromise = null;
+    console.warn('[depth] worker unavailable — falling back to procedural depth', err);
+    workerFailed = true;
     return null;
   }
 }
@@ -122,32 +130,16 @@ async function proceduralDepth(imageUrl: string): Promise<DepthResult | null> {
 /** Run the Depth-Anything model and cache the result. Returns null on any
  *  failure. Caches on success so a later call is an instant cache hit. */
 async function computeMlDepth(imageUrl: string, cacheKey: string): Promise<DepthResult | null> {
-  const pipe = await getPipeline();
-  if (!pipe) return null;
-  try {
-    const tx = await import('@huggingface/transformers');
-    const RawImageClass = (tx as unknown as { RawImage: { fromURL: (u: string) => Promise<unknown> } }).RawImage;
-    const rawImage = await RawImageClass.fromURL(imageUrl);
-    const out = await pipe(rawImage);
-    const canvas = out.depth.toCanvas();
-    const tmp = document.createElement('canvas');
-    tmp.width = DEPTH_SIZE; tmp.height = DEPTH_SIZE;
-    const ctx = tmp.getContext('2d');
-    if (!ctx) return null;
-    ctx.drawImage(canvas, 0, 0, DEPTH_SIZE, DEPTH_SIZE);
-    const bitmap = await createImageBitmap(tmp);
-    const blob = await new Promise<Blob | null>((resolve) => tmp.toBlob((b) => resolve(b), 'image/png'));
-    if (blob) {
-      try {
-        const cache = await caches.open(CACHE_NAME);
-        await cache.put(cacheKey, new Response(blob, { headers: { 'content-type': 'image/png' } }));
-      } catch { /* cache write failed — ignore */ }
-    }
-    return { bitmap, width: bitmap.width, height: bitmap.height };
-  } catch (err) {
-    console.warn('[depth] ML inference failed for', imageUrl, err);
-    return null;
-  }
+  const w = getWorker();
+  if (!w) return null;
+  const id = nextRequestId++;
+  const result = await new Promise<{ ok: boolean; bitmap?: ImageBitmap }>((resolve) => {
+    pending.set(id, resolve);
+    w.postMessage({ id, imageUrl, cacheKey });
+  });
+  if (!result.ok || !result.bitmap) return null;
+  const bitmap = result.bitmap;
+  return { bitmap, width: bitmap.width, height: bitmap.height };
 }
 
 /**
@@ -162,7 +154,11 @@ async function computeMlDepth(imageUrl: string, cacheKey: string): Promise<Depth
  */
 export async function ensureDepth(imageUrl: string): Promise<DepthResult | null> {
   if (typeof window === 'undefined') return null;
-  const cacheKey = `depth:${imageUrl}`;
+  // ABSOLUTE key: the worker writes this entry and the main thread reads
+  // it. A relative key resolves against each context's own base URL (the
+  // worker script's directory vs the page), so the two sides would use
+  // different keys and every load would miss the cache and re-run the model.
+  const cacheKey = new URL(`/__mv-depth__/${encodeURIComponent(imageUrl)}`, location.origin).toString();
 
   // 1. Cached ML map — instant, best quality.
   try {

@@ -11,6 +11,18 @@ This document is a tour. The sidebar on the left holds the rest of the showcase 
 - **Shares** through WebRTC — one URL, real-time collab, zero server
 - **Exports** to PDF, Word, PowerPoint, HTML, or a static site
 
+## Try this
+
+Every trigger below works right now, on this document:
+
+- Press `E` — the **editor** opens on this file. Inside it, type `/` for block templates, `[[` to link another note, and `Tab` at the end of a line to have the AI continue your sentence.
+- Press `P` — this document becomes a **presentation** (arrow keys advance, `?` shows every deck shortcut).
+- Press `⌘P` — the **command palette**: jump to any file, switch workspaces, run commands.
+- Press `⌘J` — **chat with this workspace**: ask questions, get answers with citations.
+- The tiny dots bottom-left switch on an **atmosphere** — the page becomes a living painting with ambient sound. The footprints icon walks you *into* it.
+- Drag a file from the sidebar onto a workspace tab up top to **move it between workspaces**; double-click a file's name to **rename** it.
+- **Export** lives under the `⋮` menu in the toolbar: PDF, Word, PowerPoint, deck HTML, or a whole static site.
+
 ## How it feels
 
 The chrome lives on the edges. The toolbar reveals when you brush the top of the viewport; the file tree appears when you reach for the left edge; the table of contents arrives from the right. Everything inside is your text.

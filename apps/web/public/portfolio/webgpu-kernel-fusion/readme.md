@@ -4,12 +4,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Live](https://img.shields.io/badge/live-kernelfusion.dev-6ea8ff)](https://kernelfusion.dev)
 [![Paper arithmetic](https://img.shields.io/badge/paper%20arithmetic-54%20%E2%9C%93-82c98b)](./tests/paper_arithmetic.test.js)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/abgnydn/webgpu-kernel-fusion/blob/main/benchmarks/colab/acrobot_cross_api.ipynb)
 
 Fusing sequential fitness evaluations into single GPU compute shader dispatches eliminates per-step kernel launch overhead. We prove this across **4 GPU APIs on 2 hardware platforms** — the fusion advantage is **GPU-API-agnostic**.
 
 ## Key Results
 
-**Same hardware: Tesla T4 (Acrobot-v1, 500 steps, RK4)**
+**Same hardware: Tesla T4 (Acrobot-v1, 500 steps, explicit Euler dt=0.05 — earlier versions mislabeled this RK4)**
 
 | System | gen/s | vs PyTorch |
 |---|---|---|
@@ -51,6 +52,31 @@ The fusion advantage scales with dispatch overhead fraction. On compute-bound N-
 - **Paper (Markdown):** [PAPER.md](PAPER.md)
 - **Paper (LaTeX):** [paper.tex](paper.tex)
 - **DOI:** [10.5281/zenodo.19342888](https://doi.org/10.5281/zenodo.19342888)
+
+### Re-measured (Tesla T4, Colab, 2026-07-28 — corrected artifact, verified-equivalent kernels)
+
+| System | gen/s | vs PyTorch |
+|---|---|---|
+| PyTorch CUDA per-step (torch 2.11.0) | 1.8 | 1x |
+| JAX lax.scan+vmap (jax 0.7.2) | 60.5 | **33.5x** |
+| **Hand-fused CUDA kernel (cupy 14.0.1)** | **317.3** | **176x** |
+
+All kernels cross-checked for output equivalence before timing (≥ 99.6% match,
+f32 chaotic-flip residue documented). PyTorch's per-step dispatch got ~3x
+faster between the v1 measurement and torch 2.11, compressing the ratios —
+the qualitative result is unchanged. Raw data:
+[`benchmarks/results/2026-07-28_t4_colab/`](benchmarks/results/2026-07-28_t4_colab/).
+
+## Reproduce the Cross-API Table (Colab)
+
+The Acrobot cross-API implementations (per-step PyTorch, hand-fused CUDA,
+JAX `lax.scan`, Triton) live in [`benchmarks/colab/acrobot_impls.py`](benchmarks/colab/acrobot_impls.py)
+with one canonical dynamics definition. Open
+[`benchmarks/colab/acrobot_cross_api.ipynb`](benchmarks/colab/acrobot_cross_api.ipynb)
+in Colab on a GPU runtime — it **verifies all implementations produce identical
+fitness on shared genomes before any timing** (CI additionally gates NumPy /
+PyTorch / JAX equivalence in float64 on every push). Speedups are tied to the
+framework versions the notebook prints; treat baselines as moving targets.
 
 ## Reproduce Every Result
 

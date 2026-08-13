@@ -18,6 +18,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useMarketingBeacon } from "@/lib/analytics";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -646,6 +647,7 @@ function makeSparkleMaterial(): THREE.ShaderMaterial {
 }
 
 export default function ProjectsConstellation() {
+  useMarketingBeacon();
   const [index, setIndex] = useState<PortfolioIndex | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hovered, setHovered] = useState<ProjectMin | null>(null);
@@ -667,7 +669,6 @@ export default function ProjectsConstellation() {
   const [inspectTilt, setInspectTilt] = useState({ x: 0, y: 0 });
   const [photo, setPhoto] = useState(false);
   const [trailer, setTrailer] = useState(false);
-  const [deckMode, setDeckMode] = useState(false);
   const [deck, setDeck] = useState<string[]>([]);
   const [lite, setLite] = useState<boolean>(() => {
     try { return window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency || 8) < 8; }
@@ -1380,7 +1381,7 @@ export default function ProjectsConstellation() {
       mouseVec.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       setMouse({ x: e.clientX, y: e.clientY });
       raycaster.setFromCamera(mouseVec, camera);
-      const hits = raycaster.intersectObjects(pickMeshes);
+      const hits = raycaster.intersectObjects(pickMeshes).filter((h) => h.object.parent?.visible !== false); // scrubbed-out cards are hidden, not removed — Raycaster ignores .visible
       if (hits.length > 0) {
         const hitMesh = hits[0].object as THREE.Mesh;
         currentHover = cards.find((c) => c.pickMesh === hitMesh) ?? null;
@@ -1396,7 +1397,7 @@ export default function ProjectsConstellation() {
       touch();
       sfxRef.current?.ensure();           // unlock audio on a user gesture
       raycaster.setFromCamera(mouseVec, camera);
-      const hits = raycaster.intersectObjects(pickMeshes);
+      const hits = raycaster.intersectObjects(pickMeshes).filter((h) => h.object.parent?.visible !== false); // scrubbed-out cards are hidden, not removed — Raycaster ignores .visible
       if (hits.length > 0) {
         const p = (hits[0].object as THREE.Mesh).userData.project as ProjectMin;
         const idx = journeyOrderRef.current.findIndex((x) => x.project.slug === p.slug);
@@ -1409,7 +1410,6 @@ export default function ProjectsConstellation() {
     // ── animate ──────────────────────────────────────────────────────────
     const clock = new THREE.Clock();
     let raf = 0;
-    let frame = 0;
     const tmpScale = new THREE.Vector3();
     const HOVER_SCALE = 1.16;
     const FOCUS_SCALE = 1.34;
@@ -1454,7 +1454,6 @@ export default function ProjectsConstellation() {
 
     function tick() {
       raf = requestAnimationFrame(tick);
-      frame++;
       const t = clock.getElapsedTime();
 
       if (lastAppliedFocus !== focusedRef.current) {

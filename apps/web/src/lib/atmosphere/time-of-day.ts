@@ -62,15 +62,20 @@ function apply() {
   root.setAttribute('data-time-phase', phase);
 }
 
-/** Call once on app boot. Sets the var + schedules quarter-hour updates. */
+/** Call once on app boot. Sets the var + schedules quarter-hour updates.
+ *  Idempotent: repeat calls reset the interval and never stack listeners. */
+let visListenerAdded = false;
 export function initTimeOfDayTint() {
   apply();
   if (updateHandle !== null) window.clearInterval(updateHandle);
   updateHandle = window.setInterval(apply, 15 * 60 * 1000);
   // Catch phase transitions when the tab returns to focus.
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) apply();
-  });
+  if (!visListenerAdded) {
+    visListenerAdded = true;
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) apply();
+    });
+  }
 }
 
 export function setTimeTintMode(next: TimeTintMode) {
@@ -83,7 +88,3 @@ export function getTimeTintMode(): TimeTintMode {
   return mode;
 }
 
-export function currentTimeTintPhase(): string {
-  if (mode === 'off') return 'off';
-  return phaseForHour(new Date().getHours());
-}

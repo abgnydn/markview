@@ -1,99 +1,105 @@
 # Commits — markview
 
-## 2026-06-27
+## 2026-08-12
 
-- `21:08` **chore(portfolio): daily sync 2026-06-27** — +33 −29 — [`d136a5b`](https://github.com/abgnydn/markview/commit/d136a5b9e6b0a66c411aaa8c8f3df0c6f3607a7d)
+- `08:28` **perf(atmosphere): render the moving light at 60fps, not 15** — +27 −11 — [`d85223e`](https://github.com/abgnydn/markview/commit/d85223ec757a53a5f3793ea4c3bd5f48ca38b307)
+- `07:54` **perf(atmosphere): move both ML models off the main thread** — +266 −96 — [`494931f`](https://github.com/abgnydn/markview/commit/494931f069a1fca439d57cd5c824c8791bf32456)
+- `07:54` **fix(landing): center the install note and import label** — +6 −2 — [`11c007b`](https://github.com/abgnydn/markview/commit/11c007bf2bb392d3c7a91181c090f2746a7728d3)
+- `06:40` **feat(desktop): Homebrew cask as the working macOS install path** — +43 −11 — [`216ffbc`](https://github.com/abgnydn/markview/commit/216ffbceb18565bd1714678f2d75265320a2dc60)
+- `06:06` **fix(landing): tell macOS/Windows users how to open the unsigned builds** — +117 −12 — [`02ba0fa`](https://github.com/abgnydn/markview/commit/02ba0fafb2463d198fa5eb391b2b5bb7ed0c049f)
 
-## 2026-06-26
+## 2026-08-11
 
-- `21:23` **chore(portfolio): daily sync 2026-06-26** — +30 −31 — [`832037d`](https://github.com/abgnydn/markview/commit/832037deda5be1583e62803cb119868af6764d86)
+- `20:50` **chore(portfolio): daily sync 2026-08-11** — +790 −794 — [`321054a`](https://github.com/abgnydn/markview/commit/321054a6236b5398a41ab69858e1c6b85d9ab891)
 
-## 2026-06-25
+## 2026-08-10
 
-- `21:47` **chore(portfolio): daily sync 2026-06-25** — +435 −364 — [`76bd014`](https://github.com/abgnydn/markview/commit/76bd0143fea1d84285d55b5bc2e422bc2ed5c39a)
-- `03:34` **feat(toolbar): consolidate secondary actions into a "More" menu (#105)** — +125 −86 — [`1d229c7`](https://github.com/abgnydn/markview/commit/1d229c7707c67d23f15552bdd9fd1dfbc520fa96)
+- `20:46` **chore(portfolio): daily sync 2026-08-10** — +408 −440 — [`f09e4f5`](https://github.com/abgnydn/markview/commit/f09e4f587b48e2181c22b38acd3d1e9aa07cfcbc)
+- `11:53` **chore: wire the analytics token to an env var, document the plugin tr…** — +40 −3 — [`c3a4365`](https://github.com/abgnydn/markview/commit/c3a43653863869544a56783dc8dcfdbabce9ccca)
+- `11:53` **feat(desktop): manual 'Check for updates'** — +117 −2 — [`54d5d5e`](https://github.com/abgnydn/markview/commit/54d5d5e78ac5461e7b10069138997a4e68cb0ae9)
+- `11:53` **fix(history): stop pruning manual bookmarks** — +8 −4 — [`1f42195`](https://github.com/abgnydn/markview/commit/1f421959b47b1b5b1a69085f3a3ec5e774028b2b)
+- `11:53` **fix(collab): give each room its own signaling Durable Object** — +31 −7 — [`917eebf`](https://github.com/abgnydn/markview/commit/917eebfb0d9f2fc7ac1f7e71133a30b1e3d05924)
+- `11:53` **ci: deploy the Cloudflare Workers from CI** — +58 −0 — [`c1ca3f6`](https://github.com/abgnydn/markview/commit/c1ca3f6a077ce0d4a35483ac4bb9bfcc6fd349cc)
+- `11:52` **test: regression coverage for the audit-wave fixes** — +318 −0 — [`36dc0e4`](https://github.com/abgnydn/markview/commit/36dc0e419e3de2fb7f9c5ea0b738c8258e84e974)
+- `11:52` **fix(render): task-list checkboxes were dead — enable in markup, deleg…** — +59 −18 — [`c18029b`](https://github.com/abgnydn/markview/commit/c18029b5166a5a68641958ee0ebc2d76439a0010)
+- `04:44` **chore(landing): desktop downloads -> 0.3.1 (published, URLs verified …** — +1 −1 — [`dcf1511`](https://github.com/abgnydn/markview/commit/dcf151178b7bb62fb4cc7716441662fcc8f8fee2)
+- `04:31` **chore(desktop): bump to 0.3.1** — +3 −3 — [`12836ad`](https://github.com/abgnydn/markview/commit/12836add2636ecad87afddc1fd5c95fd5c68a2ba)
+- `04:01` **fix(routes): portfolio workspace pollution, honest privacy policy, fo…** — +114 −17 — [`bb2bd24`](https://github.com/abgnydn/markview/commit/bb2bd24d2771c8a5866bb25c37b81683630c85f5)
+- `04:01` **fix(collab): share links that decrypt, worker DoS, guest UX** — +108 −19 — [`c74b87f`](https://github.com/abgnydn/markview/commit/c74b87f1c907524778bb0a37d4ce0ee33401da93)
+- `04:01` **fix(export): code-safe RST/AsciiDoc, real math+diagrams+images in ren…** — +207 −44 — [`e2c48c4`](https://github.com/abgnydn/markview/commit/e2c48c473e167b320e9258ca926f9728daa74828)
+- `04:00` **fix(features): presentation chord hijack + title injection, annotatio…** — +90 −27 — [`00d62a4`](https://github.com/abgnydn/markview/commit/00d62a4a3f2cac0ed9327613325df5a8b98d9bc8)
+- `04:00` **fix(render): currency-mangling double KaTeX pass, mermaid slot drift,…** — +25 −80 — [`a5c7eb1`](https://github.com/abgnydn/markview/commit/a5c7eb1c26f835e8aa48e9a2ca1b1603971e0793)
+- `04:00` **fix(viewer): cross-file save corruption, empty-file lockout, Esc laye…** — +152 −55 — [`92fa280`](https://github.com/abgnydn/markview/commit/92fa2807eb6e3c05a79856dd66549e4d3680a34c)
+- `04:00` **fix(editor): star-aware italic toggle, unmount flush, drop dead exten…** — +32 −8 — [`3f4f937`](https://github.com/abgnydn/markview/commit/3f4f9374298fa17ba53aa44f5da62a02284374c7)
+- `03:06` **fix(editor): survive mode round-trips, flush on close, unbreak mac sh…** — +103 −33 — [`527161d`](https://github.com/abgnydn/markview/commit/527161d1cab39db6fc04b922a000dfe5ddd9707f)
+- `02:32` **chore(desktop): bump serde_with 3.20.0 -> 3.21.0** — +15 −46 — [`486c402`](https://github.com/abgnydn/markview/commit/486c4027b47a52f0ab49be87dee47743f1d3b7da)
+- `02:15` **ci(portfolio): dispatch deploy after nightly sync push** — +14 −0 — [`22b482f`](https://github.com/abgnydn/markview/commit/22b482f293cdf844eb21c646343c386b2932788e)
 
-## 2026-06-24
+## 2026-08-09
 
-- `21:26` **chore(portfolio): daily sync 2026-06-24** — +26 −26 — [`d5ebdc8`](https://github.com/abgnydn/markview/commit/d5ebdc88cd52ae82ea1f8a0c5e4d94d8e01e862c)
+- `20:36` **chore(portfolio): daily sync 2026-08-09** — +495 −489 — [`00b17e1`](https://github.com/abgnydn/markview/commit/00b17e1aafbac668962412fbc8b623dccb3e7220)
 
-## 2026-06-23
+## 2026-08-08
 
-- `21:45` **chore(portfolio): daily sync 2026-06-23** — +1076 −1067 — [`53e0356`](https://github.com/abgnydn/markview/commit/53e03563c27effb8847ce703a713c6f7214825a1)
-- `07:45` **fix(presentation): hide next-slide peek on laptop/middle screens** — +10 −0 — [`8961b01`](https://github.com/abgnydn/markview/commit/8961b0103597623f9bcf95eb45ebb3f83e824cb9)
-- `07:28` **perf(atmosphere): lite = minimal tier — strip decorative layers (weak…** — +17 −0 — [`466665b`](https://github.com/abgnydn/markview/commit/466665bb2337feaa9d324122cfd9750ca3d7fc82)
-- `07:18` **perf(viewer): drop the full-screen grain blend (weak-GPU compositor r…** — +4 −1 — [`f21b06e`](https://github.com/abgnydn/markview/commit/f21b06e444a073268d8363451b136b5d38864249)
-- `06:54` **perf(atmosphere): cheap text paint + truly-static lite mode** — +27 −6 — [`4e899a2`](https://github.com/abgnydn/markview/commit/4e899a2c87bf40d23e81c7681aa5c5812d1c1acd)
-- `06:36` **perf(viewer): isolate reveal-chrome on its own GPU layer (sidebar slide)** — +11 −0 — [`32f2c4d`](https://github.com/abgnydn/markview/commit/32f2c4d440f36a3800cffa840cb1dae0fb6c66bc)
-- `06:26` **perf(viewer): make the cursor-glow compositor-only (kill hover lag)** — +13 −4 — [`4bd39fc`](https://github.com/abgnydn/markview/commit/4bd39fcd1a579e949169deb1689dd67f92c64cb4)
-- `06:15` **feat(atmosphere): lite mode — static painting, zero WebGL** — +72 −12 — [`bb9a9dd`](https://github.com/abgnydn/markview/commit/bb9a9dd70047e7c0aad49fa2f6db882c170e9ae0)
-- `03:51` **perf(atmosphere): cap particle loop to 30fps + lower render DPR to 1.5** — +16 −6 — [`10eeb08`](https://github.com/abgnydn/markview/commit/10eeb0876fb793f2e6e83be4aa2d1be9c5debcf5)
-- `03:32` **perf(atmosphere): render the depth shader on-demand, not 60fps forever** — +23 −4 — [`ca94ad1`](https://github.com/abgnydn/markview/commit/ca94ad1109480aad352b6c29a46798b4e83c5c40)
-- `03:08` **perf(atmosphere): stop scroll jank from per-frame reflow + fixed-bg r…** — +77 −33 — [`ad71864`](https://github.com/abgnydn/markview/commit/ad7186403a48e86f91391daea3879f1ffec9df67)
-- `01:27` **feat(presentation): responsive deck layout for narrow + touch screens** — +199 −0 — [`dfac516`](https://github.com/abgnydn/markview/commit/dfac516ad1a78ba7d33a71c120d1fb39e095a933)
+- `20:33` **chore(portfolio): daily sync 2026-08-08** — +114 −95 — [`1fc0990`](https://github.com/abgnydn/markview/commit/1fc09903c7d6984b6e54bcf038dcac539ac9a3a6)
 
-## 2026-06-22
+## 2026-08-07
 
-- `22:07` **chore(portfolio): daily sync 2026-06-22** — +29 −25 — [`f9d9acf`](https://github.com/abgnydn/markview/commit/f9d9acf4b3be774144d37f29e4fb23b8c857b767)
+- `20:44` **chore(portfolio): daily sync 2026-08-07** — +71 −71 — [`2f71c01`](https://github.com/abgnydn/markview/commit/2f71c0111415cd27a2fe0e85985100017e483078)
+- `00:54` **chore(portfolio): daily sync 2026-08-07** — +292 −277 — [`f2ab305`](https://github.com/abgnydn/markview/commit/f2ab305cc0b238072b293da893dcf250c6f0252f)
 
-## 2026-06-21
+## 2026-08-05
 
-- `21:19` **chore(portfolio): daily sync 2026-06-21** — +32 −28 — [`54f9c48`](https://github.com/abgnydn/markview/commit/54f9c48962bf0b29fca100c222df3e4413904305)
+- `21:14` **chore(portfolio): daily sync 2026-08-05** — +1221 −1353 — [`ac6f078`](https://github.com/abgnydn/markview/commit/ac6f0782986617e4c40b96d8f37c2951c72b1541)
 
-## 2026-06-20
+## 2026-08-04
 
-- `21:21` **chore(portfolio): daily sync 2026-06-20** — +34 −31 — [`574365b`](https://github.com/abgnydn/markview/commit/574365b2e60a1da15d6a205296431750861d2f83)
+- `21:15` **chore(portfolio): daily sync 2026-08-04** — +180 −175 — [`3a6e8f9`](https://github.com/abgnydn/markview/commit/3a6e8f9b07ffa46c77efb88c1dd5b8a38173096f)
 
-## 2026-06-19
+## 2026-08-03
 
-- `21:13` **chore(portfolio): daily sync 2026-06-19** — +32 −29 — [`c792008`](https://github.com/abgnydn/markview/commit/c792008412768c9210fd2d6408df3531ee539bc5)
+- `21:07` **chore(portfolio): daily sync 2026-08-03** — +1077 −1028 — [`7ab3b95`](https://github.com/abgnydn/markview/commit/7ab3b958dd1d1e6d99e456d8d1a23d23679ba797)
 
-## 2026-06-18
+## 2026-08-02
 
-- `22:14` **chore(portfolio): daily sync 2026-06-18** — +34 −32 — [`6cbb305`](https://github.com/abgnydn/markview/commit/6cbb305e2e3010077b009d8a0240a766353cf8f0)
+- `20:59` **chore(portfolio): daily sync 2026-08-02** — +72 −72 — [`e647627`](https://github.com/abgnydn/markview/commit/e64762721c4ae95734aa503002fc4bd127466c6d)
 
-## 2026-06-17
+## 2026-08-01
 
-- `22:04` **chore(portfolio): daily sync 2026-06-17** — +379 −597 — [`554447c`](https://github.com/abgnydn/markview/commit/554447c022968eb2d02ee78483a03c7f550de8d9)
+- `20:57` **chore(portfolio): daily sync 2026-08-01** — +70 −70 — [`f3a1536`](https://github.com/abgnydn/markview/commit/f3a153673a94bef96d46b0f2c0df5d705dc45593)
 
-## 2026-06-16
+## 2026-07-31
 
-- `22:16` **chore(portfolio): daily sync 2026-06-16** — +243 −147 — [`017aa94`](https://github.com/abgnydn/markview/commit/017aa94ec3f4796f23c7dc24d28db0c3685de824)
-- `06:52` **fix(editor): paste, slide fill, html export, new-file menu, dropdown …** — +158 −97 — [`908c115`](https://github.com/abgnydn/markview/commit/908c115dba77536a33a091e97d9d9c3b00b018b7)
+- `21:09` **chore(portfolio): daily sync 2026-07-31** — +403 −370 — [`968c9bc`](https://github.com/abgnydn/markview/commit/968c9bca3cb7d8e470863e2fadb8724c81cd8a19)
 
-## 2026-06-15
+## 2026-07-30
 
-- `22:22` **chore(portfolio): daily sync 2026-06-15** — +240 −153 — [`cc2ac96`](https://github.com/abgnydn/markview/commit/cc2ac96dd8ae83cb89d00c46670a308484ec32e2)
-- `07:26` **feat(presentation): rebuild presentation mode into a full deck engine** — +1776 −84 — [`db45c35`](https://github.com/abgnydn/markview/commit/db45c35b7e29450c242977e871c2a277a10908ee)
+- `21:14` **chore(portfolio): daily sync 2026-07-30** — +421 −276 — [`838c3a9`](https://github.com/abgnydn/markview/commit/838c3a9be531739975ab1d4faee19e343b0d0da1)
 
-## 2026-06-14
+## 2026-07-29
 
-- `21:17` **chore(portfolio): daily sync 2026-06-14** — +36 −33 — [`125f5de`](https://github.com/abgnydn/markview/commit/125f5dee9ef332226b2354d361640c36be8fb4ef)
+- `21:00` **chore(portfolio): daily sync 2026-07-29** — +316 −230 — [`f1f6eea`](https://github.com/abgnydn/markview/commit/f1f6eea5b1ae178c6cf2e237538d6030adfdf198)
 
-## 2026-06-13
+## 2026-07-28
 
-- `21:20` **chore(portfolio): daily sync 2026-06-13** — +29 −30 — [`89c09bc`](https://github.com/abgnydn/markview/commit/89c09bcbd87e3bb6711c36e819ce292cfdee24ee)
+- `21:12` **chore(portfolio): daily sync 2026-07-28** — +6328 −5528 — [`ea2229e`](https://github.com/abgnydn/markview/commit/ea2229ead2cb85db314e1b4632233d3b88f2c292)
 
-## 2026-06-12
+## 2026-07-27
 
-- `21:50` **chore(portfolio): daily sync 2026-06-12** — +570 −673 — [`662580e`](https://github.com/abgnydn/markview/commit/662580e2d55b20939b8eb301c64ec25fe5777eb6)
-- `06:48` **fix(deps): bump vitest 2→4 to clear the critical UI-server advisory** — +31 −143 — [`f80cf4a`](https://github.com/abgnydn/markview/commit/f80cf4ae512f85a7837bbb86c72bd9acb0712687)
-- `06:36` **ci: bump actions off deprecated Node 20 (checkout@v6, wrangler-action…** — +6 −6 — [`21e6e19`](https://github.com/abgnydn/markview/commit/21e6e19f0397eb736de11b1caddeba3ed3efb7da)
-- `06:04` **chore(brand): refresh OG card + README hero; drop image fossils** — +100 −5 — [`f1e7d2c`](https://github.com/abgnydn/markview/commit/f1e7d2c8a3fd7698c30776c960bcb23a6f2f4edc)
-- `05:55` **feat(projects): 3d constellation route + per-slug & OG prerender** — +2921 −0 — [`595447a`](https://github.com/abgnydn/markview/commit/595447a15af1186d5983459900cfea0cf87a0bd2)
-- `05:42` **chore(repo): reconcile to web + desktop; drop monorepo-era fossils** — +417 −1424 — [`4bee0df`](https://github.com/abgnydn/markview/commit/4bee0df438e2e5be33fcb43dd3cd8dd95e820b0d)
-- `05:42` **chore(atmosphere): shelve the non-functional WebGPU particle backend** — +11 −32 — [`d41847d`](https://github.com/abgnydn/markview/commit/d41847d30a6f204e2800b5d7d52e580b6625d4a8)
-- `05:42` **fix(webgpu): particles were fully transparent — read alpha as a verte…** — +6 −1 — [`d0f48d1`](https://github.com/abgnydn/markview/commit/d0f48d1e7f7021b24bbc959e8cb5e3e916c1815b)
-- `05:42` **fix(embeddings): batch model inputs to stop the ONNX integer-overflow…** — +29 −9 — [`499181c`](https://github.com/abgnydn/markview/commit/499181c411fe849bec0d343ed5f2f3501787397c)
-- `05:42` **debug(webgpu): surface particle init result to the on-screen toast** — +10 −0 — [`9986472`](https://github.com/abgnydn/markview/commit/9986472f82a897727da178d72f5e55b19f08435e)
-- `05:42` **fix: vermillion lede drop-cap + graceful WebGPU-particle fallback** — +19 −5 — [`7ab724f`](https://github.com/abgnydn/markview/commit/7ab724f1f8d8ac2e78f394bceec09f4d90dfb2a8)
-- `05:42` **feat(world): aged-parchment page cards in the 3D world (not basic cards)** — +63 −16 — [`8bd448a`](https://github.com/abgnydn/markview/commit/8bd448a906b33402975340f1fa0fb888b6f028a4)
-- `05:42` **perf(viewer): kill file-change lag — skip view-transition over heavy …** — +13 −2 — [`02f1cda`](https://github.com/abgnydn/markview/commit/02f1cda9300a15539eed977d57ec5f21d169102f)
-- `05:42` **perf(atmosphere): cut the cost of the paper, ambient, and images** — +25 −23 — [`5fcb55d`](https://github.com/abgnydn/markview/commit/5fcb55dc3e81c78f87bdf1d548f2636144175cfd)
-- `05:42` **fix(atmosphere): the ghost-ink root cause — .markdown-content p force…** — +14 −4 — [`06df36f`](https://github.com/abgnydn/markview/commit/06df36fd3a659a8333f165392f2901ecf7431cea)
-- `05:42` **fix(atmosphere): kill the embossed/ghosted ink — solid readable type …** — +18 −13 — [`e03e998`](https://github.com/abgnydn/markview/commit/e03e998ee6b680e2f6a2a8adea7dcea3bc8a14b9)
-- `05:42` **feat(atmosphere): aged parchment — darker, stained, uneven + readable…** — +28 −17 — [`57459e8`](https://github.com/abgnydn/markview/commit/57459e830b8ce50f8fc89463c41dab87e659425c)
-- `05:42` **feat(atmosphere): AAA paper — specular sheen, raised wax seal, watermark** — +16 −12 — [`b10ff1b`](https://github.com/abgnydn/markview/commit/b10ff1b34cc60d806fba5e7d9ad8a69642f18942)
-- `05:42` **feat(atmosphere): push the antique paper much further — 7-layer surfa…** — +30 −11 — [`030d703`](https://github.com/abgnydn/markview/commit/030d7034a45856191b3b2ce0abeb27a274db3677)
-- `05:42` **feat(atmosphere): realistic antique paper — lit fibre + organic foxing** — +21 −13 — [`7e817ab`](https://github.com/abgnydn/markview/commit/7e817ab9c952a6221b706be19774dde524d143bb)
-- `05:42` **fix(atmosphere): entering a painting always works + never hangs** — +107 −29 — [`ea85e22`](https://github.com/abgnydn/markview/commit/ea85e225474c9bdc943736f27b475833e528376c)
+- `21:14` **chore(portfolio): daily sync 2026-07-27** — +107 −105 — [`f00b9f4`](https://github.com/abgnydn/markview/commit/f00b9f4e16ed0d65acf0eef150bb3cdc9a372f01)
+- `13:43` **fix(collab): encrypted share links, reachable guest mode, honest fail…** — +132 −25 — [`a152253`](https://github.com/abgnydn/markview/commit/a152253f7e41ad04fb8da8132494e6eca317f8e5)
+- `13:19` **ux(presentation): declutter the deck toolbar — 19 icons → 6 + a ⋯ menu** — +76 −18 — [`0378680`](https://github.com/abgnydn/markview/commit/0378680de9ca44bc18c9851e585ef9e555b29a70)
+
+## 2026-07-26
+
+- `21:02` **chore(portfolio): daily sync 2026-07-26** — +68 −70 — [`ecc6b6a`](https://github.com/abgnydn/markview/commit/ecc6b6a9c68243e94f785f748db7982a6f08ddef)
+
+## 2026-07-25
+
+- `20:57` **chore(portfolio): daily sync 2026-07-25** — +287 −286 — [`6a6726c`](https://github.com/abgnydn/markview/commit/6a6726c8fde147fb4a5abe266e5271d63c31aa24)
+- `05:07` **chore(landing): desktop downloads → 0.3.0 (published, all four URLs v…** — +1 −1 — [`ae1ce41`](https://github.com/abgnydn/markview/commit/ae1ce41704f6dcfaf46237ad673df7d825463514)
+- `05:07` **fix(atmosphere): GPU/rAF leak + resilience pass from graphics audit** — +71 −14 — [`cecb66f`](https://github.com/abgnydn/markview/commit/cecb66fed4e1d8ec0b5395d0a8ad8c04d75414fd)
+- `04:40` **fix(render): rendering + export fidelity pass from pipeline audit** — +173 −53 — [`633c098`](https://github.com/abgnydn/markview/commit/633c098e2c0e6d3e21b6d90bc43c8f80df3d547c)
+- `04:40` **fix(pwa): actually cache runtime assets — offline was shell-only** — +12 −2 — [`cc3a3ca`](https://github.com/abgnydn/markview/commit/cc3a3ca5b406b029cabe84096b488eb4404444db)
+- `04:40` **fix(collab): host viewer stays live during sessions; guests told when…** — +22 −2 — [`059ad10`](https://github.com/abgnydn/markview/commit/059ad10fb83cb9df5acb3bb77c550cfc9bf35a3d)
+- `04:40` **fix(app): correctness + UX hardening pass from full-codebase audit** — +241 −31 — [`ab2ac48`](https://github.com/abgnydn/markview/commit/ab2ac48d6b52e74dcc5dbdadb7503463812da59e)

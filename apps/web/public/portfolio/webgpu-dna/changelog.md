@@ -5,9 +5,67 @@ format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/) starting
 from `0.1.0`.
 
-## [Unreleased]
+## [0.8.0] — 2026-08-08
 
-_Nothing pending. Open a PR or issue to start the next entry._
+### Added
+- **Explicit OH+deoxyribose IRT reaction channel — shipped as the default indirect-SSB
+  model** (`SSB_EXPLICIT_DNA_REACTION = true`). The deoxyribose is now an **explicit
+  competing IRT reactant** (Geant4-DNA *molecularDNA* structure): an OH damages a sugar
+  only when it actually *reacts* with it (first-passage against the sugar, k=2.5e9
+  Buxton 1988, σ=0.15 nm) before its radical reactions — not merely when it dies within
+  1 nm of a backbone. This collapses the out-of-band production indirect/direct ratio
+  **5.74 → 2.28** at 10 keV, **IN PARTRAC's 2–3 band, parameter-free** (same `p_ssb`=0.13,
+  same geometry, identical direct count). E39 measured directly that only ~20 % of
+  near-backbone OHs actually react with the sugar — the legacy `encounter` proxy
+  miscredited all of them, and its excess *climbs with track density* (2.54→5.74 over
+  1–10 keV) while the faithful channel stays flat/rising in band. E40 confirmed with a
+  folded-chromatin offline replay (folding is a second-order dR≈0.83–1.16 lever) and
+  reproduced E37's survival dR=0.716 exactly as a pipeline check. The live app and both
+  deploys (webgpudna.com + HF Space) now score the in-band 2.28; the encounter proxy
+  (5.74) is kept as the `false` fallback and the documented honest-negative. (E39, E40)
+- **K-shell Auger electron emission** — the oxygen K-shell (1a1, 539 eV) hole
+  now de-excites by emitting a ~503 eV KLL Auger electron (as Geant4-DNA does via
+  `G4UAtomicDeexcitation`), depositing only the ~36 eV L-shell rearrangement
+  locally. Diagnosed from the raw G4EMLOW 8.8 differential data: the E8 secondary
+  spectrum's 439–806 eV bin was 43 % short purely for lack of the Auger electron.
+  Closes it (4075 → 7209 vs Geant4 7272, 0.9 %) **and** lifts the full-cascade
+  ion count **0.942× → 0.981×** (5.8 % → 1.9 % deficit) since the Auger electrons
+  ionise downstream. Also adds the analytical chromatin geometry (nucleosome →
+  30 nm fibre) and the E34–E37 damage-geometry findings. (E35, E33–E37)
+
+### Changed
+- **DNA-damage scoring is now parameter-free** — the pipeline's last two calibrated
+  knobs (`SSB_P_DIRECT`, `SSB_P_INDIRECT`) are gone. Direct SSB uses a Nikjoo/Charlton
+  **energy-threshold ramp** (`E_low`=5 / `E_high`=37.5 eV) on the per-event backbone
+  energy the shaders now emit (new `rad_e` buffer); indirect uses the Nikjoo
+  OH+deoxyribose branching (0.13). The indirect/direct ratio is now a **prediction,
+  not a fit**. Three parameter-free points bracket it: threshold-free `P=1` → 2.32
+  (in PARTRAC's 2–3 band), per-event ramp → 6.5, accumulated-volume ramp → 7.1
+  (E30/E31/E32). Testing accumulation vs per-event **refuted** aggregation as the
+  cause of the above-band ratio — near-backbone sugars are single-hit; the gap is
+  the energy threshold itself. (#5, #9, #10, #11)
+  **Superseded within this release by E39/E40:** the above-band *indirect* ratio was
+  not the energy threshold but the `encounter` proxy over-counting near-backbone OHs;
+  the explicit OH+deoxyribose channel (above) fixes it at the source (5.74 → 2.28, in band).
+
+### Fixed
+- Direct-SSB production scorer over-counted `SSB_dir` ~2× — the 3-entry ionisation
+  channel and the displaced e⁻aq broke the de-dup. Now one roll per event. (#5)
+- Onsager radius **sign** in the non-production IRT backends (GPU shader + CPU
+  fallback): eaq(−1)+H₃O⁺(+1) is attractive, so `rc` must be negative (`+0.71 → −0.71`),
+  matching the production worker and un-suppressing recombination. (#7)
+- 10× strand-1 dose over-count in the (non-production) reference scorer. (#3)
+
+### Added
+- WebGPU robustness: `device.lost`/`uncapturederror` surfacing, buffer reclamation on
+  an `np` change, and `np` clamping to real device limits. (#6)
+- Headless **WebGPU smoke CI** — a software adapter compiles and runs the real
+  primary/secondary/chemistry shader bundles so a WGSL regression fails CI. (#4)
+
+### Docs
+- README §Numbers reconciled to committed artifacts: 7 stale claims corrected
+  (G-values to E25, sub-keV CSDA re-cited E5d → E29), and the test-count vanity
+  metric dropped. (#2, #8, #12)
 
 ## [0.7.0] — 2026-06-09 — real Born excitation, σ_exc fudge removed
 

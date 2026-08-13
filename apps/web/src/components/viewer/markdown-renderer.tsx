@@ -1,11 +1,16 @@
 
-import React, { useEffect, useRef, useState, useCallback, startTransition } from 'react';
+import React, { useEffect, useRef, useState, startTransition } from 'react';
 import { renderMarkdown, extractHeadings, type TocHeading } from '@/lib/markdown/pipeline';
+import { createCodeBlockWrapper, decodeHtmlEntities } from '@markview/core';
 import { expandTransclusions, hasTransclusion, type TranscludeResolver } from '@/lib/markdown/transclude';
+import { expandWikilinks } from '@/lib/markdown/wikilinks';
 import { useThemeStore } from '@/stores/theme-store';
 import { usePluginStore } from '@/lib/plugins/plugin-registry';
 import '@/lib/plugins/embed-plugin';
 import { DOM_ENHANCERS } from '@/lib/markdown/dom-enhancers';
+// Type-only imports — erased at compile time, so shiki/mermaid stay lazy.
+import type { createHighlighterCore } from 'shiki/core';
+import type MermaidDefault from 'mermaid';
 
 interface MarkdownRendererProps {
   content: string;
@@ -20,23 +25,9 @@ interface MarkdownRendererProps {
   resolveTransclusion?: TranscludeResolver;
 }
 
-/**
- * Decode the HTML entities the markdown stringifier emits, back to raw text.
- * `&amp;` is decoded LAST so `&amp;lt;` → `&lt;` → `<` doesn't double-decode.
- */
-function decodeHtmlEntities(s: string): string {
-  return s
-    .replace(/&#x3C;/g, '<')
-    .replace(/&#x3E;/g, '>')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&');
-}
 
 // Shiki highlighter singleton
-let shikiHighlighter: Awaited<ReturnType<typeof import('shiki')['createHighlighter']>> | null = null;
+let shikiHighlighter: Awaited<ReturnType<typeof createHighlighterCore>> | null = null;
 let shikiPromise: Promise<void> | null = null;
 
 let shikiFailed = false;
@@ -49,14 +40,29 @@ async function ensureShiki() {
   }
   shikiPromise = (async () => {
     try {
-      const { createHighlighter } = await import('shiki');
-      shikiHighlighter = await createHighlighter({
-        themes: ['github-dark', 'github-light'],
-        langs: [
-          'javascript', 'typescript', 'python', 'bash', 'shell', 'json', 'yaml', 'html', 'css',
-          'jsx', 'tsx', 'sql', 'go', 'rust', 'java', 'c', 'cpp', 'ruby', 'php', 'swift',
-          'kotlin', 'markdown', 'xml', 'toml', 'ini', 'dockerfile', 'graphql', 'diff',
-        ],
+      // shiki/core, NOT the main 'shiki' entry: the main entry statically
+      // references its default oniguruma engine, so importing it emits the
+      // 230 KB gz WASM chunks into the build even when they are never
+      // fetched. Core + explicit theme/grammar loaders keeps the graph
+      // clean end to end.
+      const [{ createHighlighterCore }, { createJavaScriptRegexEngine }, { bundledThemes }] = await Promise.all([
+        import('shiki/core'),
+        import('shiki/engine/javascript'),
+        import('shiki/themes'),
+      ]);
+      const [darkTheme, lightTheme] = await Promise.all([
+        bundledThemes['github-dark'](),
+        bundledThemes['github-light'](),
+      ]);
+      shikiHighlighter = await createHighlighterCore({
+        themes: [darkTheme.default, lightTheme.default],
+        // Zero eager grammars — loadShikiLangs() fetches exactly the
+        // grammars a document actually uses via the bundledLanguages
+        // loader map. The JS regex engine replaces oniguruma entirely
+        // (forgiving mode: a rare unsupported grammar degrades to plain
+        // text instead of throwing).
+        langs: [],
+        engine: createJavaScriptRegexEngine({ forgiving: true }),
       });
     } catch (e) {
       console.warn('Shiki failed to load (CSP or env issue), using plain code blocks:', e);
@@ -66,14 +72,39 @@ async function ensureShiki() {
   await shikiPromise;
 }
 
-/** Call on app mount to preload Shiki before first render */
-export function preloadShiki() {
-  ensureShiki();
+
+// Grammars that failed to load — don't retry them every render.
+const failedLangs = new Set<string>();
+
+/** Load exactly the grammars `html`'s code fences use, on demand. */
+async function loadShikiLangs(html: string): Promise<void> {
+  if (!shikiHighlighter) return;
+  const wanted = new Set<string>();
+  for (const m of html.matchAll(/<code class="language-([\w+#-]+)">/g)) {
+    if (m[1] !== 'mermaid') wanted.add(m[1]);
+  }
+  if (wanted.size === 0) return;
+  const loaded = new Set(shikiHighlighter.getLoadedLanguages());
+  const { bundledLanguages } = await import('shiki/langs');
+  await Promise.all(
+    [...wanted]
+      .filter((lang) => !loaded.has(lang) && !failedLangs.has(lang))
+      .map(async (lang) => {
+        try {
+          const loader = (bundledLanguages as Record<string, () => Promise<{ default: unknown }>>)[lang];
+          if (!loader) throw new Error('unknown language');
+          await shikiHighlighter!.loadLanguage((await loader()).default as never);
+        } catch {
+          // Unknown / plugin-handled languages render as plain blocks.
+          failedLangs.add(lang);
+        }
+      }),
+  );
 }
 
 // Mermaid singleton — avoid re-importing on every render
-let mermaidModule: typeof import('mermaid')['default'] | null = null;
-let mermaidPromise: Promise<typeof import('mermaid')['default']> | null = null;
+let mermaidModule: typeof MermaidDefault | null = null;
+let mermaidPromise: Promise<typeof MermaidDefault> | null = null;
 
 async function ensureMermaid() {
   if (mermaidModule) return mermaidModule;
@@ -88,6 +119,27 @@ async function ensureMermaid() {
 /** Yield to the browser to prevent long-task INP violations */
 function yieldToMain(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+/**
+ * Drop the `disabled` attribute GFM puts on task-list checkboxes, so they
+ * are interactive in the markup ITSELF.
+ *
+ * This used to be done by flipping `box.disabled = false` in an effect,
+ * which silently stopped working: React re-applies `dangerouslySetInnerHTML`
+ * on a later re-commit (the html is set inside `startTransition`), which
+ * rebuilds the inputs from this string — attribute still present — while
+ * the effect does not re-run because its deps never changed. Fixing the
+ * string means any number of re-applications stay enabled.
+ *
+ * Scoped to `li.task-list-item` so a raw `<input disabled>` a user wrote
+ * by hand keeps its own semantics.
+ */
+function enableTaskCheckboxes(html: string): string {
+  return html.replace(
+    /(<li class="task-list-item">\s*<input\b[^>]*?)\s+disabled(\s*\/?>)/g,
+    '$1$2',
+  );
 }
 
 function highlightHtml(html: string, theme: 'dark' | 'light'): string {
@@ -190,7 +242,10 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
         // Clean up orphaned SVG
         const orphan = document.getElementById(id);
         if (orphan) orphan.remove();
-        // Leave block as-is (will show as code)
+        // Push a passthrough entry so the sequential replace below stays
+        // aligned — otherwise one failed diagram shifts every following
+        // diagram into the wrong slot and drops the last one.
+        replacements.push({ match: m[0], replacement: m[0] });
       }
     }
 
@@ -211,27 +266,6 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
   return html;
 }
 
-function createCodeBlockWrapper(lang: string, preHtml: string, rawCode: string) {
-  const escapedCode = rawCode
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-
-  return `<div class="code-block-wrapper" data-code="${escapedCode}">
-    <div class="code-block-toolbar">
-      <span class="code-block-lang">${lang}</span>
-      <button class="code-copy-btn" title="Copy code" data-copy-code>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-        </svg>
-      </button>
-    </div>
-    ${preHtml}
-  </div>`;
-}
 
 export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles, onToggleTask, resolveTransclusion }: MarkdownRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -253,18 +287,9 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
           if (cancelled) return;
         }
 
-        // Expand `[[name]]` wikilinks into standard markdown links. The
-        // target gets `.md` appended so they flow through the same
-        // internal-link handler as `[text](other.md)`. Pipe-style aliases
-        // ([[file|display text]]) are honored.
-        const preprocessed = source.replace(
-          /\[\[([^\]\n|]+?)(?:\|([^\]\n]+))?\]\]/g,
-          (_match, target: string, alias?: string) => {
-            const label = (alias ?? target).trim();
-            const href = `${target.trim()}.md`;
-            return `[${label}](${href})`;
-          }
-        );
+        // Expand `[[name]]` wikilinks into standard markdown links —
+        // code-aware, so `[[...]]` inside fences/inline code stays verbatim.
+        const preprocessed = expandWikilinks(source);
 
         // Render markdown
         const rawHtml = await renderMarkdown(preprocessed, {
@@ -282,7 +307,10 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         await yieldToMain();
         if (cancelled) return;
 
-        // Highlight code blocks in HTML string (sync, CPU-heavy)
+        // Fetch any grammars this document needs, then highlight (sync,
+        // CPU-heavy).
+        await loadShikiLangs(rawHtml);
+        if (cancelled) return;
         const highlighted = highlightHtml(rawHtml, resolved);
 
         // Yield again before mermaid rendering
@@ -293,11 +321,12 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         const withMermaid = await renderMermaidInHtml(highlighted, resolved);
 
         if (!cancelled) {
+          const final = onToggleTask ? enableTaskCheckboxes(withMermaid) : withMermaid;
           // Use startTransition so this low-priority update doesn't block interactions
           startTransition(() => {
-            setHtml(withMermaid);
+            setHtml(final);
           });
-          onHtmlRendered?.(withMermaid);
+          onHtmlRendered?.(final);
         }
       } catch (e) {
         console.warn('Markdown processing error:', e);
@@ -495,79 +524,6 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
   }, [html, onNavigateToFile, workspaceFiles]);
 
 
-  // KaTeX math rendering
-  useEffect(() => {
-    if (!contentRef.current || !html) return;
-    const container = contentRef.current;
-
-    const renderMath = async () => {
-      try {
-        const katex = (await import('katex')).default;
-
-        // Process block math: $$...$$
-        container.querySelectorAll('code').forEach((code) => {
-          const text = code.textContent || '';
-          if (text.startsWith('$$') && text.endsWith('$$')) {
-            const mathText = text.slice(2, -2).trim();
-            const wrapper = document.createElement('div');
-            wrapper.className = 'katex-block';
-            try {
-              katex.render(mathText, wrapper, { displayMode: true, throwOnError: false });
-              const parent = code.closest('pre') || code;
-              parent.replaceWith(wrapper);
-            } catch (e) { /* keep original */ }
-          }
-        });
-
-        // Process inline math in text nodes
-        const walk = (node: Node) => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            const text = node.textContent || '';
-            if (!text.includes('$')) return;
-            const regex = /\$([^$\n]+?)\$/g;
-            let match;
-            const frag = document.createDocumentFragment();
-            let lastIndex = 0;
-            let found = false;
-
-            while ((match = regex.exec(text)) !== null) {
-              found = true;
-              if (match.index > lastIndex) {
-                frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
-              }
-              const span = document.createElement('span');
-              span.className = 'katex-inline';
-              try {
-                katex.render(match[1], span, { displayMode: false, throwOnError: false });
-              } catch (e) {
-                span.textContent = match[0];
-              }
-              frag.appendChild(span);
-              lastIndex = regex.lastIndex;
-            }
-            if (found) {
-              if (lastIndex < text.length) {
-                frag.appendChild(document.createTextNode(text.slice(lastIndex)));
-              }
-              node.parentNode?.replaceChild(frag, node);
-            }
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node as HTMLElement;
-            // Skip code blocks and existing katex
-            if (el.tagName === 'CODE' || el.tagName === 'PRE' || el.classList.contains('katex')) return;
-            Array.from(node.childNodes).forEach(walk);
-          }
-        };
-        walk(container);
-      } catch (e) {
-        console.warn('KaTeX failed to load:', e);
-      }
-    };
-
-    const timer = setTimeout(renderMath, 200);
-    return () => clearTimeout(timer);
-  }, [html]);
-
   // Table sorting
   useEffect(() => {
     if (!contentRef.current || !html) return;
@@ -620,24 +576,35 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
     return () => cleanups.forEach((c) => c());
   }, [html]);
 
-  // Interactive task lists — enable the (otherwise disabled) GFM checkboxes
-  // and report each toggle by its document-order index so the host can flip
-  // the matching `- [ ]` / `- [x]` line in the source.
+  // Interactive task lists — report each toggle by its document-order index
+  // so the host can flip the matching `- [ ]` / `- [x]` line in the source.
+  //
+  // The listener is DELEGATED to the stable container rather than bound per
+  // checkbox: React rebuilds the inner subtree from the html string on
+  // re-commit (see enableTaskCheckboxes), which would silently discard
+  // per-element listeners without re-running this effect. Delegation and
+  // the markup-level `disabled` removal together make toggling survive
+  // any number of re-applications.
+  const toggleRef = useRef(onToggleTask);
+  toggleRef.current = onToggleTask;
   useEffect(() => {
     const root = contentRef.current;
-    if (!root || !onToggleTask) return;
-    const boxes = Array.from(
-      root.querySelectorAll<HTMLInputElement>('li.task-list-item input[type="checkbox"]'),
-    );
-    const cleanups = boxes.map((box, i) => {
-      box.disabled = false;
-      box.style.cursor = 'pointer';
-      const onChange = () => onToggleTask(i, box.checked);
-      box.addEventListener('change', onChange);
-      return () => box.removeEventListener('change', onChange);
-    });
-    return () => cleanups.forEach((c) => c());
-  }, [html, onToggleTask]);
+    if (!root) return;
+    const onChange = (e: Event) => {
+      const cb = toggleRef.current;
+      if (!cb) return;
+      const target = e.target as HTMLInputElement | null;
+      if (!target || target.type !== 'checkbox') return;
+      if (!target.closest('li.task-list-item')) return;
+      const boxes = Array.from(
+        root.querySelectorAll<HTMLInputElement>('li.task-list-item input[type="checkbox"]'),
+      );
+      const index = boxes.indexOf(target);
+      if (index >= 0) cb(index, target.checked);
+    };
+    root.addEventListener('change', onChange);
+    return () => root.removeEventListener('change', onChange);
+  }, []);
 
   return (
     <div className="markdown-content" ref={contentRef} style={{ fontSize: 'var(--content-font-size, 16px)' }}>

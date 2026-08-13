@@ -3,9 +3,15 @@ import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } fr
 import {
   ChevronLeft, ChevronRight, X, Maximize2, Minimize2, LayoutGrid, Timer, Play, Pause,
   Pencil, Palette, Printer, Keyboard, StickyNote, MonitorPlay, Search, Film, Image, Link2, Volume2, VolumeX,
-  SkipBack, SkipForward, Eraser, Undo2, Highlighter, Download, Repeat, BarChart3, Captions,
+  SkipBack, SkipForward, Eraser, Undo2, Highlighter, Download, Repeat, BarChart3, Captions, MoreHorizontal,
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import { splitSlides } from '@/lib/markdown/slide-split';
+// deckTitle comes from textContent (raw text) — it must be re-escaped
+// before being interpolated into presenter/export HTML strings.
+import { escapeHtml } from '@/lib/plugins/plugin-registry';
+import { getAudioContextCtor } from '@/lib/audio-context';
+import { useFocusReturn } from '@/hooks/use-focus-return';
 
 interface PresentationModeProps {
   html: string;
@@ -47,13 +53,14 @@ function parseSlide(slideHtml: string) {
   const notes: string[] = [];
   root.querySelectorAll('blockquote, .markdown-alert-note, .markdown-alert').forEach((el) => {
     const t = (el.textContent || '').trim();
-    if (/^note[:\s]/i.test(t) || el.className.includes('note')) { notes.push(t.replace(/^note[:\s]+/i, '')); el.remove(); }
+    if (/^note:/i.test(t) || el.className.includes('note')) { notes.push(t.replace(/^note:\s*/i, '')); el.remove(); }
   });
   const title = (root.querySelector('h1, h2, h3')?.textContent || 'Slide').trim();
   return { body: root.innerHTML, bg, notes: notes.join('\n\n'), title, words: stripTags(slideHtml).split(' ').length };
 }
 
 export function PresentationMode({ html, onClose }: PresentationModeProps) {
+  useFocusReturn(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [dir, setDir] = useState<1 | -1>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -70,6 +77,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const [incremental, setIncremental] = useState(false);
   const [frag, setFrag] = useState(0);
   const [chromeHidden, setChromeHidden] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [numBuf, setNumBuf] = useState('');
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
   const [trail, setTrail] = useState<{ x: number; y: number; id: number }[]>([]);
@@ -111,18 +119,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const presenterWin = useRef<Window | null>(null);
   const trailId = useRef(0);
 
-  const rawSlides = useMemo(() => {
-    const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
-    const container = doc.body.firstElementChild!;
-    const out: string[] = [];
-    let cur = '';
-    Array.from(container.children).forEach((el) => {
-      if (el.tagName === 'H1' || el.tagName === 'H2') { if (cur.trim()) out.push(cur); cur = el.outerHTML; }
-      else cur += el.outerHTML;
-    });
-    if (cur.trim()) out.push(cur);
-    return out.length > 0 ? out : [`<div>${html}</div>`];
-  }, [html]);
+  const rawSlides = useMemo(() => splitSlides(html), [html]);
 
   const baseParsed = useMemo(() => rawSlides.map(parseSlide), [rawSlides]);
   const baseSections = useMemo(() => rawSlides.map((s) => /^<h1/i.test(s.trim())), [rawSlides]);
@@ -168,7 +165,9 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const beep = useCallback(() => {
     if (!sound) return;
     try {
-      audioCtx.current ??= new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const AC = getAudioContextCtor();
+      if (!AC) return;
+      audioCtx.current ??= new AC();
       const ctx = audioCtx.current; const o = ctx.createOscillator(); const g = ctx.createGain();
       o.frequency.value = 660; o.type = 'sine'; g.gain.value = 0.04;
       o.connect(g); g.connect(ctx.destination); o.start();
@@ -209,7 +208,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   }, [currentSlide, theme]);
 
   const exportHtml = useCallback(() => {
-    const doc = `<!doctype html><meta charset=utf8><title>${deckTitle}</title><style>body{margin:0;background:#0a0b11;color:#eef1f6;font-family:system-ui,sans-serif}section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8% 9%;border-bottom:1px solid #222}h1,h2{font-size:3rem;margin:0 0 .4em}p,li{font-size:1.3rem;line-height:1.6;color:#aeb6c4}code{background:#ffffff14;padding:.1em .4em;border-radius:4px}pre{background:#0008;padding:1em;border-radius:8px;overflow:auto}</style>` +
+    const doc = `<!doctype html><meta charset=utf8><title>${escapeHtml(deckTitle)}</title><style>body{margin:0;background:#0a0b11;color:#eef1f6;font-family:system-ui,sans-serif}section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8% 9%;border-bottom:1px solid #222}h1,h2{font-size:3rem;margin:0 0 .4em}p,li{font-size:1.3rem;line-height:1.6;color:#aeb6c4}code{background:#ffffff14;padding:.1em .4em;border-radius:4px}pre{background:#0008;padding:1em;border-radius:8px;overflow:auto}</style>` +
       slides.map((s) => `<section>${s}</section>`).join('');
     const blob = new Blob([doc], { type: 'text/html' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${deckTitle.replace(/\W+/g, '-').toLowerCase()}.html`; a.click();
@@ -222,7 +221,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     const w = window.open('', 'mv-presenter', 'width=900,height=620');
     if (!w) return;
     presenterWin.current = w;
-    w.document.write(`<!doctype html><meta charset=utf8><title>Presenter — ${deckTitle}</title><style>body{margin:0;background:#07080c;color:#eef1f6;font-family:system-ui,sans-serif;display:grid;grid-template-rows:auto 1fr auto;height:100vh}header{display:flex;justify-content:space-between;padding:10px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-bottom:1px solid #1c1f27}#main{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;padding:14px;min-height:0}.card{background:#13151c;border:1px solid #ffffff14;border-radius:12px;padding:22px;overflow:auto}.card h4{margin:0 0 10px;font:11px ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase;color:#9b7dff}.next{opacity:.7}#notes{font-size:15px;line-height:1.6;white-space:pre-wrap;color:#c7cdd8}footer{padding:8px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-top:1px solid #1c1f27}h1,h2{font-size:1.8rem}p,li{color:#aeb6c4}</style><header><span id=pos></span><span id=time></span></header><div id=main><div class=card><h4>Current</h4><div id=cur></div></div><div style="display:grid;grid-template-rows:1fr 1fr;gap:14px;min-height:0"><div class="card next"><h4>Next</h4><div id=nxt></div></div><div class=card><h4>Notes</h4><div id=notes></div></div></div></div><footer>${deckTitle} · markview.ai</footer><script>const bc=new BroadcastChannel('mv-deck-pv');bc.onmessage=e=>{const d=e.data;document.getElementById('cur').innerHTML=d.cur;document.getElementById('nxt').innerHTML=d.nxt||'<p style=opacity:.5>— end —</p>';document.getElementById('notes').innerText=d.notes||'No notes.';document.getElementById('pos').textContent=d.pos;document.getElementById('time').textContent=d.time;};bc.postMessage({req:1});<\/script>`);
+    w.document.write(`<!doctype html><meta charset=utf8><title>Presenter — ${escapeHtml(deckTitle)}</title><style>body{margin:0;background:#07080c;color:#eef1f6;font-family:system-ui,sans-serif;display:grid;grid-template-rows:auto 1fr auto;height:100vh}header{display:flex;justify-content:space-between;padding:10px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-bottom:1px solid #1c1f27}#main{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;padding:14px;min-height:0}.card{background:#13151c;border:1px solid #ffffff14;border-radius:12px;padding:22px;overflow:auto}.card h4{margin:0 0 10px;font:11px ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase;color:#9b7dff}.next{opacity:.7}#notes{font-size:15px;line-height:1.6;white-space:pre-wrap;color:#c7cdd8}footer{padding:8px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-top:1px solid #1c1f27}h1,h2{font-size:1.8rem}p,li{color:#aeb6c4}</style><header><span id=pos></span><span id=time></span></header><div id=main><div class=card><h4>Current</h4><div id=cur></div></div><div style="display:grid;grid-template-rows:1fr 1fr;gap:14px;min-height:0"><div class="card next"><h4>Next</h4><div id=nxt></div></div><div class=card><h4>Notes</h4><div id=notes></div></div></div></div><footer>${escapeHtml(deckTitle)} · markview.ai</footer><script>const bc=new BroadcastChannel('mv-deck-pv');bc.onmessage=e=>{const d=e.data;document.getElementById('cur').innerHTML=d.cur;document.getElementById('nxt').innerHTML=d.nxt||'<p style=opacity:.5>— end —</p>';document.getElementById('notes').innerText=d.notes||'No notes.';document.getElementById('pos').textContent=d.pos;document.getElementById('time').textContent=d.time;};bc.postMessage({req:1});<\/script>`);
     w.document.close();
   }, [deckTitle]);
 
@@ -240,7 +239,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   }, [currentSlide, slides, parsed, elapsed, timerOn, clock]);
 
   // deep link
-  useEffect(() => { const m = window.location.hash.match(/slide-(\d+)/); if (m) { const n = +m[1] - 1; if (n >= 0 && n < slides.length) setCurrentSlide(n); } }, []); // eslint-disable-line
+  useEffect(() => { const m = window.location.hash.match(/slide-(\d+)/); if (m) { const n = +m[1] - 1; if (n >= 0 && n < slides.length) setCurrentSlide(n); } }, []);
   useEffect(() => { try { window.history.replaceState(null, '', `#slide-${currentSlide + 1}`); } catch { /* ignore */ } }, [currentSlide]);
 
   useEffect(() => { const h = () => setIsFullscreen(!!document.fullscreenElement); document.addEventListener('fullscreenchange', h); return () => document.removeEventListener('fullscreenchange', h); }, []);
@@ -299,7 +298,10 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     const avail = slide.clientHeight - parseFloat(cs.paddingTop || '0') - parseFloat(cs.paddingBottom || '0');
     const natural = body.scrollHeight;
     if (natural < 1 || avail < 1) return;
-    const scale = Math.max(0.6, Math.min(1.45, avail / natural));
+    // Scale down far enough that dense slides fit inside the (overflow:hidden)
+    // card instead of being clipped; only enlarge gently so sparse slides
+    // don't look blown-up/blurry.
+    const scale = Math.max(0.45, Math.min(1.15, avail / natural));
     if (Math.abs(scale - 1) > 0.04) {
       body.style.transformOrigin = 'center center';
       body.style.transform = `scale(${scale})`;
@@ -380,6 +382,9 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (search != null) { if (e.key === 'Escape') { e.preventDefault(); setSearch(null); } return; }
+      // Never hijack ⌘/Ctrl/⌥ chords — ⌘C must copy, not clear the
+      // drawing; ⌘F must not toggle fullscreen; etc.
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       const k = e.key;
       if (/^[0-9]$/.test(k)) { e.preventDefault(); setNumBuf((b) => (b + k).slice(-3)); window.clearTimeout(numTimer.current); numTimer.current = window.setTimeout(() => setNumBuf(''), 1100); return; }
       if (k === 'Enter' && numBuf) { e.preventDefault(); goTo(+numBuf - 1); setNumBuf(''); return; }
@@ -422,7 +427,8 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         case '?': case 'h': case 'H': e.preventDefault(); setShowHelp((v) => !v); break;
         case 'Escape':
           e.preventDefault();
-          if (showHelp) setShowHelp(false); else if (toc) setToc(false); else if (blank) setBlank(null);
+          if (moreOpen) setMoreOpen(false);
+          else if (showHelp) setShowHelp(false); else if (toc) setToc(false); else if (blank) setBlank(null);
           else if (overview) setOverview(false); else if (magnify) setMagnify(false); else if (spotlight) setSpotlight(false);
           else if (draw) setDraw(false); else if (!document.fullscreenElement) onClose();
           break;
@@ -430,7 +436,10 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [goNext, goPrev, goTo, onClose, toggleFullscreen, slides.length, overview, showHelp, blank, draw, numBuf, clearDrawing, cycleTheme, toggleAspect, cycleTransition, toc, magnify, spotlight, search, openPresenter, jumpSection, undoDraw]);
+  }, [goNext, goPrev, goTo, onClose, toggleFullscreen, slides.length, overview, showHelp, blank, draw, numBuf, clearDrawing, cycleTheme, toggleAspect, cycleTransition, toc, magnify, spotlight, search, openPresenter, jumpSection, undoDraw, moreOpen]);
+
+  // The ⋯ menu shouldn't linger over a new slide.
+  useEffect(() => { setMoreOpen(false); }, [currentSlide]);
 
   const pct = ((currentSlide + 1) / slides.length) * 100;
   const overTime = targetMin > 0 && elapsed > targetMin * 60;
@@ -479,25 +488,39 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         </div>
       )}
 
+      {/* Calm chrome: six primary controls + one ⋯ menu. Everything else
+          stays keyboard-reachable (see ? help) and lives in the menu —
+          nineteen always-visible icons read as clutter over a slide. */}
       <div className="presentation-controls">
         {timerOn && <span className={`presentation-timer${overTime ? ' is-over' : ''}`}><Timer size={13} /> {String(Math.floor(elapsed / 60)).padStart(2, '0')}:{String(elapsed % 60).padStart(2, '0')}{targetMin > 0 && ` / ${targetMin}:00`} · {clock}</span>}
         <span className="presentation-counter">{currentSlide + 1}<em>/</em>{slides.length}</span>
-        <button className={`presentation-btn${autoplay ? ' is-on' : ''}`} onClick={() => setAutoplay((v) => !v)} title="Autoplay (P)">{autoplay ? <Pause size={15} /> : <Play size={15} />}</button>
-        <button className={`presentation-btn${notesOpen ? ' is-on' : ''}`} onClick={() => setNotesOpen((v) => !v)} title="Notes (S)"><StickyNote size={15} /></button>
-        <button className="presentation-btn" onClick={openPresenter} title="Presenter view (V)"><MonitorPlay size={15} /></button>
-        <button className="presentation-btn" onClick={() => setSearch('')} title="Search (/)"><Search size={15} /></button>
-        <button className={`presentation-btn${filmstrip ? ' is-on' : ''}`} onClick={() => setFilmstrip((v) => !v)} title="Filmstrip (,)"><Film size={15} /></button>
+        <button className={`presentation-btn${overview ? ' is-on' : ''}`} onClick={() => setOverview((v) => !v)} title="Overview (O)"><LayoutGrid size={15} /></button>
         <button className={`presentation-btn${draw ? ' is-on' : ''}`} onClick={() => setDraw((v) => !v)} title="Draw (D)"><Pencil size={15} /></button>
         <button className="presentation-btn" onClick={cycleTheme} title="Theme (M)"><Palette size={15} /></button>
-        <button className={`presentation-btn${overview ? ' is-on' : ''}`} onClick={() => setOverview((v) => !v)} title="Overview (O)"><LayoutGrid size={15} /></button>
-        <button className="presentation-btn" onClick={exportPng} title="Slide → PNG"><Image size={15} /></button>
-        <button className="presentation-btn" onClick={() => window.print()} title="Export PDF (E)"><Printer size={15} /></button>
-        <button className="presentation-btn" onClick={copyLink} title="Copy slide link"><Link2 size={15} /></button>
-        <button className={`presentation-btn${sound ? ' is-on' : ''}`} onClick={() => setSound((v) => !v)} title="Advance sound">{sound ? <Volume2 size={15} /> : <VolumeX size={15} />}</button>
-        <button className={`presentation-btn${loop ? ' is-on' : ''}`} onClick={() => setLoop((v) => !v)} title="Loop"><Repeat size={15} /></button>
-        <button className={`presentation-btn${caption ? ' is-on' : ''}`} onClick={() => setCaption((v) => !v)} title="Lower-third caption"><Captions size={15} /></button>
-        <button className={`presentation-btn${statsOpen ? ' is-on' : ''}`} onClick={() => setStatsOpen((v) => !v)} title="Stats & options"><BarChart3 size={15} /></button>
-        <button className="presentation-btn" onClick={() => setShowHelp((v) => !v)} title="Shortcuts (?)"><Keyboard size={15} /></button>
+        <div className="presentation-more-wrap">
+          <button className={`presentation-btn${moreOpen ? ' is-on' : ''}`} onClick={() => setMoreOpen((v) => !v)} title="More tools" aria-haspopup="menu" aria-expanded={moreOpen}><MoreHorizontal size={15} /></button>
+          {moreOpen && (
+            <div className="presentation-more-menu" role="menu" onClick={() => setMoreOpen(false)}>
+              <button className="presentation-more-item" onClick={() => setAutoplay((v) => !v)}>{autoplay ? <Pause size={14} /> : <Play size={14} />} Autoplay{autoplay && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setTimerOn((v) => !v)}><Timer size={14} /> Timer{timerOn && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setNotesOpen((v) => !v)}><StickyNote size={14} /> Speaker notes{notesOpen && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={openPresenter}><MonitorPlay size={14} /> Presenter view</button>
+              <button className="presentation-more-item" onClick={() => setSearch('')}><Search size={14} /> Search slides</button>
+              <button className="presentation-more-item" onClick={() => setFilmstrip((v) => !v)}><Film size={14} /> Filmstrip{filmstrip && ' ✓'}</button>
+              <hr className="presentation-more-sep" />
+              <button className="presentation-more-item" onClick={exportPng}><Image size={14} /> Slide → PNG</button>
+              <button className="presentation-more-item" onClick={exportHtml}><Download size={14} /> Deck → HTML</button>
+              <button className="presentation-more-item" onClick={() => window.print()}><Printer size={14} /> Print / PDF</button>
+              <button className="presentation-more-item" onClick={copyLink}><Link2 size={14} /> Copy slide link</button>
+              <hr className="presentation-more-sep" />
+              <button className="presentation-more-item" onClick={() => setSound((v) => !v)}>{sound ? <Volume2 size={14} /> : <VolumeX size={14} />} Advance sound{sound && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setLoop((v) => !v)}><Repeat size={14} /> Loop{loop && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setCaption((v) => !v)}><Captions size={14} /> Caption{caption && ' ✓'}</button>
+              <button className="presentation-more-item" onClick={() => setStatsOpen((v) => !v)}><BarChart3 size={14} /> Stats & options</button>
+              <button className="presentation-more-item" onClick={() => setShowHelp((v) => !v)}><Keyboard size={14} /> Shortcuts (?)</button>
+            </div>
+          )}
+        </div>
         <button className="presentation-btn" onClick={toggleFullscreen} title="Fullscreen (F)">{isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}</button>
         <button className="presentation-btn" onClick={onClose} title="Exit (Esc)"><X size={16} /></button>
       </div>
@@ -550,10 +573,14 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         <button className="presentation-nav-btn is-edge" onClick={() => goTo(0)} disabled={currentSlide === 0} aria-label="First"><SkipBack size={18} /></button>
         <button className="presentation-nav-btn" onClick={goPrev} disabled={currentSlide === 0 && frag === 0} aria-label="Previous"><ChevronLeft size={22} /></button>
         <div className="presentation-dots" role="tablist">
-          {slides.map((_, i) => <button key={i} className={`presentation-dot${i === currentSlide ? ' is-active' : ''}${sections[i] && i > 0 ? ' is-section' : ''}`} onClick={() => goTo(i)} title={parsed[i]?.title} aria-label={parsed[i]?.title || `Slide ${i + 1}`} aria-selected={i === currentSlide} />)}
+          {slides.map((_, i) => <button key={i} className={`presentation-dot${i === currentSlide ? ' is-active' : ''}${sections[i] && i > 0 ? ' is-section' : ''}`} onClick={() => goTo(i)} role="tab" title={parsed[i]?.title} aria-label={parsed[i]?.title || `Slide ${i + 1}`} aria-selected={i === currentSlide} />)}
         </div>
         <button className="presentation-nav-btn" onClick={goNext} disabled={currentSlide === slides.length - 1 && frag >= fragCount} aria-label="Next"><ChevronRight size={22} /></button>
         <button className="presentation-nav-btn is-edge" onClick={() => goTo(slides.length - 1)} disabled={currentSlide === slides.length - 1} aria-label="Last"><SkipForward size={18} /></button>
+      </div>
+
+      <div className="mv-sr-only" role="status">
+        {`Slide ${currentSlide + 1} of ${slides.length}${parsed[currentSlide]?.title ? ` — ${parsed[currentSlide].title}` : ''}`}
       </div>
 
       <div className="presentation-footer">
@@ -583,7 +610,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
       )}
 
       {numBuf && <div className="presentation-numbuf">→ {numBuf}</div>}
-      {hint && <div className="presentation-firsthint">Press <kbd>?</kbd> for {40} shortcuts & features</div>}
+      {hint && <div className="presentation-firsthint">Press <kbd>?</kbd> for shortcuts</div>}
       {laser && trail.map((t) => <div key={t.id} className="presentation-trail" style={{ left: t.x, top: t.y }} aria-hidden />)}
       {laser && pointer && <div className="presentation-laser" style={{ left: pointer.x, top: pointer.y }} aria-hidden />}
       {spotlight && pointer && <div className="presentation-spot" style={{ ['--sx' as string]: `${pointer.x}px`, ['--sy' as string]: `${pointer.y}px` }} aria-hidden />}

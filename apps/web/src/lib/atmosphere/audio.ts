@@ -1,3 +1,5 @@
+import { getAudioContextCtor } from '@/lib/audio-context';
+import type { Atmosphere } from '@/stores/theme-store';
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -19,7 +21,7 @@
 let ctx: AudioContext | null = null;
 let masterGain: GainNode | null = null;
 let active: { stop: () => void } | null = null;
-let currentId: string | null = null;
+let currentId: Atmosphere | null = null;
 let storedVolume = 0.35;
 let muted = false;
 
@@ -33,7 +35,10 @@ try {
 
 function ensureContext(): AudioContext {
   if (!ctx) {
-    const AC = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext);
+    const AC = getAudioContextCtor();
+    // Behavior-equivalent to the old unguarded `new AC()`: environments
+    // with no AudioContext at all throw; callers already guard with try.
+    if (!AC) throw new Error('AudioContext unavailable');
     ctx = new AC();
     masterGain = ctx.createGain();
     masterGain.gain.value = muted ? 0 : storedVolume;
@@ -50,15 +55,7 @@ function rampGainTo(value: number, durationSec = 1.2) {
   masterGain.gain.linearRampToValueAtTime(value, now + durationSec);
 }
 
-export function setAtmosphereVolume(v: number) {
-  storedVolume = Math.min(1, Math.max(0, v));
-  try { localStorage.setItem('markview-atmosphere-volume', String(storedVolume)); } catch { /* ignore */ }
-  if (!muted) rampGainTo(storedVolume, 0.3);
-}
 
-export function getAtmosphereVolume(): number {
-  return storedVolume;
-}
 
 export function setAtmosphereMuted(m: boolean) {
   muted = m;
@@ -74,7 +71,7 @@ export function isAtmosphereMuted(): boolean {
  * Switch to a different atmosphere's audio. Fades the old one out,
  * fades the new one in. Pass 'none' to silence.
  */
-export function setAtmosphereAudio(id: string) {
+export function setAtmosphereAudio(id: Atmosphere) {
   if (id === currentId) return;
   currentId = id;
   if (active) {
@@ -92,6 +89,10 @@ export function setAtmosphereAudio(id: string) {
     case 'wave':   active = startWave();   break;
     case 'snow':   active = startSnow();   break;
     case 'fields': active = startFields(); break;
+    // Exhaustiveness gate: adding a fifth atmosphere and forgetting its
+    // audio used to compile clean and silently play nothing — now every
+    // dispatch site gets a type error until this switch learns the case.
+    default: { id satisfies never; }
   }
 }
 
@@ -100,7 +101,11 @@ export function unlockAtmosphereAudio() {
   if (!ctx) return;
   if (ctx.state === 'suspended') {
     void ctx.resume().then(() => {
-      if (currentId && !active && !muted) setAtmosphereAudio(currentId);
+      if (currentId && !active && !muted) {
+        const id = currentId;
+        currentId = null; // bypass the `id === currentId` early return
+        setAtmosphereAudio(id);
+      }
     });
   }
 }
@@ -439,19 +444,6 @@ function pinkNoise(ac: AudioContext): AudioBufferSourceNode {
   return node;
 }
 
-function bellPing(ac: AudioContext, out: AudioNode, freq: number, vol = 0.08) {
-  const o = ac.createOscillator();
-  const g = ac.createGain();
-  o.type = 'sine';
-  o.frequency.value = freq;
-  const t = ac.currentTime;
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(vol, t + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 4.5);
-  o.connect(g).connect(out);
-  o.start(t);
-  o.stop(t + 4.6);
-}
 
 function pluck(ac: AudioContext, out: AudioNode, freq: number, vol = 0.04, durSec = 0.9) {
   const o = ac.createOscillator();

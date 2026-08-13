@@ -1,8 +1,10 @@
-import { renderMarkdown } from '@/lib/markdown/pipeline';
+import { renderMarkdownForExport } from './export-utils';
 
 /**
  * Export the active markdown as a PDF file.
  * Uses html2pdf.js for client-side PDF generation with styled output.
+ * renderMarkdownForExport gives it real math/mermaid output and inlines
+ * asset: images as data URIs so html2canvas can actually load them.
  */
 export async function downloadAsPdf(
   filename: string,
@@ -10,7 +12,7 @@ export async function downloadAsPdf(
   theme: 'dark' | 'light'
 ): Promise<void> {
   const html2pdf = (await import('html2pdf.js')).default;
-  const html = await renderMarkdown(content);
+  const html = await renderMarkdownForExport(content);
   const title = filename.replace(/\.md$/i, '');
 
   const isDark = theme === 'dark';
