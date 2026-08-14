@@ -18,6 +18,32 @@ import { DESKTOP_VERSION, RELEASES_LATEST_URL, isNewerVersion } from '@/lib/vers
 
 const RELEASES_API = 'https://api.github.com/repos/abgnydn/markview/releases/latest';
 
+/**
+ * The version of the RUNNING build.
+ *
+ * DESKTOP_VERSION (lib/version.ts) is bumped *after* the desktop binary is
+ * built and published, so the compiled bundle always embeds the *previous*
+ * release's number — using it here made every shipped build think it was one
+ * version behind and show a permanent, bogus "update available". Instead ask
+ * Tauri for the version baked into the app at build time from
+ * tauri.conf.json, which is always this exact build's number. Falls back to
+ * DESKTOP_VERSION when the runtime API is absent (the web/PWA context, where
+ * this manual check isn't reachable anyway). `withGlobalTauri: true` puts the
+ * API on `window.__TAURI__`, so no `@tauri-apps/api` import is bundled.
+ */
+async function getRunningVersion(): Promise<string> {
+  const tauri = (window as unknown as {
+    __TAURI__?: { app?: { getVersion?: () => Promise<string> } };
+  }).__TAURI__;
+  if (tauri?.app?.getVersion) {
+    try {
+      const v = await tauri.app.getVersion();
+      if (v) return v;
+    } catch { /* fall through to the compile-time constant */ }
+  }
+  return DESKTOP_VERSION;
+}
+
 export interface UpdateCheckResult {
   status: 'update-available' | 'up-to-date' | 'error';
   latest?: string;
@@ -59,12 +85,13 @@ export async function checkForUpdates(): Promise<UpdateCheckResult> {
     const url = data.html_url || RELEASES_LATEST_URL;
     if (!latest) throw new Error('no tag in response');
 
-    if (isNewerVersion(latest, DESKTOP_VERSION)) {
+    const running = await getRunningVersion();
+    if (isNewerVersion(latest, running)) {
       toast(`MarkView ${latest} is available — opening the download page.`);
       void openExternal(url);
       return { status: 'update-available', latest, url };
     }
-    toast(`You're on the latest version (${DESKTOP_VERSION}).`);
+    toast(`You're on the latest version (${running}).`);
     return { status: 'up-to-date', latest, url };
   } catch {
     toast('Could not reach GitHub to check for updates.');
