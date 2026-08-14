@@ -74,7 +74,7 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   {
     label: 'Render',
     title: 'GitHub-flavored, fast',
-    body: 'Mermaid, KaTeX, Shiki for 140+ languages, tables, alerts, footnotes — rendered locally, instantly.',
+    body: 'Mermaid, KaTeX, Shiki for 140+ languages, tables, alerts, footnotes — plus live blocks: charts, tabs, timelines, CSV tables, maps, embeds. Rendered locally, instantly.',
   },
   {
     label: 'Workspace',
@@ -98,13 +98,13 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   },
   {
     label: 'AI',
-    title: 'Ask your notes, locally',
-    body: 'Semantic search, related-notes rail, and a workspace-grounded chat. MiniLM and SmolLM2 run in your browser — no API keys, no uploads.',
+    title: 'Ask your notes',
+    body: 'Semantic search and related notes run fully in your browser (MiniLM). Workspace chat with citations picks its brain: local SmolLM2, or cloud Llama when you want more — no account either way.',
   },
   {
     label: 'Privacy',
     title: 'Stays on your machine',
-    body: 'No accounts. No telemetry. Files never leave your browser. Full PWA, plus native desktop builds for Mac, Windows, Linux.',
+    body: 'No accounts. No telemetry. Documents live in your browser and are never uploaded — only live share and cloud AI send anything, and only when you invoke them. Full PWA, plus native desktop builds for Mac, Windows, Linux.',
   },
 ];
 
@@ -221,7 +221,7 @@ export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingE
         </h1>
         <p className="ed-hero-sub">
           Drag a file in. Drop a folder. Paste a GitHub repo URL. Markview renders, edits,
-          searches, diffs, and exports — entirely on your machine. No accounts, no uploads,
+          searches, diffs, presents, and exports — entirely on your machine. No accounts,
           no telemetry. Share a live collab link when you want company.
         </p>
         <div className="ed-hero-cta-row">
@@ -276,7 +276,7 @@ export function LandingEditor({ onStart, onImportGithub, onDropFiles }: LandingE
         )}
 
         <div className="ed-hero-meta">
-          <kbd>⌘K</kbd> search · <kbd>⌘B</kbd> bold · <kbd>⌘I</kbd> italic · <kbd>⌘S</kbd> save · drag-drop a <code>.md</code> to start
+          <kbd>⌘K</kbd> search · <kbd>⌘P</kbd> palette · <kbd>E</kbd> edit · <kbd>P</kbd> present · drag-drop a <code>.md</code> to start
         </div>
 
         <div className="ed-github-import">

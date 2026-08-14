@@ -25,6 +25,7 @@ import tablesDoc from "@/showcase/05-tables.md?raw";
 import calloutsDoc from "@/showcase/06-callouts.md?raw";
 import diagramsDoc from "@/showcase/07-diagrams.md?raw";
 import mediaDoc from "@/showcase/08-media.md?raw";
+import blocksDoc from "@/showcase/09-blocks.md?raw";
 
 /**
  * Home — single route. Two surfaces:
@@ -222,10 +223,10 @@ function LoadingScreen() {
 }
 
 /**
- * The seed workspace. Eight files that together exercise every renderer
+ * The seed workspace. Nine files that together exercise every renderer
  * feature — typography, code (multi-language), math, tables, callouts,
- * diagrams, media — so the first thing a new user sees is a complete tour
- * of what the editor can render.
+ * diagrams, media, live blocks (fence plugins + wikilinks) — so the first
+ * thing a new user sees is a complete tour of what the editor can render.
  */
 const SHOWCASE_FILES = [
   { filename: "01-welcome.md",    content: welcomeDoc },
@@ -236,4 +237,5 @@ const SHOWCASE_FILES = [
   { filename: "06-callouts.md",   content: calloutsDoc },
   { filename: "07-diagrams.md",   content: diagramsDoc },
   { filename: "08-media.md",      content: mediaDoc },
+  { filename: "09-blocks.md",     content: blocksDoc },
 ];

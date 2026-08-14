@@ -120,7 +120,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   const [splatMode, setSplatMode] = useState(
     () => typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mv-splat') === '1',
   );
-  // Transient toast text shown on a `v`/`b` toggle ('' = hidden).
+  // Transient toast text shown on a `v` toggle ('' = hidden).
   const [hint, setHint] = useState('');
   const flashHint = useCallback((text: string) => {
     setHint(text);

@@ -398,7 +398,6 @@ export function ExportMenu({ variant = 'button' }: ExportMenuProps) {
           <button className="export-dropdown-item" onClick={handlePrint}>
             <Printer size={15} />
             <span>Print / Save as PDF</span>
-            <kbd className="export-kbd">⌘P</kbd>
           </button>
 
           <div className="export-dropdown-divider" />
