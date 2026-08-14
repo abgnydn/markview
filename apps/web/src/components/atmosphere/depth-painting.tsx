@@ -44,14 +44,51 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [ready, setReady] = useState(false);
   const [fallback, setFallback] = useState(true);
+  // GPU-recovery nonce — bumped when a lost WebGL context is restored or
+  // a failed probe later succeeds, re-running the boot effect.
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     setReady(false);
     setFallback(true);
-    // Lite mode (or no WebGL) → keep the static <img>, never boot Three.js.
-    if (!isWebGLSupported() || forceStatic) return;
+    // Lite mode → keep the static <img>, never boot Three.js.
+    if (forceStatic) return;
     let cancelled = false;
     let cleanup: (() => void) | null = null;
+
+    // A wedged GPU process fails the WebGL probe browser-wide while the
+    // rest of the page works (seen live in a days-old browser instance),
+    // and that state can clear without a reload. So a failed probe or
+    // boot isn't permanent: re-probe when the tab is next foregrounded,
+    // a bounded number of times, and rebuild if WebGL is back.
+    const reprobeOnVisible = () => {
+      if (!document.hidden && isWebGLSupported()) setAttempt((a) => a + 1);
+    };
+    const armReprobe = () => {
+      if (attempt < 4) document.addEventListener('visibilitychange', reprobeOnVisible);
+    };
+
+    // Context loss (GPU reset, VRAM pressure) → show the static <img>;
+    // preventDefault tells the browser we want restoration, and the
+    // restored event triggers a full clean rebuild via the nonce.
+    const canvasEl = canvasRef.current;
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      setReady(false);
+      setFallback(true);
+    };
+    const onContextRestored = () => setAttempt((a) => a + 1);
+    canvasEl?.addEventListener('webglcontextlost', onContextLost);
+    canvasEl?.addEventListener('webglcontextrestored', onContextRestored);
+
+    if (!isWebGLSupported()) {
+      armReprobe();
+      return () => {
+        document.removeEventListener('visibilitychange', reprobeOnVisible);
+        canvasEl?.removeEventListener('webglcontextlost', onContextLost);
+        canvasEl?.removeEventListener('webglcontextrestored', onContextRestored);
+      };
+    }
 
     (async () => {
       const depthResult = await ensureDepth(src);
@@ -565,13 +602,24 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
 
       setReady(true);
       setFallback(false);
-    })();
+    })().catch((err) => {
+      // Renderer/context creation can throw on a degraded GPU. Keep the
+      // static <img> and retry on the next tab foreground.
+      if (cancelled) return;
+      console.warn('[atmosphere] depth painting boot failed', err);
+      setReady(false);
+      setFallback(true);
+      armReprobe();
+    });
 
     return () => {
       cancelled = true;
+      document.removeEventListener('visibilitychange', reprobeOnVisible);
+      canvasEl?.removeEventListener('webglcontextlost', onContextLost);
+      canvasEl?.removeEventListener('webglcontextrestored', onContextRestored);
       cleanup?.();
     };
-  }, [src, paintingKey, forceStatic]);
+  }, [src, paintingKey, forceStatic, attempt]);
 
   return (
     <>
