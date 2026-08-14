@@ -31,6 +31,8 @@ import { clipboardToTable } from './editor-paste';
 import { smartTypography } from './editor-typography';
 import { createFormatBubble } from './editor-bubble';
 import { useFocusReturn } from '@/hooks/use-focus-return';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { setCloudOptedIn } from '@/lib/generation';
 
 interface MarkdownEditorProps {
   content: string;
@@ -515,6 +517,14 @@ export function MarkdownEditor({
       ? 'edit'   // mobile hides the split pane; start honest
       : 'split');
   const [showHistory, setShowHistory] = useState(false);
+  // Tab co-author cloud consent — editor-coauthor.ts raises this event
+  // instead of ever sending document text without an explicit yes.
+  const [showCloudConsent, setShowCloudConsent] = useState(false);
+  useEffect(() => {
+    const onConsent = () => setShowCloudConsent(true);
+    window.addEventListener('markview:cloud-ai-consent', onConsent);
+    return () => window.removeEventListener('markview:cloud-ai-consent', onConsent);
+  }, []);
   // #15 Cursor halo — add .editor-typing class while the user is
   // actively typing (decays 800ms after the last keystroke), so the
   // violet glow only appears when the caret is "alive".
@@ -845,6 +855,18 @@ export function MarkdownEditor({
           onClose={() => setShowHistory(false)}
         />
       )}
+      <ConfirmDialog
+        isOpen={showCloudConsent}
+        title="Continue writing with cloud AI?"
+        description="Tab at the end of a line asks a cloud model (Cloudflare Workers AI, Llama 3.3 70B) to draft your next sentences. It sends up to the last 1,500 characters before your cursor. Nothing is stored server-side, but that text does leave your machine. Decline and Tab just indents, as always."
+        confirmText="Enable"
+        cancelText="Not now"
+        onConfirm={() => {
+          setCloudOptedIn(true);
+          setShowCloudConsent(false);
+        }}
+        onCancel={() => setShowCloudConsent(false)}
+      />
     </div>
   );
 }

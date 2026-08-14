@@ -54,6 +54,21 @@ export function setGenerativeOptedIn(v: boolean): void {
   try { localStorage.setItem(SETTING_KEY, String(v)); } catch { /* ignore */ }
 }
 
+// ── Cloud consent ────────────────────────────────────────────────────
+// One flag gates EVERY path that sends text off the machine (chat cloud
+// mode, Tab co-author). Nothing cloud-side runs until the user confirms
+// a dialog that says exactly what will be sent. Local-only is the
+// default state.
+const CLOUD_KEY = 'markview-cloud-ai-opt-in';
+
+export function isCloudOptedIn(): boolean {
+  try { return localStorage.getItem(CLOUD_KEY) === 'true'; } catch { return false; }
+}
+
+export function setCloudOptedIn(v: boolean): void {
+  try { localStorage.setItem(CLOUD_KEY, String(v)); } catch { /* ignore */ }
+}
+
 /**
  * Resolve the generation pipeline. Loads the model if it hasn't been
  * loaded yet. Marks the user as opted-in so subsequent sessions skip
@@ -147,6 +162,9 @@ interface PipelineCall {
  * need to know which backend ran.
  */
 async function generateChatCloud(options: GenerateOptions & { model?: string }): Promise<string> {
+  // Defense in depth — callers gate on consent before building prompts,
+  // but no cloud request may ever leave without it.
+  if (!isCloudOptedIn()) throw new Error('cloud AI not enabled');
   const { messages, maxNewTokens = 512, temperature = 0.5, onToken, signal, model } = options;
   const res = await fetch('/api/chat', {
     method: 'POST',
@@ -345,7 +363,7 @@ export async function answerQuestionInWorkspace(
 NOTES:
 ${contextBlock || '(no notes found)'}`;
 
-  const mode: ChatMode = options.mode ?? 'cloud';
+  const mode: ChatMode = options.mode ?? 'local';
   const generator = mode === 'cloud' ? generateChatCloud : generateChat;
   const answer = await generator({
     messages: [

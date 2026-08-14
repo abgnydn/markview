@@ -2,7 +2,7 @@
 
 import { StateField, StateEffect, type Extension } from '@codemirror/state';
 import { EditorView, Decoration, WidgetType, keymap } from '@codemirror/view';
-import { continueWriting } from '@/lib/generation';
+import { continueWriting, isCloudOptedIn } from '@/lib/generation';
 
 /**
  * AI co-author — Tab at the end of a line spawns a ghost continuation
@@ -18,6 +18,10 @@ import { continueWriting } from '@/lib/generation';
  * The ghost streams token-by-token as the model generates, so you see
  * the continuation appear live. Cloud-only; if the request fails or
  * returns empty, Tab falls through to its normal indent behavior.
+ *
+ * Consent-gated: the first Tab without cloud opt-in raises the consent
+ * dialog instead of sending anything (see requestGhost). One shared
+ * flag covers cloud chat and the co-author.
  */
 
 // ── State ────────────────────────────────────────────────────────────
@@ -92,6 +96,19 @@ function requestGhost(view: EditorView): boolean {
   // Need some preceding text to continue from.
   const before = state.doc.sliceString(0, pos);
   if (before.trim().length < 12) return false;
+
+  // Continuations are cloud-powered (Workers AI) — never send document
+  // text without explicit consent. First trigger raises the consent
+  // dialog (markdown-editor.tsx listens); "not now" silences the ask
+  // for the session and Tab falls through to plain indent.
+  if (!isCloudOptedIn()) {
+    try {
+      if (sessionStorage.getItem('mv-coauthor-asked') === '1') return false;
+      sessionStorage.setItem('mv-coauthor-asked', '1');
+    } catch { /* ignore */ }
+    window.dispatchEvent(new CustomEvent('markview:cloud-ai-consent'));
+    return true; // consumed — the dialog explains what Tab would do
+  }
 
   // Cancel any in-flight request, seed an empty pending ghost.
   activeAbort?.abort();

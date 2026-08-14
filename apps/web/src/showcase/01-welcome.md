@@ -17,10 +17,10 @@ This document is a tour. The sidebar on the left holds the rest of the showcase 
 Every trigger below works right now, on this document:
 
 - Press `E` — the **editor** opens on this file. Inside it, type `/` for block templates, `[[` to link another note, `#` for tags, and select text for a floating format bubble. `⌘S` saves — and every save keeps a snapshot you can restore from the clock icon.
-- `Tab` at the end of a line asks the AI to **continue your sentence** — a ghost paragraph streams in; `⌘↵` keeps it, `Esc` discards it. (This one calls a cloud model.)
+- `Tab` at the end of a line asks the AI to **continue your sentence** — a ghost paragraph streams in; `⌘↵` keeps it, `Esc` discards it. (This one uses a cloud model, so MarkView asks permission first — decline and Tab just indents.)
 - Press `P` — this document becomes a **presentation** (arrow keys advance, `?` shows every deck shortcut — there are thirty, including a laser pointer, spotlight, freehand draw, and a presenter window).
 - Press `⌘P` — the **command palette**: jump to any file, switch workspaces, themes, atmospheres.
-- Press `⌘J` — **chat with this workspace**: ask questions, get answers with citations. Runs local (SmolLM2, downloads ~220 MB into your browser, nothing leaves it) or cloud (Llama 70B) — you pick the mode in the panel.
+- Press `⌘J` — **chat with this workspace**: ask questions, get answers with citations. Local by default — SmolLM2 downloads ~220 MB into your browser once and nothing ever leaves it. A bigger cloud brain (Llama 70B) is one toggle away, and it always asks before anything is sent.
 - Select any sentence and press `⌘⇧A` — it becomes a **highlight** with an optional note. `⌘⇧C` copies a deep link straight to the selection.
 - The tiny dots bottom-left switch on an **atmosphere** — the page becomes a living painting with ambient sound. Click the painting for an echo pulse, press `V` for volumetric mode, `G` for anaglyph 3D. The footprints icon walks you *into* it.
 - Drag a file from the sidebar onto a workspace tab up top to **move it between workspaces**; double-click a file's name to **rename** it.

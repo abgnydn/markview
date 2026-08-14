@@ -10,16 +10,22 @@ import {
   onGenStatus,
   isGenerativeOptedIn,
   setGenerativeOptedIn,
+  isCloudOptedIn,
+  setCloudOptedIn,
   type GenStatus,
   type ChatMode,
 } from '@/lib/generation';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 const MODE_KEY = 'markview-ai-chat-mode';
+// Local is the default AND the fallback: a stored 'cloud' preference only
+// holds if cloud consent was actually given (legacy sessions predate the
+// consent dialog — they quietly return to local until re-confirmed).
 function readMode(): ChatMode {
   try {
     const v = localStorage.getItem(MODE_KEY);
-    return v === 'local' ? 'local' : 'cloud';
-  } catch { return 'cloud'; }
+    return v === 'cloud' && isCloudOptedIn() ? 'cloud' : 'local';
+  } catch { return 'local'; }
 }
 
 interface AiChatProps {
@@ -90,10 +96,17 @@ export function AiChat({ onClose }: AiChatProps) {
   }, [turns, memoryKey]);
   const [input, setInput] = useState('');
   const [mode, setModeState] = useState<ChatMode>(() => readMode());
+  const [showCloudConsent, setShowCloudConsent] = useState(false);
   const setMode = (m: ChatMode) => {
     setModeState(m);
     try { localStorage.setItem(MODE_KEY, m); } catch { /* quota */ }
     if (m === 'local' && isGenerativeOptedIn()) void warmGenerative();
+  };
+  // Cloud never activates silently — the first switch runs through a
+  // consent dialog spelling out what leaves the machine.
+  const requestCloud = () => {
+    if (isCloudOptedIn()) setMode('cloud');
+    else setShowCloudConsent(true);
   };
   const [optedIn, setOptedIn] = useState<boolean>(() => isGenerativeOptedIn());
   const [status, setStatus] = useState<GenStatus>({ state: 'idle' });
@@ -112,13 +125,14 @@ export function AiChat({ onClose }: AiChatProps) {
   }, [optedIn, mode]);
 
   useEffect(() => {
-    // Esc to close.
+    // Esc to close — unless the cloud-consent dialog is up (its own Esc
+    // handler cancels the dialog; the chat should stay open behind it).
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape' && !showCloudConsent) onClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [onClose, showCloudConsent]);
 
   useEffect(() => {
     // Auto-scroll to bottom as new tokens land.
@@ -197,8 +211,8 @@ export function AiChat({ onClose }: AiChatProps) {
             <button
               type="button"
               className={`ai-chat-mode-btn${mode === 'cloud' ? ' is-active' : ''}`}
-              onClick={() => setMode('cloud')}
-              title="Cloudflare Workers AI · Llama-3.3-70B · free, fast, in the cloud"
+              onClick={requestCloud}
+              title="Cloudflare Workers AI · Llama-3.3-70B · free, fast, in the cloud — asks before anything is sent"
             >
               <Cloud size={11} /> cloud
             </button>
@@ -254,7 +268,7 @@ export function AiChat({ onClose }: AiChatProps) {
               onClick={() => {
                 setOptedIn(false);
                 setGenerativeOptedIn(false);
-                setMode('cloud');
+                requestCloud();
               }}
             >
               Switch to cloud
@@ -344,6 +358,19 @@ export function AiChat({ onClose }: AiChatProps) {
             </div>
           </>
         )}
+        <ConfirmDialog
+          isOpen={showCloudConsent}
+          title="Use cloud AI?"
+          description="Cloud mode sends your question plus the most relevant excerpts of this workspace to Cloudflare Workers AI (Llama 3.3 70B) to generate answers — and lets Tab in the editor continue your writing. Nothing is stored server-side, but that text does leave your machine. Local mode keeps everything in your browser."
+          confirmText="Enable cloud"
+          cancelText="Stay local"
+          onConfirm={() => {
+            setCloudOptedIn(true);
+            setShowCloudConsent(false);
+            setMode('cloud');
+          }}
+          onCancel={() => setShowCloudConsent(false)}
+        />
       </aside>
     </div>
   );
