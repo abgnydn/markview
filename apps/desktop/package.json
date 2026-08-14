@@ -1,6 +1,6 @@
 {
   "name": "@markview/desktop",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "private": true,
   "scripts": {
     "dev": "tauri dev",
