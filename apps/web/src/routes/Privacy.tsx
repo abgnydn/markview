@@ -62,8 +62,7 @@ export default function PrivacyPage() {
           <h2>7. Third-Party Services</h2>
           <ul style={{ color: '#a1a1aa', lineHeight: '2', paddingLeft: '20px' }}>
             <li><strong>GitHub API</strong> — Used only when you explicitly import from a GitHub repository</li>
-            <li><strong>Hugging Face</strong> — When you explicitly enable an AI feature (local chat model, painting-atmosphere depth), the model weights are downloaded from Hugging Face&apos;s CDN. Your documents are never uploaded — models run entirely in your browser.</li>
-            <li><strong>Cloud AI (optional)</strong> — If you choose the cloud mode of AI chat or the AI co-author, the relevant text excerpt is sent to our Cloudflare Workers AI endpoint to generate a response. It is processed transiently and not stored or logged. Local mode keeps everything on-device.</li>
+            <li><strong>Hugging Face</strong> — When you use an AI feature (workspace chat, semantic search, or the painting-atmosphere depth effect), the model weights are downloaded once from Hugging Face&apos;s CDN and cached. The models then run entirely in your browser — your documents and questions are never uploaded.</li>
           </ul>
 
           <h2>8. Desktop Application</h2>

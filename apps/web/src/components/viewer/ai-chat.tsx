@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef, useState } from 'react';
-import { X, Send, Sparkles, Square, FileText, Cpu, Cloud } from 'lucide-react';
+import { X, Send, Sparkles, Square, FileText, Cpu } from 'lucide-react';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useFocusReturn } from '@/hooks/use-focus-return';
 import {
@@ -10,23 +10,8 @@ import {
   onGenStatus,
   isGenerativeOptedIn,
   setGenerativeOptedIn,
-  isCloudOptedIn,
-  setCloudOptedIn,
   type GenStatus,
-  type ChatMode,
 } from '@/lib/generation';
-import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-
-const MODE_KEY = 'markview-ai-chat-mode';
-// Local is the default AND the fallback: a stored 'cloud' preference only
-// holds if cloud consent was actually given (legacy sessions predate the
-// consent dialog — they quietly return to local until re-confirmed).
-function readMode(): ChatMode {
-  try {
-    const v = localStorage.getItem(MODE_KEY);
-    return v === 'cloud' && isCloudOptedIn() ? 'cloud' : 'local';
-  } catch { return 'local'; }
-}
 
 interface AiChatProps {
   onClose: () => void;
@@ -95,19 +80,6 @@ export function AiChat({ onClose }: AiChatProps) {
     try { localStorage.setItem(memoryKey, JSON.stringify(finished)); } catch { /* quota */ }
   }, [turns, memoryKey]);
   const [input, setInput] = useState('');
-  const [mode, setModeState] = useState<ChatMode>(() => readMode());
-  const [showCloudConsent, setShowCloudConsent] = useState(false);
-  const setMode = (m: ChatMode) => {
-    setModeState(m);
-    try { localStorage.setItem(MODE_KEY, m); } catch { /* quota */ }
-    if (m === 'local' && isGenerativeOptedIn()) void warmGenerative();
-  };
-  // Cloud never activates silently — the first switch runs through a
-  // consent dialog spelling out what leaves the machine.
-  const requestCloud = () => {
-    if (isCloudOptedIn()) setMode('cloud');
-    else setShowCloudConsent(true);
-  };
   const [optedIn, setOptedIn] = useState<boolean>(() => isGenerativeOptedIn());
   const [status, setStatus] = useState<GenStatus>({ state: 'idle' });
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -120,19 +92,18 @@ export function AiChat({ onClose }: AiChatProps) {
   useEffect(() => { inputRef.current?.focus(); }, []);
 
   useEffect(() => {
-    // Warm SmolLM2 only if the user is in local mode AND opted in.
-    if (mode === 'local' && optedIn) void warmGenerative();
-  }, [optedIn, mode]);
+    // Warm SmolLM2 once the user has opted into the local model.
+    if (optedIn) void warmGenerative();
+  }, [optedIn]);
 
   useEffect(() => {
-    // Esc to close — unless the cloud-consent dialog is up (its own Esc
-    // handler cancels the dialog; the chat should stay open behind it).
+    // Esc to close.
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !showCloudConsent) onClose();
+      if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose, showCloudConsent]);
+  }, [onClose]);
 
   useEffect(() => {
     // Auto-scroll to bottom as new tokens land.
@@ -159,8 +130,7 @@ export function AiChat({ onClose }: AiChatProps) {
 
     try {
       const result = await answerQuestionInWorkspace(activeWorkspaceId, question, {
-        topK: mode === 'cloud' ? 8 : 4,
-        mode,
+        topK: 4,
         signal: ac.signal,
         onToken: (_chunk, full) => {
           setTurns((all) => all.map((t) => (t.id === id ? { ...t, answer: full } : t)));
@@ -207,30 +177,15 @@ export function AiChat({ onClose }: AiChatProps) {
         <div className="ai-chat-header">
           <Sparkles size={13} className="ai-chat-header-icon" />
           <span className="ai-chat-title">Chat with this workspace</span>
-          <div className="ai-chat-mode-toggle" role="group" aria-label="engine">
-            <button
-              type="button"
-              className={`ai-chat-mode-btn${mode === 'cloud' ? ' is-active' : ''}`}
-              onClick={requestCloud}
-              title="Cloudflare Workers AI · Llama-3.3-70B · free, fast, in the cloud — asks before anything is sent"
-            >
-              <Cloud size={11} /> cloud
-            </button>
-            <button
-              type="button"
-              className={`ai-chat-mode-btn${mode === 'local' ? ' is-active' : ''}`}
-              onClick={() => setMode('local')}
-              title="SmolLM2-360M · in your browser tab · private, offline, lower quality"
-            >
-              <Cpu size={11} /> local
-            </button>
-          </div>
+          <span className="ai-chat-engine" title="SmolLM2-360M · runs in your browser tab · private, offline">
+            <Cpu size={11} /> local
+          </span>
           <button className="ai-chat-close" onClick={onClose} title="Close (Esc)">
             <X size={16} />
           </button>
         </div>
 
-        {mode === 'local' && !optedIn ? (
+        {!optedIn ? (
           <div className="ai-chat-opt-in">
             <div className="ai-chat-opt-in-icon"><Cpu size={20} /></div>
             <h3 className="ai-chat-opt-in-title">Local AI, your machine</h3>
@@ -247,7 +202,7 @@ export function AiChat({ onClose }: AiChatProps) {
               Download &amp; enable
             </button>
           </div>
-        ) : mode === 'local' && status.state === 'loading' ? (
+        ) : status.state === 'loading' ? (
           <div className="ai-chat-loading">
             <Cpu size={18} />
             <span>Loading SmolLM2…</span>
@@ -259,19 +214,15 @@ export function AiChat({ onClose }: AiChatProps) {
             )}
             <span className="ai-chat-loading-hint">One-time download. Cached after.</span>
           </div>
-        ) : mode === 'local' && status.state === 'failed' ? (
+        ) : status.state === 'failed' ? (
           <div className="ai-chat-error">
             <strong>Could not load the local model.</strong>
             <p>{status.error}</p>
             <button
               className="ai-chat-opt-in-btn"
-              onClick={() => {
-                setOptedIn(false);
-                setGenerativeOptedIn(false);
-                requestCloud();
-              }}
+              onClick={() => void warmGenerative()}
             >
-              Switch to cloud
+              Retry
             </button>
           </div>
         ) : (
@@ -358,19 +309,6 @@ export function AiChat({ onClose }: AiChatProps) {
             </div>
           </>
         )}
-        <ConfirmDialog
-          isOpen={showCloudConsent}
-          title="Use cloud AI?"
-          description="Cloud mode sends your question plus the most relevant excerpts of this workspace to Cloudflare Workers AI (Llama 3.3 70B) to generate answers — and lets Tab in the editor continue your writing. Nothing is stored server-side, but that text does leave your machine. Local mode keeps everything in your browser."
-          confirmText="Enable cloud"
-          cancelText="Stay local"
-          onConfirm={() => {
-            setCloudOptedIn(true);
-            setShowCloudConsent(false);
-            setMode('cloud');
-          }}
-          onCancel={() => setShowCloudConsent(false)}
-        />
       </aside>
     </div>
   );

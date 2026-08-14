@@ -98,13 +98,13 @@ const FEATURES: Array<{ label: string; title: string; body: string }> = [
   },
   {
     label: 'AI',
-    title: 'Ask your notes',
-    body: 'Semantic search and related notes run fully in your browser (MiniLM). Workspace chat with citations is local by default (SmolLM2); a bigger cloud brain (Llama 70B) is one toggle away — and always asks before anything is sent.',
+    title: 'Ask your notes, on-device',
+    body: 'Semantic search, related notes, and workspace chat with citations all run fully in your browser — MiniLM for retrieval, SmolLM2 for answers. No API keys, no accounts, nothing uploaded.',
   },
   {
     label: 'Privacy',
     title: 'Stays on your machine',
-    body: 'No accounts. No telemetry. Documents live in your browser and are never uploaded — only live share and opt-in cloud AI send anything, and each asks first. Full PWA, plus native desktop builds for Mac, Windows, Linux.',
+    body: 'No accounts. No telemetry. Documents live in your browser and are never uploaded — only an explicit live-share link sends anything. Full PWA, plus native desktop builds for Mac, Windows, Linux.',
   },
 ];
 

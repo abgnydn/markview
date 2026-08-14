@@ -54,21 +54,6 @@ export function setGenerativeOptedIn(v: boolean): void {
   try { localStorage.setItem(SETTING_KEY, String(v)); } catch { /* ignore */ }
 }
 
-// ── Cloud consent ────────────────────────────────────────────────────
-// One flag gates EVERY path that sends text off the machine (chat cloud
-// mode, Tab co-author). Nothing cloud-side runs until the user confirms
-// a dialog that says exactly what will be sent. Local-only is the
-// default state.
-const CLOUD_KEY = 'markview-cloud-ai-opt-in';
-
-export function isCloudOptedIn(): boolean {
-  try { return localStorage.getItem(CLOUD_KEY) === 'true'; } catch { return false; }
-}
-
-export function setCloudOptedIn(v: boolean): void {
-  try { localStorage.setItem(CLOUD_KEY, String(v)); } catch { /* ignore */ }
-}
-
 /**
  * Resolve the generation pipeline. Loads the model if it hasn't been
  * loaded yet. Marks the user as opted-in so subsequent sessions skip
@@ -155,69 +140,6 @@ interface PipelineCall {
  *
  * Returns the final string. Honors `signal.abort()` for a stop button.
  */
-/**
- * Cloud generation via the Cloudflare Pages Function at /api/chat.
- * Uses Workers AI (Llama-3.3-70B by default) on the free CF tier.
- * Same streaming + abort contract as generateChat() — caller doesn't
- * need to know which backend ran.
- */
-async function generateChatCloud(options: GenerateOptions & { model?: string }): Promise<string> {
-  // Defense in depth — callers gate on consent before building prompts,
-  // but no cloud request may ever leave without it.
-  if (!isCloudOptedIn()) throw new Error('cloud AI not enabled');
-  const { messages, maxNewTokens = 512, temperature = 0.5, onToken, signal, model } = options;
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      messages,
-      stream: true,
-      max_tokens: maxNewTokens,
-      temperature,
-      ...(model ? { model } : {}),
-    }),
-    signal,
-  });
-  if (!res.ok) {
-    let detail = '';
-    try { detail = (await res.json() as { detail?: string }).detail ?? ''; } catch { /* ignore */ }
-    throw new Error(`cloud chat ${res.status}${detail ? ': ' + detail : ''}`);
-  }
-  if (!res.body) throw new Error('cloud chat returned no body');
-
-  let accumulated = '';
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  try {
-     
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      let nl: number;
-      while ((nl = buffer.indexOf('\n\n')) !== -1) {
-        const frame = buffer.slice(0, nl).trim();
-        buffer = buffer.slice(nl + 2);
-        if (!frame.startsWith('data:')) continue;
-        const payload = frame.slice(5).trim();
-        if (payload === '[DONE]') return accumulated.trim();
-        try {
-          const parsed = JSON.parse(payload) as { response?: string };
-          const chunk = parsed.response ?? '';
-          if (chunk) {
-            accumulated += chunk;
-            onToken?.(chunk, accumulated);
-          }
-        } catch { /* skip malformed frame */ }
-      }
-    }
-  } finally {
-    reader.releaseLock();
-  }
-  return accumulated.trim();
-}
-
 async function generateChat(options: GenerateOptions): Promise<string> {
   const pipe = (await getPipeline()) as PipelineCall;
   const { messages, maxNewTokens = 256, temperature = 0.7, topP = 0.9, onToken, signal } = options;
@@ -291,52 +213,11 @@ async function generateChat(options: GenerateOptions): Promise<string> {
  * also retrieve fuller paragraphs (not the 140-char preview) so the
  * model has enough to ground on.
  */
-export type ChatMode = 'local' | 'cloud';
-
-/**
- * Continue the user's writing in their own voice. Given the text
- * BEFORE the cursor, generate a single ~2-4 sentence continuation
- * paragraph that picks up where they left off — no preamble, no
- * "here's a continuation", just the prose. Used by the editor's
- * Tab-to-ghost co-author (see editor-coauthor.ts).
- *
- * Cloud-only (Llama-3.3-70B) — a 360M local model can't hold a
- * voice well enough for this to feel like the user wrote it.
- * Returns '' on any failure so the editor silently no-ops.
- */
-export async function continueWriting(
-  before: string,
-  options: { signal?: AbortSignal; onToken?: (chunk: string, full: string) => void } = {},
-): Promise<string> {
-  // Trim to the last ~1500 chars — enough voice + topic context
-  // without paying for the whole doc on every Tab.
-  const ctx = before.slice(-1500).trimEnd();
-  if (ctx.length < 12) return '';
-  const system = `You are a writing continuation engine. The user is mid-document. Continue their text in EXACTLY their voice, tone, and format (if they write markdown, continue markdown). Output ONLY the continuation — no preamble, no quotes, no "here is", no meta. Write 2-4 sentences that flow naturally from where they stopped. Match their register precisely: terse stays terse, lyrical stays lyrical.`;
-  try {
-    const out = await generateChatCloud({
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: ctx },
-      ],
-      maxNewTokens: 160,
-      temperature: 0.7,
-      onToken: options.onToken,
-      signal: options.signal,
-    });
-    // Strip a leading space/newline the model sometimes prepends.
-    return out.replace(/^[\s]+/, '');
-  } catch {
-    return '';
-  }
-}
-
 export async function answerQuestionInWorkspace(
   workspaceId: string,
   question: string,
   options: {
     topK?: number;
-    mode?: ChatMode;
     onToken?: (chunk: string, full: string) => void;
     signal?: AbortSignal;
   } = {},
@@ -363,14 +244,12 @@ export async function answerQuestionInWorkspace(
 NOTES:
 ${contextBlock || '(no notes found)'}`;
 
-  const mode: ChatMode = options.mode ?? 'local';
-  const generator = mode === 'cloud' ? generateChatCloud : generateChat;
-  const answer = await generator({
+  const answer = await generateChat({
     messages: [
       { role: 'system', content: system },
       { role: 'user', content: question },
     ],
-    maxNewTokens: mode === 'cloud' ? 480 : 220,
+    maxNewTokens: 220,
     temperature: 0.3,
     topP: 0.85,
     onToken: options.onToken,
