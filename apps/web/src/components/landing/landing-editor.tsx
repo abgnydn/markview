@@ -66,14 +66,14 @@ function pickDownload(): { href: string; label: string; tooltip: string; os?: 'm
   if (isMac) {
     const looksIntel = /Intel/i.test(ua) && !/Apple/i.test(platform);
     return looksIntel
-      ? { href: DL(ASSET_MAC_X64), label: 'Download for macOS (Intel)', tooltip: `${ASSET_MAC_X64} · 15 MB · Apache-2.0`, os: 'mac' }
-      : { href: DL(ASSET_MAC_ARM), label: 'Download for macOS', tooltip: `${ASSET_MAC_ARM} · 15 MB · Apache-2.0`, os: 'mac' };
+      ? { href: DL(ASSET_MAC_X64), label: 'Download for macOS (Intel)', tooltip: `${ASSET_MAC_X64} · 31 MB · Apache-2.0`, os: 'mac' }
+      : { href: DL(ASSET_MAC_ARM), label: 'Download for macOS', tooltip: `${ASSET_MAC_ARM} · 31 MB · Apache-2.0`, os: 'mac' };
   }
   if (isWindows) {
-    return { href: DL(ASSET_WIN_SETUP), label: 'Download for Windows', tooltip: `${ASSET_WIN_SETUP} · 13 MB · Apache-2.0`, os: 'windows' };
+    return { href: DL(ASSET_WIN_SETUP), label: 'Download for Windows', tooltip: `${ASSET_WIN_SETUP} · 31 MB · Apache-2.0`, os: 'windows' };
   }
   if (isLinux) {
-    return { href: DL(ASSET_LINUX_APPIMAGE), label: 'Download for Linux', tooltip: `${ASSET_LINUX_APPIMAGE} · 85 MB · Apache-2.0`, os: 'linux' };
+    return { href: DL(ASSET_LINUX_APPIMAGE), label: 'Download for Linux', tooltip: `${ASSET_LINUX_APPIMAGE} · 102 MB · Apache-2.0`, os: 'linux' };
   }
   return { href: RELEASES_URL, label: 'Download for desktop', tooltip: 'Pick the build for your OS' };
 }

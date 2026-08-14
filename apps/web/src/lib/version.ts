@@ -10,7 +10,7 @@
  *
  * Consumers: the landing download buttons and the desktop update check.
  */
-export const DESKTOP_VERSION = '0.3.1';
+export const DESKTOP_VERSION = '0.3.2';
 
 export const RELEASES_LATEST_URL = 'https://github.com/abgnydn/markview/releases/latest';
 
