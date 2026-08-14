@@ -1,5 +1,7 @@
 
-import React, { useRef, useMemo, useState, useCallback, lazy, Suspense } from 'react';
+import React, { useRef, useMemo, useState, useCallback, Suspense } from 'react';
+import { lazyWithRetry } from '@/lib/lazy-with-retry';
+import { ErrorBoundary } from '@/components/error-boundary';
 import { useWorkspaceStore } from '@/stores/workspace-store';
 import { useThemeStore } from '@/stores/theme-store';
 import { useCollabStore } from '@/stores/collab-store';
@@ -22,13 +24,13 @@ import { CommandPalette } from '@/components/viewer/command-palette';
 // tight. The MarkdownEditor pulls in CodeMirror, PresentationMode pulls
 // in reveal-style rendering, AiChat pulls transformers.js — none of it
 // belongs on the path of "open a shared URL, just read."
-const PresentationMode = lazy(() => import('@/components/viewer/presentation-mode').then((m) => ({ default: m.PresentationMode })));
-const SplitView = lazy(() => import('@/components/viewer/split-view').then((m) => ({ default: m.SplitView })));
-const DiffView = lazy(() => import('@/components/viewer/diff-view').then((m) => ({ default: m.DiffView })));
-const MarkdownEditor = lazy(() => import('@/components/viewer/markdown-editor').then((m) => ({ default: m.MarkdownEditor })));
-const FileBrowser = lazy(() => import('@/components/viewer/file-browser').then((m) => ({ default: m.FileBrowser })));
-const GraphView = lazy(() => import('@/components/viewer/graph-view').then((m) => ({ default: m.GraphView })));
-const AiChat = lazy(() => import('@/components/viewer/ai-chat').then((m) => ({ default: m.AiChat })));
+const PresentationMode = lazyWithRetry(() => import('@/components/viewer/presentation-mode').then((m) => ({ default: m.PresentationMode })));
+const SplitView = lazyWithRetry(() => import('@/components/viewer/split-view').then((m) => ({ default: m.SplitView })));
+const DiffView = lazyWithRetry(() => import('@/components/viewer/diff-view').then((m) => ({ default: m.DiffView })));
+const MarkdownEditor = lazyWithRetry(() => import('@/components/viewer/markdown-editor').then((m) => ({ default: m.MarkdownEditor })));
+const FileBrowser = lazyWithRetry(() => import('@/components/viewer/file-browser').then((m) => ({ default: m.FileBrowser })));
+const GraphView = lazyWithRetry(() => import('@/components/viewer/graph-view').then((m) => ({ default: m.GraphView })));
+const AiChat = lazyWithRetry(() => import('@/components/viewer/ai-chat').then((m) => ({ default: m.AiChat })));
 
 // PresenceBar replaced by the floating <ShareStatus /> widget (bottom-right).
 import { ShareStatus } from '@/components/collab/share-status';
@@ -37,8 +39,8 @@ import { RelatedNotes } from '@/components/viewer/related-notes';
 import { BacklinksPanel } from '@/components/viewer/backlinks-panel';
 import { PaintingAtmosphere } from '@/components/atmosphere/painting-atmosphere';
 import { AtmosphereDots } from '@/components/atmosphere/atmosphere-dots';
-const PaintingWorld = lazy(() => import('@/components/atmosphere/painting-world').then((m) => ({ default: m.PaintingWorld })));
-const SplatWorld = lazy(() => import('@/components/atmosphere/splat-world').then((m) => ({ default: m.SplatWorld })));
+const PaintingWorld = lazyWithRetry(() => import('@/components/atmosphere/painting-world').then((m) => ({ default: m.PaintingWorld })));
+const SplatWorld = lazyWithRetry(() => import('@/components/atmosphere/splat-world').then((m) => ({ default: m.SplatWorld })));
 import { useAtmosphereRotation } from '@/hooks/use-atmosphere-rotation';
 import { useEmbeddingsBackfill } from '@/hooks/use-embeddings-backfill';
 import { useViewerOverlays } from '@/hooks/use-viewer-overlays';
@@ -594,19 +596,25 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         const yText = collabIsActive ? collab.getYText(editorFileId) ?? undefined : undefined;
         const awareness = collabIsActive ? collab.getAwareness() ?? undefined : undefined;
         return (
-          <Suspense fallback={null}>
-            <MarkdownEditor
-              key={editorFileId}
-              content={activeFileContent}
-              filename={activeFile?.filename || 'untitled.md'}
-              fileId={activeFile?.id}
-              workspaceId={useWorkspaceStore.getState().activeWorkspaceId || undefined}
-              onSave={(newContent) => handleEditorSave(newContent, editorFileId)}
-              onClose={() => setShowEditor(false)}
-              yText={yText}
-              awareness={awareness}
-            />
-          </Suspense>
+          // Boundary around the editor specifically: if its chunk fails to
+          // load (e.g. offline, first-ever open), the viewer behind it stays
+          // alive and the user gets a recovery card instead of a black screen.
+          // Retry closes the editor, returning to the reader.
+          <ErrorBoundary label="editor" onReset={() => setShowEditor(false)}>
+            <Suspense fallback={null}>
+              <MarkdownEditor
+                key={editorFileId}
+                content={activeFileContent}
+                filename={activeFile?.filename || 'untitled.md'}
+                fileId={activeFile?.id}
+                workspaceId={useWorkspaceStore.getState().activeWorkspaceId || undefined}
+                onSave={(newContent) => handleEditorSave(newContent, editorFileId)}
+                onClose={() => setShowEditor(false)}
+                yText={yText}
+                awareness={awareness}
+              />
+            </Suspense>
+          </ErrorBoundary>
         );
       })()}
 

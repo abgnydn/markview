@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useRef, lazy, Suspense } from "react";
+import { useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useThemeStore } from "@/stores/theme-store";
 import { useCollabStore } from "@/stores/collab-store";
+import { lazyWithRetry } from "@/lib/lazy-with-retry";
+import { ErrorBoundary } from "@/components/error-boundary";
 // Lazy — the editor surface is the heaviest chunk in the app (CodeMirror,
 // the markdown parser, the icon set). Deferring it lets the landing paint
 // without it; returning users hit a brief Suspense fallback while it loads.
-const ViewerPage = lazy(() =>
+const ViewerPage = lazyWithRetry(() =>
   import("@/components/viewer/viewer-page").then((m) => ({ default: m.ViewerPage })),
 );
 import { LandingEditor } from "@/components/landing/landing-editor";
@@ -193,13 +195,15 @@ export default function Home() {
   }
 
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      <ViewerPage
-        onGoHome={handleGoHome}
-        addFilesInputRef={addFilesInputRef}
-        onNavigateToFile={handleNavigateToFile}
-      />
-    </Suspense>
+    <ErrorBoundary label="viewer">
+      <Suspense fallback={<LoadingScreen />}>
+        <ViewerPage
+          onGoHome={handleGoHome}
+          addFilesInputRef={addFilesInputRef}
+          onNavigateToFile={handleNavigateToFile}
+        />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 

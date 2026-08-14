@@ -329,8 +329,15 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   // idle cinema
   useEffect(() => {
     const wake = () => { setChromeHidden(false); window.clearTimeout(idleTimer.current); idleTimer.current = window.setTimeout(() => { if (!draw && !overview && !showHelp && !toc && search == null) setChromeHidden(true); }, 3500); };
-    wake(); window.addEventListener('mousemove', wake); window.addEventListener('keydown', wake);
-    return () => { window.removeEventListener('mousemove', wake); window.removeEventListener('keydown', wake); window.clearTimeout(idleTimer.current); };
+    // touchstart/pointerdown too — a phone fires neither mousemove nor keydown,
+    // so without these the deck controls fade after 3.5s and never come back
+    // (the exit button included), stranding touch users.
+    wake();
+    window.addEventListener('mousemove', wake);
+    window.addEventListener('keydown', wake);
+    window.addEventListener('touchstart', wake, { passive: true });
+    window.addEventListener('pointerdown', wake);
+    return () => { window.removeEventListener('mousemove', wake); window.removeEventListener('keydown', wake); window.removeEventListener('touchstart', wake); window.removeEventListener('pointerdown', wake); window.clearTimeout(idleTimer.current); };
   }, [draw, overview, showHelp, toc, search]);
 
   // first-run hint dismiss

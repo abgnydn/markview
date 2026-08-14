@@ -49,6 +49,16 @@ function pickDownload(): { href: string; label: string; tooltip: string; os?: 'm
   const uad = (navigator as { userAgentData?: { platform?: string } }).userAgentData;
   const platform = uad?.platform ?? '';
 
+  // Phones/tablets can't run the desktop binaries, and iPadOS/iOS carry
+  // "like Mac OS X" in the UA — which would otherwise match the Mac branch
+  // and offer a .dmg. Point them at the release list instead of a dead
+  // download (the web app they're already on is the real answer).
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(ua)
+    || (/Mac/i.test(ua) && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1); // iPadOS 13+ desktop UA
+  if (isMobile) {
+    return { href: RELEASES_URL, label: 'Desktop downloads', tooltip: 'Native builds for macOS, Windows, and Linux' };
+  }
+
   const isMac = /Mac/i.test(ua) || /macOS/i.test(platform);
   const isWindows = /Windows/i.test(ua) || /Windows/i.test(platform);
   const isLinux = !isMac && !isWindows && (/Linux/i.test(ua) || /Linux/i.test(platform));

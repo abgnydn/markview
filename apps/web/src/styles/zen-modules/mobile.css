@@ -88,6 +88,13 @@
   /* Collab share / presence — always visible while sharing. */
   .collab-share-btn,
   .collab-presence-bar { opacity: 1 !important; }
+  /* Atmosphere dots reveal on body:hover — which never fires on touch, so on a
+     phone they sit invisible yet tappable, silently switching the mood when a
+     thumb grazes the bottom-left. Give them a resting visibility and a roomier
+     tap area. (!important: mobile.css is imported at the top of zen.css, so the
+     base rules below it otherwise win the cascade.) */
+  .mv-atm-dots { opacity: 0.9 !important; gap: 14px !important; padding: 9px 13px !important; }
+  .mv-atm-dot { width: 15px !important; height: 15px !important; }
   /* Hide the hover-zone strips — they consume tap targets at the edges. */
   .zen-zone-top,
   .zen-zone-left,
@@ -208,7 +215,24 @@
      users into raw markdown with no way to see rendered output. Only
      Split (the middle pill) is meaningless on a phone. */
   .editor-toolbar-center .editor-mode-btn:nth-child(2) { display: none !important; }
-  .editor-toolbar { padding: 10px 12px !important; }
+  /* The toolbar packs filename + mode pills + History/Save/Close into a row
+     that is ~510px wide on a 390px phone, pushing Close off-screen — the only
+     way to leave the editor (there is no Esc on touch). Let the filename be
+     the flexible, shrink-to-fit column and drop the center's auto-margins so
+     the fixed right group (Save + Close) is always fully on-screen. */
+  .editor-toolbar { padding: 10px 12px !important; gap: 8px !important; }
+  .editor-toolbar-left { flex: 1 1 auto; min-width: 0; }
+  .editor-filename {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .editor-toolbar-center { margin: 0 !important; flex: 0 0 auto; }
+  .editor-toolbar-right { flex: 0 0 auto; }
+  /* Version history is a desktop power feature; dropping its button on mobile
+     buys the room that keeps the filename legible next to Save + Close. */
+  .editor-history-btn { display: none !important; }
   .editor-format-bar {
     /* Always visible on touch; no hover. Compact + horizontally scrollable. */
     opacity: 1 !important;
@@ -248,6 +272,38 @@
   }
   .search-input { font-size: 16px !important; /* prevents iOS zoom-on-focus */ }
   .search-result { min-height: 56px !important; padding: 12px 14px !important; }
+  /* The header row (icon + input + text/meaning toggle + ESC) is ~465px wide
+     and pushes the "meaning" toggle — the only way to reach semantic search —
+     off a 390px screen. Let it wrap, and drop the ESC hint that touch can't
+     use, so the toggle stays fully visible. */
+  .search-input-wrapper { flex-wrap: wrap; }
+  .search-input { flex: 1 1 140px; min-width: 0; }
+  .search-mode-toggle { margin-right: 0 !important; margin-left: auto; }
+  .search-kbd { display: none !important; }
+
+  /* Export menu — full-width panel dropping from under the toolbar. The base
+     `.export-dropdown` (declared late in globals.css) collapses the panel to a
+     ~14px sliver on phones. A naive `position:fixed; bottom:0` bottom sheet
+     doesn't work either: `.toolbar` sets `will-change: transform`, which makes
+     it the containing block for fixed descendants — so `bottom:0` pins to the
+     48px toolbar (top of screen) and the sheet is pushed off-screen upward.
+     Instead anchor to that same block from the top: `top:100%` sits just below
+     the toolbar, and the panel flows downward, full-width and scrollable.
+     (mobile.css loads after all of globals.css, so these win the cascade.) */
+  .export-dropdown {
+    position: fixed !important;
+    top: 100% !important;
+    bottom: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    max-height: 78vh !important;
+    overflow-y: auto !important;
+    border-radius: 0 0 14px 14px !important;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .export-dropdown-item { min-height: 44px !important; }
 
   /* Code blocks scroll horizontally with momentum on touch. */
   .markdown-content pre {
