@@ -1,0 +1,21 @@
+# Cloudflare Pages routing.
+#
+# Order matters. Pages serves a matching static file first, then walks these
+# rules top to bottom.
+#
+# Rule 1 exists because of a real incident on a sibling project: Pages served
+# index.html (200, text/html) for a missing /assets/* path, and the
+# `immutable, max-age=31536000` header in public/_headers then stamped that
+# HTML body into the zone edge cache for a year at an asset URL. Pages' own
+# deploy purge does not touch the zone cache, and the wrangler OAuth on this
+# machine has zone:read only, so it could not be purged.
+#
+# A missing hashed asset must fail loudly, not be cached as HTML forever.
+/assets/*   /asset-not-found.html   404
+
+# Rule 2 is the SPA fallback that react-router needs. It was previously
+# implicit — Pages falls back to index.html when a project has no 404.html.
+# Stating it explicitly means rule 1 above cannot accidentally turn the whole
+# site into hard 404s, and the behaviour no longer depends on the absence of
+# a file.
+/*          /index.html             200
