@@ -10,7 +10,7 @@ export async function downloadAsImage(
   const title = filename.replace(/\.md$/i, '');
 
   // Find the rendered markdown container
-  const target = document.querySelector('.markdown-body') as HTMLElement;
+  const target = document.querySelector('.markdown-content') as HTMLElement;
   if (!target) throw new Error('No rendered markdown found');
 
   let dataUrl: string;
@@ -41,7 +41,7 @@ export async function downloadAsImage(
 export async function copyAsImage(): Promise<void> {
   const htmlToImage = await import('html-to-image');
 
-  const target = document.querySelector('.markdown-body') as HTMLElement;
+  const target = document.querySelector('.markdown-content') as HTMLElement;
   if (!target) throw new Error('No rendered markdown found');
 
   const blob = await htmlToImage.toBlob(target, {

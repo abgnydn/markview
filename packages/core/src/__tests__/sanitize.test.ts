@@ -40,6 +40,18 @@ describe('sanitize schema', () => {
     expect(asset).toContain('src="asset:abc123"');
   });
 
+  it('escapes the un-rendered math fallback (KaTeX RangeError breakout)', async () => {
+    // Deeply-nested \frac blows KaTeX's parser stack → RangeError, which is
+    // NOT a ParseError so it escapes throwOnError:false and hits the app's
+    // fallback catch. That branch splices raw source into post-sanitize HTML,
+    // so it must escape the body itself or a </code> breakout executes.
+    const breakout = '\\frac{1}{'.repeat(2000) + '2' + '}'.repeat(2000) + '</code><img src=x onerror=alert(1)>';
+    const inline = await renderMarkdown('$' + breakout + '$', { katex: true });
+    expect(inline).not.toContain('<img src=x onerror');
+    const block = await renderMarkdown('$$' + breakout.replace('</code>', '</code></pre>') + '$$', { katex: true });
+    expect(block).not.toContain('<img src=x onerror');
+  });
+
   it('keeps ordinary markdown intact', async () => {
     const html = await renderMarkdown('# Title\n\n**bold** and [a link](https://example.com)\n');
     expect(html).toContain('<strong>bold</strong>');

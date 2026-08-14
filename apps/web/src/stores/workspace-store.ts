@@ -1,6 +1,7 @@
 
 import { create } from 'zustand';
 import { db, type DBWorkspace, type DBFile } from '@/lib/storage/db';
+import { ensurePersistentStorage } from '@/lib/storage/persistence';
 
 // ---------- Types ----------
 
@@ -81,6 +82,16 @@ function generateId(): string {
   return crypto.randomUUID();
 }
 
+/**
+ * The marketing routes seed their own workspaces — "portfolio: <slug>" on
+ * /p/:slug and "the chronicle" on /projects. Those are re-fetchable
+ * content, not the user's documents, so they must not count as "the user
+ * has something worth protecting".
+ */
+function isSystemWorkspaceTitle(title: string): boolean {
+  return title.startsWith('portfolio: ') || title === 'the chronicle';
+}
+
 function deriveDisplayName(filename: string): string {
   return filename
     .replace(/\.md$/i, '')
@@ -122,8 +133,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       // routes' system workspaces ("portfolio: <slug>" / "the chronicle"),
       // so browsing /projects or /p/:slug never steals the editor's
       // default workspace from the user's real notes.
-      const isSystemWs = (t: string) => t.startsWith('portfolio: ') || t === 'the chronicle';
-      const activeWs = workspaces.find((w) => !isSystemWs(w.title)) ?? workspaces[0];
+      const activeWs = workspaces.find((w) => !isSystemWorkspaceTitle(w.title)) ?? workspaces[0];
       const dbFiles = await db.files
         .where('workspaceId')
         .equals(activeWs.id)
@@ -223,6 +233,11 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       activeFileId: fileMetas.length > 0 ? fileMetas[0].id : null,
       activeFileContent: firstContent,
     }));
+
+    // The user's first documents just landed in IndexedDB — ask the browser
+    // to stop treating them as evictable. Skipped for the marketing routes'
+    // own workspaces: a visitor reading /p/:slug has nothing to protect yet.
+    if (!isSystemWorkspaceTitle(title)) void ensurePersistentStorage();
   },
 
   // ---------- Switch Workspace ----------
@@ -444,6 +459,10 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
           : ws
       ),
     }));
+
+    // Files added to an existing workspace only ever come from a deliberate
+    // user action, so no system-workspace guard is needed here.
+    void ensurePersistentStorage();
   },
 
   // ---------- Remove File ----------

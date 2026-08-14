@@ -389,6 +389,19 @@ function extractMath(content: string): MathExtract {
   return { content: transformed.join(''), blocks };
 }
 
+// Entity-escape a math body for the un-rendered fallback. This text
+// bypasses rehype-sanitize (extracted pre-sanitize, restored post-), so
+// the fallback branch is the only thing standing between a hostile `$…$`
+// and script execution.
+function escapeMathHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 async function restoreMathInHtml(
   html: string,
   blocks: MathExtract['blocks']
@@ -413,9 +426,18 @@ async function restoreMathInHtml(
       } catch {
         // Couldn't render — fall back to a code-styled sample so the user
         // sees something instead of a leaked placeholder.
+        //
+        // SECURITY: `math` is raw source pulled out BEFORE rehype-sanitize
+        // and spliced back in AFTER it, so it is never sanitized. KaTeX
+        // normally escapes it, but a non-ParseError (e.g. a RangeError from
+        // deeply-nested `\frac`/superscripts blowing the parser stack) is
+        // rethrown past `throwOnError:false` and lands here — so this branch
+        // MUST escape the body itself or a `</code><img onerror=…>` breakout
+        // executes on the viewer and in exported HTML.
+        const safe = escapeMathHtml(display ? math.trim() : math);
         replacement = display
-          ? `<pre><code>${math.trim()}</code></pre>`
-          : `<code>${math}</code>`;
+          ? `<pre><code>${safe}</code></pre>`
+          : `<code>${safe}</code>`;
       }
       // Block math typically lands inside its own <p> (since the placeholder
       // word formed a paragraph). Replace <p>KEY</p> with the bare block so
