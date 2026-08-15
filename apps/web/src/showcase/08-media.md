@@ -24,17 +24,17 @@ Some claims need an asterisk[^1]. Others want a longer aside that doesn't belong
 
 ## Images
 
-A photograph rendered with a soft drop shadow, then a centered italic caption beneath it:
+Every MarkView atmosphere is a public-domain painting, and any of them renders inline just as well as a photo — here's one with a soft drop shadow and a centered italic caption beneath it:
 
-![A pen resting on a notebook](https://images.unsplash.com/photo-1455390582262-044cdead277a?w=900&h=500&fit=crop)
+![Katsushika Hokusai, "Fine Wind, Clear Morning" (Red Fuji)](/atmospheres/fuji-hokusai.webp)
 
-*Writing instruments — pen and notebook, the original markdown editor.*
+*Katsushika Hokusai, "Fine Wind, Clear Morning" (c. 1831) — the woodblock print behind the Fuji atmosphere.*
 
-A second image, this time landscape:
+A second image, this time a painted landscape:
 
-![Open book on a wooden desk](https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?w=900&h=500&fit=crop)
+![Vincent van Gogh, "Wheat Field with Cypresses"](/atmospheres/fields-vangogh.webp)
 
-*An open book — the medium MarkView is trying to translate, one keystroke at a time.*
+*Vincent van Gogh, "Wheat Field with Cypresses" (1889) — one of the canvases the Fields atmosphere drifts through.*
 
 ## Task lists
 
