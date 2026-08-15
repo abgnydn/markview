@@ -3319,6 +3319,19 @@ body::after {
   .markdown-content h1 + p {
     transform: none;
   }
+  /* The live editor preview re-renders its whole HTML on every (debounced)
+     keystroke, so fresh blocks re-enter from translateY(6px) each time and the
+     pane visibly twitches/"refreshes" as you type. The settle is a page-entry
+     flourish, not something a live preview should replay — hold its blocks
+     static. */
+  .editor-preview-content .markdown-content p,
+  .editor-preview-content .markdown-content li,
+  .editor-preview-content .markdown-content blockquote,
+  .editor-preview-content .markdown-content pre,
+  .editor-preview-content .markdown-content table {
+    transform: none;
+    transition: none;
+  }
 }
 
 /* #2 Whisper tab strip — drop the pill bg, render filenames inline,
