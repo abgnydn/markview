@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Info } from 'lucide-react';
 import { ATMOSPHERES, pickPaintingFor } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
 import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
@@ -204,6 +206,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
   };
 
   return (
+    <>
     <div
       className={`atmosphere atmosphere-painting atmosphere-${displayedCfg.id}${imageReady ? '' : ' atmosphere-swapping'}${lite ? ' atmosphere-lite' : ''}`}
       style={style}
@@ -287,14 +290,8 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         <WebGLParticles kind={displayedCfg.particles} />
       )}
 
-      <div className="atmosphere-credit">
-        <span className="atmosphere-credit-artist">{displayed.painting.attribution}</span>
-        <span className="atmosphere-credit-sep"> · </span>
-        <span className="atmosphere-credit-detail">{displayed.painting.attributionDetail}</span>
-      </div>
-
       {/* #14 Caption flourish — soft italic title bottom-left for 2.4s
-          on every painting swap. Sits above the credit, fades on its own. */}
+          on every painting swap. Fades on its own. */}
       <div
         className={`atmosphere-caption${captionVisible ? ' atmosphere-caption-show' : ''}`}
         aria-hidden="true"
@@ -310,6 +307,28 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         {hint}
       </div>
     </div>
+    {/* Painting credit — portaled to <body> so it escapes the atmosphere
+        layer's z-index:0 stacking context (otherwise the expanded pill hides
+        behind the paper column) and its aria-hidden (so the label is read).
+        A floating bottom-right button that unfurls the attribution on hover. */}
+    {typeof document !== 'undefined' && createPortal(
+      <div
+        className="atmosphere-credit"
+        tabIndex={0}
+        role="note"
+        aria-label={`Painting: ${displayed.painting.attribution} · ${displayed.painting.attributionDetail}`}
+        title={`${displayed.painting.attribution} · ${displayed.painting.attributionDetail}`}
+      >
+        <span className="atmosphere-credit-icon" aria-hidden="true"><Info size={13} strokeWidth={2} /></span>
+        <span className="atmosphere-credit-text">
+          <span className="atmosphere-credit-artist">{displayed.painting.attribution}</span>
+          <span className="atmosphere-credit-sep"> · </span>
+          <span className="atmosphere-credit-detail">{displayed.painting.attributionDetail}</span>
+        </span>
+      </div>,
+      document.body,
+    )}
+    </>
   );
 }
 
