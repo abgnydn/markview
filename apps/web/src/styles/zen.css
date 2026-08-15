@@ -1286,14 +1286,20 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .katex-dis
   margin: 1.4em 0 !important;
   padding: 0.4em 0;
 }
-/* (42) Mermaid / diagrams — set on a soft inset panel so the rendered
-   strokes read regardless of the diagram's own theme. */
+/* (42) Mermaid / diagrams — the diagram renders with the LIGHT theme under an
+   atmosphere (see markdown-renderer's renderTheme), so its strokes and labels
+   are dark ink. Sit it on a light paper card, not the dark chrome default, so
+   dark-on-light stays legible (a dark inset panel here put class-diagram text,
+   which is drawn straight on the panel, dark-on-dark). */
+html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .mermaid-wrapper {
+  background: rgba(255, 252, 247, 0.72) !important;
+  border: 1px solid rgba(28, 24, 18, 0.12) !important;
+}
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .mermaid,
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content svg.mermaid {
-  background: rgba(28, 24, 18, 0.78);
+  background: transparent;
   border-radius: 4px;
   padding: 12px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 /* (43) Code-fence plugin widgets (csv / chart / tabs / timeline / map /
    alert / embed) — mounted on the paper with a thin mat + shadow. */

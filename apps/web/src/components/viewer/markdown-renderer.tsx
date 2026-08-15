@@ -271,6 +271,13 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
   const contentRef = useRef<HTMLDivElement>(null);
   const [html, setHtml] = useState('');
   const resolved = useThemeStore((s) => s.resolved);
+  const atmosphere = useThemeStore((s) => s.atmosphere);
+  // An active atmosphere renders the content on a light paper scrim with dark
+  // ink regardless of the app's dark/light appearance, so Shiki and Mermaid
+  // must use their LIGHT themes too — otherwise a dark code block or (as seen)
+  // a dark-navy Mermaid diagram lands on the paper with its labels darkened to
+  // invisibility. Effective theme = light whenever an atmosphere is on.
+  const renderTheme: 'dark' | 'light' = atmosphere !== 'none' ? 'light' : resolved;
 
   // Render markdown + highlight with Shiki
   useEffect(() => {
@@ -311,14 +318,14 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         // CPU-heavy).
         await loadShikiLangs(rawHtml);
         if (cancelled) return;
-        const highlighted = highlightHtml(rawHtml, resolved);
+        const highlighted = highlightHtml(rawHtml, renderTheme);
 
         // Yield again before mermaid rendering
         await yieldToMain();
         if (cancelled) return;
 
         // Render mermaid diagrams in the HTML string (before DOM)
-        const withMermaid = await renderMermaidInHtml(highlighted, resolved);
+        const withMermaid = await renderMermaidInHtml(highlighted, renderTheme);
 
         if (!cancelled) {
           const final = onToggleTask ? enableTaskCheckboxes(withMermaid) : withMermaid;
@@ -343,7 +350,7 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
 
     process();
     return () => { cancelled = true; };
-  }, [content, resolved, resolveTransclusion]);
+  }, [content, renderTheme, resolveTransclusion]);
 
   // Extract headings after HTML is set
   useEffect(() => {
