@@ -346,69 +346,31 @@
   50%  { transform: translate3d(var(--mote-x, 0px), -55vh, 0);                            opacity: var(--opacity-peak, 0.8); }
   100% { transform: translate3d(calc(var(--mote-x, 0px) * -0.4), -110vh, 0);              opacity: 0; }
 }
-/* Painting credit — a floating info button pinned bottom-RIGHT, clear of the
-   atmosphere dock (bottom-left) that used to clip it. Collapsed it is a small
-   circular button; on hover or keyboard focus it expands leftward into a pill
-   that reveals the full attribution, so the painter's name is readable. The
-   pill is dark in both themes, so its text is an explicit light ink rather
-   than a theme variable. */
 .atmosphere-credit {
-  position: fixed;                  /* portaled to <body>; float over the content column */
-  z-index: 20;                      /* above content + dock, below dialogs/overlays */
-  right: 20px;
+  position: absolute;
+  left: 20px;
   bottom: 14px;
-  left: auto;
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse;      /* icon sits at the right edge; text unfurls to its left */
-  height: 28px;
-  max-width: 28px;                  /* collapsed: just the icon */
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(11, 10, 13, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
   font-family: var(--zen-mono);
   font-size: 9.5px;
   letter-spacing: 0.14em;
-  color: rgba(240, 236, 228, 0.72);
+  color: var(--zen-fg-faint);
+  opacity: 0.7;
   pointer-events: auto;
-  cursor: default;
-  transition: max-width 340ms cubic-bezier(0.4, 0, 0.2, 1), background 200ms ease;
-}
-.atmosphere-credit:hover,
-.atmosphere-credit:focus-within {
-  max-width: min(80vw, 620px);
-  background: rgba(11, 10, 13, 0.7);
-  outline: none;
-}
-.atmosphere-credit-icon {
-  flex: none;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(240, 236, 228, 0.85);
-}
-.atmosphere-credit-text {
-  white-space: nowrap;
-  padding: 0 4px 0 14px;
-  opacity: 0;
-  transition: opacity 200ms ease 80ms;
-}
-.atmosphere-credit:hover .atmosphere-credit-text,
-.atmosphere-credit:focus-within .atmosphere-credit-text {
-  opacity: 1;
+  max-width: 72vw;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  line-height: 1.5;
 }
 .atmosphere-credit-artist {
   text-transform: uppercase;
-  color: rgba(240, 236, 228, 0.95);
+  color: var(--zen-fg-soft);
 }
 .atmosphere-credit-detail {
   font-style: italic;
   letter-spacing: 0.04em;
+}
+/* Light theme: drop the text-shadow (the print is bright, we want crisp ink). */
+:root:not(.dark):not([data-theme='dark']) .atmosphere-credit {
+  text-shadow: 0 1px 2px rgba(255, 250, 245, 0.6);
 }
 
 /* ──────────────────────────────────────────────────────────────────────

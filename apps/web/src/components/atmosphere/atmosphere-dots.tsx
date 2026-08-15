@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { Volume2, VolumeX, RefreshCw, Shuffle, Sun, Footprints, Zap } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw, Shuffle, Sun, Footprints, Zap, Palette } from 'lucide-react';
 import { useThemeStore, type Atmosphere } from '@/stores/theme-store';
 import {
   isAtmosphereMuted, setAtmosphereMuted,
@@ -192,6 +192,14 @@ export function AtmosphereDots() {
       >
         <Sun size={12} />
       </button>
+
+      {/* Collapse handle — the always-visible floating button. On a hover
+          device the rest of the bar is tucked away and unfurls to the left
+          when this is hovered/focused (see .mv-atm-dots collapse in zen.css).
+          Hidden on touch, where the whole bar stays open. */}
+      <span className="mv-atm-handle" aria-hidden="true">
+        <Palette size={13} />
+      </span>
     </div>
   );
 }

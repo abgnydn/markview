@@ -4637,10 +4637,14 @@ input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
  * ──────────────────────────────────────────────────────────────────────── */
 .mv-atm-dots {
   position: fixed;
-  left: calc(env(safe-area-inset-left, 0px) + 16px);
+  /* Moved to the bottom-RIGHT so it no longer sits over the painting credit
+     at the bottom-left. */
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  left: auto;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
   z-index: 4;
   display: flex;
+  justify-content: flex-end;   /* content hugs the right; overflow clips on the left */
   gap: 10px;
   align-items: center;
   padding: 7px 11px;
@@ -4649,12 +4653,33 @@ input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  opacity: 0;
-  transition: opacity 320ms ease;
 }
-body:hover .mv-atm-dots,
-.mv-atm-dots:hover,
-.mv-atm-dots:focus-within { opacity: 1; }
+/* The always-visible handle (rightmost). It's the collapsed floating button. */
+.mv-atm-handle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: rgba(240, 236, 228, 0.9);
+  order: 1;                    /* keep it last/rightmost regardless of DOM tweaks */
+}
+
+/* On a hover device the bar collapses to just the handle and unfurls to the
+   left on hover/focus. On touch there is no hover, so the bar stays open
+   (see mobile.css) and the handle is hidden. */
+@media (hover: hover) and (pointer: fine) {
+  .mv-atm-dots {
+    max-width: 38px;           /* collapsed: handle + padding */
+    overflow: hidden;
+    transition: max-width 360ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mv-atm-dots:hover,
+  .mv-atm-dots:focus-within {
+    max-width: min(90vw, 560px);
+  }
+}
 .mv-atm-dot {
   width: 11px;
   height: 11px;
