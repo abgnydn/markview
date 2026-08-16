@@ -4656,14 +4656,15 @@ input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
  * ──────────────────────────────────────────────────────────────────────── */
 .mv-atm-dots {
   position: fixed;
-  /* Moved to the bottom-RIGHT so it no longer sits over the painting credit
-     at the bottom-left. */
-  right: calc(env(safe-area-inset-right, 0px) + 16px);
-  left: auto;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  /* Bottom-LEFT, sitting ABOVE the painting credit (which lives at bottom:14px):
+     ~44px clears it. Expanding on the right side overlapped the TOC/right rail,
+     so it lives on the left and unfurls rightward instead. */
+  left: calc(env(safe-area-inset-left, 0px) + 16px);
+  right: auto;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 44px);
   z-index: 4;
   display: flex;
-  justify-content: flex-end;   /* content hugs the right; overflow clips on the left */
+  justify-content: flex-start;   /* content hugs the left; overflow clips on the right */
   gap: 10px;
   align-items: center;
   padding: 7px 11px;
@@ -4673,7 +4674,7 @@ input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
-/* The always-visible handle (rightmost). It's the collapsed floating button. */
+/* The always-visible handle (leftmost). It's the collapsed floating button. */
 .mv-atm-handle {
   flex: none;
   display: inline-flex;
@@ -4682,7 +4683,7 @@ input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
   width: 20px;
   height: 20px;
   color: rgba(240, 236, 228, 0.9);
-  order: 1;                    /* keep it last/rightmost regardless of DOM tweaks */
+  order: -1;                   /* keep it first/leftmost regardless of DOM order */
 }
 
 /* On a hover device the bar collapses to just the handle and unfurls to the

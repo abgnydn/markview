@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { Volume2, VolumeX, RefreshCw, Shuffle, Sun, Footprints, Zap, Palette } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw, Shuffle, Sun, Moon, Monitor, Sunrise, Footprints, Zap, Palette } from 'lucide-react';
 import { useThemeStore, type Atmosphere } from '@/stores/theme-store';
 import {
   isAtmosphereMuted, setAtmosphereMuted,
@@ -34,6 +34,8 @@ const OPTIONS: Array<{ id: Atmosphere; label: string }> = [
 export function AtmosphereDots() {
   const atmosphere = useThemeStore((s) => s.atmosphere);
   const setAtmosphere = useThemeStore((s) => s.setAtmosphere);
+  const mode = useThemeStore((s) => s.mode);
+  const setMode = useThemeStore((s) => s.setMode);
   const isLive = atmosphere !== 'none';
 
   const [muted, setMuted] = useState(() => isAtmosphereMuted());
@@ -102,6 +104,14 @@ export function AtmosphereDots() {
   const playTick = () => {
     void import('@/lib/atmosphere/audio').then(({ playUiSound }) => playUiSound('tick'));
   };
+
+  // Appearance (light / dark / system) — merged in from the old toolbar theme
+  // button so this floating dock is the single place for atmosphere + theme.
+  const cycleMode = () => {
+    setMode(mode === 'light' ? 'dark' : mode === 'dark' ? 'system' : 'light');
+    playTick();
+  };
+  const ModeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;
 
   return (
     <div className="mv-atm-dots" role="group" aria-label="Atmosphere">
@@ -181,6 +191,18 @@ export function AtmosphereDots() {
         </>
       )}
 
+      {/* Appearance (light / dark / system) — merged in from the toolbar so
+          theme + atmosphere live in one control. Cycles on click. */}
+      <button
+        type="button"
+        className="mv-atm-icon"
+        onClick={cycleMode}
+        title={`Appearance: ${mode} — click to change`}
+        aria-label="Change appearance (light, dark, or system)"
+      >
+        <ModeIcon size={12} />
+      </button>
+
       {/* Time-of-day toggle — always available, even with no atmosphere,
           since the tint applies to the page background too. */}
       <button
@@ -190,13 +212,13 @@ export function AtmosphereDots() {
         title={tintOn ? 'Time-of-day tint · on (auto)' : 'Time-of-day tint · off'}
         aria-label="Toggle time-of-day tint"
       >
-        <Sun size={12} />
+        <Sunrise size={12} />
       </button>
 
       {/* Collapse handle — the always-visible floating button. On a hover
-          device the rest of the bar is tucked away and unfurls to the left
-          when this is hovered/focused (see .mv-atm-dots collapse in zen.css).
-          Hidden on touch, where the whole bar stays open. */}
+          device the rest of the bar is tucked away and unfurls when this is
+          hovered/focused (see .mv-atm-dots collapse in zen.css). Hidden on
+          touch, where the whole bar stays open. */}
       <span className="mv-atm-handle" aria-hidden="true">
         <Palette size={13} />
       </span>

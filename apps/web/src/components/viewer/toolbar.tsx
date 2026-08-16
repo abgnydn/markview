@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Monitor, Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles, FilePlus, Upload, RefreshCw } from 'lucide-react';
+import { Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles, FilePlus, Upload, RefreshCw } from 'lucide-react';
 import { isTauri } from '@/lib/tauri/tauri-bridge';
 import { useThemeStore } from '@/stores/theme-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -25,7 +25,7 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onToggleVault, onOpenFileBrowser, onOpenAiChat, onGoHome, onToggleSidebar }: ToolbarProps) {
-  const { mode, setMode, fontSize } = useThemeStore();
+  const fontSize = useThemeStore((s) => s.fontSize);
   const colorScheme = useThemeStore((s) => s.colorScheme);
   const setColorScheme = useThemeStore((s) => s.setColorScheme);
   const workspaces = useWorkspaceStore((s) => s.workspaces);
@@ -37,12 +37,10 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
 
   const [showOverflow, setShowOverflow] = useState(false);
   const [showThemePicker, setShowThemePicker] = useState(false);
-  const [showModePicker, setShowModePicker] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const overflowRef = useRef<HTMLDivElement>(null);
   const themePickerRef = useRef<HTMLDivElement>(null);
-  const modePickerRef = useRef<HTMLDivElement>(null);
   const addMenuRef = useRef<HTMLDivElement>(null);
 
   // Close overflow menu on click outside
@@ -53,9 +51,6 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
       }
       if (themePickerRef.current && !themePickerRef.current.contains(e.target as Node)) {
         setShowThemePicker(false);
-      }
-      if (modePickerRef.current && !modePickerRef.current.contains(e.target as Node)) {
-        setShowModePicker(false);
       }
       if (addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) {
         setShowAddMenu(false);
@@ -70,10 +65,9 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
         ref.current?.querySelector<HTMLButtonElement>('button[aria-expanded], button')?.focus();
       if (showOverflow) { e.preventDefault(); e.stopPropagation(); setShowOverflow(false); restore(overflowRef); }
       else if (showThemePicker) { e.preventDefault(); e.stopPropagation(); setShowThemePicker(false); restore(themePickerRef); }
-      else if (showModePicker) { e.preventDefault(); e.stopPropagation(); setShowModePicker(false); restore(modePickerRef); }
       else if (showAddMenu) { e.preventDefault(); e.stopPropagation(); setShowAddMenu(false); restore(addMenuRef); }
     };
-    if (showOverflow || showThemePicker || showModePicker || showAddMenu) {
+    if (showOverflow || showThemePicker || showAddMenu) {
       document.addEventListener('mousedown', handleClick);
       window.addEventListener('keydown', handleKey, true);
     }
@@ -81,14 +75,12 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
       document.removeEventListener('mousedown', handleClick);
       window.removeEventListener('keydown', handleKey, true);
     };
-  }, [showOverflow, showThemePicker, showModePicker, showAddMenu]);
+  }, [showOverflow, showThemePicker, showAddMenu]);
 
 
   const handleClearAll = () => {
     setShowClearConfirm(true);
   };
-
-  const ThemeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;
 
   return (
     <>
@@ -294,39 +286,6 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
         </div>
 
         <span className="toolbar-font-size toolbar-desktop-only">{fontSize}px</span>
-
-        <div className="toolbar-theme-picker-container toolbar-desktop-only" ref={modePickerRef}>
-          <button
-            className="toolbar-btn toolbar-theme-btn"
-            onClick={() => setShowModePicker(!showModePicker)}
-            title={`Theme: ${mode}`}
-          >
-            <ThemeIcon size={18} />
-            <span className="toolbar-theme-label">{mode}</span>
-          </button>
-          {showModePicker && (
-            <div className="toolbar-theme-picker">
-              <div className="theme-picker-header">Appearance</div>
-              {['light', 'dark', 'system'].map((m) => {
-                const ItemIcon = m === 'dark' ? Moon : m === 'light' ? Sun : Monitor;
-                return (
-                  <button
-                    key={m}
-                    className={`theme-picker-item ${mode === m ? 'theme-picker-active' : ''}`}
-                    onClick={() => {
-                      setMode(m as 'dark' | 'light' | 'system');
-                      setShowModePicker(false);
-                    }}
-                  >
-                    <ItemIcon size={14} style={{ marginRight: 4, color: 'var(--text-secondary)' }} />
-                    <span className="theme-picker-name" style={{ textTransform: 'capitalize' }}>{m}</span>
-                    {mode === m && <span className="theme-picker-check">✓</span>}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
       </div>
       </header>
       <ConfirmDialog
