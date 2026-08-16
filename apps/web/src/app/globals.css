@@ -2783,21 +2783,6 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
   opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
 }
 
-/* ---- print / export to PDF (E) ---- */
-.presentation-print { display: none; }
-@media print {
-  .presentation-overlay > *:not(.presentation-print) { display: none !important; }
-  .presentation-print { display: block; }
-  .presentation-print-slide {
-    page-break-after: always; break-after: page;
-    width: 100%; min-height: 100vh; padding: 8% 9%;
-    display: flex; flex-direction: column; justify-content: center;
-    color: #111; background: #fff;
-  }
-  .presentation-print-slide :is(h1, h2) { font-size: 32pt; margin: 0 0 12pt; }
-  .presentation-print-slide :is(p, li) { font-size: 15pt; line-height: 1.5; }
-}
-
 /* ---- more transitions (X): zoom / flip ---- */
 .presentation-slide.t-zoom { animation: deckZoom 0.45s cubic-bezier(0.16, 0.84, 0.34, 1); }
 @keyframes deckZoom { from { opacity: 0; transform: scale(0.86); } to { opacity: 1; transform: none; } }

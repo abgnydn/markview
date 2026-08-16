@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
 import {
   ChevronLeft, ChevronRight, X, Maximize2, Minimize2, LayoutGrid, Timer, Play, Pause,
-  Pencil, Palette, Printer, Keyboard, StickyNote, MonitorPlay, Search, Film, Image, Link2, Volume2, VolumeX,
+  Pencil, Palette, Keyboard, StickyNote, MonitorPlay, Search, Film, Image, Link2, Volume2, VolumeX,
   SkipBack, SkipForward, Eraser, Undo2, Highlighter, Download, Repeat, BarChart3, Captions, MoreHorizontal,
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
@@ -421,7 +421,6 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         case 'm': case 'M': e.preventDefault(); cycleTheme(); break;
         case 'r': case 'R': e.preventDefault(); toggleAspect(); break;
         case 'x': case 'X': e.preventDefault(); cycleTransition(); break;
-        case 'e': case 'E': e.preventDefault(); window.print(); break;
         case ',': e.preventDefault(); setFilmstrip((v) => !v); break;
         case '+': case '=': e.preventDefault(); setTargetMin((m) => m + 1); setTimerOn(true); break;
         case '-': e.preventDefault(); setTargetMin((m) => Math.max(0, m - 1)); break;
@@ -517,7 +516,6 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
               <hr className="presentation-more-sep" />
               <button className="presentation-more-item" onClick={exportPng}><Image size={14} /> Slide → PNG</button>
               <button className="presentation-more-item" onClick={exportHtml}><Download size={14} /> Deck → HTML</button>
-              <button className="presentation-more-item" onClick={() => window.print()}><Printer size={14} /> Print / PDF</button>
               <button className="presentation-more-item" onClick={copyLink}><Link2 size={14} /> Copy slide link</button>
               <hr className="presentation-more-sep" />
               <button className="presentation-more-item" onClick={() => setSound((v) => !v)}>{sound ? <Volume2 size={14} /> : <VolumeX size={14} />} Advance sound{sound && ' ✓'}</button>
@@ -670,16 +668,12 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
                 ['P', 'Autoplay'], ['T', 'Timer'], ['+ −', 'Time target'], ['I', 'Incremental'],
                 ['B / W', 'Blank black / white'], ['L', 'Laser'], ['K', 'Spotlight'], ['Z', 'Magnify'],
                 ['D / C', 'Draw / clear'], ['M', 'Theme'], ['R', 'Aspect'], ['X', 'Transition'],
-                ['E', 'Print PDF'], ['? H', 'This help'], ['Esc', 'Back / exit'],
+                ['? H', 'This help'], ['Esc', 'Back / exit'],
               ].map(([key, desc]) => <div key={key}><dt>{key}</dt><dd>{desc}</dd></div>)}
             </dl>
           </div>
         </div>
       )}
-
-      <div className="presentation-print" aria-hidden>
-        {slides.map((s, i) => <div key={i} className="presentation-print-slide markdown-content" dangerouslySetInnerHTML={{ __html: s }} />)}
-      </div>
     </div>
   );
 }
