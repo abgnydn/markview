@@ -29,7 +29,6 @@ const SplitView = lazyWithRetry(() => import('@/components/viewer/split-view').t
 const DiffView = lazyWithRetry(() => import('@/components/viewer/diff-view').then((m) => ({ default: m.DiffView })));
 const MarkdownEditor = lazyWithRetry(() => import('@/components/viewer/markdown-editor').then((m) => ({ default: m.MarkdownEditor })));
 const FileBrowser = lazyWithRetry(() => import('@/components/viewer/file-browser').then((m) => ({ default: m.FileBrowser })));
-const GraphView = lazyWithRetry(() => import('@/components/viewer/graph-view').then((m) => ({ default: m.GraphView })));
 const AiChat = lazyWithRetry(() => import('@/components/viewer/ai-chat').then((m) => ({ default: m.AiChat })));
 
 // PresenceBar replaced by the floating <ShareStatus /> widget (bottom-right).
@@ -148,10 +147,9 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
 
-  // Overlay state + their keyboard shortcuts (\ for graph, ⌘J for chat,
-  // Esc closes whichever is open). One hook owns the whole stack.
+  // Overlay state + their keyboard shortcuts (⌘J for chat, Esc closes
+  // whichever is open). One hook owns the whole stack.
   const {
-    vaultOpen, setVaultOpen,
     fileBrowserOpen, setFileBrowserOpen,
     aiChatOpen, setAiChatOpen,
   } = useViewerOverlays();
@@ -370,7 +368,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         onToggleSplitView={() => setShowSplitView(!showSplitView)}
         onToggleDiffView={() => setShowDiffView(true)}
         onToggleEditor={isGuestMode ? undefined : () => setShowEditor(true)}
-        onToggleVault={() => setVaultOpen(true)}
         onOpenFileBrowser={() => setFileBrowserOpen(true)}
         onOpenAiChat={() => setAiChatOpen(true)}
         onGoHome={onGoHome}
@@ -459,11 +456,6 @@ export function ViewerPage({ onGoHome, addFilesInputRef, onNavigateToFile }: Vie
         </Suspense>
       )}
 
-      {vaultOpen && (
-        <Suspense fallback={null}>
-          <GraphView onClose={() => setVaultOpen(false)} />
-        </Suspense>
-      )}
 
       {aiChatOpen && (
         <Suspense fallback={null}>

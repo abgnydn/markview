@@ -97,12 +97,6 @@ export function CommandPalette() {
         run: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true })),
       },
       {
-        id: 'toggle-graph',
-        label: 'Open graph view',
-        hint: '\\',
-        run: () => window.dispatchEvent(new KeyboardEvent('keydown', { key: '\\' })),
-      },
-      {
         id: 'browse-files',
         label: 'Browse all workspaces & files',
         run: () => window.dispatchEvent(new CustomEvent('markview:open-file-browser')),

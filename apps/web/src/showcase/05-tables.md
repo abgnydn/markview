@@ -52,4 +52,3 @@ Hairlines only — no zebra stripes, no boxed cells. Columns lead the eye; the s
 | `⌘S`        | Save the current file           |
 | `E`         | Open the editor on this file    |
 | `Esc`       | Close the editor / dismiss UI   |
-| `\`         | Toggle the graph view           |

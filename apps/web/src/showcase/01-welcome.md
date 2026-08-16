@@ -2,7 +2,7 @@
 
 On your machine. Drag a file in, drop a folder, paste a GitHub URL — MarkView renders it locally and never sends a byte. No accounts, no telemetry, no cloud storage.
 
-This document is a tour. The sidebar on the left holds the rest of the showcase — typography, code, math, tables, callouts, diagrams, media, and live blocks. Press `\` for the graph view, `⌘K` to search across every file (flip it to **meaning** mode and it searches by sense, not spelling), `E` to open the editor on whichever file you're reading.
+This document is a tour. The sidebar on the left holds the rest of the showcase — typography, code, math, tables, callouts, diagrams, media, and live blocks. Press `⌘K` to search across every file (flip it to **meaning** mode and it searches by sense, not spelling), and `E` to open the editor on whichever file you're reading.
 
 ## What it does
 

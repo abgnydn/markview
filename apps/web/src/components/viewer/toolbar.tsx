@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Network, Sparkles, FilePlus, Upload, RefreshCw } from 'lucide-react';
+import { Search, FolderOpen, Plus, Clock, BookOpen, Presentation, Columns2, Edit3, FileCode2, Menu, MoreVertical, Palette, Trash2, Sparkles, FilePlus, Upload, RefreshCw } from 'lucide-react';
 import { isTauri } from '@/lib/tauri/tauri-bridge';
 import { useThemeStore } from '@/stores/theme-store';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -17,14 +17,13 @@ interface ToolbarProps {
   onToggleSplitView?: () => void;
   onToggleDiffView?: () => void;
   onToggleEditor?: () => void;
-  onToggleVault?: () => void;
   onOpenFileBrowser?: () => void;
   onOpenAiChat?: () => void;
   onGoHome?: () => void;
   onToggleSidebar?: () => void;
 }
 
-export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onToggleVault, onOpenFileBrowser, onOpenAiChat, onGoHome, onToggleSidebar }: ToolbarProps) {
+export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentation, onToggleSplitView, onToggleDiffView, onToggleEditor, onOpenFileBrowser, onOpenAiChat, onGoHome, onToggleSidebar }: ToolbarProps) {
   const fontSize = useThemeStore((s) => s.fontSize);
   const colorScheme = useThemeStore((s) => s.colorScheme);
   const setColorScheme = useThemeStore((s) => s.setColorScheme);
@@ -225,11 +224,6 @@ export function Toolbar({ onAddFiles, onNewFile, readingStats, onTogglePresentat
                   <button className="toolbar-overflow-item" onClick={() => { onOpenFileBrowser?.(); setShowOverflow(false); }}>
                     <FolderOpen size={16} /> Browse files
                   </button>
-                  {onToggleVault && (
-                    <button className="toolbar-overflow-item" onClick={() => { onToggleVault?.(); setShowOverflow(false); }}>
-                      <Network size={16} /> Graph view
-                    </button>
-                  )}
                   {/* Desktop only, and only on click — the app never checks
                       for updates on its own (see lib/tauri/update-check). */}
                   {isTauri() && (
