@@ -1,14 +1,14 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef, useLayoutEffect } from 'react';
 import {
-  ChevronLeft, ChevronRight, X, Maximize2, Minimize2, LayoutGrid, Timer, Play, Pause,
-  Pencil, Palette, Keyboard, StickyNote, MonitorPlay, Search, Film, Image, Link2, Volume2, VolumeX,
-  SkipBack, SkipForward, Eraser, Undo2, Highlighter, Download, Repeat, BarChart3, Captions, MoreHorizontal,
+  ChevronLeft, ChevronRight, X, Maximize2, Minimize2, LayoutGrid, Timer,
+  Palette, Keyboard, StickyNote, Search, Image, Link2, Volume2, VolumeX,
+  SkipBack, SkipForward, Download, BarChart3, Captions, MoreHorizontal,
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { splitSlides } from '@/lib/markdown/slide-split';
 // deckTitle comes from textContent (raw text) — it must be re-escaped
-// before being interpolated into presenter/export HTML strings.
+// before being interpolated into export HTML strings.
 import { escapeHtml } from '@/lib/plugins/plugin-registry';
 import { getAudioContextCtor } from '@/lib/audio-context';
 import { useFocusReturn } from '@/hooks/use-focus-return';
@@ -66,10 +66,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [overview, setOverview] = useState(false);
   const [blank, setBlank] = useState<null | 'black' | 'white'>(null);
-  const [laser, setLaser] = useState(false);
-  const [draw, setDraw] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [autoplay, setAutoplay] = useState(false);
   const [timerOn, setTimerOn] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [clock, setClock] = useState('');
@@ -79,16 +76,11 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const [chromeHidden, setChromeHidden] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [numBuf, setNumBuf] = useState('');
-  const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
-  const [trail, setTrail] = useState<{ x: number; y: number; id: number }[]>([]);
   const [theme, setTheme] = useState<DeckTheme>(() => lsGet('mv-deck-theme', 'midnight') as DeckTheme);
   const [aspect, setAspect] = useState<Aspect>(() => lsGet('mv-deck-aspect', '16x9') as Aspect);
   const [transition, setTransition] = useState<Transition>(() => lsGet('mv-deck-transition', 'slide') as Transition);
   const [notesOpen, setNotesOpen] = useState(false);
   const [autofit, setAutofit] = useState(true);
-  const [spotlight, setSpotlight] = useState(false);
-  const [magnify, setMagnify] = useState(false);
-  const [filmstrip, setFilmstrip] = useState(false);
   const [toc, setToc] = useState(false);
   const [sound, setSound] = useState(false);
   const [search, setSearch] = useState<string | null>(null);
@@ -99,25 +91,14 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const [sectionHue, setSectionHue] = useState(false);
   const [statsOpen, setStatsOpen] = useState(false);
   const [caption, setCaption] = useState(false);
-  const [interval, setIntervalMs] = useState(5000);
-  const [loop, setLoop] = useState(false);
-  const [penColor, setPenColor] = useState('#9b7dff');
-  const [penWidth, setPenWidth] = useState(3);
-  const [penMode, setPenMode] = useState<'pen' | 'highlight' | 'erase'>('pen');
-  const [zoomLevel, setZoomLevel] = useState(1.6);
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const drawHistory = useRef<ImageData[]>([]);
   const bodyRef = useRef<HTMLDivElement>(null);
   const slideRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const idleTimer = useRef<number | undefined>(undefined);
   const numTimer = useRef<number | undefined>(undefined);
-  const drawing = useRef(false);
   const audioCtx = useRef<AudioContext | null>(null);
-  const presenterWin = useRef<Window | null>(null);
-  const trailId = useRef(0);
 
   const rawSlides = useMemo(() => splitSlides(html), [html]);
 
@@ -198,7 +179,6 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     for (let i = s - 1; i >= 0; i--) if (sections[i]) { setDir(-1); return i; } return s;
   }), [sections]);
   const cycleTransition = useCallback(() => setTransition((t) => { const n = TRANSITIONS[(TRANSITIONS.indexOf(t) + 1) % TRANSITIONS.length]; lsSet('mv-deck-transition', n); return n; }), []);
-  const clearDrawing = useCallback(() => { const c = canvasRef.current; c?.getContext('2d')?.clearRect(0, 0, c.width, c.height); drawHistory.current = []; }, []);
 
   const exportPng = useCallback(() => {
     const el = slideRef.current; if (!el) return;
@@ -217,27 +197,6 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
 
   const copyLink = useCallback(() => { navigator.clipboard?.writeText(window.location.href).catch(() => {}); }, []);
 
-  const openPresenter = useCallback(() => {
-    const w = window.open('', 'mv-presenter', 'width=900,height=620');
-    if (!w) return;
-    presenterWin.current = w;
-    w.document.write(`<!doctype html><meta charset=utf8><title>Presenter — ${escapeHtml(deckTitle)}</title><style>body{margin:0;background:#07080c;color:#eef1f6;font-family:system-ui,sans-serif;display:grid;grid-template-rows:auto 1fr auto;height:100vh}header{display:flex;justify-content:space-between;padding:10px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-bottom:1px solid #1c1f27}#main{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;padding:14px;min-height:0}.card{background:#13151c;border:1px solid #ffffff14;border-radius:12px;padding:22px;overflow:auto}.card h4{margin:0 0 10px;font:11px ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase;color:#9b7dff}.next{opacity:.7}#notes{font-size:15px;line-height:1.6;white-space:pre-wrap;color:#c7cdd8}footer{padding:8px 16px;font:13px ui-monospace,monospace;color:#9aa3b2;border-top:1px solid #1c1f27}h1,h2{font-size:1.8rem}p,li{color:#aeb6c4}</style><header><span id=pos></span><span id=time></span></header><div id=main><div class=card><h4>Current</h4><div id=cur></div></div><div style="display:grid;grid-template-rows:1fr 1fr;gap:14px;min-height:0"><div class="card next"><h4>Next</h4><div id=nxt></div></div><div class=card><h4>Notes</h4><div id=notes></div></div></div></div><footer>${escapeHtml(deckTitle)} · markview.ai</footer><script>const bc=new BroadcastChannel('mv-deck-pv');bc.onmessage=e=>{const d=e.data;document.getElementById('cur').innerHTML=d.cur;document.getElementById('nxt').innerHTML=d.nxt||'<p style=opacity:.5>— end —</p>';document.getElementById('notes').innerText=d.notes||'No notes.';document.getElementById('pos').textContent=d.pos;document.getElementById('time').textContent=d.time;};bc.postMessage({req:1});<\/script>`);
-    w.document.close();
-  }, [deckTitle]);
-
-  // broadcast state to presenter window
-  useEffect(() => {
-    let bc: BroadcastChannel | null = null;
-    try { bc = new BroadcastChannel('mv-deck-pv'); } catch { return; }
-    const post = () => bc?.postMessage({
-      cur: slides[currentSlide], nxt: slides[currentSlide + 1] || '', notes: parsed[currentSlide]?.notes || '',
-      pos: `${currentSlide + 1} / ${slides.length}`, time: timerOn ? `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}` : clock,
-    });
-    bc.onmessage = (e) => { if (e.data?.req) post(); };
-    post();
-    return () => bc?.close();
-  }, [currentSlide, slides, parsed, elapsed, timerOn, clock]);
-
   // deep link
   useEffect(() => { const m = window.location.hash.match(/slide-(\d+)/); if (m) { const n = +m[1] - 1; if (n >= 0 && n < slides.length) setCurrentSlide(n); } }, []);
   useEffect(() => { try { window.history.replaceState(null, '', `#slide-${currentSlide + 1}`); } catch { /* ignore */ } }, [currentSlide]);
@@ -252,19 +211,6 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     const id = window.setInterval(() => { setElapsed((e) => e + 1); tick(); }, 1000); tick();
     return () => window.clearInterval(id);
   }, [timerOn]);
-
-  // autoplay (speed + loop)
-  useEffect(() => {
-    if (!autoplay) return;
-    const id = window.setTimeout(() => {
-      setCurrentSlide((s) => {
-        if (s >= slides.length - 1) { if (loop) { setDir(1); return 0; } setAutoplay(false); return s; }
-        setDir(1); return s + 1;
-      });
-      setFrag(0);
-    }, interval);
-    return () => window.clearTimeout(id);
-  }, [autoplay, currentSlide, slides.length, interval, loop]);
 
   // per-section accent hue
   useEffect(() => {
@@ -323,12 +269,9 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     });
   }, [currentSlide, slides]);
 
-  useLayoutEffect(() => { const c = canvasRef.current; if (!c) return; const r = () => { c.width = c.offsetWidth; c.height = c.offsetHeight; }; r(); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, [draw]);
-  useEffect(() => { clearDrawing(); }, [currentSlide, clearDrawing]);
-
   // idle cinema
   useEffect(() => {
-    const wake = () => { setChromeHidden(false); window.clearTimeout(idleTimer.current); idleTimer.current = window.setTimeout(() => { if (!draw && !overview && !showHelp && !toc && search == null) setChromeHidden(true); }, 3500); };
+    const wake = () => { setChromeHidden(false); window.clearTimeout(idleTimer.current); idleTimer.current = window.setTimeout(() => { if (!overview && !showHelp && !toc && search == null) setChromeHidden(true); }, 3500); };
     // touchstart/pointerdown too — a phone fires neither mousemove nor keydown,
     // so without these the deck controls fade after 3.5s and never come back
     // (the exit button included), stranding touch users.
@@ -338,59 +281,24 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     window.addEventListener('touchstart', wake, { passive: true });
     window.addEventListener('pointerdown', wake);
     return () => { window.removeEventListener('mousemove', wake); window.removeEventListener('keydown', wake); window.removeEventListener('touchstart', wake); window.removeEventListener('pointerdown', wake); window.clearTimeout(idleTimer.current); };
-  }, [draw, overview, showHelp, toc, search]);
+  }, [overview, showHelp, toc, search]);
 
   // first-run hint dismiss
   useEffect(() => { if (!hint) return; const id = window.setTimeout(() => { setHint(false); lsSet('mv-deck-seen', '1'); }, 4500); return () => window.clearTimeout(id); }, [hint]);
-
-  const onPointerMove = useCallback((e: React.MouseEvent) => {
-    if (laser || spotlight) setPointer({ x: e.clientX, y: e.clientY });
-    if (laser) {
-      const id = trailId.current++;
-      setTrail((t) => [...t.slice(-7), { x: e.clientX, y: e.clientY, id }]);
-      window.setTimeout(() => setTrail((t) => t.filter((p) => p.id !== id)), 420);
-    }
-    if (magnify && slideRef.current) {
-      const r = slideRef.current.getBoundingClientRect();
-      const px = ((e.clientX - r.left) / r.width) * 100, py = ((e.clientY - r.top) / r.height) * 100;
-      slideRef.current.style.transformOrigin = `${Math.max(0, Math.min(100, px))}% ${Math.max(0, Math.min(100, py))}%`;
-    }
-    if (draw && drawing.current) {
-      const c = canvasRef.current; if (!c) return; const r = c.getBoundingClientRect(); const ctx = c.getContext('2d'); if (!ctx) return;
-      ctx.lineTo(e.clientX - r.left, e.clientY - r.top);
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      if (penMode === 'erase') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = penWidth * 6; }
-      else { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = penColor; ctx.globalAlpha = penMode === 'highlight' ? 0.32 : 1; ctx.lineWidth = penMode === 'highlight' ? penWidth * 5 : penWidth; }
-      ctx.stroke();
-    }
-  }, [laser, spotlight, magnify, draw, penColor, penWidth, penMode]);
-  const onPointerDown = useCallback((e: React.MouseEvent) => {
-    if (!draw) return; const c = canvasRef.current; if (!c) return; const r = c.getBoundingClientRect(); const ctx = c.getContext('2d'); if (!ctx) return;
-    try { drawHistory.current.push(ctx.getImageData(0, 0, c.width, c.height)); if (drawHistory.current.length > 30) drawHistory.current.shift(); } catch { /* ignore */ }
-    drawing.current = true; ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top);
-  }, [draw]);
-  const onPointerUp = useCallback(() => { drawing.current = false; }, []);
-  const undoDraw = useCallback(() => { const c = canvasRef.current; const prev = drawHistory.current.pop(); if (c && prev) c.getContext('2d')?.putImageData(prev, 0, 0); }, []);
-  const saveAnnotated = useCallback(() => {
-    const el = stageRef.current; if (!el) return;
-    toPng(el, { pixelRatio: 2, backgroundColor: theme === 'paper' ? '#f4efe4' : '#0d0e13' })
-      .then((url) => { const a = document.createElement('a'); a.href = url; a.download = `slide-${currentSlide + 1}-annotated.png`; a.click(); }).catch(() => {});
-  }, [currentSlide, theme]);
 
   const touchX = useRef<number | null>(null); const wheelLock = useRef(false);
   const onTouchStart = useCallback((e: React.TouchEvent) => { touchX.current = e.changedTouches[0]?.clientX ?? null; }, []);
   const onTouchEnd = useCallback((e: React.TouchEvent) => { if (touchX.current == null) return; const dx = (e.changedTouches[0]?.clientX ?? 0) - touchX.current; if (Math.abs(dx) > 60) { if (dx < 0) goNext(); else goPrev(); } touchX.current = null; }, [goNext, goPrev]);
   const onWheel = useCallback((e: React.WheelEvent) => {
-    if (magnify) { setZoomLevel((z) => Math.max(1.2, Math.min(3, z + (e.deltaY < 0 ? 0.15 : -0.15)))); return; }
     if (overview || wheelLock.current) return; if (Math.abs(e.deltaY) < 24 && Math.abs(e.deltaX) < 24) return;
     wheelLock.current = true; if (e.deltaY > 0 || e.deltaX > 0) goNext(); else goPrev(); window.setTimeout(() => { wheelLock.current = false; }, 650);
-  }, [overview, magnify, goNext, goPrev]);
+  }, [overview, goNext, goPrev]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (search != null) { if (e.key === 'Escape') { e.preventDefault(); setSearch(null); } return; }
-      // Never hijack ⌘/Ctrl/⌥ chords — ⌘C must copy, not clear the
-      // drawing; ⌘F must not toggle fullscreen; etc.
+      // Never hijack ⌘/Ctrl/⌥ chords — ⌘C must copy and ⌘F
+      // must not toggle fullscreen; etc.
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const k = e.key;
       if (/^[0-9]$/.test(k)) { e.preventDefault(); setNumBuf((b) => (b + k).slice(-3)); window.clearTimeout(numTimer.current); numTimer.current = window.setTimeout(() => setNumBuf(''), 1100); return; }
@@ -406,43 +314,31 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         case 'g': case 'G': e.preventDefault(); setToc((v) => !v); break;
         case 'f': case 'F': e.preventDefault(); toggleFullscreen(); break;
         case 't': case 'T': e.preventDefault(); setTimerOn((v) => !v); break;
-        case 'p': case 'P': e.preventDefault(); setAutoplay((v) => !v); break;
         case 'b': case 'B': e.preventDefault(); setBlank((v) => (v === 'black' ? null : 'black')); break;
         case 'w': case 'W': e.preventDefault(); setBlank((v) => (v === 'white' ? null : 'white')); break;
-        case 'l': case 'L': e.preventDefault(); setLaser((v) => !v); break;
-        case 'k': case 'K': e.preventDefault(); setSpotlight((v) => !v); break;
-        case 'z': case 'Z': e.preventDefault(); setMagnify((v) => !v); break;
-        case 'd': case 'D': e.preventDefault(); setDraw((v) => !v); break;
-        case 'c': case 'C': e.preventDefault(); clearDrawing(); break;
         case 'i': case 'I': e.preventDefault(); setIncremental((v) => !v); setFrag(0); break;
         case 's': case 'S': e.preventDefault(); setNotesOpen((v) => !v); break;
-        case 'v': case 'V': e.preventDefault(); openPresenter(); break;
         case 'a': case 'A': e.preventDefault(); setAutofit((v) => !v); break;
         case 'm': case 'M': e.preventDefault(); cycleTheme(); break;
         case 'r': case 'R': e.preventDefault(); toggleAspect(); break;
         case 'x': case 'X': e.preventDefault(); cycleTransition(); break;
-        case ',': e.preventDefault(); setFilmstrip((v) => !v); break;
         case '+': case '=': e.preventDefault(); setTargetMin((m) => m + 1); setTimerOn(true); break;
         case '-': e.preventDefault(); setTargetMin((m) => Math.max(0, m - 1)); break;
-        case '[': e.preventDefault(); setIntervalMs((v) => Math.min(15000, v + 1000)); break;
-        case ']': e.preventDefault(); setIntervalMs((v) => Math.max(1500, v - 1000)); break;
         case '{': e.preventDefault(); jumpSection(false); break;
         case '}': e.preventDefault(); jumpSection(true); break;
-        case 'u': case 'U': if (draw) { e.preventDefault(); undoDraw(); } break;
         case '/': e.preventDefault(); setSearch(''); break;
         case '?': case 'h': case 'H': e.preventDefault(); setShowHelp((v) => !v); break;
         case 'Escape':
           e.preventDefault();
           if (moreOpen) setMoreOpen(false);
           else if (showHelp) setShowHelp(false); else if (toc) setToc(false); else if (blank) setBlank(null);
-          else if (overview) setOverview(false); else if (magnify) setMagnify(false); else if (spotlight) setSpotlight(false);
-          else if (draw) setDraw(false); else if (!document.fullscreenElement) onClose();
+          else if (overview) setOverview(false); else if (!document.fullscreenElement) onClose();
           break;
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [goNext, goPrev, goTo, onClose, toggleFullscreen, slides.length, overview, showHelp, blank, draw, numBuf, clearDrawing, cycleTheme, toggleAspect, cycleTransition, toc, magnify, spotlight, search, openPresenter, jumpSection, undoDraw, moreOpen]);
+  }, [goNext, goPrev, goTo, onClose, toggleFullscreen, slides.length, overview, showHelp, blank, numBuf, cycleTheme, toggleAspect, cycleTransition, toc, search, jumpSection, moreOpen]);
 
   // The ⋯ menu shouldn't linger over a new slide.
   useEffect(() => { setMoreOpen(false); }, [currentSlide]);
@@ -471,11 +367,8 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   return (
     <div
       ref={overlayRef}
-      className={`presentation-overlay theme-${theme} aspect-${aspect}${overview ? ' is-overview' : ''}${chromeHidden ? ' chrome-hidden' : ''}${draw ? ' is-drawing' : ''}${magnify ? ' is-magnify' : ''}${spotlight ? ' is-spotlight' : ''}`}
-      style={{ ['--deck-zoom' as string]: String(zoomLevel) }}
-      onMouseMove={onPointerMove} onMouseDown={onPointerDown} onMouseUp={onPointerUp}
+      className={`presentation-overlay theme-${theme} aspect-${aspect}${overview ? ' is-overview' : ''}${chromeHidden ? ' chrome-hidden' : ''}`}
       onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onWheel={onWheel}
-      onDoubleClick={() => { if (!draw && !overview) setMagnify((v) => !v); }}
     >
       <span className="presentation-orb o1" aria-hidden />
       <span className="presentation-orb o2" aria-hidden />
@@ -494,32 +387,27 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
         </div>
       )}
 
-      {/* Calm chrome: six primary controls + one ⋯ menu. Everything else
+      {/* Calm chrome: five primary controls + one ⋯ menu. Everything else
           stays keyboard-reachable (see ? help) and lives in the menu —
           nineteen always-visible icons read as clutter over a slide. */}
       <div className="presentation-controls">
         {timerOn && <span className={`presentation-timer${overTime ? ' is-over' : ''}`}><Timer size={13} /> {String(Math.floor(elapsed / 60)).padStart(2, '0')}:{String(elapsed % 60).padStart(2, '0')}{targetMin > 0 && ` / ${targetMin}:00`} · {clock}</span>}
         <span className="presentation-counter">{currentSlide + 1}<em>/</em>{slides.length}</span>
         <button className={`presentation-btn${overview ? ' is-on' : ''}`} onClick={() => setOverview((v) => !v)} title="Overview (O)"><LayoutGrid size={15} /></button>
-        <button className={`presentation-btn${draw ? ' is-on' : ''}`} onClick={() => setDraw((v) => !v)} title="Draw (D)"><Pencil size={15} /></button>
         <button className="presentation-btn" onClick={cycleTheme} title="Theme (M)"><Palette size={15} /></button>
         <div className="presentation-more-wrap">
           <button className={`presentation-btn${moreOpen ? ' is-on' : ''}`} onClick={() => setMoreOpen((v) => !v)} title="More tools" aria-haspopup="menu" aria-expanded={moreOpen}><MoreHorizontal size={15} /></button>
           {moreOpen && (
             <div className="presentation-more-menu" role="menu" onClick={() => setMoreOpen(false)}>
-              <button className="presentation-more-item" onClick={() => setAutoplay((v) => !v)}>{autoplay ? <Pause size={14} /> : <Play size={14} />} Autoplay{autoplay && ' ✓'}</button>
               <button className="presentation-more-item" onClick={() => setTimerOn((v) => !v)}><Timer size={14} /> Timer{timerOn && ' ✓'}</button>
               <button className="presentation-more-item" onClick={() => setNotesOpen((v) => !v)}><StickyNote size={14} /> Speaker notes{notesOpen && ' ✓'}</button>
-              <button className="presentation-more-item" onClick={openPresenter}><MonitorPlay size={14} /> Presenter view</button>
               <button className="presentation-more-item" onClick={() => setSearch('')}><Search size={14} /> Search slides</button>
-              <button className="presentation-more-item" onClick={() => setFilmstrip((v) => !v)}><Film size={14} /> Filmstrip{filmstrip && ' ✓'}</button>
               <hr className="presentation-more-sep" />
               <button className="presentation-more-item" onClick={exportPng}><Image size={14} /> Slide → PNG</button>
               <button className="presentation-more-item" onClick={exportHtml}><Download size={14} /> Deck → HTML</button>
               <button className="presentation-more-item" onClick={copyLink}><Link2 size={14} /> Copy slide link</button>
               <hr className="presentation-more-sep" />
               <button className="presentation-more-item" onClick={() => setSound((v) => !v)}>{sound ? <Volume2 size={14} /> : <VolumeX size={14} />} Advance sound{sound && ' ✓'}</button>
-              <button className="presentation-more-item" onClick={() => setLoop((v) => !v)}><Repeat size={14} /> Loop{loop && ' ✓'}</button>
               <button className="presentation-more-item" onClick={() => setCaption((v) => !v)}><Captions size={14} /> Caption{caption && ' ✓'}</button>
               <button className="presentation-more-item" onClick={() => setStatsOpen((v) => !v)}><BarChart3 size={14} /> Stats & options</button>
               <button className="presentation-more-item" onClick={() => setShowHelp((v) => !v)}><Keyboard size={14} /> Shortcuts (?)</button>
@@ -541,37 +429,11 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
       ) : (
         <div className="presentation-stage" ref={stageRef}>
           <div key={currentSlide} className="presentation-slide-wrap">{renderSlide(currentSlide)}</div>
-          {draw && <canvas ref={canvasRef} className="presentation-canvas" />}
-          {autoplay && <div key={`cd-${currentSlide}-${interval}`} className="presentation-countdown" style={{ animationDuration: `${interval}ms` }} />}
         </div>
       )}
 
-      {draw && (
-        <div className="presentation-drawbar" onMouseDown={(e) => e.stopPropagation()}>
-          {['#9b7dff', '#ff5f57', '#28c840', '#febc2e', '#ffffff'].map((col) => (
-            <button key={col} className={`deck-swatch${penColor === col && penMode !== 'erase' ? ' is-active' : ''}`} style={{ background: col }} onClick={() => { setPenColor(col); setPenMode('pen'); }} aria-label={`Pen ${col}`} />
-          ))}
-          {[2, 4, 8].map((wpx) => (
-            <button key={wpx} className={`deck-width${penWidth === wpx ? ' is-active' : ''}`} onClick={() => setPenWidth(wpx)} aria-label={`Width ${wpx}`}><span style={{ width: wpx + 2, height: wpx + 2 }} /></button>
-          ))}
-          <button className={`presentation-btn${penMode === 'highlight' ? ' is-on' : ''}`} onClick={() => setPenMode((m) => (m === 'highlight' ? 'pen' : 'highlight'))} title="Highlighter"><Highlighter size={15} /></button>
-          <button className={`presentation-btn${penMode === 'erase' ? ' is-on' : ''}`} onClick={() => setPenMode((m) => (m === 'erase' ? 'pen' : 'erase'))} title="Eraser"><Eraser size={15} /></button>
-          <button className="presentation-btn" onClick={undoDraw} title="Undo (U)"><Undo2 size={15} /></button>
-          <button className="presentation-btn" onClick={saveAnnotated} title="Save annotated PNG"><Download size={15} /></button>
-          <button className="presentation-btn" onClick={clearDrawing} title="Clear (C)"><X size={15} /></button>
-        </div>
-      )}
-
-      {!overview && !blank && currentSlide < slides.length - 1 && !filmstrip && (
+      {!overview && !blank && currentSlide < slides.length - 1 && (
         <div className="presentation-peek" aria-hidden><span className="presentation-peek-label">Next</span>{renderSlide(currentSlide + 1, true)}</div>
-      )}
-
-      {filmstrip && (
-        <div className="presentation-filmstrip">
-          {slides.map((_, i) => (
-            <button key={i} className={`presentation-film-item${i === currentSlide ? ' is-active' : ''}`} onClick={() => goTo(i)}>{renderSlide(i, true)}<span>{i + 1}</span></button>
-          ))}
-        </div>
       )}
 
       <div className="presentation-nav">
@@ -591,7 +453,7 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
       <div className="presentation-footer">
         <span>{deckTitle}</span>
         <span className="presentation-footer-meta">
-          {autofit && <em>fit</em>}{incremental && <em>reveal</em>}{loop && <em>loop</em>}{transition !== 'slide' && <em>{transition}</em>}{aspect !== '16x9' && <em>{aspect === '4x3' ? '4:3' : '16:10'}</em>}
+          {autofit && <em>fit</em>}{incremental && <em>reveal</em>}{transition !== 'slide' && <em>{transition}</em>}{aspect !== '16x9' && <em>{aspect === '4x3' ? '4:3' : '16:10'}</em>}
           {Math.round(pct)}% · {readMin} min read · markview.ai
         </span>
       </div>
@@ -616,9 +478,6 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
 
       {numBuf && <div className="presentation-numbuf">→ {numBuf}</div>}
       {hint && <div className="presentation-firsthint">Press <kbd>?</kbd> for shortcuts</div>}
-      {laser && trail.map((t) => <div key={t.id} className="presentation-trail" style={{ left: t.x, top: t.y }} aria-hidden />)}
-      {laser && pointer && <div className="presentation-laser" style={{ left: pointer.x, top: pointer.y }} aria-hidden />}
-      {spotlight && pointer && <div className="presentation-spot" style={{ ['--sx' as string]: `${pointer.x}px`, ['--sy' as string]: `${pointer.y}px` }} aria-hidden />}
       {blank && <div className={`presentation-blank is-${blank}`} onClick={() => setBlank(null)} />}
 
       {toc && (
@@ -643,8 +502,6 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
               <div><b>{sections.filter(Boolean).length}</b><span>sections</span></div>
               <div><b>{totalWords.toLocaleString()}</b><span>words</span></div>
               <div><b>{readMin}</b><span>min read</span></div>
-              <div><b>{Math.round((interval / 1000) * slides.length / 6) / 10}</b><span>min autoplay</span></div>
-              <div><b>{interval / 1000}s</b><span>per slide</span></div>
             </div>
             <div className="presentation-opts">
               <button className={agenda ? 'is-on' : ''} onClick={() => setAgenda((v) => !v)}>Agenda slide</button>
@@ -663,11 +520,10 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
             <dl>
               {[
                 ['→ Space', 'Next / reveal'], ['←', 'Previous'], ['1–9 ↵', 'Jump to slide'], ['Home End', 'First / last'],
-                ['O', 'Overview'], ['G', 'Contents'], [',', 'Filmstrip'], ['/', 'Search'],
-                ['S', 'Speaker notes'], ['V', 'Presenter view'], ['F', 'Fullscreen'], ['A', 'Auto-fit'],
-                ['P', 'Autoplay'], ['T', 'Timer'], ['+ −', 'Time target'], ['I', 'Incremental'],
-                ['B / W', 'Blank black / white'], ['L', 'Laser'], ['K', 'Spotlight'], ['Z', 'Magnify'],
-                ['D / C', 'Draw / clear'], ['M', 'Theme'], ['R', 'Aspect'], ['X', 'Transition'],
+                ['O', 'Overview'], ['G', 'Contents'], ['/', 'Search'],
+                ['S', 'Speaker notes'], ['F', 'Fullscreen'], ['A', 'Auto-fit'],
+                ['T', 'Timer'], ['+ −', 'Time target'], ['I', 'Incremental'],
+                ['B / W', 'Blank black / white'], ['M', 'Theme'], ['R', 'Aspect'], ['X', 'Transition'],
                 ['? H', 'This help'], ['Esc', 'Back / exit'],
               ].map(([key, desc]) => <div key={key}><dt>{key}</dt><dd>{desc}</dd></div>)}
             </dl>

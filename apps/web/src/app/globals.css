@@ -2684,20 +2684,6 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 .presentation-blank.is-black { background: #000; }
 .presentation-blank.is-white { background: #fff; }
 
-/* ---- laser pointer (L) ---- */
-.presentation-laser {
-  position: fixed; width: 20px; height: 20px; border-radius: 50%;
-  transform: translate(-50%, -50%); pointer-events: none; z-index: 20;
-  background: radial-gradient(circle, rgba(255, 64, 64, 0.95) 0%, rgba(255, 64, 64, 0.35) 45%, transparent 70%);
-  box-shadow: 0 0 16px rgba(255, 40, 40, 0.85);
-}
-
-/* ---- pen / draw canvas (D) ---- */
-.presentation-stage { position: relative; }
-.presentation-canvas { position: absolute; inset: 0; z-index: 8; }
-.presentation-overlay.is-drawing { cursor: crosshair; }
-.presentation-overlay.is-drawing .presentation-slide { user-select: none; }
-
 /* ---- code copy button ---- */
 .presentation-slide pre { position: relative; }
 .deck-copy {
@@ -2828,16 +2814,6 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 .presentation-search input { background: none; border: none; outline: none; color: var(--deck-ink); font-size: 15px; width: 240px; }
 .presentation-search > span { font-family: var(--font-mono); font-size: 12px; color: var(--deck-ink-soft); white-space: nowrap; }
 
-/* ---- filmstrip (,) ---- */
-.presentation-filmstrip {
-  position: absolute; bottom: 84px; left: 0; right: 0; z-index: 11;
-  display: flex; gap: 12px; overflow-x: auto; padding: 4px 24px 10px; scrollbar-width: thin;
-}
-.presentation-film-item { all: unset; position: relative; flex: 0 0 200px; cursor: pointer; }
-.presentation-film-item .presentation-slide.is-thumb { width: 200px; }
-.presentation-film-item.is-active .presentation-slide.is-thumb { box-shadow: 0 0 0 2px var(--deck-accent); }
-.presentation-film-item > span { position: absolute; top: 6px; left: 9px; font-family: var(--font-mono); font-size: 10px; color: var(--deck-ink-soft); background: rgba(0, 0, 0, 0.4); padding: 0 6px; border-radius: 5px; }
-
 /* ---- contents / TOC (G) ---- */
 .presentation-toc ol { list-style: none; margin: 0; padding: 0; max-height: 62vh; overflow: auto; }
 .presentation-toc li button {
@@ -2855,22 +2831,6 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
   padding: 8px 18px; font-size: 13px; color: var(--deck-ink); animation: deckFade 0.4s ease;
 }
 .presentation-firsthint kbd { font-family: var(--font-mono); background: rgba(255, 255, 255, 0.14); padding: 1px 7px; border-radius: 5px; }
-
-/* ---- laser pointer trail ---- */
-.presentation-trail {
-  position: fixed; width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%, -50%);
-  background: rgba(255, 64, 64, 0.5); pointer-events: none; z-index: 19; animation: trailFade 0.42s forwards;
-}
-@keyframes trailFade { to { opacity: 0; transform: translate(-50%, -50%) scale(0.4); } }
-
-/* ---- spotlight (K) ---- */
-.presentation-spot {
-  position: fixed; inset: 0; z-index: 15; pointer-events: none;
-  background: radial-gradient(circle 150px at var(--sx) var(--sy), transparent 0, transparent 135px, rgba(0, 0, 0, 0.8) 250px);
-}
-
-/* ---- magnify (Z) ---- */
-.presentation-overlay.is-magnify .presentation-slide:not(.is-thumb) { transform: scale(1.6); cursor: zoom-out; transition: transform 0.12s ease; }
 
 /* ============================================
    PRESENTATION — visual polish
@@ -3003,9 +2963,8 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 /* ============================================
    PRESENTATION — batch 4 (controls + structure)
    ============================================ */
-/* 16:10 aspect + magnify zoom level */
+/* 16:10 aspect */
 .presentation-overlay.aspect-16x10 .presentation-slide:not(.is-thumb) { aspect-ratio: 16 / 10; width: min(1080px, 91vw); }
-.presentation-overlay.is-magnify .presentation-slide:not(.is-thumb) { transform: scale(var(--deck-zoom, 1.6)); }
 
 /* balanced text + cover clip-reveal */
 .presentation-slide:not(.is-thumb) :is(h1, h2) { text-wrap: balance; }
@@ -3013,26 +2972,9 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 .presentation-slide.is-cover:not(.is-thumb) :is(h1, h2) { animation: coverReveal 0.75s cubic-bezier(0.16, 0.84, 0.34, 1) both; }
 @keyframes coverReveal { from { clip-path: inset(0 100% 0 0); opacity: 0; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
 
-/* autoplay per-slide countdown */
-.presentation-countdown { position: absolute; bottom: 0; left: 0; height: 3px; border-radius: 2px; background: var(--deck-accent); opacity: 0.6; z-index: 3; animation: deckCountdown linear forwards; }
-@keyframes deckCountdown { from { width: 0; } to { width: 100%; } }
-
 /* first/last edge buttons */
 .presentation-nav-btn.is-edge { width: 38px; height: 38px; opacity: 0.7; }
 .presentation-nav-btn.is-edge:hover:not(:disabled) { opacity: 1; }
-
-/* annotation toolbar */
-.presentation-drawbar {
-  position: absolute; left: 50%; bottom: 84px; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 8px; z-index: 14;
-  background: rgba(8, 9, 14, 0.95); border: 1px solid var(--deck-line); border-radius: 12px;
-  padding: 8px 12px; box-shadow: 0 20px 50px -24px rgba(0, 0, 0, 0.8);
-}
-.deck-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; padding: 0; cursor: pointer; }
-.deck-swatch.is-active { border-color: #fff; box-shadow: 0 0 0 2px var(--deck-accent); }
-.deck-width { display: grid; place-items: center; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--deck-line); border-radius: 8px; cursor: pointer; }
-.deck-width.is-active { border-color: var(--deck-accent); }
-.deck-width span { display: block; background: var(--deck-ink); border-radius: 50%; }
 
 /* lower-third caption */
 .presentation-caption {
@@ -3073,7 +3015,7 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 .presentation-overlay.theme-paper .presentation-nav { background: rgba(250, 247, 240, 0.6); border-color: rgba(0, 0, 0, 0.1); }
 
 /* 3. glass for the floating panels */
-.presentation-drawbar, .presentation-search, .presentation-notes {
+.presentation-search, .presentation-notes {
   backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2);
 }
 
@@ -3109,10 +3051,10 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 
 /* 10. slim custom scrollbars */
 .presentation-slide-body::-webkit-scrollbar, .presentation-grid::-webkit-scrollbar,
-.presentation-filmstrip::-webkit-scrollbar, .presentation-toc ol::-webkit-scrollbar,
+.presentation-toc ol::-webkit-scrollbar,
 .presentation-notes::-webkit-scrollbar { width: 8px; height: 8px; }
 .presentation-slide-body::-webkit-scrollbar-thumb, .presentation-grid::-webkit-scrollbar-thumb,
-.presentation-filmstrip::-webkit-scrollbar-thumb, .presentation-toc ol::-webkit-scrollbar-thumb,
+.presentation-toc ol::-webkit-scrollbar-thumb,
 .presentation-notes::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 4px; }
 .presentation-slide-body::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.28); }
 
@@ -3228,20 +3170,10 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 .presentation-help-card { animation: deckPop 0.32s cubic-bezier(0.16, 1.2, 0.4, 1); }
 @keyframes deckPop { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
 
-/* --- filmstrip snap + active glow --- */
-.presentation-filmstrip { scroll-snap-type: x proximity; }
-.presentation-film-item { scroll-snap-align: center; transition: transform 0.18s; }
-.presentation-film-item:hover { transform: translateY(-3px); }
-.presentation-film-item.is-active .presentation-slide.is-thumb { box-shadow: 0 0 0 2px var(--deck-accent), 0 0 20px -4px var(--deck-accent); }
-
 /* --- peek refinement --- */
 .presentation-peek { transition: opacity 0.3s; }
 .presentation-peek:hover { opacity: 1; }
 .presentation-peek-label { color: var(--deck-accent); }
-
-/* --- laser pulse + softer spotlight --- */
-.presentation-laser { animation: laserPulse 1.4s ease-in-out infinite; }
-@keyframes laserPulse { 0%, 100% { box-shadow: 0 0 16px rgba(255, 40, 40, 0.85); } 50% { box-shadow: 0 0 26px rgba(255, 40, 40, 1); } }
 
 /* --- blank screens get a faint centered wordmark --- */
 .presentation-blank.is-black::after { content: 'markview'; position: absolute; inset: 0; display: grid; place-items: center; font: 600 14px var(--font-mono); letter-spacing: 4px; text-transform: uppercase; color: rgba(255, 255, 255, 0.12); }
@@ -3250,9 +3182,8 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 .presentation-timer { padding: 4px 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; }
 .presentation-timer.is-over { background: rgba(255, 107, 107, 0.14); }
 
-/* --- search caret + drawbar swatch hover --- */
+/* --- search caret --- */
 .presentation-search input { caret-color: var(--deck-accent); }
-.deck-swatch { transition: transform 0.15s; } .deck-swatch:hover { transform: scale(1.18); }
 
 /* --- progress tick glow --- */
 .presentation-tick { box-shadow: 0 0 6px rgba(255, 255, 255, 0.4); }
@@ -3262,7 +3193,7 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
 @keyframes deckRiseBlur { from { opacity: 0; transform: translateY(12px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .presentation-laser, .presentation-help-card, .presentation-stage .presentation-slide-body > * { animation: none; }
+  .presentation-help-card, .presentation-stage .presentation-slide-body > * { animation: none; }
 }
 
 /* ============================================
@@ -3352,9 +3283,6 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
   font-size: clamp(200px, 46vh, 460px); opacity: 0.04; -webkit-mask-image: none; mask-image: none;
 }
 
-/* --- draw cursor shows the pen color --- */
-.presentation-overlay.is-drawing { cursor: crosshair; }
-
 /* --- dot tooltip native title is fine; add active glow ring --- */
 .presentation-dot.is-active { box-shadow: 0 0 0 3px color-mix(in srgb, var(--deck-accent) 30%, transparent), 0 0 14px rgba(155, 125, 255, 0.7); }
 
@@ -3413,9 +3341,6 @@ html[data-atmosphere] .presentation-overlay .presentation-slide.markdown-content
     radial-gradient(60% 55% at 88% 92%, rgba(59, 110, 165, 0.14), transparent 60%),
     radial-gradient(130% 120% at 50% -10%, #14121d 0%, #0a0b11 48%, #07080c 100%);
 }
-
-/* refined drawbar swatch ring + width dot color */
-.deck-swatch:hover { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4); }
 
 /* cover subtitle measure */
 .presentation-slide.is-cover:not(.is-thumb) p { max-width: 46ch; }

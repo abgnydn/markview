@@ -17,7 +17,7 @@ This document is a tour. The sidebar on the left holds the rest of the showcase 
 Every trigger below works right now, on this document:
 
 - Press `E` — the **editor** opens on this file. Inside it, type `/` for block templates, `[[` to link another note, `#` for tags, and select text for a floating format bubble. `⌘S` saves — and every save keeps a snapshot you can restore from the clock icon.
-- Press `P` — this document becomes a **presentation** (arrow keys advance, `?` shows every deck shortcut — there are thirty, including a laser pointer, spotlight, freehand draw, and a presenter window).
+- Press `P` — this document becomes a **presentation** (arrow keys advance, `?` shows every deck shortcut).
 - Press `⌘P` — the **command palette**: jump to any file, switch workspaces, themes, atmospheres.
 - Press `⌘J` — **chat with this workspace**: ask questions, get answers with citations. It runs entirely on your machine — SmolLM2 downloads ~220 MB into your browser once, and nothing you write ever leaves it.
 - Select any sentence and press `⌘⇧A` — it becomes a **highlight** with an optional note. `⌘⇧C` copies a deep link straight to the selection.
