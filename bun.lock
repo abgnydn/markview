@@ -22,7 +22,7 @@
     },
     "apps/desktop": {
       "name": "@markview/desktop",
-      "version": "0.3.0",
+      "version": "0.3.2",
       "dependencies": {
         "@tauri-apps/api": "^2.1.1",
       },
@@ -69,7 +69,7 @@
         "react-router-dom": "^7.18.2",
         "satori": "^0.26.0",
         "shiki": "^4.0.2",
-        "three": "^0.184.0",
+        "three": "^0.185.1",
         "y-codemirror.next": "^0.3.5",
         "y-protocols": "^1.0.7",
         "y-webrtc": "^10.3.0",
@@ -1535,7 +1535,7 @@
 
     "text-segmentation": ["text-segmentation@1.0.3", "", { "dependencies": { "utrie": "^1.0.2" } }, "sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw=="],
 
-    "three": ["three@0.184.0", "", {}, "sha512-wtTRjG92pM5eUg/KuUnHsqSAlPM296brTOcLgMRqEeylYTh/CdtvKUvCyyCQTzFuStieWxvZb8mVTMvdPyUpxg=="],
+    "three": ["three@0.185.1", "", {}, "sha512-5aojFCXKwnjBRZvUnt3WFfEcvUJgkN5LlijRFN95hMy8WVkG4I0QNcJE+OuWvuJ0bOdStrbfXn0pkd6/QyiAlg=="],
 
     "tiny-inflate": ["tiny-inflate@1.0.3", "", {}, "sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw=="],
 
