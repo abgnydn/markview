@@ -36,6 +36,19 @@ export interface AtmosphereConfig {
   paintings: Painting[];
 }
 
+/**
+ * Attribution for the bundled field recordings (see
+ * scripts/fetch-atmosphere-audio.sh). Three of the four are CC-BY, which
+ * REQUIRES visible credit — the atmosphere credit line renders this whenever
+ * ambient sound is unmuted. Keep it in sync with the script, and don't drop it.
+ */
+export const AUDIO_CREDITS: Record<Exclude<Atmosphere, 'none'>, string> = {
+  fuji:   'Sound: “Forest Ambient LOOP” by Imjeax · CC BY 4.0',
+  wave:   'Sound: “Atlantic Ocean Waves” by tim.kahn · CC BY 4.0',
+  snow:   'Sound: “Howling Wind Ambience” by DBlover · CC0',
+  fields: 'Sound: “meadow-land summer ambience” by klankbeeld · CC BY 4.0',
+};
+
 export const ATMOSPHERES: Record<Exclude<Atmosphere, 'none'>, AtmosphereConfig> = {
   fuji: {
     id: 'fuji',

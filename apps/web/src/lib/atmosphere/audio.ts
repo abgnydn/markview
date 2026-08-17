@@ -61,10 +61,80 @@ export function setAtmosphereMuted(m: boolean) {
   muted = m;
   try { localStorage.setItem('markview-atmosphere-muted', String(muted)); } catch { /* ignore */ }
   rampGainTo(muted ? 0 : storedVolume, 0.3);
+  // The credit line shows the recording's attribution only while sound is
+  // audible (CC-BY), so it needs to know about mute changes in this tab —
+  // the `storage` event only fires cross-tab.
+  try { window.dispatchEvent(new CustomEvent('markview:atmosphere-muted')); } catch { /* SSR */ }
 }
 
 export function isAtmosphereMuted(): boolean {
   return muted;
+}
+
+// ── Field recordings ─────────────────────────────────────────────────────
+// Each atmosphere prefers a real looping field recording bundled at
+// /atmospheres/audio/<id>.opus (see scripts/fetch-atmosphere-audio.sh, which
+// downloads + loops + encodes the CC-licensed sources). Synthesis below is
+// the fallback: it plays whenever the file isn't bundled, fails to load, or
+// can't be decoded — so audio never hard-breaks and the app still works
+// fully offline.
+
+const sampleCache = new Map<string, AudioBuffer | null>();
+
+async function loadSample(id: string): Promise<AudioBuffer | null> {
+  if (sampleCache.has(id)) return sampleCache.get(id) ?? null;
+  try {
+    const res = await fetch(`/atmospheres/audio/${id}.opus`);
+    if (!res.ok) { sampleCache.set(id, null); return null; }
+    const bytes = await res.arrayBuffer();
+    const decoded = await ensureContext().decodeAudioData(bytes);
+    sampleCache.set(id, decoded);
+    return decoded;
+  } catch {
+    // Missing file, offline, or a codec the browser can't decode.
+    sampleCache.set(id, null);
+    return null;
+  }
+}
+
+/** Loop a decoded recording with the same slow fade-in the synths use. */
+function playSample(buffer: AudioBuffer): ActiveAudio {
+  const ac = ensureContext();
+  const out = ac.createGain();
+  out.gain.value = 0;
+  if (masterGain) out.connect(masterGain); // ensureContext() has just set it
+  out.gain.linearRampToValueAtTime(0.85, ac.currentTime + 2.2);
+
+  const src = ac.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  src.connect(out);
+  src.start();
+
+  return {
+    stop: () => {
+      const t = ac.currentTime;
+      out.gain.cancelScheduledValues(t);
+      out.gain.setValueAtTime(out.gain.value, t);
+      out.gain.linearRampToValueAtTime(0, t + 1.0);
+      window.setTimeout(() => {
+        try { src.stop(); src.disconnect(); out.disconnect(); } catch { /* already gone */ }
+      }, 1100);
+    },
+  };
+}
+
+function startSynth(id: Exclude<Atmosphere, 'none'>): ActiveAudio {
+  switch (id) {
+    case 'fuji':   return startFuji();
+    case 'wave':   return startWave();
+    case 'snow':   return startSnow();
+    case 'fields': return startFields();
+    // Exhaustiveness gate: adding a fifth atmosphere and forgetting its
+    // audio used to compile clean and silently play nothing — now every
+    // dispatch site gets a type error until this switch learns the case.
+    default: { id satisfies never; return { stop: () => {} }; }
+  }
 }
 
 /**
@@ -84,16 +154,15 @@ export function setAtmosphereAudio(id: Atmosphere) {
   // interaction. We'll be re-called from the gesture handler.
   if (ctx && ctx.state === 'suspended') return;
 
-  switch (id) {
-    case 'fuji':   active = startFuji();   break;
-    case 'wave':   active = startWave();   break;
-    case 'snow':   active = startSnow();   break;
-    case 'fields': active = startFields(); break;
-    // Exhaustiveness gate: adding a fifth atmosphere and forgetting its
-    // audio used to compile clean and silently play nothing — now every
-    // dispatch site gets a type error until this switch learns the case.
-    default: { id satisfies never; }
-  }
+  // Real recording if we have one, synthesis otherwise. The load is async,
+  // so re-check that the user hasn't switched away (or muted) before this
+  // resolves — otherwise a slow fetch could start audio for a mood that is
+  // no longer showing.
+  const requested = id;
+  void loadSample(id).then((buffer) => {
+    if (currentId !== requested || muted || active) return;
+    active = buffer ? playSample(buffer) : startSynth(requested);
+  });
 }
 
 /** Resume the audio context after a user gesture. Browsers require this. */

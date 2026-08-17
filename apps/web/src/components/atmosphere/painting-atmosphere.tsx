@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ATMOSPHERES, pickPaintingFor } from './atmospheres';
+import { ATMOSPHERES, AUDIO_CREDITS, pickPaintingFor } from './atmospheres';
 import type { Atmosphere } from '@/stores/theme-store';
-import { setAtmosphereAudio, unlockAtmosphereAudio } from '@/lib/atmosphere/audio';
+import { setAtmosphereAudio, unlockAtmosphereAudio, isAtmosphereMuted } from '@/lib/atmosphere/audio';
 import { WebGLParticles } from './webgl-particles';
 import { DepthPainting } from './depth-painting';
 import { SplatPainting } from './splat-painting';
@@ -93,6 +93,19 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     () => (displayedCfg ? buildCreatures(displayedCfg.id) : []),
     [displayedCfg],
   );
+
+  // Sound attribution shows only while audio is actually audible — three of
+  // the four bundled recordings are CC-BY, which requires visible credit.
+  const [soundOn, setSoundOn] = useState(() => !isAtmosphereMuted());
+  useEffect(() => {
+    const sync = () => setSoundOn(!isAtmosphereMuted());
+    window.addEventListener('markview:atmosphere-muted', sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener('markview:atmosphere-muted', sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
 
   // Switch ambient audio with the painting. Audio is muted by default
   // and needs an unlock gesture (handled inside the audio module).
@@ -291,6 +304,9 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         <span className="atmosphere-credit-artist">{displayed.painting.attribution}</span>
         <span className="atmosphere-credit-sep"> · </span>
         <span className="atmosphere-credit-detail">{displayed.painting.attributionDetail}</span>
+        {soundOn && (
+          <span className="atmosphere-credit-detail"> · {AUDIO_CREDITS[displayedCfg.id]}</span>
+        )}
       </div>
 
       {/* #14 Caption flourish — soft italic title bottom-left for 2.4s
