@@ -40,6 +40,9 @@ ENTRIES=(
 # Seamless loop: crossfade the tail back over the head so the wrap is
 # inaudible. Body B + crossfade X => output length B.
 XFADE=4
+# Mean level every bed is matched to, so switching moods never jumps in
+# volume. Quiet on purpose — this sits under reading.
+TARGET_MEAN=-29
 
 for entry in "${ENTRIES[@]}"; do
   IFS='|' read -r id user sound start body <<<"$entry"
@@ -60,9 +63,21 @@ for entry in "${ENTRIES[@]}"; do
       [0:a]asplit=2[a][b]; \
       [a]atrim=0:${body},asetpts=PTS-STARTPTS[body]; \
       [b]atrim=${body}:$((body + XFADE)),asetpts=PTS-STARTPTS[tail]; \
-      [tail][body]acrossfade=d=${XFADE}:c1=tri:c2=tri, \
-      loudnorm=I=-26:TP=-2:LRA=11,aformat=sample_rates=48000[out]" \
-    -map "[out]" -c:a libopus -b:a 56k -ac 2 -vbr on -application audio \
+      [tail][body]acrossfade=d=${XFADE}:c1=tri:c2=tri,aformat=sample_rates=48000[out]" \
+    -map "[out]" -c:a pcm_s16le "$TMP/$id.wav"
+
+  # Match levels across atmospheres. Single-pass `loudnorm` left an
+  # already-compressed source ~8 dB hotter than the rest (jarring on switch,
+  # and peaking near 0 dBFS), so measure the actual mean and correct it —
+  # deterministic and well-suited to these noise-like beds. The limiter is
+  # only a safety net against transients.
+  mean="$(ffmpeg -v info -i "$TMP/$id.wav" -af volumedetect -f null - 2>&1 \
+          | grep mean_volume | tail -1 | sed -E 's/.*mean_volume: (-?[0-9.]+) dB.*/\1/')"
+  gain="$(awk -v m="${mean:-$TARGET_MEAN}" -v t="$TARGET_MEAN" 'BEGIN{printf "%.2f", t-m}')"
+
+  ffmpeg -v error -y -i "$TMP/$id.wav" \
+    -af "volume=${gain}dB,alimiter=limit=0.79" \
+    -c:a libopus -b:a 56k -ac 2 -vbr on -application audio \
     "$OUT/$id.opus"
 
   echo "   ✓ $(du -h "$OUT/$id.opus" | cut -f1)  $OUT/$id.opus"
