@@ -10,8 +10,9 @@ interface WebGLParticlesProps {
 /**
  * Advanced GPU particle system — Three.js Points with a custom shader.
  * Replaces the ~30 CSS keyframes + tiny canvas flock with ~3000
- * particles per atmosphere driven by a real wind field + cursor force +
- * gravity + life/respawn cycle.
+ * particles per atmosphere driven by a real wind field + gravity +
+ * life/respawn cycle. The particles do not react to the cursor: they
+ * fall, and that is all they do.
  *
  * State lives in JS Float32 arrays and uploads to a single VBO per
  * frame. The CPU update is ~0.4 ms for 3000 particles. Render is a
@@ -39,8 +40,6 @@ export interface KindConfig {
   lifeMin: number;          // seconds
   lifeMax: number;
   windStrength: number;     // multiplier on the global wind vector
-  cursorForce: number;      // 0-1 multiplier
-  cursorRadius: number;     // px
   // spawn behavior
   spawnFrom: 'top' | 'bottom-band' | 'edges';
   initialVy: () => number;  // starting vertical velocity
@@ -168,8 +167,6 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     lifeMin: 18,
     lifeMax: 32,
     windStrength: 0.95,
-    cursorForce: 0.35,
-    cursorRadius: 180,
     spawnFrom: 'top',
     initialVy: () => 4 + Math.random() * 10,
     initialVx: () => (Math.random() - 0.5) * 14,
@@ -192,8 +189,6 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     lifeMin: 22,
     lifeMax: 36,
     windStrength: 0.45,
-    cursorForce: 0.22,
-    cursorRadius: 130,
     spawnFrom: 'top',
     initialVy: () => 10 + Math.random() * 18,
     initialVx: () => (Math.random() - 0.5) * 4,
@@ -216,8 +211,6 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     lifeMin: 0.9,
     lifeMax: 2.1,
     windStrength: 0.25,
-    cursorForce: 0.5,
-    cursorRadius: 160,
     spawnFrom: 'bottom-band',
     initialVy: () => -(70 + Math.random() * 200),
     initialVx: () => (Math.random() - 0.5) * 180,
@@ -240,8 +233,6 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     lifeMin: 22,
     lifeMax: 38,
     windStrength: 0.35,
-    cursorForce: 0.20,
-    cursorRadius: 140,
     spawnFrom: 'bottom-band',
     initialVy: () => -(6 + Math.random() * 10),
     initialVx: () => (Math.random() - 0.5) * 6,
@@ -479,15 +470,6 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const accumDpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const accumOn = cfg.accumulate > 0;
 
-      // ── Inputs ────────────────────────────────────────────────────
-      let cursorX = 0, cursorY = 0;
-      const onMove = (e: MouseEvent) => {
-        // Convert to centered coords (camera space).
-        cursorX = e.clientX - W() / 2;
-        cursorY = H() / 2 - e.clientY;
-      };
-      window.addEventListener('mousemove', onMove);
-
       const onResize = () => {
         renderer.setSize(window.innerWidth, window.innerHeight, false);
         camera.left = -window.innerWidth / 2;
@@ -539,20 +521,6 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
 
           // Gravity (positive = down → reduces y). Also depth-scaled.
           vy[i] -= cfg.gravity * speedScale * dt;
-
-          // Cursor force (push particles away from cursor) — only the
-          // near layer responds strongly so the cursor reads as
-          // genuinely close to the viewer, not a global wind.
-          const dx = px - cursorX;
-          const dy = py - cursorY;
-          const dist2 = dx * dx + dy * dy;
-          const r = cfg.cursorRadius;
-          if (dist2 < r * r && dist2 > 0.001) {
-            const dist = Math.sqrt(dist2);
-            const force = (1 - dist / r) * cfg.cursorForce * 220 * (0.3 + d * 0.7);
-            vx[i] += (dx / dist) * force * dt;
-            vy[i] += (dy / dist) * force * dt;
-          }
 
           // Drag.
           vx[i] *= dragFactor;
@@ -679,7 +647,6 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       document.addEventListener('visibilitychange', onVis);
 
       cleanup = () => {
-        window.removeEventListener('mousemove', onMove);
         window.removeEventListener('resize', onResize);
         document.removeEventListener('visibilitychange', onVis);
         if (raf) cancelAnimationFrame(raf);
