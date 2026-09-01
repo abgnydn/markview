@@ -25,6 +25,13 @@ type Transition = 'slide' | 'fade' | 'zoom' | 'flip' | 'none';
 
 const THEMES: DeckTheme[] = ['midnight', 'aurora', 'sand', 'noir', 'forest', 'paper', 'contrast'];
 const TRANSITIONS: Transition[] = ['slide', 'fade', 'zoom', 'flip', 'none'];
+// Auto-fit bounds. A slide needing less than FIT_FLOOR is an outlier — it
+// takes its own smaller scale instead of shrinking the whole deck to its size.
+// Below MIN_FIT type stops being readable from the back of a room, so a slide
+// that dense scrolls rather than shrinking further.
+const MIN_FIT = 0.45;
+const FIT_FLOOR = 0.8;
+const MAX_FIT = 1.15;
 const lsGet = (k: string, d: string) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 const lsSet = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { /* ignore */ } };
 const stripTags = (h: string) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -81,6 +88,8 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const [transition, setTransition] = useState<Transition>(() => lsGet('mv-deck-transition', 'slide') as Transition);
   const [notesOpen, setNotesOpen] = useState(false);
   const [autofit, setAutofit] = useState(true);
+  const [deckScale, setDeckScale] = useState(1);
+  const [viewport, setViewport] = useState(0);
   const [toc, setToc] = useState(false);
   const [sound, setSound] = useState(false);
   const [search, setSearch] = useState<string | null>(null);
@@ -232,27 +241,76 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
     body.querySelectorAll('li').forEach((li, i) => li.classList.toggle('frag-hidden', incremental && i >= frag));
   }, [incremental, frag, currentSlide, slides]);
 
-  // auto-fit
+  // Card size is viewport-derived, so the fit has to be re-measured on resize
+  // (entering fullscreen included).
+  useEffect(() => {
+    const onResize = () => setViewport((v) => v + 1);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Auto-fit resolves to ONE scale for the whole deck, never one per slide:
+  // type that changes size every slide reads as a mistake, not a design. The
+  // deck takes the scale of its tightest slide that still clears FIT_FLOOR, so
+  // nothing overflows and every slide matches. Measured off-screen, because
+  // the live card clips its own body.
   useLayoutEffect(() => {
-    const body = bodyRef.current; if (!body) return;
-    body.style.transform = ''; body.style.transformOrigin = ''; body.style.width = '';
-    const slide = slideRef.current;
-    if (!autofit || !slide || covers[currentSlide]) return;
-    // fit-to-FILL: scale content up or down (from the centre) so the slide
-    // uses the whole card height instead of floating in the top half.
+    if (!autofit) { setDeckScale(1); return; }
+    const slide = slideRef.current, overlay = overlayRef.current;
+    if (!slide || !overlay || slide.clientWidth < 1) return;
     const cs = getComputedStyle(slide);
     const avail = slide.clientHeight - parseFloat(cs.paddingTop || '0') - parseFloat(cs.paddingBottom || '0');
+    if (avail < 1) return;
+
+    const probe = document.createElement('article');
+    probe.className = 'presentation-slide markdown-content';
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText = `position:absolute;left:-99999px;top:0;visibility:hidden;pointer-events:none;width:${slide.clientWidth}px;height:auto;max-height:none;aspect-ratio:auto;padding:${cs.padding}`;
+    const probeBody = document.createElement('div');
+    probeBody.className = 'presentation-slide-body';
+    probeBody.style.cssText = 'max-height:none;height:auto;overflow:visible';
+    probe.appendChild(probeBody);
+    overlay.appendChild(probe);
+
+    const needed: number[] = [];
+    slides.forEach((body, i) => {
+      if (covers[i]) return; // covers set their own, deliberately large, type
+      probeBody.innerHTML = body;
+      const natural = probeBody.scrollHeight;
+      if (natural > 0) needed.push(avail / natural);
+    });
+    probe.remove();
+    const shared = needed.filter((n) => n >= FIT_FLOOR);
+    const fit = shared.length ? Math.min(...shared) : needed.length ? Math.min(...needed) : 1;
+    setDeckScale(Math.max(MIN_FIT, Math.min(MAX_FIT, fit)));
+  }, [autofit, slides, covers, aspect, theme, viewport, overview]);
+
+  // auto-fit — apply the deck-wide scale to the slide on screen
+  useLayoutEffect(() => {
+    const body = bodyRef.current; if (!body) return;
+    body.style.cssText = '';
+    const slide = slideRef.current;
+    if (!autofit || !slide || covers[currentSlide]) return;
+    const cs = getComputedStyle(slide);
+    const avail = slide.clientHeight - parseFloat(cs.paddingTop || '0') - parseFloat(cs.paddingBottom || '0');
+    if (avail < 1) return;
+    // The body is a scrolling flex child, so its automatic min-height is 0 and
+    // it shrinks to the card: scaling *that* box down showed the same clipped
+    // text, smaller. Give the box the height its content needs first, then
+    // scale it back onto the card, so shrinking actually reveals the overflow.
+    body.style.flexShrink = '0';
+    body.style.height = 'auto';
+    body.style.maxHeight = 'none';
     const natural = body.scrollHeight;
-    if (natural < 1 || avail < 1) return;
-    // Scale down far enough that dense slides fit inside the (overflow:hidden)
-    // card instead of being clipped; only enlarge gently so sparse slides
-    // don't look blown-up/blurry.
-    const scale = Math.max(0.45, Math.min(1.15, avail / natural));
-    if (Math.abs(scale - 1) > 0.04) {
+    const scale = natural > 0 && natural * deckScale > avail
+      ? Math.max(MIN_FIT, avail / natural) // an outlier slide, on its own scale
+      : deckScale;
+    body.style.maxHeight = `${avail / scale}px`; // past this it scrolls
+    if (Math.abs(scale - 1) > 0.01) {
       body.style.transformOrigin = 'center center';
       body.style.transform = `scale(${scale})`;
     }
-  }, [autofit, currentSlide, aspect, theme, frag, slides, covers]);
+  }, [autofit, currentSlide, deckScale, aspect, theme, frag, slides, covers, viewport, overview]);
 
   // code copy buttons
   useEffect(() => {
@@ -290,7 +348,15 @@ export function PresentationMode({ html, onClose }: PresentationModeProps) {
   const onTouchStart = useCallback((e: React.TouchEvent) => { touchX.current = e.changedTouches[0]?.clientX ?? null; }, []);
   const onTouchEnd = useCallback((e: React.TouchEvent) => { if (touchX.current == null) return; const dx = (e.changedTouches[0]?.clientX ?? 0) - touchX.current; if (Math.abs(dx) > 60) { if (dx < 0) goNext(); else goPrev(); } touchX.current = null; }, [goNext, goPrev]);
   const onWheel = useCallback((e: React.WheelEvent) => {
-    if (overview || wheelLock.current) return; if (Math.abs(e.deltaY) < 24 && Math.abs(e.deltaX) < 24) return;
+    if (overview || wheelLock.current) return;
+    // A slide too dense even for MIN_FIT keeps a scrollbar. Let the wheel reach
+    // that overflow instead of skipping past text nothing else can get to.
+    const body = bodyRef.current;
+    if (body && body.contains(e.target as Node) && body.scrollHeight > body.clientHeight + 1) {
+      const atEnd = body.scrollTop + body.clientHeight >= body.scrollHeight - 1;
+      if (e.deltaY > 0 ? !atEnd : body.scrollTop > 0) return;
+    }
+    if (Math.abs(e.deltaY) < 24 && Math.abs(e.deltaX) < 24) return;
     wheelLock.current = true; if (e.deltaY > 0 || e.deltaX > 0) goNext(); else goPrev(); window.setTimeout(() => { wheelLock.current = false; }, 650);
   }, [overview, goNext, goPrev]);
 
