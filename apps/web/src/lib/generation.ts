@@ -120,6 +120,10 @@ export interface GenerateOptions {
   temperature?: number;
   /** Top-p. Default 0.9. */
   topP?: number;
+  /** Penalty on already-emitted tokens. Default 1.15. */
+  repetitionPenalty?: number;
+  /** Block verbatim repeats of this many tokens. Default 4. 0 disables. */
+  noRepeatNgramSize?: number;
   /** Called with each token-batch as it streams in. */
   onToken?: (chunk: string, fullSoFar: string) => void;
   /** AbortSignal — pass `controller.signal` to support stop button. */
@@ -142,7 +146,19 @@ interface PipelineCall {
  */
 async function generateChat(options: GenerateOptions): Promise<string> {
   const pipe = (await getPipeline()) as PipelineCall;
-  const { messages, maxNewTokens = 256, temperature = 0.7, topP = 0.9, onToken, signal } = options;
+  const {
+    messages, maxNewTokens = 256, temperature = 0.7, topP = 0.9,
+    // SmolLM2-360M at q4 is small enough to fall into verbatim loops — it
+    // shipped answering "what is this about" with "a note about a note about
+    // a note…" until it hit the token budget. Sampling alone does not stop
+    // that: with no penalty the highest-probability continuation of a loop is
+    // more of the loop, and a low temperature (the chat path uses 0.3) makes
+    // it likelier to stay there, not less. The penalty discourages tokens
+    // already emitted; the n-gram block is the hard stop that makes a
+    // verbatim cycle impossible rather than merely unlikely.
+    repetitionPenalty = 1.15, noRepeatNgramSize = 4,
+    onToken, signal,
+  } = options;
 
   let accumulated = '';
   let abortRequested = false;
@@ -177,6 +193,8 @@ async function generateChat(options: GenerateOptions): Promise<string> {
         max_new_tokens: maxNewTokens,
         temperature,
         top_p: topP,
+        repetition_penalty: repetitionPenalty,
+        ...(noRepeatNgramSize > 0 ? { no_repeat_ngram_size: noRepeatNgramSize } : {}),
         do_sample: true,
         return_full_text: false,
         streamer,
