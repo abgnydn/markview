@@ -100,8 +100,21 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
       const THREE = await import('three');
       if (cancelled) return;
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      // The fragment shader costs ~37 texture fetches per pixel (7-tap DOF,
+      // 4-tap SSAO, 6-tap bloom, 12-step god rays at two fetches a step), so
+      // resolution is far and away the most expensive dial here — every extra
+      // pixel is paid for 37 times, 60 times a second, full-screen. Hence
+      // FULL_DPR is the look and LOW_DPR (half the pixels) is the escape
+      // hatch; see the quality governor below for when we drop to it.
+      const FULL_DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+      const LOW_DPR = Math.min(window.devicePixelRatio || 1, 1.06);
+      let dpr = FULL_DPR;
+      // No MSAA. The scene is a single full-screen quad, so there is not one
+      // polygon edge for multisampling to smooth — every visible edge comes
+      // out of the texture and the shader, which MSAA does not touch. All it
+      // bought was a multisampled framebuffer plus a resolve blit on every
+      // frame, at DPR-scaled full-screen size.
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
       renderer.setPixelRatio(dpr);
       renderer.setSize(window.innerWidth, window.innerHeight, false);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -453,6 +466,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
       focalRO.observe(document.body);
 
       const resize = () => {
+        renderer.setPixelRatio(dpr);
         renderer.setSize(window.innerWidth, window.innerHeight, false);
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -460,6 +474,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
         fitMesh();
         docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
         updateFocalTarget();
+        relearn();
       };
       (material.uniforms.uAspect as { value: number }).value = window.innerWidth / window.innerHeight;
       window.addEventListener('resize', resize);
@@ -532,8 +547,60 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
         && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const IDLE_FRAME_MS = reducedMotion ? 1000 / 10 : 1000 / 60;
       const reveal = material.uniforms.uReveal as { value: number };
+
+      // ── Quality governor ────────────────────────────────────────────
+      // The shader's cost is dominated by resolution, and whether the machine
+      // can afford full resolution is not knowable up front: the same laptop
+      // is fine with nothing else open and starved with two other browsers
+      // holding the GPU. So measure instead of guess.
+      //
+      // Every rAF callback is a frame the compositor actually delivered, so
+      // the gap between callbacks is the real display cadence — no
+      // instrumentation needed. `native` learns the display's own interval
+      // (8.3ms at 120Hz, 16.7 at 60) as the fastest median we have seen, and
+      // a median well above it means frames are being missed. Two bad windows
+      // in a row drop us to half resolution; four good ones earn it back.
+      // Hysteresis is deliberately asymmetric — dropping is cheap and
+      // reversible, oscillating between tiers is what would be visible.
+      let native = Infinity;
+      let gaps: number[] = [];
+      let bad = 0, good = 0, lowered = false, lastFrame = -1;
+      const applyDpr = (next: number) => {
+        if (next === dpr) return;
+        dpr = next;
+        renderer.setPixelRatio(dpr);
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+      };
+      const governor = (now: number) => {
+        if (lastFrame >= 0) gaps.push(now - lastFrame);
+        lastFrame = now;
+        if (gaps.length < 90) return;
+        gaps.sort((a, b) => a - b);
+        const median = gaps[gaps.length >> 1];
+        gaps = [];
+        // Ignore the pathological gaps a backgrounded or stalled tab produces;
+        // they say nothing about whether the shader is affordable.
+        if (median > 100) return;
+        native = Math.min(native, median);
+        if (median > native * 1.6) { bad++; good = 0; } else if (median < native * 1.2) { good++; bad = 0; }
+        if (!lowered && bad >= 2) { lowered = true; applyDpr(LOW_DPR); bad = 0; }
+        else if (lowered && good >= 4) { lowered = false; applyDpr(FULL_DPR); good = 0; }
+        else if (lowered && bad >= 6) {
+          // Half resolution did not buy the frames back, so the slow cadence
+          // is not ours to fix — a 60Hz display we mistook for a stalled
+          // 120Hz one, or a machine busy elsewhere. Re-learn the baseline and
+          // give the full-quality image back rather than keeping it degraded
+          // for a jank we are not causing.
+          native = Infinity; bad = 0; good = 0; lowered = false; applyDpr(FULL_DPR);
+        }
+      };
+      // Moving between displays changes the native cadence out from under the
+      // baseline; drop what we learned and measure the new screen.
+      const relearn = () => { native = Infinity; gaps = []; bad = 0; good = 0; };
+
       const draw = (now: number) => {
         rafId = requestAnimationFrame(draw);
+        governor(now);
         const tNow = (performance.now() - start) / 1000;
 
         const active =
