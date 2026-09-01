@@ -1,4 +1,6 @@
-const CACHE_NAME = 'markview-v5';
+// Bumped to v6 to evict entries the old cache-first fetch handler had frozen
+// permanently (see below) — without this the fix only helps new installs.
+const CACHE_NAME = 'markview-v6';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -46,33 +48,60 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match('/'))
     );
   } else {
-    // Cache-first with RUNTIME CACHING: hashed chunks are immutable, so
-    // store each successful response. Without the put(), only the shell
-    // was ever cached and offline loads died on their first chunk request
-    // — "offline-ready" in name only.
-    event.respondWith(
-      caches.match(event.request).then((cached) => {
-        return cached || fetch(event.request).then((res) => {
-          if (res.ok) {
-            // Bounded runtime cache: hashed /assets are always worth
-            // keeping (immutable), everything else only under 2 MB with a
-            // known size — an unbounded put() of every ok response grew
-            // storage forever on long-lived installs (full-res paintings,
-            // OG cards, model shards…).
-            const path = new URL(event.request.url).pathname;
-            const len = Number(res.headers.get('content-length') || 0);
-            const cacheable = path.startsWith('/assets/') || (len > 0 && len < 2 * 1024 * 1024);
-            if (cacheable) {
-              const copy = res.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-            }
-          }
-          return res;
-        }).catch((err) => {
+    // Two kinds of asset live under this branch and they need opposite
+    // policies.
+    //
+    // /assets/* is hashed build output: the URL changes whenever the bytes
+    // do, so a cache hit can be trusted forever and never needs revalidating.
+    //
+    // Everything else (/atmospheres/*.jpg, /atmospheres/audio/*.opus,
+    // /manifest.json …) has a STABLE url and mutable bytes. Serving those
+    // cache-first meant that once a client had a copy it could never get
+    // another one: CACHE_NAME is a constant that no deploy changes, so the
+    // entry was pinned for the life of the install. A corrected painting or
+    // a re-mastered audio loop would ship to production and simply never
+    // reach anyone who already had the old one. Those get
+    // stale-while-revalidate instead — the cached copy is still served
+    // immediately, but the network refreshes it for the next load.
+    const path = new URL(event.request.url).pathname;
+    const immutable = path.startsWith('/assets/');
+
+    // Bounded runtime cache: hashed /assets are always worth keeping,
+    // everything else only under 2 MB with a known size — an unbounded put()
+    // of every ok response grew storage forever on long-lived installs
+    // (full-res paintings, OG cards, model shards…).
+    const fetchAndCache = () => fetch(event.request).then((res) => {
+      if (res.ok) {
+        const len = Number(res.headers.get('content-length') || 0);
+        if (immutable || (len > 0 && len < 2 * 1024 * 1024)) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+      }
+      return res;
+    });
+
+    if (immutable) {
+      event.respondWith(
+        caches.match(event.request).then((cached) => cached || fetchAndCache().catch((err) => {
           console.error('[SW] Fetch failed:', event.request.url, err);
           throw err;
-        });
-      })
+        }))
+      );
+      return;
+    }
+
+    // Started synchronously, and its lifetime extended explicitly: a
+    // revalidation kicked off from inside the respondWith chain can be killed
+    // when the worker is torn down, which is exactly the case where the stale
+    // entry would survive another round.
+    const network = fetchAndCache();
+    event.waitUntil(network.catch(() => {}));
+    event.respondWith(
+      caches.match(event.request).then((cached) => cached || network.catch((err) => {
+        console.error('[SW] Fetch failed:', event.request.url, err);
+        throw err;
+      }))
     );
   }
 });
