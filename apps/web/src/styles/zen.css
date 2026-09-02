@@ -1392,6 +1392,14 @@ html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-edito
 html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-scroller {
   background: linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
 }
+/* (61b) …and so does the split-view preview beside it. The ink rules above
+   colour EVERY .markdown-content on the page for paper (#211a0e), but only
+   .viewer-content and the CodeMirror surface were ever given paper to sit on.
+   The preview pane kept the app's dark background, so in split view under an
+   atmosphere it rendered near-black ink on near-black and was unreadable. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-preview-pane {
+  background: linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
+}
 /* (62) Editor ink text. */
 html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-content { color: #2c2418 !important; }
 /* (63) Vermillion brush caret. */

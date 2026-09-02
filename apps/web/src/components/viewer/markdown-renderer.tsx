@@ -116,6 +116,51 @@ async function ensureMermaid() {
   return mermaidPromise;
 }
 
+/**
+ * Warm the lazily-loaded render engines once, on idle.
+ *
+ * Shiki grammars, Mermaid and KaTeX are each fetched the first time a document
+ * actually uses them. That keeps the initial bundle small, but it also meant
+ * every *first* of a kind stalled mid-navigation: opening math.md downloaded
+ * KaTeX, then moving to diagrams.md downloaded Mermaid, so switching files
+ * visibly waited. The engines are singletons, so paying for them once in the
+ * background makes every later switch instant.
+ *
+ * Deliberately off the critical path: it runs only after a document has
+ * already rendered, and only when the browser reports itself idle.
+ */
+let warmed = false;
+export function warmRenderAssets(): void {
+  if (warmed || typeof window === 'undefined') return;
+  warmed = true;
+  const idle: (cb: () => void) => void =
+    typeof window.requestIdleCallback === 'function'
+      ? (cb) => window.requestIdleCallback(cb, { timeout: 4000 })
+      : (cb) => { window.setTimeout(cb, 1500); };
+  idle(() => {
+    void ensureMermaid().catch(() => {});
+    void import('katex').catch(() => {});
+    void (async () => {
+      await ensureShiki();
+      const hl = shikiHighlighter;
+      if (!hl) return;
+      const { bundledLanguages } = await import('shiki/langs');
+      const loaded = new Set(hl.getLoadedLanguages());
+      // The grammars the showcase and most real notes actually use. Anything
+      // else still loads on demand through loadShikiLangs().
+      const common = ['typescript', 'javascript', 'python', 'rust', 'bash', 'json', 'css', 'html', 'markdown'];
+      await Promise.all(common.filter((l) => !loaded.has(l) && !failedLangs.has(l)).map(async (lang) => {
+        try {
+          const loader = (bundledLanguages as Record<string, () => Promise<{ default: unknown }>>)[lang];
+          if (loader) await hl.loadLanguage((await loader()).default as never);
+        } catch {
+          failedLangs.add(lang);
+        }
+      }));
+    })().catch(() => {});
+  });
+}
+
 /** Yield to the browser to prevent long-task INP violations */
 function yieldToMain(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
@@ -266,6 +311,29 @@ async function renderMermaidInHtml(html: string, theme: 'dark' | 'light'): Promi
   return html;
 }
 
+/**
+ * Swap freshly rendered diagrams into the document already on screen.
+ *
+ * Used instead of a second setHtml: replacing the whole subtree would replay
+ * the scroll-reveal over prose the reader can already see. Each original
+ * mermaid block yields exactly one slot in the rendered HTML — a
+ * .mermaid-wrapper normally, or the untouched <pre> when that diagram failed
+ * to lay out — so the two lists stay index-aligned even when some fail.
+ */
+function patchMermaidIntoDom(root: HTMLElement | null, renderedHtml: string): void {
+  if (!root) return;
+  const tpl = document.createElement('template');
+  tpl.innerHTML = renderedHtml;
+  const slots = [...tpl.content.querySelectorAll('.mermaid-wrapper, pre > code.language-mermaid')]
+    .map((el) => (el.classList.contains('mermaid-wrapper') ? el : el.parentElement))
+    .filter((el): el is HTMLElement => el != null);
+  const targets = [...root.querySelectorAll('pre > code.language-mermaid')]
+    .map((c) => c.parentElement)
+    .filter((el): el is HTMLElement => el != null);
+  for (let i = 0; i < Math.min(slots.length, targets.length); i++) {
+    targets[i].replaceWith(slots[i]);
+  }
+}
 
 export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, onNavigateToFile, workspaceFiles, onToggleTask, resolveTransclusion }: MarkdownRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -324,16 +392,33 @@ export function MarkdownRenderer({ content, onHeadingsChange, onHtmlRendered, on
         await yieldToMain();
         if (cancelled) return;
 
-        // Render mermaid diagrams in the HTML string (before DOM)
-        const withMermaid = await renderMermaidInHtml(highlighted, renderTheme);
+        // Paint the prose BEFORE laying diagrams out. Mermaid lays each
+        // diagram out one after another, and a page of them measured ~850ms —
+        // during which the whole document, every paragraph of it, was still
+        // the previous file. Every other file switched in ~80ms, so diagrams
+        // were the one format that visibly waited. The diagrams are patched
+        // into the live DOM once they are ready.
+        if (highlighted.includes('language-mermaid')) {
+          const interim = onToggleTask ? enableTaskCheckboxes(highlighted) : highlighted;
+          if (cancelled) return;
+          startTransition(() => { setHtml(interim); });
+          onHtmlRendered?.(interim);
+          warmRenderAssets();
+          await yieldToMain();
+          if (cancelled) return;
+          const rendered = await renderMermaidInHtml(highlighted, renderTheme);
+          if (!cancelled) patchMermaidIntoDom(contentRef.current, rendered);
+          return;
+        }
 
         if (!cancelled) {
-          const final = onToggleTask ? enableTaskCheckboxes(withMermaid) : withMermaid;
+          const final = onToggleTask ? enableTaskCheckboxes(highlighted) : highlighted;
           // Use startTransition so this low-priority update doesn't block interactions
           startTransition(() => {
             setHtml(final);
           });
           onHtmlRendered?.(final);
+          warmRenderAssets();
         }
       } catch (e) {
         console.warn('Markdown processing error:', e);
