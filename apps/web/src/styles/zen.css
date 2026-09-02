@@ -1392,13 +1392,35 @@ html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-edito
 html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-scroller {
   background: linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
 }
-/* (61b) …and so does the split-view preview beside it. The ink rules above
-   colour EVERY .markdown-content on the page for paper (#211a0e), but only
-   .viewer-content and the CodeMirror surface were ever given paper to sit on.
-   The preview pane kept the app's dark background, so in split view under an
-   atmosphere it rendered near-black ink on near-black and was unreadable. */
-html[data-atmosphere]:not([data-atmosphere='none']) .editor-preview-pane {
+/* (61b) …and so does every OTHER surface that hosts rendered markdown.
+   The ink rules above colour EVERY .markdown-content on the page for paper
+   (#211a0e) and the renderer forces Shiki and Mermaid to their light themes
+   whenever an atmosphere is on — but only .viewer-content and the CodeMirror
+   surface were ever given paper to sit on. Anything else showing rendered
+   markdown kept the app's dark background and got dark ink on it: the split
+   editor preview, the compare-files pane, and the Mermaid zoom modal, which
+   put a light-themed diagram on a dark panel.
+   The invariant: light ink theme and light paper travel together. A new
+   surface that renders markdown belongs in this list. */
+html[data-atmosphere]:not([data-atmosphere='none']) .editor-preview-pane,
+html[data-atmosphere]:not([data-atmosphere='none']) .split-view-pane-body,
+html[data-atmosphere]:not([data-atmosphere='none']) .mermaid-preview-container {
   background: linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
+}
+/* The zoom modal's chrome is themed off the app's --bg and --text tokens,
+   which stay dark; on paper they need ink. */
+html[data-atmosphere]:not([data-atmosphere='none']) .mermaid-preview-header {
+  background: transparent !important;
+  color: #211a0e !important;
+  border-bottom-color: rgba(120, 90, 50, 0.22) !important;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .mermaid-preview-close {
+  color: rgba(33, 26, 14, 0.6) !important;
+}
+html[data-atmosphere]:not([data-atmosphere='none']) .mermaid-preview-close:hover {
+  background: rgba(176, 57, 42, 0.10) !important;
+  color: #211a0e !important;
+  border-color: rgba(120, 90, 50, 0.28) !important;
 }
 /* (62) Editor ink text. */
 html[data-atmosphere]:not([data-atmosphere='none']) .editor-codemirror .cm-content { color: #2c2418 !important; }
