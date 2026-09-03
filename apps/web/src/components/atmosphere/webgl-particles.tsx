@@ -186,7 +186,7 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     gravity: 14,
     drag: 0.06,
     terminalV: 80,        // snow falls steady; gusts can push past briefly
-    stretch: 0.20,        // mild streak on fast gusts (real snow blur)
+    stretch: 0.85,        // near flakes on a gust streak visibly; far ones barely
     accumulate: 0.55,     // snow PILES UP — strongest accumulation of any kind
     accumulateFadePerSec: 0.010,  // ~95 s half-life (snow stays put longer)
     // Wide spread on purpose: depth-of-field only reads if the nearest
@@ -195,7 +195,7 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     sizeJitter: 15,
     lifeMin: 22,
     lifeMax: 36,
-    windStrength: 0.45,
+    windStrength: 0.8,
     spawnFrom: 'top',
     initialVy: () => 10 + Math.random() * 18,
     initialVx: () => (Math.random() - 0.5) * 4,
@@ -352,6 +352,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const rotations = new Float32Array(count);
       const alphas = new Float32Array(count);
       const depthAttr = new Float32Array(count); // depth, mirrored for the shader
+      const stretchAttr = new Float32Array(count).fill(1); // motion-blur elongation
 
       // Velocity + life + DEPTH live in JS only (not uploaded to GPU).
       // `depth` 0=far (small + slow + dim), 1=near (large + fast + bright).
@@ -415,6 +416,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       geom.setAttribute('rotation', new THREE.BufferAttribute(rotations, 1));
       geom.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
       geom.setAttribute('depth', new THREE.BufferAttribute(depthAttr, 1));
+      geom.setAttribute('stretch', new THREE.BufferAttribute(stretchAttr, 1));
 
       const material = new THREE.ShaderMaterial({
         uniforms: {
@@ -433,14 +435,17 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           attribute float rotation;
           attribute float alpha;
           attribute float depth;
+          attribute float stretch;
           varying float vAlpha;
           varying float vRotation;
           varying float vDepth;
+          varying float vStretch;
           uniform float uDpr;
           void main() {
             vAlpha = alpha;
             vRotation = rotation;
             vDepth = depth;
+            vStretch = stretch;
             vec4 mv = modelViewMatrix * vec4(position, 1.0);
             gl_Position = projectionMatrix * mv;
             gl_PointSize = size * uDpr;
@@ -453,11 +458,16 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           varying float vAlpha;
           varying float vRotation;
           varying float vDepth;
+          varying float vStretch;
           void main() {
-            // Rotate gl_PointCoord around its center.
+            // Into the sprite's own frame: rotate so x runs along the
+            // velocity, then squeeze the short axis by the stretch so the
+            // disc is left long along the path — a streak, not a dot.
             vec2 uv = gl_PointCoord - 0.5;
             float c = cos(vRotation), s = sin(vRotation);
-            uv = mat2(c, -s, s, c) * uv + 0.5;
+            uv = mat2(c, -s, s, c) * uv;
+            uv.y *= vStretch;
+            uv += 0.5;
             if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) discard;
             // Depth of field. The focal plane is the page, mid-distance; the
             // nearest particles are past it and go soft, read from a coarser
@@ -524,7 +534,12 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       // Ambient snow/dust reads fine at 30fps — motion is dt-based so the
       // speed is identical — and this halves the cost, handing the frame
       // budget back to the actual interface.
-      const MIN_FRAME_MS = 30;
+      // 60fps. This was 30 on the theory that halving the sim saved the
+      // frame budget; profiled, the whole particle draw is 0.06–0.13ms and
+      // the sim under a millisecond, and 30fps is exactly the stutter that
+      // reads as "screensaver" — a falling flake stepping instead of
+      // gliding. A 120Hz display still renders every other frame.
+      const MIN_FRAME_MS = 15;
       const tick = () => {
         raf = requestAnimationFrame(tick);
         const now = performance.now();
@@ -570,12 +585,18 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           // Integrate.
           positions[ix] = px + vx[i] * dt;
           positions[ix + 1] = py + vy[i] * dt;
-          rotations[i] += rotV[i] * dt;
-
-          // Velocity-stretch (motion-blur cue) — particles moving fast
-          // grow longer along their travel direction. Scaled per-kind
-          // via cfg.stretch.
-          const stretch = Math.min(1.6, 1 + (speed / vTerm) * cfg.stretch);
+          // Motion blur. A fast particle close to the lens smears along its
+          // path within the exposure; a far one does not. Elongation is
+          // therefore speed × nearness, and the sprite is turned so its long
+          // axis lies along the velocity. Kinds that tumble (petals) keep
+          // their own spin — a petal does not streak, it flutters.
+          const near = 0.25 + d * 0.75;
+          const stretch = Math.min(2.4, 1 + (speed / vTerm) * cfg.stretch * near);
+          stretchAttr[i] = stretch;
+          if (cfg.rotates) rotations[i] += rotV[i] * dt;
+          else rotations[i] = Math.atan2(vy[i], vx[i]);
+          // The quad is square, so it grows by the stretch on both axes and the
+          // shader squeezes the sprite back down across the short axis.
           sizes[i] = (cfg.baseSize + (depth[i] * cfg.sizeJitter)) * (0.35 + depth[i] * 0.65) * stretch;
 
           // Life + alpha + per-particle alpha jitter + depth dim.
@@ -654,6 +675,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         geom.attributes.rotation.needsUpdate = true;
         geom.attributes.alpha.needsUpdate = true;
         geom.attributes.depth.needsUpdate = true;
+        geom.attributes.stretch.needsUpdate = true;
 
         renderer.render(scene, camera);
         // NOTE: no requestAnimationFrame here — the top of tick() already

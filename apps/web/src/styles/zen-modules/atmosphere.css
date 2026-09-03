@@ -23,6 +23,64 @@
   opacity: 0.85;
 }
 
+/* ── Photographic finish ────────────────────────────────────────────────
+   Two layers over the painting and the particles, under the paper, that
+   a clean digital composite lacks and a filmed one has.
+
+   ::before — atmospheric haze. Air is not transparent: the far ground of a
+   snow scene is veiled, and the veil deepens toward the horizon. A cool,
+   low-alpha gradient rising from the bottom third does that, and it is
+   what makes the near flakes read as NEAR — they sit in front of the
+   haze, the painting sits behind it.
+
+   ::after — film grain. Fine fractal noise at low opacity in soft-light,
+   sized well above the viewport and nudged around on a stepped keyframe
+   so it never sits still. Grain hides the too-perfect gradients of a
+   rendered image and binds painting, particles and haze into one plate.
+   It stops at the paper: the sheet is in the same room, but the reader is
+   looking AT it, and grain over type would just look like dirty type. */
+.atmosphere.atmosphere-painting::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  /* --atm-haze is set per atmosphere in zen.css: cold blue-grey for the
+     snow, sea spray for the wave, blossom-pink for Fuji, gold for the
+     fields. One blue haze on a red mountain read as fog on the wrong day. */
+  background:
+    linear-gradient(180deg,
+      transparent 0%,
+      transparent 52%,
+      rgba(var(--atm-haze, 204, 214, 226), 0.06) 70%,
+      rgba(var(--atm-haze, 204, 214, 226), 0.16) 88%,
+      rgba(var(--atm-haze, 204, 214, 226), 0.24) 100%);
+}
+.atmosphere.atmosphere-painting::after {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  z-index: 4;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+  background-size: 320px 320px;
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+  animation: atmosphere-grain 0.9s steps(6) infinite;
+}
+@keyframes atmosphere-grain {
+  0%   { transform: translate(0, 0); }
+  17%  { transform: translate(-6%, -9%); }
+  33%  { transform: translate(4%, -3%); }
+  50%  { transform: translate(-3%, 7%); }
+  67%  { transform: translate(8%, 2%); }
+  83%  { transform: translate(-7%, 5%); }
+  100% { transform: translate(2%, -6%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere.atmosphere-painting::after { animation: none; }
+}
+
 /* Generic atmosphere rules — drive every painted background through CSS
    custom properties supplied per-atmosphere by the React component. */
 .atmosphere-image {

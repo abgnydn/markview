@@ -73,24 +73,28 @@ html[data-atmosphere='fuji'] {       /* Mt. Fuji · cherry blossom — sakura ro
   --zen-accent-soft: rgba(224, 135, 159, 0.26);
   --zen-accent-glow: rgba(224, 135, 159, 0.12);
   --zen-code:        #d98a6a;
+  --atm-haze:        246, 214, 222;  /* blossom-pink morning air */
 }
 html[data-atmosphere='wave'] {       /* The Great Wave · sea — prussian indigo */
   --zen-accent:      #5d8fd1;
   --zen-accent-soft: rgba(93, 143, 209, 0.26);
   --zen-accent-glow: rgba(93, 143, 209, 0.12);
   --zen-code:        #6fb0c4;
+  --atm-haze:        196, 216, 232;  /* sea spray */
 }
 html[data-atmosphere='snow'] {       /* winter · frost slate */
   --zen-accent:      #8fa9c8;
   --zen-accent-soft: rgba(143, 169, 200, 0.26);
   --zen-accent-glow: rgba(143, 169, 200, 0.12);
   --zen-code:        #a7b8cc;
+  --atm-haze:        204, 214, 226;  /* cold, blue-grey */
 }
 html[data-atmosphere='fields'] {     /* golden fields · harvest gold */
   --zen-accent:      #cfa441;
   --zen-accent-soft: rgba(207, 164, 65, 0.26);
   --zen-accent-glow: rgba(207, 164, 65, 0.12);
   --zen-code:        #d9b25a;
+  --atm-haze:        240, 222, 178;  /* late-afternoon gold */
 }
 
 [data-theme='dark'],
@@ -882,15 +886,27 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
      the sheet read as a coloured rectangle rather than a material. */
   background:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='52'><rect x='3' y='3' width='46' height='46' rx='5' fill='none' stroke='%23b0392a' stroke-width='3'/><path d='M15 16 H37 M26 16 V38 M18 27 H34 M20 38 H32' stroke='%23b0392a' stroke-width='3' stroke-linecap='round' fill='none'/></svg>") no-repeat,
+    /* fine fibres — anisotropic, the grain of a laid sheet */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='p' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.018 0.42' numOctaves='3' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.30  0 0 0 0 0.22  0 0 0 0 0.12  0 0 0 0.09 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>") repeat,
+    /* mottle — the slow, cloudy variation in pulp density you see holding
+       a sheet to the light; the fibres alone read as uniform static */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'><filter id='m' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.0035' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.26  0 0 0 0 0.12  0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23m)'/></svg>") repeat,
+    /* directional light — one key light, upper left, as on a lit desk */
+    linear-gradient(118deg, rgba(255, 252, 240, 0.30) 0%, rgba(255, 252, 240, 0.08) 34%, transparent 55%, rgba(70, 52, 28, 0.07) 100%),
     radial-gradient(ellipse 78% 66% at 50% 46%, transparent 58%, rgba(70, 52, 28, 0.13) 100%),
     linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
-  background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0 !important;
-  background-size: 48px 48px, 420px 420px, cover, cover !important;
+  background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0, 0 0, 0 0 !important;
+  background-size: 48px 48px, 420px 420px, 900px 900px, cover, cover, cover !important;
   border-radius: 2px !important;
+  /* Three shadows, three distances. A sheet an inch off the wall casts a
+     tight dark contact line, a mid penumbra, and a wide soft ambient fall;
+     one big blur reads as a glow, not as an object with a position. */
   box-shadow:
-    0 30px 90px -34px rgba(0, 0, 0, 0.7),
-    inset 0 0 0 1px rgba(120, 90, 50, 0.10) !important;
+    0 1px 2px rgba(20, 12, 4, 0.35),
+    0 10px 24px -8px rgba(20, 12, 4, 0.45),
+    0 44px 110px -30px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 1px rgba(120, 90, 50, 0.10),
+    inset 0 18px 22px -20px rgba(40, 26, 10, 0.35) !important;
 }
 /* ::before → top scroll rod (was the frosted band). */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
@@ -904,9 +920,20 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
   -webkit-backdrop-filter: none !important;
   mask-image: none !important;
   -webkit-mask-image: none !important;
-  border-radius: 5px;
-  background: linear-gradient(180deg, #6c5638 0%, #4c3a22 100%);
-  box-shadow: 0 5px 14px -4px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  /* A turned, lacquered rod: a specular band a third of the way down where
+     the key light catches the cylinder, dark under the curve, and a
+     brushed-grain pass along its length. Flat brown bars were the single
+     loudest "this is a div" in the scene. */
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='17'><filter id='w' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23w)'/></svg>") repeat-x,
+    linear-gradient(180deg, #3a2a16 0%, #7a5f3c 22%, #a5895f 34%, #6a5133 52%, #3b2a15 82%, #241708 100%);
+  box-shadow:
+    0 6px 16px -4px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 240, 210, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+    inset 14px 0 12px -12px rgba(0, 0, 0, 0.55),
+    inset -14px 0 12px -12px rgba(0, 0, 0, 0.55);
 }
 /* ::after → bottom scroll rod. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
@@ -917,9 +944,16 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
   right: -12px;
   height: 17px;
   z-index: 3;
-  border-radius: 5px;
-  background: linear-gradient(180deg, #6c5638 0%, #4c3a22 100%);
-  box-shadow: 0 7px 18px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='17'><filter id='w' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23w)'/></svg>") repeat-x,
+    linear-gradient(180deg, #3a2a16 0%, #7a5f3c 22%, #a5895f 34%, #6a5133 52%, #3b2a15 82%, #241708 100%);
+  box-shadow:
+    0 9px 22px -4px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 240, 210, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+    inset 14px 0 12px -12px rgba(0, 0, 0, 0.55),
+    inset -14px 0 12px -12px rgba(0, 0, 0, 0.55);
 }
 /* Ink on paper — flat solid sepia, NO text-shadow. The colour MUST be set
    directly on the text elements: the base theme colours `p`/`li` directly
