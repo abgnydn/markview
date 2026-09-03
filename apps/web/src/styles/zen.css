@@ -874,11 +874,19 @@ nav.toc a.active {
  * the top rod. Per-appearance paper warmth via --paper-*.
  * ════════════════════════════════════════════════════════════════════════ */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  /* Layers, top to bottom: the seal; laid-paper fibres (procedural
+     turbulence, anisotropic so the grain runs across the sheet like a
+     mould-made paper, at 9% so it is felt more than seen); a soft vignette
+     that darkens the margins the way light falls off a real sheet; the
+     tone itself. Before this it was one flat gradient, which is what made
+     the sheet read as a coloured rectangle rather than a material. */
   background:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='52'><rect x='3' y='3' width='46' height='46' rx='5' fill='none' stroke='%23b0392a' stroke-width='3'/><path d='M15 16 H37 M26 16 V38 M18 27 H34 M20 38 H32' stroke='%23b0392a' stroke-width='3' stroke-linecap='round' fill='none'/></svg>") no-repeat,
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='p' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.018 0.42' numOctaves='3' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.30  0 0 0 0 0.22  0 0 0 0 0.12  0 0 0 0.09 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>") repeat,
+    radial-gradient(ellipse 78% 66% at 50% 46%, transparent 58%, rgba(70, 52, 28, 0.13) 100%),
     linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
-  background-position: calc(100% - 30px) calc(100% - 36px), 0 0 !important;
-  background-size: 48px 48px, cover !important;
+  background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0 !important;
+  background-size: 48px 48px, 420px 420px, cover, cover !important;
   border-radius: 2px !important;
   box-shadow:
     0 30px 90px -34px rgba(0, 0, 0, 0.7),

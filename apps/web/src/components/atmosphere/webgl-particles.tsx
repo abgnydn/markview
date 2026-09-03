@@ -101,15 +101,20 @@ const drawPetal = (ctx: CanvasRenderingContext2D, s: number) => {
 const drawSnow = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.clearRect(0, 0, s, s);
   const cx = s / 2, cy = s / 2;
-  // Opaque white disk with a single-pixel feather. Reads as a crisp
-  // snowflake, not a glow. Two-stop gradient gives natural anti-alias.
-  const grad = ctx.createRadialGradient(cx, cy, s * 0.30, cx, cy, s * 0.40);
-  grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-  grad.addColorStop(0.85, 'rgba(255, 255, 255, 1)');
-  grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  // A flake as a camera sees it, not as a diagram draws it: a soft-bodied
+  // disc whose brightness gathers slightly toward the rim. Out-of-focus
+  // points of light form exactly that — a faintly ringed disc — and the
+  // shader pushes the near flakes further out of focus, so the rim is
+  // what sells them as bokeh instead of dots. Far flakes are tiny enough
+  // that the rim collapses into a plain bright speck.
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, s * 0.42);
+  grad.addColorStop(0.00, 'rgba(255, 255, 255, 0.86)');
+  grad.addColorStop(0.62, 'rgba(255, 255, 255, 0.90)');
+  grad.addColorStop(0.84, 'rgba(255, 255, 255, 1.00)');
+  grad.addColorStop(1.00, 'rgba(255, 255, 255, 0.00)');
   ctx.fillStyle = grad;
   ctx.beginPath();
-  ctx.arc(cx, cy, s * 0.40, 0, Math.PI * 2);
+  ctx.arc(cx, cy, s * 0.42, 0, Math.PI * 2);
   ctx.fill();
 };
 
@@ -154,7 +159,7 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     // time, not hundreds. Big size variance so a couple of large petals
     // dominate against many small distant ones.
     count: 700,
-    spriteSize: 36,
+    spriteSize: 96,
     sprite: drawPetal,
     gravity: 6,
     drag: 0.04,
@@ -176,7 +181,7 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     // Snowfall density tuned to "calm flurry," not blizzard. Most flakes
     // are tiny (3-6px) with occasional larger ones (up to 11px).
     count: 1400,
-    spriteSize: 22,
+    spriteSize: 64,
     sprite: drawSnow,
     gravity: 14,
     drag: 0.06,
@@ -184,8 +189,10 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     stretch: 0.20,        // mild streak on fast gusts (real snow blur)
     accumulate: 0.55,     // snow PILES UP — strongest accumulation of any kind
     accumulateFadePerSec: 0.010,  // ~95 s half-life (snow stays put longer)
-    baseSize: 3,
-    sizeJitter: 8,
+    // Wide spread on purpose: depth-of-field only reads if the nearest
+    // flakes are unmistakably bigger and softer than the rest.
+    baseSize: 2.5,
+    sizeJitter: 15,
     lifeMin: 22,
     lifeMax: 36,
     windStrength: 0.45,
@@ -198,7 +205,7 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     // Spray off a wave crest — a handful of large droplets per burst,
     // many small mist droplets behind. Short-lived.
     count: 600,
-    spriteSize: 18,
+    spriteSize: 64,
     sprite: drawSpray,
     gravity: 110,
     drag: 0.32,
@@ -220,7 +227,7 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     // Sun-dust / pollen — should feel sparse and slow. The "glow" is the
     // point of motes so keep their soft halo but thin out the density.
     count: 500,
-    spriteSize: 18,
+    spriteSize: 64,
     sprite: drawMote,
     gravity: -5,
     drag: 0.10,
@@ -330,7 +337,12 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const sctx = spriteCanvas.getContext('2d')!;
       cfg.sprite(sctx, cfg.spriteSize);
       const spriteTex = new THREE.CanvasTexture(spriteCanvas);
-      spriteTex.minFilter = THREE.LinearFilter;
+      // Mipmaps are the depth-of-field. Sampling a coarser level is a free,
+      // exact box blur of the sprite, so the fragment shader can defocus a
+      // particle just by biasing the level it reads — near flakes read a
+      // blurry level, far ones the sharp one.
+      spriteTex.generateMipmaps = true;
+      spriteTex.minFilter = THREE.LinearMipmapLinearFilter;
       spriteTex.magFilter = THREE.LinearFilter;
       spriteTex.colorSpace = THREE.SRGBColorSpace;
 
@@ -339,6 +351,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const sizes = new Float32Array(count);
       const rotations = new Float32Array(count);
       const alphas = new Float32Array(count);
+      const depthAttr = new Float32Array(count); // depth, mirrored for the shader
 
       // Velocity + life + DEPTH live in JS only (not uploaded to GPU).
       // `depth` 0=far (small + slow + dim), 1=near (large + fast + bright).
@@ -376,6 +389,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         // a few are "near" (matches what you see looking through real air).
         const u = Math.random();
         depth[i] = u * u;
+        depthAttr[i] = depth[i];
         vx[i] = cfg.initialVx();
         vy[i] = cfg.initialVy();
         // Per-particle size scales with depth: near = base + jitter,
@@ -400,11 +414,16 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       geom.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
       geom.setAttribute('rotation', new THREE.BufferAttribute(rotations, 1));
       geom.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
+      geom.setAttribute('depth', new THREE.BufferAttribute(depthAttr, 1));
 
       const material = new THREE.ShaderMaterial({
         uniforms: {
           uSprite:  { value: spriteTex },
           uDpr:     { value: dpr },
+          // Mip levels of defocus applied to the nearest particles. The
+          // camera is focused on the page; the flakes drifting past the lens
+          // are the ones that should smear.
+          uBokeh:   { value: 3.2 },
         },
         transparent: true,
         depthWrite: false,
@@ -413,12 +432,15 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           attribute float size;
           attribute float rotation;
           attribute float alpha;
+          attribute float depth;
           varying float vAlpha;
           varying float vRotation;
+          varying float vDepth;
           uniform float uDpr;
           void main() {
             vAlpha = alpha;
             vRotation = rotation;
+            vDepth = depth;
             vec4 mv = modelViewMatrix * vec4(position, 1.0);
             gl_Position = projectionMatrix * mv;
             gl_PointSize = size * uDpr;
@@ -427,16 +449,24 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         fragmentShader: `
           precision mediump float;
           uniform sampler2D uSprite;
+          uniform float uBokeh;
           varying float vAlpha;
           varying float vRotation;
+          varying float vDepth;
           void main() {
             // Rotate gl_PointCoord around its center.
             vec2 uv = gl_PointCoord - 0.5;
             float c = cos(vRotation), s = sin(vRotation);
             uv = mat2(c, -s, s, c) * uv + 0.5;
             if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) discard;
-            vec4 tex = texture2D(uSprite, uv);
-            gl_FragColor = vec4(tex.rgb, tex.a * vAlpha);
+            // Depth of field. The focal plane is the page, mid-distance; the
+            // nearest particles are past it and go soft, read from a coarser
+            // mip level. Far ones stay pin-sharp specks.
+            float near = smoothstep(0.45, 1.0, vDepth);
+            vec4 tex = texture2D(uSprite, uv, near * uBokeh);
+            // Out-of-focus highlights spread their light over more pixels,
+            // so they look lighter, not dimmer: lift them a touch.
+            gl_FragColor = vec4(tex.rgb * (1.0 + near * 0.12), tex.a * vAlpha);
           }
         `,
       });
@@ -623,6 +653,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         geom.attributes.size.needsUpdate = true;
         geom.attributes.rotation.needsUpdate = true;
         geom.attributes.alpha.needsUpdate = true;
+        geom.attributes.depth.needsUpdate = true;
 
         renderer.render(scene, camera);
         // NOTE: no requestAnimationFrame here — the top of tick() already
