@@ -43,7 +43,10 @@
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 3;
+  /* Under the particles and the drift (z:1–2): the haze veils the far
+     ground of the PAINTING; the snow in the air and on the ground is in
+     front of it. */
+  z-index: 0;
   pointer-events: none;
   /* --atm-haze is set per atmosphere in zen.css: cold blue-grey for the
      snow, sea spray for the wave, blossom-pink for Fuji, gold for the

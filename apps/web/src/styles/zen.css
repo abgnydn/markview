@@ -908,52 +908,80 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
     inset 0 0 0 1px rgba(120, 90, 50, 0.10),
     inset 0 18px 22px -20px rgba(40, 26, 10, 0.35) !important;
 }
-/* ::before → top scroll rod (was the frosted band). */
+/* ── The mount ────────────────────────────────────────────────────────
+   A hanging scroll is not a sheet of paper; it is a sheet MOUNTED. Silk
+   brocade around the honshi, a gold ichimonji strip where silk meets paper,
+   a thin rod at the top it hangs from by a cord, and a thick lacquered
+   roller at the bottom with turned end knobs (jikusaki) whose weight keeps
+   it flat. The paper alone, with two brown bars, was a div with a gradient.
+
+   The brocade is a border-image: a tiled 84px lattice-and-blossom motif on
+   deep indigo with gold lines. The paper layers are clipped to the padding
+   box so silk and paper never overlap, and the column is widened by the
+   two borders so the text measure does not change. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  max-width: calc(var(--zen-content-width) + 52px) !important;
+  border: 26px solid transparent !important;
+  border-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='84' height='84'><rect width='84' height='84' fill='%231b2740'/><g fill='none' stroke='%23c9a75a' stroke-width='0.9' opacity='0.85'><path d='M0 14 L14 0 M14 28 L28 14 M28 0 L42 14 M42 28 L56 14 M56 0 L70 14 M70 28 L84 14 M0 42 L14 28 M14 56 L28 42 M28 28 L42 42 M42 56 L56 42 M56 28 L70 42 M70 56 L84 42 M0 70 L14 56 M14 84 L28 70 M28 56 L42 70 M42 84 L56 70 M56 56 L70 70 M70 84 L84 70'/><path d='M0 14 L14 28 M14 0 L28 14 M28 28 L42 14 M42 0 L56 14 M56 28 L70 14 M70 0 L84 14 M0 42 L14 56 M14 28 L28 42 M28 56 L42 42 M42 28 L56 42 M56 56 L70 42 M70 28 L84 42 M0 70 L14 84 M14 56 L28 70 M28 84 L42 70 M42 56 L56 70 M56 84 L70 70 M70 56 L84 70'/></g><g fill='%23c9a75a' opacity='0.9'><circle cx='14' cy='14' r='2.2'/><circle cx='42' cy='14' r='2.2'/><circle cx='70' cy='14' r='2.2'/><circle cx='28' cy='42' r='2.2'/><circle cx='56' cy='42' r='2.2'/><circle cx='84' cy='42' r='2.2'/><circle cx='0' cy='42' r='2.2'/><circle cx='14' cy='70' r='2.2'/><circle cx='42' cy='70' r='2.2'/><circle cx='70' cy='70' r='2.2'/></g><g fill='%23e8d39a' opacity='0.55'><circle cx='28' cy='14' r='0.9'/><circle cx='56' cy='14' r='0.9'/><circle cx='14' cy='42' r='0.9'/><circle cx='42' cy='42' r='0.9'/><circle cx='70' cy='42' r='0.9'/><circle cx='28' cy='70' r='0.9'/><circle cx='56' cy='70' r='0.9'/></g></svg>") 28 round !important;
+  background-clip: padding-box !important;
+  /* gold ichimonji trim on the inside edge of the silk */
+  outline: 2px solid #c9a75a;
+  outline-offset: -28px;
+}
+
+/* ::before → the cord and the top rod (hyōmoku). Cord from above the
+   viewport down to the rod; rod as a slim turned cylinder. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before {
+  content: '';
   inset: auto !important;
-  top: -11px !important;
-  left: -12px !important;
-  right: -12px !important;
-  height: 17px !important;
+  /* -102 = 26px of border + 8px proud of the silk's top edge, plus the 68px
+     of cord drawn above the rod inside this box. The rod is 22px tall. */
+  top: -102px !important;
+  left: -14px !important;
+  right: -14px !important;
+  height: 90px !important;
   z-index: 3;
+  pointer-events: none;
+  border-radius: 0 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   mask-image: none !important;
   -webkit-mask-image: none !important;
-  border-radius: 8px;
-  /* A turned, lacquered rod: a specular band a third of the way down where
-     the key light catches the cylinder, dark under the curve, and a
-     brushed-grain pass along its length. Flat brown bars were the single
-     loudest "this is a div" in the scene. */
+  box-shadow: none !important;
   background:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='17'><filter id='w' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23w)'/></svg>") repeat-x,
-    linear-gradient(180deg, #3a2a16 0%, #7a5f3c 22%, #a5895f 34%, #6a5133 52%, #3b2a15 82%, #241708 100%);
-  box-shadow:
-    0 6px 16px -4px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 240, 210, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
-    inset 14px 0 12px -12px rgba(0, 0, 0, 0.55),
-    inset -14px 0 12px -12px rgba(0, 0, 0, 0.55);
+    /* cord — braided, so two thin strands */
+    linear-gradient(90deg, transparent calc(50% - 3px), #2b1d0c calc(50% - 3px), #6b4d28 calc(50% - 2px), #2b1d0c calc(50% - 1px), transparent calc(50% - 1px), transparent calc(50% + 1px), #2b1d0c calc(50% + 1px), #6b4d28 calc(50% + 2px), #2b1d0c calc(50% + 3px), transparent calc(50% + 3px)) 0 0 / 100% 68px no-repeat,
+    /* rod grain + turned wood */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='24'><filter id='w' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23w)'/></svg>") 0 68px / 240px 22px repeat-x,
+    linear-gradient(180deg, #2a1c0d 0%, #5d4527 14%, #9a7d54 28%, #c3a87c 36%, #8a6f48 46%, #4a3419 66%, #2b1c0b 86%, #160d04 100%) 0 68px / 100% 22px no-repeat;
+  /* the rod's own rounded profile, shadow and end shading */
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.55));
 }
-/* ::after → bottom scroll rod. */
+
+/* ::after → the roller (jiku): thick, lacquered, with end knobs. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
   content: '';
   position: absolute;
-  bottom: -11px;
-  left: -12px;
-  right: -12px;
-  height: 17px;
+  bottom: -34px; /* 26px of border, 8px hanging below the silk */
+  left: -36px;
+  right: -36px;
+  height: 26px;
   z-index: 3;
-  border-radius: 8px;
+  pointer-events: none;
+  border-radius: 13px;
   background:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='17'><filter id='w' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23w)'/></svg>") repeat-x,
-    linear-gradient(180deg, #3a2a16 0%, #7a5f3c 22%, #a5895f 34%, #6a5133 52%, #3b2a15 82%, #241708 100%);
+    /* end knobs: dark turned caps with a specular dot */
+    radial-gradient(circle at 13px 11px, rgba(255, 236, 200, 0.45) 0, rgba(255, 236, 200, 0.45) 2px, transparent 3px) no-repeat,
+    radial-gradient(circle at calc(100% - 13px) 11px, rgba(255, 236, 200, 0.45) 0, rgba(255, 236, 200, 0.45) 2px, transparent 3px) no-repeat,
+    linear-gradient(90deg, #1a1108 0, #1a1108 30px, transparent 30px, transparent calc(100% - 30px), #1a1108 calc(100% - 30px), #1a1108 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='24'><filter id='w' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23w)'/></svg>") 30px 0 / 240px 26px repeat-x,
+    linear-gradient(180deg, #2a1c0d 0%, #5a4326 20%, #8f7550 33%, #5a4326 55%, #2a1c0d 85%, #150d04 100%);
   box-shadow:
-    0 9px 22px -4px rgba(0, 0, 0, 0.65),
+    0 12px 26px -6px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(255, 240, 210, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.45),
-    inset 14px 0 12px -12px rgba(0, 0, 0, 0.55),
-    inset -14px 0 12px -12px rgba(0, 0, 0, 0.55);
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    inset 32px 0 0 -30px rgba(255, 220, 170, 0.12),
+    inset -32px 0 0 -30px rgba(255, 220, 170, 0.12);
 }
 /* Ink on paper — flat solid sepia, NO text-shadow. The colour MUST be set
    directly on the text elements: the base theme colours `p`/`li` directly
@@ -1133,14 +1161,7 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content p + p {
   text-indent: 1.4em;
   margin-top: 0.2em !important;
 }
-/* (13) Scroll-rod end knobs (軸頭) — darker rounded caps at both ends. */
-html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
-html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
-  background:
-    radial-gradient(circle at 7px 50%, #3a2c18, #3a2c18 6px, transparent 7px),
-    radial-gradient(circle at calc(100% - 7px) 50%, #3a2c18, #3a2c18 6px, transparent 7px),
-    linear-gradient(180deg, #6c5638 0%, #4c3a22 100%) !important;
-}
+/* (13) — rod end knobs now live in the mount rules (::after), above. */
 /* (14) Aged-paper edge + fold creases — soft rim darkening, plus two faint
    fold lines (a horizontal third and an off-centre vertical) drawn as a thin
    shadow paired with a catch-light, so the sheet reads as once-folded. */
@@ -1197,19 +1218,8 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
   outline: 1px solid rgba(140, 100, 60, 0.22);
   outline-offset: calc(var(--zen-edge-pad) * 0.45);
 }
-/* (23) Per-appearance rod tint — wood warms / cools with the scene. */
-html[data-atmosphere='snow'] .viewer-content::before,
-html[data-atmosphere='snow'] .viewer-content::after,
-html[data-atmosphere='wave'] .viewer-content::before,
-html[data-atmosphere='wave'] .viewer-content::after {
-  filter: hue-rotate(-12deg) saturate(0.8) brightness(1.04);
-}
-html[data-atmosphere='fields'] .viewer-content::before,
-html[data-atmosphere='fields'] .viewer-content::after,
-html[data-atmosphere='fuji'] .viewer-content::before,
-html[data-atmosphere='fuji'] .viewer-content::after {
-  filter: hue-rotate(6deg) saturate(1.1);
-}
+/* (23) — per-scene rod tint removed: the rods are lacquer now and carry a
+   drop-shadow filter of their own in the mount rules. */
 /* (24) Section marker — a small appearance glyph before MAJOR sections (H2)
    only; H3 stays clean so the page doesn't read as a field of bullets. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2::before {
@@ -1386,8 +1396,10 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content .mv-headin
   color: #b0392a !important;
 }
 /* (47) Wall shadow — the scroll casts a soft shadow on the dark wall. */
+/* The scroll hangs from a rod on a cord; 118px is room for both above
+     the silk, or the top of the mount sits above the viewport unseen. */
 html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
-  margin-top: 2.2vh !important;
+  margin-top: max(118px, 2.2vh) !important;
   margin-bottom: 4vh !important;
 }
 /* (48) Scroll-reveal — soften the existing reveal into an ink-soak ease.
@@ -1418,8 +1430,7 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content table {
    as the seal's twin rather than shifting per appearance. */
 /* (55) Responsive scroll — narrower paper + slimmer rods on small screens. */
 @media (max-width: 720px) {
-  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
-  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after { height: 12px; left: -6px; right: -6px; }
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { border-width: 14px !important; outline-offset: -16px; }
   html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content > p:first-of-type::first-letter { font-size: 2.8em; }
 }
 /* (56) Audio / video — framed like a mounted plate. */
@@ -4976,25 +4987,17 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
     inset 0 -50px 100px -56px rgba(74, 56, 30, 0.30) !important;
 }
 
-/* Carved wooden rods — knobs at the ends + a fine lengthwise grain. */
-html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::before,
-html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content::after {
-  background:
-    radial-gradient(circle at 8px 50%, #3a2c18 0, #3a2c18 6px, transparent 7px),
-    radial-gradient(circle at calc(100% - 8px) 50%, #3a2c18 0, #3a2c18 6px, transparent 7px),
-    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 8px),
-    linear-gradient(180deg, #715a3a 0%, #4c3a22 100%) !important;
-}
+/* (carved rods) — superseded by the mount rules. */
 
 /* Per-appearance character — a faint light wash tints the whole paper toward
    the scene (over the gradient, under the ink). */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
   position: relative;
 }
-html[data-atmosphere='fuji']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 236, 224, 0.20), inset 0 0 110px rgba(96, 60, 28, 0.26), inset 0 -54px 110px -56px rgba(110, 56, 40, 0.30) !important; }
-html[data-atmosphere='wave']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(232, 240, 248, 0.18), inset 0 0 110px rgba(72, 64, 36, 0.26), inset 0 -54px 110px -56px rgba(40, 64, 86, 0.28) !important; }
-html[data-atmosphere='snow']   .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.7), 0 8px 22px -12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(120,90,50,0.12), inset 0 56px 120px -70px rgba(238, 244, 250, 0.22), inset 0 0 110px rgba(80, 70, 44, 0.24), inset 0 -54px 110px -56px rgba(56, 70, 84, 0.26) !important; }
-html[data-atmosphere='fields'] .viewer-content { box-shadow: 0 38px 100px -38px rgba(0,0,0,0.72), 0 8px 22px -12px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 246, 216, 0.22), inset 0 0 110px rgba(104, 74, 30, 0.28), inset 0 -54px 110px -56px rgba(110, 84, 30, 0.32) !important; }
+html[data-atmosphere='fuji'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 236, 224, 0.20), inset 0 0 110px rgba(96, 60, 28, 0.26), inset 0 -54px 110px -56px rgba(110, 56, 40, 0.30) !important; }
+html[data-atmosphere='wave'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(232, 240, 248, 0.18), inset 0 0 110px rgba(72, 64, 36, 0.26), inset 0 -54px 110px -56px rgba(40, 64, 86, 0.28) !important; }
+html[data-atmosphere='snow'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.12), inset 0 56px 120px -70px rgba(238, 244, 250, 0.22), inset 0 0 110px rgba(80, 70, 44, 0.24), inset 0 -54px 110px -56px rgba(56, 70, 84, 0.26) !important; }
+html[data-atmosphere='fields'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 246, 216, 0.22), inset 0 0 110px rgba(104, 74, 30, 0.28), inset 0 -54px 110px -56px rgba(110, 84, 30, 0.32) !important; }
 
 /* (per-appearance painting colour-grade removed for perf — a CSS filter on
    the painting canvas re-applies on every depth-parallax frame.) */

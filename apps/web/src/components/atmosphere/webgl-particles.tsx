@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef } from 'react';
+import { SnowBank, stampPetal } from './accumulation';
 import type { ParticleKind } from './atmospheres';
 
 interface WebGLParticlesProps {
@@ -60,17 +61,6 @@ export interface KindConfig {
 // droplets are OPAQUE shapes with sharp edges and just a hint of
 // anti-aliasing. Each drawer below renders a solid form with a
 // minimal feather, not a glow.
-
-// Per-kind splat tint used by the accumulation layer. Matches each
-// sprite's signature color so settled dust reads as "made of this".
-function splatColor(kind: Exclude<ParticleKind, 'none'>, alpha: number): string {
-  switch (kind) {
-    case 'petals': return `rgba(249, 168, 212, ${alpha})`;
-    case 'snow':   return `rgba(255, 255, 255, ${alpha})`;
-    case 'spray':  return `rgba(190, 220, 245, ${alpha})`;
-    case 'motes':  return `rgba(245, 205, 130, ${alpha})`;
-  }
-}
 
 const drawPetal = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.clearRect(0, 0, s, s);
@@ -169,8 +159,10 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     accumulateFadePerSec: 0.018,  // ~55 s half-life
     baseSize: 10,
     sizeJitter: 18,        // 10–28px — strong size variance
-    lifeMin: 18,
-    lifeMax: 32,
+    // A petal at ~30px/s needs ~25s to cross the viewport; shorter lives
+    // timed out in the air and nothing reached the ground to carpet it.
+    lifeMin: 38,
+    lifeMax: 58,
     windStrength: 0.95,
     spawnFrom: 'top',
     initialVy: () => 4 + Math.random() * 10,
@@ -193,8 +185,10 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
     // flakes are unmistakably bigger and softer than the rest.
     baseSize: 2.5,
     sizeJitter: 15,
-    lifeMin: 22,
-    lifeMax: 36,
+    // Long enough to reach the ground: a flake that times out mid-air never
+    // lands, and it is the landings that build the drift.
+    lifeMin: 34,
+    lifeMax: 50,
     windStrength: 0.8,
     spawnFrom: 'top',
     initialVy: () => 10 + Math.random() * 18,
@@ -509,6 +503,23 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const accumCtx = accumCanvas.getContext('2d')!;
       const accumDpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const accumOn = cfg.accumulate > 0;
+      // Snow piles on surfaces (see accumulation.ts); petals carpet the
+      // ground where they fall. Two different things, two code paths.
+      const pileMode: 'bank' | 'carpet' | 'none' = !accumOn ? 'none' : kind === 'snow' ? 'bank' : 'carpet';
+      const bank = new SnowBank();
+      bank.resize(W());
+      // The scroll's top rod is a surface too. Its position is layout, read at
+      // 8Hz off the hot path — never inside the per-particle loop.
+      let rodClock = 0;
+      const updateRod = () => {
+        const el = document.querySelector('.viewer-content');
+        if (!el) { bank.setRod(null); return; }
+        const r = el.getBoundingClientRect();
+        const y = r.top - 8;                        // the rod's top edge: 8px proud of the silk
+        if (y < 2 || y > H() - 30) { bank.setRod(null); return; }
+        bank.setRod({ x0: r.left - 14 + 9, x1: r.right + 14 - 9, y });
+      };
+      let bankFrame = 0;
 
       const onResize = () => {
         renderer.setSize(window.innerWidth, window.innerHeight, false);
@@ -518,8 +529,9 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         camera.bottom = -window.innerHeight / 2;
         camera.updateProjectionMatrix();
         // Resizing the accumulation canvas clears it (browser behavior).
-        // Acceptable — we lose accumulated dust on window resize.
+        // The snow bank is a heightfield, not pixels, so it survives.
         setAccumSize();
+        bank.resize(W());
       };
       window.addEventListener('resize', onResize);
 
@@ -527,6 +539,32 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const wind = makeWindField();
       let last = performance.now();
       let raf = 0;
+
+      // Gusts. The wind field gives texture; it does not give weather. A
+      // gust is a coherent event: it builds over a second or two, holds,
+      // and dies away, and while it is on the whole field leans the same
+      // way. That is what makes snow read as WEATHER rather than a
+      // particle field — you can see one coming across the frame.
+      let gust = 0, gustTarget = 0, gustDir = 1, gustClock = 0, gustWait = 6 + Math.random() * 8;
+      const stepGust = (dt: number) => {
+        gustClock += dt;
+        if (gustTarget === 0 && gustClock > gustWait) {
+          gustTarget = 0.6 + Math.random() * 0.4;
+          gustDir = Math.random() < 0.5 ? -1 : 1;
+          gustClock = 0;
+          gustWait = 2.5 + Math.random() * 3.5;       // how long it blows
+        } else if (gustTarget > 0 && gustClock > gustWait) {
+          gustTarget = 0;
+          gustClock = 0;
+          gustWait = 7 + Math.random() * 12;          // calm before the next
+        }
+        gust += (gustTarget - gust) * Math.min(1, dt * (gustTarget > 0 ? 0.9 : 0.5));
+      };
+
+      // Scroll parallax. The reader's scroll is a camera move: when the page
+      // goes up, what is close to the lens goes up more than what is far.
+      // Without this the flakes are a sheet of glass in front of the page.
+      let lastScrollY = window.scrollY;
       // Cap the particle simulation to ~30fps. Each tick runs a full CPU
       // physics pass, a full-screen accumulation fade, AND re-uploads every
       // particle buffer to the GPU — at 60fps that alone can swamp an
@@ -549,6 +587,9 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         const tSec = now / 1000;
 
         const dragFactor = Math.exp(-cfg.drag * dt);
+        stepGust(dt);
+        const scrollDelta = window.scrollY - lastScrollY;
+        lastScrollY = window.scrollY;
         for (let i = 0; i < count; i++) {
           const ix = i * 3;
           // Position in centered coords.
@@ -563,6 +604,23 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           const [wx, wy] = wind(px + W() / 2, H() / 2 - py, tSec);
           vx[i] += wx * cfg.windStrength * speedScale * dt;
           vy[i] += wy * cfg.windStrength * speedScale * dt;
+          // A gust leans on everything, the near layer hardest, and lifts a
+          // little: snow in a gust goes sideways and slightly UP.
+          if (gust > 0.01) {
+            vx[i] += gustDir * gust * 70 * speedScale * dt;
+            vy[i] += gust * 18 * speedScale * dt;
+          }
+          // Flutter. A petal is a sail: it does not fall, it see-saws down,
+          // sliding sideways one way then the other as it tips, and its spin
+          // follows the tip. Each has its own phase and rate.
+          if (cfg.rotates) {
+            const ph = i * 1.7 + tSec * (1.4 + (i % 7) * 0.13);
+            vx[i] += Math.sin(ph) * 28 * dt;
+            vy[i] += Math.max(0, Math.cos(ph * 0.5)) * 9 * dt;
+            rotV[i] = Math.cos(ph) * 1.6;
+          }
+          // Camera move: parallax with the reader's scroll.
+          if (scrollDelta !== 0) positions[ix + 1] += scrollDelta * (0.10 + d * 0.55);
 
           // Gravity (positive = down → reduces y). Also depth-scaled.
           vy[i] -= cfg.gravity * speedScale * dt;
@@ -607,49 +665,48 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           const depthAlpha = 0.45 + d * 0.55;
           alphas[i] = Math.max(0, Math.min(1, fade * depthAlpha * alphaBase[i]));
 
-          // Settling — when a particle reaches the lower viewport
-          // and the kind accumulates, write a soft splat and respawn.
-          // Earlier we also required `speed < terminalV * 0.25`, but
-          // gravity-bound particles cruise at terminal speed all the
-          // way down so they never qualified and nothing ever piled
-          // up. Now ANY particle that reaches the lower 25% of the
-          // viewport settles — matches what your eye expects from
-          // snow hitting the ground.
+          // Landing. Screen space: x from the left, y from the top.
           let settled = false;
-          // Settle band: from -H/2 * 0.50 down to -H/2 (the floor).
-          // Slight randomization on the exact splat-y position so the
-          // accumulation reads as a soft pile rather than a hard line.
-          const settleBandTop = -H() / 2 * 0.50;
-          if (accumOn && positions[ix + 1] < settleBandTop) {
-            // Splat near the bottom band (with a 0..30px jitter above
-            // the floor) so accumulation looks like a soft drift, not
-            // a stripe at the screen edge.
-            positions[ix + 1] = -H() / 2 + Math.random() * 30;
-            // Translate centered coords → top-left pixel coords for
-            // the accumulation canvas. DPR-scaled.
-            const sx = (positions[ix] + W() / 2) * accumDpr;
-            const sy = (H() / 2 - positions[ix + 1]) * accumDpr;
-            // Splat radius is generous so each one is visible — the
-            // old 0.42× sprite-size was 4-5 actual pixels and read as
-            // noise. ~22-50 px in screen space accumulates into a
-            // proper drift.
-            const sR = (10 + sizes[i] * 1.4) * accumDpr;
-            // Soft radial splat in the kind's signature color via
-            // additive blend. Subtle per particle; accumulates over
-            // many settled particles.
-            const g = accumCtx.createRadialGradient(sx, sy, 0, sx, sy, sR);
-            const splatA = cfg.accumulate * alphaBase[i];
-            // Reuse the sprite's center-color by re-running the kind's
-            // drawer into a tiny aux canvas would be heavier — instead
-            // we pick per-kind splat colors that match.
-            g.addColorStop(0, splatColor(kind, splatA));
-            g.addColorStop(1, splatColor(kind, 0));
-            accumCtx.globalCompositeOperation = 'lighter';
-            accumCtx.fillStyle = g;
-            accumCtx.beginPath();
-            accumCtx.arc(sx, sy, sR, 0, Math.PI * 2);
-            accumCtx.fill();
-            settled = true;
+          if (pileMode !== 'none') {
+            const sx = positions[ix] + W() / 2;
+            const sy = H() / 2 - positions[ix + 1];
+            const syPrev = H() / 2 - py;
+            const restSize = (cfg.baseSize + depth[i] * cfg.sizeJitter) * (0.35 + depth[i] * 0.65);
+            if (pileMode === 'bank') {
+              // A flake stops where the pile already is, so the drift grows
+              // under the fall instead of flakes vanishing into a line.
+              // The scroll hangs at one depth. Flakes nearer than it pass in
+              // front, farther ones behind; only the band at its depth can
+              // land on the rod. Without this the rod, sitting at the top of
+              // the viewport, caught every flake over the column the moment
+              // it entered the frame, and the snowfall over the page died.
+              const rodH = d > 0.28 && d < 0.5 ? bank.rodHeightAt(sx) : -1;
+              if (rodH >= 0) {
+                const rodSurface = bank.rodTop - rodH;
+                if (syPrev < rodSurface && sy >= rodSurface && vy[i] < 0) {
+                  bank.deposit(sx, restSize, 'rod');
+                  settled = true;
+                }
+              }
+              if (!settled) {
+                const groundSurface = H() - bank.groundHeightAt(sx);
+                if (sy >= groundSurface - 1) {
+                  bank.deposit(sx, restSize, 'ground');
+                  settled = true;
+                }
+              }
+            } else if (sy >= H() - 4 - Math.random() * 26) {
+              // Petals come to rest in a shallow band along the bottom; a
+              // few land on the rod as well.
+              const rodH = bank.rodHeightAt(sx);
+              const y = rodH >= 0 && Math.random() < 0.08 ? bank.rodTop + 2 : H() - 2 - Math.random() * 22;
+              accumCtx.save();
+              accumCtx.scale(accumDpr, accumDpr);
+              accumCtx.globalCompositeOperation = 'source-over';
+              stampPetal(accumCtx, spriteCanvas, sx, y, restSize, cfg.accumulate * alphaBase[i]);
+              accumCtx.restore();
+              settled = true;
+            }
           }
 
           // Respawn if life expired OR offscreen OR just settled.
@@ -658,10 +715,21 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           if (life[i] <= 0 || offX || offY || settled) respawn(i, false);
         }
 
-        // Fade the accumulation layer per-second. We multiply the
-        // entire canvas's alpha by (1 - fadePerSec * dt) using a
-        // destination-out fill — cheap and uniform.
-        if (accumOn && cfg.accumulateFadePerSec > 0) {
+        if (pileMode === 'bank') {
+          rodClock += dt;
+          if (rodClock > 0.125) { rodClock = 0; updateRod(); }
+          bank.step(dt);
+          // The drift is redrawn from the heightfield, not accumulated as
+          // pixels, so it can be drawn at a third of the sim rate with no
+          // loss: nothing on it moves faster than the pile grows.
+          if ((bankFrame++ % 3) === 0) {
+            accumCtx.save();
+            accumCtx.setTransform(accumDpr, 0, 0, accumDpr, 0, 0);
+            bank.render(accumCtx, W(), H());
+            accumCtx.restore();
+          }
+        } else if (pileMode === 'carpet' && cfg.accumulateFadePerSec > 0) {
+          // The carpet thins over minutes rather than piling into a floor.
           const fadeAlpha = cfg.accumulateFadePerSec * dt;
           accumCtx.globalCompositeOperation = 'destination-out';
           accumCtx.fillStyle = `rgba(0,0,0,${fadeAlpha})`;
