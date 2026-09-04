@@ -63,11 +63,15 @@ test.describe('Dark/Light Mode Toggle', () => {
     await page.goto('/');
     await uploadFile(page, 'test.md', testMd);
     await page.waitForSelector('.toolbar', { timeout: 10000 });
+    // Appearance lives in the floating atmosphere dock (bottom-left) since
+    // the old toolbar theme button was merged into it. The dock unfurls on
+    // hover on hover-capable devices, so hover before touching its buttons.
+    await page.locator('.mv-atm-dots').hover();
   });
 
   test('theme toggle button exists', async ({ page }) => {
-    // Title is "Theme: dark" or "Theme: light" etc
-    const themeBtn = page.locator('button[title^="Theme:"]');
+    // Title is "Appearance: dark — click to change" etc.
+    const themeBtn = page.locator('button[title^="Appearance:"]');
     await expect(themeBtn).toBeVisible();
   });
 
@@ -77,7 +81,7 @@ test.describe('Dark/Light Mode Toggle', () => {
     );
 
     // Click theme cycle button
-    const themeBtn = page.locator('button[title^="Theme:"]');
+    const themeBtn = page.locator('button[title^="Appearance:"]');
     await themeBtn.click();
     await page.waitForTimeout(300);
 
