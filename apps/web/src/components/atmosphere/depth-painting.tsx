@@ -679,7 +679,14 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
         // rejects the 8.3ms gap AND (with any jitter) sometimes the 16.6ms
         // one too, landing at ~48fps instead of 60. The slack makes the
         // every-other-frame cadence stable.
-        if (!active && lastRender >= 0 && now - lastRender < IDLE_FRAME_MS * 0.75) return;
+        //
+        // But every-other-frame IS the judder on a 120Hz display (the
+        // living relief + shader wobble move continuously), so once the
+        // governor has learned a fast native cadence and the GPU is coping
+        // (not lowered), render every vsync. Any missed frames re-arm the
+        // old gate via lowered automatically.
+        const idleMs = !lowered && native < 12 ? 0 : IDLE_FRAME_MS * 0.75;
+        if (!active && lastRender >= 0 && now - lastRender < idleMs) return;
         lastRender = now;
 
         (material.uniforms.uTime as { value: number }).value = tNow;

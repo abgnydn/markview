@@ -1086,12 +1086,18 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
       // under a millisecond; 30fps is exactly the stutter that reads as
       // "screensaver" — a falling flake stepping instead of gliding. A
       // 120Hz display still renders every other frame.
+      // Render budget: match the display instead of capping at 60. 7ms
+      // clears every vsync up to 144Hz (8.3ms 120Hz cadence, jitter
+      // included); 60Hz is unaffected (16.7ms clears either budget).
+      // Falls back to 15ms when the painting's governor reports the GPU
+      // is short, so weak machines keep the old, cheaper cadence.
       const MIN_FRAME_MS = 15;
+      const FULL_FRAME_MS = 7;
       const dragFactors = new Float32Array(cells);
       const tick = () => {
         raf = requestAnimationFrame(tick);
         const now = performance.now();
-        if (now - last < MIN_FRAME_MS) return;
+        if (now - last < (lowQuality ? MIN_FRAME_MS : FULL_FRAME_MS)) return;
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
         const tSec = now / 1000;
@@ -1378,7 +1384,10 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
         // When the painting's governor has dropped resolution the machine is
         // short of GPU; the surfaces redraw less often to give some back.
         if ((bankFrame & 63) === 0) lowQuality = document.documentElement.getAttribute('data-atm-quality') === '1';
-        const cadence = (pile === 'surf' || pile === 'rain' ? 2 : 3) + (lowQuality ? 2 : 0);
+        // High-refresh displays render twice the frames; scale the repaint
+        // cadence so the paint RATE stays constant instead of doubling.
+        const baseCadence = pile === 'surf' || pile === 'rain' ? 2 : 3;
+        const cadence = (lowQuality ? baseCadence + 2 : baseCadence) * (dt < 0.012 ? 2 : 1);
         const draw = (bankFrame++ % cadence) === 0;
         if (pile === 'bank') { bank.step(dt); for (const L of ledgeBanks) L.bank.step(dt); }
         if (pile === 'surf' || pile === 'rain') {
