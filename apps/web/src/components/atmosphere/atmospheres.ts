@@ -13,7 +13,7 @@
 
 import type { Atmosphere } from '@/stores/theme-store';
 
-export type ParticleKind = 'none' | 'petals' | 'snow' | 'spray' | 'motes';
+export type ParticleKind = 'none' | 'petals' | 'snow' | 'spray' | 'motes' | 'rain';
 
 export interface Painting {
   /** Stable id used for the cycle index + localStorage key. */
@@ -38,7 +38,7 @@ export interface AtmosphereConfig {
 
 /**
  * Attribution for the bundled field recordings (see
- * scripts/fetch-atmosphere-audio.sh). Three of the four are CC-BY, which
+ * scripts/fetch-atmosphere-audio.sh). Three of the five are CC-BY, which
  * REQUIRES visible credit — the atmosphere credit line renders this whenever
  * ambient sound is unmuted. Keep it in sync with the script, and don't drop it.
  */
@@ -47,6 +47,7 @@ export const AUDIO_CREDITS: Record<Exclude<Atmosphere, 'none'>, string> = {
   wave:   'Sound: “Atlantic Ocean Waves” by tim.kahn · CC BY 4.0',
   snow:   'Sound: “Howling Wind Ambience” by DBlover · CC0',
   fields: 'Sound: “meadow-land summer ambience” by klankbeeld · CC BY 4.0',
+  rain:   'Sound: “AMB_M_City_Rain_Light” by conleec · CC0',
 };
 
 export const ATMOSPHERES: Record<Exclude<Atmosphere, 'none'>, AtmosphereConfig> = {
@@ -186,23 +187,15 @@ export const ATMOSPHERES: Record<Exclude<Atmosphere, 'none'>, AtmosphereConfig> 
     filterLight: 'saturate(0.85) contrast(0.95) brightness(1.05)',
     filterDark: 'saturate(0.70) contrast(0.95) brightness(0.92)',
     paintings: [
-      // snow-36531 and snow-56188 are different impressions of the SAME
-      // Karasaki Pine in Rain print and read as duplicates when rotated;
-      // dropped them. snow-57043 is technically rain (Shōno) but visually
-      // distinct from the Kanbara village so the rotation reads as two
-      // distinct atmospheres rather than four near-clones.
+      // snow-36531 and snow-56188 were two impressions of the SAME Night
+      // Rain at Karasaki print and read as duplicates when rotated; dropped
+      // them. White Rain at Shōno (57043) sat here while there was no rain
+      // pack. Both prints now live in the rain pack below.
       {
         key: 'kanbara-evening',
         imageSrc: '/atmospheres/snow-hiroshige.webp',
         attribution: 'Utagawa Hiroshige',
         attributionDetail: 'A Snowy Evening at Kanbara, 1834 · The Met (CC0)',
-        focal: 'center 50%',
-      },
-      {
-        key: 'shono-white-rain',
-        imageSrc: '/atmospheres/snow-57043.webp',
-        attribution: 'Utagawa Hiroshige',
-        attributionDetail: 'White Rain at Shōno, 1833-34 · The Met (CC0)',
         focal: 'center 50%',
       },
       {
@@ -305,6 +298,52 @@ export const ATMOSPHERES: Record<Exclude<Atmosphere, 'none'>, AtmosphereConfig> 
         imageSrc: '/atmospheres/fields-437547.webp',
         attribution: 'Jacob van Ruisdael',
         attributionDetail: 'Grainfields, late 1660s · The Met (CC0)',
+        focal: 'center 50%',
+      },
+    ],
+  },
+  rain: {
+    id: 'rain',
+    label: 'Rain',
+    particles: 'rain',
+    opacityLight: 0.64,
+    opacityDark: 0.44,
+    filterLight: 'saturate(0.82) contrast(0.96)',
+    filterDark: 'saturate(0.70) contrast(0.94) brightness(0.84)',
+    paintings: [
+      {
+        key: 'ohashi-sudden-shower',
+        imageSrc: '/atmospheres/rain-37094.webp',
+        attribution: 'Utagawa Hiroshige',
+        attributionDetail: 'Sudden Shower over Shin-Ōhashi Bridge and Atake, 1857 · The Met (CC0)',
+        focal: 'center 60%',
+      },
+      {
+        key: 'karasaki-night-rain',
+        imageSrc: '/atmospheres/rain-36531.webp',
+        attribution: 'Utagawa Hiroshige',
+        attributionDetail: 'Night Rain at Karasaki, c. 1835 · The Met (CC0)',
+        focal: 'center 50%',
+      },
+      {
+        key: 'shono-white-rain',
+        imageSrc: '/atmospheres/rain-57043.webp',
+        attribution: 'Utagawa Hiroshige',
+        attributionDetail: 'White Rain at Shōno, 1833-34 · The Met (CC0)',
+        focal: 'center 50%',
+      },
+      {
+        key: 'tsuchiyama-spring-rain',
+        imageSrc: '/atmospheres/rain-36971.webp',
+        attribution: 'Utagawa Hiroshige',
+        attributionDetail: 'Spring Rain at Tsuchiyama, 1834-35 · The Met (CC0)',
+        focal: 'center 50%',
+      },
+      {
+        key: 'azuma-wood-evening-rain',
+        imageSrc: '/atmospheres/rain-57065.webp',
+        attribution: 'Utagawa Hiroshige',
+        attributionDetail: 'Evening Rain in Azuma Wood, c. 1838 · The Met (CC0)',
         focal: 'center 50%',
       },
     ],

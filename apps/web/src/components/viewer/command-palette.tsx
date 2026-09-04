@@ -59,7 +59,7 @@ export function CommandPalette() {
     const themeStore = useThemeStore.getState();
     const wsStore = useWorkspaceStore.getState();
 
-    const atmospheres: Atmosphere[] = ['none', 'fuji', 'wave', 'snow', 'fields'];
+    const atmospheres: Atmosphere[] = ['none', 'fuji', 'wave', 'snow', 'fields', 'rain'];
     const atmCmds: Command[] = atmospheres.map((a) => ({
       id: `atm-${a}`,
       label: `Atmosphere · ${a === 'none' ? 'paper (off)' : a}`,

@@ -39,26 +39,67 @@
    rendered image and binds painting, particles and haze into one plate.
    It stops at the paper: the sheet is in the same room, but the reader is
    looking AT it, and grain over type would just look like dirty type. */
+/* --atm-fog drives the swap pulse below: 0 at rest, 1 while the container
+   carries .atmosphere-swapping. Registered as a <number> so the transition
+   interpolates it and the haze stops that read it move every frame. */
+@property --atm-fog { syntax: '<number>'; inherits: false; initial-value: 0; }
 .atmosphere.atmosphere-painting::before {
   content: '';
   position: absolute;
   inset: 0;
-  /* Under the particles and the drift (z:1–2): the haze veils the far
-     ground of the PAINTING; the snow in the air and on the ground is in
-     front of it. */
-  z-index: 0;
+  /* Over the painting, under the particles and the drift (z:1–2, later
+     in tree order): the haze veils the far ground of the PAINTING; the
+     snow in the air and on the ground is in front of it. At z:0 this
+     pseudo painted in tree order BEFORE the img/canvas (both z:auto) —
+     i.e. underneath the painting, where the veil only tinted the page
+     background showing through it. */
+  z-index: 1;
   pointer-events: none;
+  --atm-fog: 0;
+  /* The veil is the swap pulse OR the weather: --atm-visibility (1 clear,
+     ~0.65 in a squall) is written on the container by the particle field. */
+  --atm-veil: max(var(--atm-fog, 0), calc((1 - var(--atm-visibility, 1)) * 0.9));
   /* --atm-haze is set per atmosphere in zen.css: cold blue-grey for the
      snow, sea spray for the wave, blossom-pink for Fuji, gold for the
-     fields. One blue haze on a red mountain read as fog on the wrong day. */
+     fields. One blue haze on a red mountain read as fog on the wrong day.
+
+     Two layers. Top: the haze; each stop's alpha and position are offset
+     by --atm-fog, so at 1 the veil is thicker and its horizon has climbed
+     from 52% to 22% of the frame. Bottom: a vignette — transparent through
+     the centre 55%, 0.28 black at the corners — so the frame darkens at
+     its edges and the eye stays on the lit centre and the reading column.
+     Pure gradients, nothing sampled from the painting, so no per-frame
+     filter on the canvas. */
   background:
     linear-gradient(180deg,
       transparent 0%,
-      transparent 52%,
-      rgba(var(--atm-haze, 204, 214, 226), 0.06) 70%,
-      rgba(var(--atm-haze, 204, 214, 226), 0.16) 88%,
-      rgba(var(--atm-haze, 204, 214, 226), 0.24) 100%);
+      transparent calc(52% - var(--atm-veil) * 30%),
+      rgba(var(--atm-haze, 204, 214, 226), calc(0.06 + var(--atm-veil) * 0.10)) calc(70% - var(--atm-veil) * 22%),
+      rgba(var(--atm-haze, 204, 214, 226), calc(0.16 + var(--atm-veil) * 0.16)) calc(88% - var(--atm-veil) * 12%),
+      rgba(var(--atm-haze, 204, 214, 226), calc(0.24 + var(--atm-veil) * 0.20)) 100%),
+    radial-gradient(ellipse at center,
+      transparent 55%,
+      rgba(0, 0, 0, 0.28) 100%);
+  /* Scene switch as weather: the fog rolls in over 900ms while the next
+     painting decodes, and rolls back out when .atmosphere-swapping drops.
+     The gradient repaints for the duration of the transition only. */
+  transition: --atm-fog 900ms ease-in-out;
 }
+.atmosphere.atmosphere-painting.atmosphere-swapping::before {
+  --atm-fog: 1;
+}
+
+/* Grain strength. The lead sets --atm-grain from the painting's measured
+   luminance (an inline value on the container wins over these). Until it
+   does: one default, and a per-atmosphere fallback keyed on the same
+   html[data-atmosphere] the palettes in zen.css use — bright flat snow
+   carries more grain, the busy dark brushwork of the fields carries less. */
+:root { --atm-grain: 0.42; }
+html[data-atmosphere='fuji']   { --atm-grain: 0.40; }
+html[data-atmosphere='wave']   { --atm-grain: 0.36; }
+html[data-atmosphere='snow']   { --atm-grain: 0.48; }
+html[data-atmosphere='fields'] { --atm-grain: 0.30; }
+html[data-atmosphere='rain']   { --atm-grain: 0.44; }
 .atmosphere.atmosphere-painting::after {
   content: '';
   position: absolute;
@@ -68,7 +109,15 @@
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
   background-size: 320px 320px;
   mix-blend-mode: soft-light;
-  opacity: 0.55;
+  opacity: var(--atm-grain, 0.42);
+  /* Less grain low in the frame, where the haze already sits. The mask is
+     in this element's box, which is inset -40% (frame rows are 22%–78% of
+     it) and rides along with the grain jitter, so the ramp is long: full
+     to the frame's midpoint, 0.55 at its foot. The jitter shifts the ramp
+     by up to ±9% of the box, which only modulates the grain's contrast in
+     the lower band, not the mean luminance. */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 48%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0.55) 100%);
+          mask-image: linear-gradient(180deg, #000 0%, #000 48%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0.55) 100%);
   animation: atmosphere-grain 0.9s steps(6) infinite;
 }
 @keyframes atmosphere-grain {
@@ -106,6 +155,66 @@
 .dark .atmosphere-image {
   opacity: var(--atm-opacity-dark, 0.4);
   filter: var(--atm-filter-dark, saturate(0.8) contrast(0.92) brightness(0.85)) var(--atm-time-tint, none);
+}
+
+/* ── Gate weave ─────────────────────────────────────────────────────────
+   Projected film is never quite still: the frame drifts a pixel or two in
+   the gate, irregularly, at low frequency. Two keyframed drifts on the
+   `translate` property (composited, no repaint, leaves `transform` free):
+   the painting on an 11s loop at ±1.2px x / ±0.8px y, and the whole layer
+   on a 17s loop at ±0.4px so haze, grain and particles carry a trace of
+   the same movement. 11 and 17 share no factor, so the two do not phase-
+   lock. The painting is scaled 1.006 so the drift never uncovers a strip
+   of page background along the frame edge (0.6% is 1.8px on a 600px
+   viewport, above the 1.2px worst-case vertical excursion). Both the img
+   fallback and the WebGL canvas carry .atmosphere-image and run the same
+   keyframes from the same mount, so the boot crossfade between them stays
+   aligned; a remount after context loss can be up to 2.4px out of phase
+   for the 700ms of that fade. */
+.atmosphere.atmosphere-painting {
+  animation: atmosphere-weave-frame 17s linear infinite;
+  will-change: transform;
+}
+.atmosphere-painting .atmosphere-image {
+  scale: 1.006;
+  animation: atmosphere-weave 11s linear infinite;
+  will-change: transform;
+}
+@keyframes atmosphere-weave {
+  0%   { translate: 0 0; }
+  9%   { translate: 0.8px -0.5px; }
+  21%  { translate: -1.1px 0.3px; }
+  30%  { translate: -0.4px 0.8px; }
+  44%  { translate: 1.2px 0.2px; }
+  53%  { translate: 0.5px -0.8px; }
+  66%  { translate: -0.9px -0.3px; }
+  78%  { translate: 0.2px 0.6px; }
+  89%  { translate: -1.2px -0.6px; }
+  100% { translate: 0 0; }
+}
+@keyframes atmosphere-weave-frame {
+  0%   { translate: 0 0; }
+  23%  { translate: 0.4px -0.2px; }
+  47%  { translate: -0.3px 0.4px; }
+  71%  { translate: -0.4px -0.4px; }
+  86%  { translate: 0.2px 0.3px; }
+  100% { translate: 0 0; }
+}
+/* Lite mode is documented below as nothing animating, nothing forcing
+   per-frame compositing — the weave is exactly that, so it is off there. */
+.atmosphere.atmosphere-painting.atmosphere-lite,
+.atmosphere.atmosphere-painting.atmosphere-lite .atmosphere-image {
+  animation: none;
+  will-change: auto;
+  scale: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere.atmosphere-painting,
+  .atmosphere.atmosphere-painting .atmosphere-image {
+    animation: none;
+    will-change: auto;
+    scale: none;
+  }
 }
 
 /* Cursor-reactive Canvas overlay — fills the viewport above the CSS
@@ -411,6 +520,9 @@
   position: absolute;
   left: 20px;
   bottom: 14px;
+  /* Above the haze + vignette (::before, z:1, earlier in tree order):
+     the credit sits in the corner where both are strongest. */
+  z-index: 1;
   font-family: var(--zen-mono);
   font-size: 9.5px;
   letter-spacing: 0.14em;

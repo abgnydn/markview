@@ -7,6 +7,8 @@ import { setAtmosphereAudio, unlockAtmosphereAudio, isAtmosphereMuted } from '@/
 import { WebGLParticles } from './webgl-particles';
 import { DepthPainting } from './depth-painting';
 import { SplatPainting } from './splat-painting';
+import { startMountSway } from './mount-sway';
+import { setSceneAtmosphere } from '@/lib/atmosphere/scene-light';
 
 interface PaintingAtmosphereProps {
   atmosphere: Exclude<Atmosphere, 'none'>;
@@ -191,6 +193,21 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
     return () => document.body.classList.remove('mv-lite');
   }, [lite]);
 
+  // One light for the scene (scene-light.ts): the painting's relief, the
+  // beams, the snow's shade and the scroll's cast shadow all read it.
+  useEffect(() => {
+    setSceneAtmosphere(displayed.atmosphere);
+    return () => setSceneAtmosphere('none');
+  }, [displayed.atmosphere]);
+
+  // The scroll sways in the particle field's gusts (mount-sway.ts writes
+  // --mount-sway; zen.css rotates the mount by it). Off in lite: there is
+  // no wind without the sim, and a moving panel is a composite per frame.
+  useEffect(() => {
+    if (lite) return;
+    return startMountSway();
+  }, [lite]);
+
   // The WebGPU-compute particle backend was deleted 2026-08-13 (shelved
   // since Three 0.184: instanced Sprite drew zero instances; no visible
   // benefit over the WebGL field, which already renders on the GPU).
@@ -297,7 +314,7 @@ export function PaintingAtmosphere({ atmosphere, paintingNonce = 0 }: PaintingAt
         /* GPU-rendered, CPU-simulated particle field — curl-noise wind,
            cursor force, gravity, life/respawn, per-atmosphere sprite. The
            (A WebGPU-compute variant was shelved and later deleted.) */
-        <WebGLParticles kind={displayedCfg.particles} />
+        <WebGLParticles kind={displayedCfg.particles} paintingSrc={displayed.painting.imageSrc} />
       )}
 
       <div className="atmosphere-credit">
@@ -351,7 +368,7 @@ function isTypingTarget(target: EventTarget | null): boolean {
  */
 function buildBirds(atmosphereId: string): ParticleInstance[] {
   const seedByAtmosphere: Record<string, number> = {
-    fuji: 0xb14d5, wave: 0x5ea91, snow: 0xfa11e, fields: 0xf1e1d,
+    fuji: 0xb14d5, wave: 0x5ea91, snow: 0xfa11e, fields: 0xf1e1d, rain: 0x4a1e5,
   };
   const rng = mulberry32(seedByAtmosphere[atmosphereId] ?? 0xb1d533);
   // More birds over open-sky scenes, fewer over the wave/snow close-ups.
@@ -448,6 +465,7 @@ function buildCreatures(atmosphereId: string): CreatureInstance[] {
     case 'fields': return make('butterfly', 5);
     case 'wave': return make('koi', 3);
     case 'snow': return make('crow', 2);
+    case 'rain': return make('crow', 2);
     default: return [];
   }
 }

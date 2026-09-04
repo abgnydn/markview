@@ -9,7 +9,7 @@
 # (see apps/web/src/lib/atmosphere/audio.ts), so running this is OPTIONAL —
 # it just upgrades the ambience from synth to real field recordings.
 #
-# Sources are Creative Commons from freesound.org. THREE OF THE FOUR ARE
+# Sources are Creative Commons from freesound.org. THREE OF THE FIVE ARE
 # CC-BY: the attribution in apps/web/src/components/atmosphere/atmospheres.ts
 # (audioCredit) must stay visible in the UI. Do not remove it.
 #
@@ -17,6 +17,7 @@
 #   wave   Atlantic Ocean Waves       tim.kahn    CC-BY 4.0  freesound.org/s/197714
 #   fields meadow-land summer ambience klankbeeld CC-BY 4.0  freesound.org/s/240108
 #   snow   Howling Wind Ambience      DBlover     CC0        freesound.org/s/405601
+#   rain   AMB_M_City_Rain_Light      conleec     CC0        freesound.org/s/171980
 #
 # Usage:  bash apps/web/scripts/fetch-atmosphere-audio.sh
 # Needs:  ffmpeg (brew install ffmpeg), curl, network access to freesound.org
@@ -35,6 +36,7 @@ ENTRIES=(
   "wave|tim.kahn|197714|30|60"
   "fields|klankbeeld|240108|120|60"
   "snow|DBlover|405601|8|60"
+  "rain|conleec|171980|30|60"
 )
 
 # Seamless loop: crossfade the tail back over the head so the wrap is

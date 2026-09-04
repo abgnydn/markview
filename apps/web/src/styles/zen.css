@@ -96,6 +96,13 @@ html[data-atmosphere='fields'] {     /* golden fields · harvest gold */
   --zen-code:        #d9b25a;
   --atm-haze:        240, 222, 178;  /* late-afternoon gold */
 }
+html[data-atmosphere='rain'] {       /* rain · wet slate */
+  --zen-accent:      #7b93aa;
+  --zen-accent-soft: rgba(123, 147, 170, 0.26);
+  --zen-accent-glow: rgba(123, 147, 170, 0.12);
+  --zen-code:        #8ea6b9;
+  --atm-haze:        186, 198, 210;  /* wet slate-grey */
+}
 
 [data-theme='dark'],
 .dark {
@@ -891,8 +898,16 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
     /* mottle — the slow, cloudy variation in pulp density you see holding
        a sheet to the light; the fibres alone read as uniform static */
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'><filter id='m' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.0035' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.36  0 0 0 0 0.26  0 0 0 0 0.12  0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23m)'/></svg>") repeat,
-    /* directional light — one key light, upper left, as on a lit desk */
-    linear-gradient(118deg, rgba(255, 252, 240, 0.30) 0%, rgba(255, 252, 240, 0.08) 34%, transparent 55%, rgba(70, 52, 28, 0.07) 100%),
+    /* directional light — the scene's key light (scene-light.ts writes
+       --key-x, --key-rgb, --key-warmth, --key-intensity on <html>): it comes
+       from the side the sun is on, in the sun's colour, and the shaded side
+       of the sheet is in the colour of the air (--atm-haze) — blue in the
+       snow, gold in the fields */
+    linear-gradient(calc(180deg + var(--key-x, -0.6) * 62deg),
+      rgba(var(--key-rgb, 255, 252, 240), calc((0.16 + var(--key-warmth, 0.2) * 0.2) * var(--key-intensity, 0.9) + 0.06)) 0%,
+      rgba(var(--key-rgb, 255, 252, 240), calc(0.06 * var(--key-intensity, 0.9) + 0.02)) 34%,
+      transparent 55%,
+      rgba(var(--atm-haze, 70, 52, 28), 0.10) 100%),
     radial-gradient(ellipse 78% 66% at 50% 46%, transparent 58%, rgba(70, 52, 28, 0.13) 100%),
     linear-gradient(178deg, var(--paper-top, #f3ead7), var(--paper-bot, #ece1ca)) !important;
   background-position: calc(100% - 30px) calc(100% - 36px), 0 0, 0 0, 0 0, 0 0, 0 0 !important;
@@ -1031,6 +1046,7 @@ html[data-atmosphere='fuji']   .viewer-content { --paper-top: #ecdcbb; --paper-b
 html[data-atmosphere='wave']   .viewer-content { --paper-top: #e4ddc4; --paper-bot: #d4caa8; }
 html[data-atmosphere='snow']   .viewer-content { --paper-top: #e7e3d4; --paper-bot: #d8d3bd; }
 html[data-atmosphere='fields'] .viewer-content { --paper-top: #ecddb2; --paper-bot: #ddca92; }
+html[data-atmosphere='rain']   .viewer-content { --paper-top: #e2e1d6; --paper-bot: #d1d1c0; }
 
 /* ════════════════ 20 classical-scroll refinements ════════════════ */
 
@@ -1578,11 +1594,13 @@ html[data-atmosphere='wave']   .viewer-content { --seal: #2f6f8f; }
 html[data-atmosphere='snow']   .viewer-content { --seal: #5b6b80; }
 html[data-atmosphere='fields'] .viewer-content { --seal: #b06a1f; }
 html[data-atmosphere='fuji']   .viewer-content { --seal: #b0392a; }
+html[data-atmosphere='rain']   .viewer-content { --seal: #4f6478; }
 /* (74) Distinct section glyph per appearance. */
 html[data-atmosphere='wave']   .markdown-content h2::before { content: '≈'; }
 html[data-atmosphere='snow']   .markdown-content h2::before { content: '❄'; }
 html[data-atmosphere='fields'] .markdown-content h2::before { content: '☷'; }
 html[data-atmosphere='fuji']   .markdown-content h2::before { content: '❀'; }
+html[data-atmosphere='rain']   .markdown-content h2::before { content: '☂'; }
 /* (76) Heading underline tints toward the appearance. */
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2 { border-bottom-color: var(--zen-accent-soft) !important; }
 
@@ -4619,7 +4637,7 @@ body.mv-fast-scroll .atmosphere-cursor-canvas { opacity: 0.4; }
  * small coloured point. Buttons + inputs keep the native pointer / text
  * cursors so click + edit affordances are unchanged.
  *   default-dark → violet · light → carbon ·
- *   fuji → pink · wave → indigo · snow → silver · fields → amber
+ *   fuji → pink · wave → indigo · snow → silver · fields → amber · rain → slate
  * ──────────────────────────────────────────────────────────────────────── */
 body {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%23b9a4ff'/></svg>") 6 6, auto;
@@ -4638,6 +4656,9 @@ html[data-atmosphere='snow'] body {
 }
 html[data-atmosphere='fields'] body {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%23f59e0b'/></svg>") 6 6, auto;
+}
+html[data-atmosphere='rain'] body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><circle cx='6' cy='6' r='4' fill='%239fb3c8'/></svg>") 6 6, auto;
 }
 /* Native pointer + text on interactive surfaces — affordances unchanged. */
 button, a, [role='button'], .toolbar-btn,
@@ -4750,7 +4771,7 @@ input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
 
 /* ────────────────────────────────────────────────────────────────────────
  * Atmosphere quick-toggle — six small dots floating bottom-left, one
- * per atmosphere (paper / fuji / wave / snow / fields). Active one is
+ * per atmosphere (paper / fuji / wave / snow / fields / rain). Active one is
  * filled in its mood color; others are hairline rings. Lets the user
  * change mood without opening the sidebar. Click to set.
  * Mounted globally via <AtmosphereDots /> in viewer-page.
@@ -4821,6 +4842,7 @@ input, textarea, .cm-content, [contenteditable='true'] { cursor: text; }
 .mv-atm-dot-wave   { color: #3b82f6; }
 .mv-atm-dot-snow   { color: #cbd5e1; }
 .mv-atm-dot-fields { color: #f59e0b; }
+.mv-atm-dot-rain   { color: #9fb3c8; }
 
 /* Subtle divider between mood dots + control icons. */
 .mv-atm-sep {
@@ -4897,6 +4919,9 @@ html[data-atmosphere='snow'] body {
 }
 html[data-atmosphere='fields'] body {
   cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.25'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.5' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%23f59e0b'/></svg>") 12 12, default;
+}
+html[data-atmosphere='rain'] body {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='7' fill='black' opacity='0.25'/><circle cx='12' cy='12' r='5' fill='white'/><circle cx='12' cy='12' r='5' fill='none' stroke='black' stroke-opacity='0.5' stroke-width='1.2'/><circle cx='12' cy='12' r='2.2' fill='%236b7f96'/></svg>") 12 12, default;
 }
 
 /* Pointer over clickable surfaces — refined diagonal arrow with a
@@ -4980,6 +5005,7 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
   background-repeat: no-repeat, repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, no-repeat !important;
   background-blend-mode: normal, screen, soft-light, multiply, multiply, multiply, soft-light, overlay, normal !important;
   box-shadow:
+    var(--mount-cast),
     0 38px 100px -38px rgba(0, 0, 0, 0.72),
     0 8px 22px -12px rgba(0, 0, 0, 0.42),
     inset 0 0 0 1px rgba(120, 90, 50, 0.16),
@@ -4994,10 +5020,11 @@ html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content {
   position: relative;
 }
-html[data-atmosphere='fuji'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 236, 224, 0.20), inset 0 0 110px rgba(96, 60, 28, 0.26), inset 0 -54px 110px -56px rgba(110, 56, 40, 0.30) !important; }
-html[data-atmosphere='wave'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(232, 240, 248, 0.18), inset 0 0 110px rgba(72, 64, 36, 0.26), inset 0 -54px 110px -56px rgba(40, 64, 86, 0.28) !important; }
-html[data-atmosphere='snow'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.12), inset 0 56px 120px -70px rgba(238, 244, 250, 0.22), inset 0 0 110px rgba(80, 70, 44, 0.24), inset 0 -54px 110px -56px rgba(56, 70, 84, 0.26) !important; }
-html[data-atmosphere='fields'] .viewer-content { box-shadow: 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 246, 216, 0.22), inset 0 0 110px rgba(104, 74, 30, 0.28), inset 0 -54px 110px -56px rgba(110, 84, 30, 0.32) !important; }
+html[data-atmosphere='fuji'] .viewer-content { box-shadow: var(--mount-cast), 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 236, 224, 0.20), inset 0 0 110px rgba(96, 60, 28, 0.26), inset 0 -54px 110px -56px rgba(110, 56, 40, 0.30) !important; }
+html[data-atmosphere='wave'] .viewer-content { box-shadow: var(--mount-cast), 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(232, 240, 248, 0.18), inset 0 0 110px rgba(72, 64, 36, 0.26), inset 0 -54px 110px -56px rgba(40, 64, 86, 0.28) !important; }
+html[data-atmosphere='snow'] .viewer-content { box-shadow: var(--mount-cast), 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.12), inset 0 56px 120px -70px rgba(238, 244, 250, 0.22), inset 0 0 110px rgba(80, 70, 44, 0.24), inset 0 -54px 110px -56px rgba(56, 70, 84, 0.26) !important; }
+html[data-atmosphere='fields'] .viewer-content { box-shadow: var(--mount-cast), 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.14), inset 0 56px 120px -70px rgba(255, 246, 216, 0.22), inset 0 0 110px rgba(104, 74, 30, 0.28), inset 0 -54px 110px -56px rgba(110, 84, 30, 0.32) !important; }
+html[data-atmosphere='rain'] .viewer-content { box-shadow: var(--mount-cast), 0 1px 2px rgba(20, 12, 4, 0.35), 0 10px 24px -8px rgba(20, 12, 4, 0.45), 0 44px 110px -30px rgba(0, 0, 0, 0.75), inset 0 18px 22px -20px rgba(40, 26, 10, 0.35), inset 0 0 0 1px rgba(120,90,50,0.12), inset 0 56px 120px -70px rgba(226, 234, 242, 0.20), inset 0 0 110px rgba(70, 72, 60, 0.26), inset 0 -54px 110px -56px rgba(48, 64, 80, 0.30) !important; }
 
 /* (per-appearance painting colour-grade removed for perf — a CSS filter on
    the painting canvas re-applies on every depth-parallax frame.) */
@@ -5023,4 +5050,39 @@ html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h1:hover,
 html[data-atmosphere]:not([data-atmosphere='none']) .markdown-content h2:hover {
   color: #100b04 !important;
   transition: color 300ms var(--zen-ease);
+}
+
+/* ── The scroll hangs, so it moves and it casts ───────────────────────── */
+
+/* Cast shadow — a mounted scroll stands an inch off the wall, and the wall
+   takes its shadow on the side away from the light. scene-light.ts publishes
+   the key on <html>: --key-x (-1 left … 1 right) and --key-y (0 low … 1
+   high). The shadow falls across away from the key and lengthens as the key
+   drops; wide and soft, because the wall is far behind the sheet. One layer,
+   declared here once and spliced into every box-shadow list above, so the
+   four appearances and the base all cast from the same light. Warm-dark, not
+   black: the wall is lit. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  --mount-cast: calc(var(--key-x, -0.6) * -46px) calc((1 - var(--key-y, 0.6)) * 30px + 26px) 70px -10px rgba(10, 8, 6, 0.42);
+}
+
+/* Sway — mount-sway.ts runs a damped spring on the particle field's gust
+   and writes the angle as an inline `rotate` on this element (an inline
+   write touches one element's style; a custom property on <html> inherits
+   and recalculated the whole document per write). The scroll pivots where
+   it hangs: the top of the cord. ::before draws that 102px above the
+   padding box; transform-origin measures from the border box, 26px of silk
+   higher, so 76px. The individual `rotate` property rather than `transform`:
+   the unfurl entrance (60) fills forwards with `transform: none`, and an
+   animation outranks a normal declaration, so a `transform` would be
+   discarded the moment it finished playing. */
+html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content {
+  transform-origin: 50% -76px;
+  /* Overrides (105): the panel is not static any more, it moves most frames,
+     and its own layer is what keeps the rotation off the paint path. */
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* mount-sway.ts does not run here; nothing moves, so no layer. */
+  html[data-atmosphere]:not([data-atmosphere='none']) .viewer-content { will-change: auto; }
 }

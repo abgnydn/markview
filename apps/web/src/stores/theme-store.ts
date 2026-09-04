@@ -17,7 +17,7 @@ type ResolvedTheme = 'dark' | 'light';
  * Add more by appending to the union + ATMOSPHERES config in
  * `components/atmosphere/atmospheres.ts`.
  */
-export type Atmosphere = 'none' | 'fuji' | 'wave' | 'snow' | 'fields';
+export type Atmosphere = 'none' | 'fuji' | 'wave' | 'snow' | 'fields' | 'rain';
 
 interface ThemeState {
   mode: ThemeMode;

@@ -12,10 +12,14 @@ import type { Atmosphere } from '@/stores/theme-store';
  *   wave   → filtered brown noise swelling like ocean breath
  *   snow   → high-passed pink noise + occasional muted bell hits
  *   fields → warm pad + sparse high pluck (cicada/bird tones)
+ *   rain   → band-passed noise hiss + sparse drips
  *
  * The whole thing is < 4 KB minified. No autoplay — needs an explicit
  * `start()` from a user gesture (browser autoplay policy). Master
  * volume + mute state persist to localStorage.
+ *
+ * `getAtmosphereSignal()` reads the output back as a few smoothed numbers
+ * (level, low band, high band, onset) so the visuals can follow the sound.
  */
 
 let ctx: AudioContext | null = null;
@@ -24,6 +28,7 @@ let active: { stop: () => void } | null = null;
 let currentId: Atmosphere | null = null;
 let storedVolume = 0.35;
 let muted = false;
+let tap: SignalTap | null = null;
 
 try {
   const v = localStorage.getItem('markview-atmosphere-volume');
@@ -42,7 +47,19 @@ function ensureContext(): AudioContext {
     ctx = new AC();
     masterGain = ctx.createGain();
     masterGain.gain.value = muted ? 0 : storedVolume;
-    masterGain.connect(ctx.destination);
+    // The analyser sits after the master gain, so it reads what actually
+    // reaches the speakers (nothing while muted). getAtmosphereSignal()
+    // divides the master gain back out so the numbers do not follow the
+    // volume slider.
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = SIGNAL_FFT_SIZE;
+    analyser.smoothingTimeConstant = 0;
+    masterGain.connect(analyser).connect(ctx.destination);
+    tap = {
+      analyser,
+      time: new Float32Array(analyser.fftSize),
+      freq: new Float32Array(analyser.frequencyBinCount),
+    };
   }
   return ctx;
 }
@@ -130,6 +147,7 @@ function startSynth(id: Exclude<Atmosphere, 'none'>): ActiveAudio {
     case 'wave':   return startWave();
     case 'snow':   return startSnow();
     case 'fields': return startFields();
+    case 'rain':   return startRain();
     // Exhaustiveness gate: adding a fifth atmosphere and forgetting its
     // audio used to compile clean and silently play nothing — now every
     // dispatch site gets a type error until this switch learns the case.
@@ -177,6 +195,135 @@ export function unlockAtmosphereAudio() {
       }
     });
   }
+}
+
+// ── Signal for the visuals ───────────────────────────────────────────────
+// A wave should break on the crash in the recording and a gust should
+// follow the wind's loudness, so the visual layers poll a few numbers
+// derived from the audio output once per frame.
+
+export interface AtmosphereSignal {
+  /** RMS of the output, 0..1. A bundled loop sits around 0.4–0.5. */
+  level: number;
+  /** Energy in ~20–250 Hz (surf rumble, wind body), 0..1. */
+  low: number;
+  /** Energy in ~2–8 kHz (hiss, cicadas, chimes), 0..1. */
+  high: number;
+  /** Rate of rise of `low`, 0..1. Peaks on a crash, decays within ~300 ms. */
+  onset: number;
+}
+
+interface SignalTap {
+  analyser: AnalyserNode;
+  time: Float32Array<ArrayBuffer>;
+  freq: Float32Array<ArrayBuffer>;
+}
+
+const SIGNAL_FFT_SIZE = 1024;
+// Pre-master RMS that reads as level 1. The bundled loops are matched to a
+// −29 dB mean (scripts/fetch-atmosphere-audio.sh), decode to a mono RMS of
+// about 0.03 and play at 0.85, which puts their level near 0.4–0.5 with
+// peaks near 1.
+const LEVEL_REF = 0.06;
+// Band RMS that reads as 1. Measured on the loops: wave's low band sits
+// near 0.45 and reaches 1 on a crash; the fields and fuji high bands sit
+// near 0.3. The snow loop has almost no 2–8 kHz content, so its high band
+// stays near 0.02.
+const BAND_REF = 0.04;
+const ATTACK_S = 0.05;
+const RELEASE_S = 0.4;
+// The onset compares `low` with a copy lagged by this much. With one
+// frame of lag the per-frame FFT jitter reads as constant small pulses;
+// 150 ms keeps a crash at 0.6–1 and the calm stretches under 0.25.
+const ONSET_LAG_S = 0.15;
+// A rise of `low` at this rate (units per second) reads as onset 1.
+const ONSET_FULL_RATE = 2;
+const ONSET_DECAY_S = 0.1;
+const SIGNAL_CACHE_MS = 8;
+// Below this master gain the division is meaningless; treat as silent.
+const MIN_GAIN = 0.01;
+
+let signal: AtmosphereSignal | null = null;
+let signalAt = 0;
+let primed = false;
+let sLevel = 0, sLow = 0, sHigh = 0, lowLag = 0, sOnset = 0;
+
+/** True while an atmosphere is producing audible output. */
+export function isAtmosphereAudioPlaying(): boolean {
+  return active !== null && !muted && ctx?.state === 'running';
+}
+
+function clamp01(x: number): number {
+  return Math.min(1, Math.max(0, x));
+}
+
+/** One-pole envelope follower: fast up, slow down. */
+function follow(cur: number, target: number, dt: number): number {
+  return cur + (target - cur) * (1 - Math.exp(-dt / (target > cur ? ATTACK_S : RELEASE_S)));
+}
+
+/**
+ * The current audio signal, or null when nothing is playing (no
+ * atmosphere, muted, or the context is still suspended). Computed at most
+ * once per ~8 ms; every caller in a frame gets the same object.
+ */
+export function getAtmosphereSignal(): AtmosphereSignal | null {
+  const gain = masterGain?.gain.value ?? 0;
+  if (!tap || !isAtmosphereAudioPlaying() || gain < MIN_GAIN) {
+    primed = false;
+    signal = null;
+    return null;
+  }
+  const now = performance.now();
+  if (signal && now - signalAt < SIGNAL_CACHE_MS) return signal;
+  const dt = primed ? Math.min(0.1, (now - signalAt) / 1000) : 0;
+  signalAt = now;
+
+  const { analyser, time, freq } = tap;
+  analyser.getFloatTimeDomainData(time);
+  analyser.getFloatFrequencyData(freq);
+
+  let sq = 0;
+  for (const s of time) sq += s * s;
+  // Divide the master gain out: the analyser is post-fader.
+  const rms = Math.sqrt(sq / time.length) / gain;
+
+  // Band energies as a share of the total, so the browser's FFT scaling
+  // cancels and each band becomes the RMS of that part of the signal.
+  const binHz = analyser.context.sampleRate / analyser.fftSize;
+  const lowEnd = Math.floor(250 / binHz);
+  const highStart = Math.ceil(2000 / binHz);
+  const highEnd = Math.min(freq.length - 1, Math.floor(8000 / binHz));
+  let total = 0, lowP = 0, highP = 0;
+  let k = 0;
+  for (const db of freq) {
+    if (k > 0) { // skip DC
+      const p = 10 ** (db / 10);
+      total += p;
+      if (k <= lowEnd) lowP += p;
+      else if (k >= highStart && k <= highEnd) highP += p;
+    }
+    k++;
+  }
+  const rawLevel = clamp01(rms / LEVEL_REF);
+  const rawLow = total > 0 ? clamp01((rms * Math.sqrt(lowP / total)) / BAND_REF) : 0;
+  const rawHigh = total > 0 ? clamp01((rms * Math.sqrt(highP / total)) / BAND_REF) : 0;
+
+  if (!primed) {
+    // First frame after (re)start: settle on the current values so the
+    // fade-in does not read as an onset.
+    sLevel = rawLevel; sLow = rawLow; sHigh = rawHigh; lowLag = rawLow; sOnset = 0;
+    primed = true;
+  } else {
+    sLevel = follow(sLevel, rawLevel, dt);
+    sLow = follow(sLow, rawLow, dt);
+    sHigh = follow(sHigh, rawHigh, dt);
+    lowLag += (sLow - lowLag) * (1 - Math.exp(-dt / ONSET_LAG_S));
+    const rise = Math.max(0, sLow - lowLag) / ONSET_LAG_S;
+    sOnset = Math.max(clamp01(rise / ONSET_FULL_RATE), sOnset * Math.exp(-dt / ONSET_DECAY_S));
+  }
+  signal = { level: sLevel, low: sLow, high: sHigh, onset: sOnset };
+  return signal;
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -466,6 +613,54 @@ function startFields(): ActiveAudio {
       out.gain.linearRampToValueAtTime(0, t + 1.0);
       window.setTimeout(() => {
         try { oscs.forEach((o) => o.stop()); bee1.stop(); bee2.stop(); beeLfo.stop(); out.disconnect(); } catch { /* */ }
+      }, 1100);
+    },
+  };
+}
+
+/** Steady rain — pink noise band-passed to a hiss, a slow breath LFO so
+ *  the shower swells and eases, and sparse high drips. */
+function startRain(): ActiveAudio {
+  const ac = ensureContext();
+  const out = ac.createGain();
+  out.gain.value = 0.0;
+  if (masterGain) out.connect(masterGain); // ensureContext() has just set it
+  out.gain.linearRampToValueAtTime(0.3, ac.currentTime + 2.5);
+
+  // Rain hiss — pink noise band 900 Hz–5 kHz.
+  const noise = pinkNoise(ac);
+  const hp = ac.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 900;
+  hp.Q.value = 0.4;
+  const lp = ac.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 5000;
+  const breath = ac.createGain();
+  breath.gain.value = 0.7;
+  noise.connect(hp).connect(lp).connect(breath).connect(out);
+
+  // Shower LFO — ~12 s.
+  const lfo = ac.createOscillator();
+  lfo.frequency.value = 0.08;
+  const lfoG = ac.createGain();
+  lfoG.gain.value = 0.25;
+  lfo.connect(lfoG).connect(breath.gain);
+  lfo.start();
+
+  // Drips — a short high pluck every ~1.4 s at a random pitch.
+  const dripTimer = window.setInterval(() => {
+    if (!ctx || document.hidden) return;
+    pluck(ac, out, 1600 + Math.random() * 1000, 0.02, 0.25);
+  }, 1400);
+
+  return {
+    stop: () => {
+      window.clearInterval(dripTimer);
+      const t = ac.currentTime;
+      out.gain.linearRampToValueAtTime(0, t + 1.0);
+      window.setTimeout(() => {
+        try { lfo.stop(); noise.disconnect(); out.disconnect(); } catch { /* */ }
       }, 1100);
     },
   };

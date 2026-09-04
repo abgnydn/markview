@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ensureDepth, isWebGLSupported } from '@/lib/atmosphere/depth';
+import { getSceneLight, onSceneLight } from '@/lib/atmosphere/scene-light';
+import type { SceneLight } from '@/lib/atmosphere/scene-light';
 
 interface DepthPaintingProps {
   src: string;
@@ -158,6 +160,27 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
       if (cancelled) { paintingTex.dispose(); renderer.dispose(); return; }
       const paintImg = paintingTex.image as HTMLImageElement;
 
+      // Auto-exposure. Paintings differ in key by a factor of three (a
+      // Hokusai sky against a Van Gogh night); the same dimming on both
+      // makes the dark one mud. Measure the painting's mean luminance once
+      // and expose toward a middle grey; and grain scales with it, since
+      // grain on a dark plate is noise, not texture.
+      let autoExposure = 1;
+      {
+        const c = document.createElement('canvas');
+        c.width = 64; c.height = 64;
+        const x = c.getContext('2d');
+        if (x) {
+          x.drawImage(paintImg, 0, 0, 64, 64);
+          const d = x.getImageData(0, 0, 64, 64).data;
+          let sum = 0;
+          for (let i = 0; i < d.length; i += 4) sum += 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+          const mean = sum / (64 * 64 * 255);
+          autoExposure = Math.max(0.85, Math.min(1.7, 0.40 / Math.max(0.05, mean)));
+          document.documentElement.style.setProperty('--atm-grain', Math.max(0.22, Math.min(0.5, 0.22 + mean * 0.5)).toFixed(3));
+        }
+      }
+
       // Depth map as a CanvasTexture (the ImageBitmap from ensureDepth).
       const depthTex = new THREE.CanvasTexture(depthResult.bitmap);
       depthTex.minFilter = THREE.LinearFilter;
@@ -179,6 +202,16 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
           uTime:       { value: 0.0 },
           uLightDir:   { value: new THREE.Vector3(-0.7, 0.6, 0.9).normalize() },
           uAmbient:    { value: 0.78 },
+          // The scene light (scene-light.ts): key and fill as colours, and
+          // the weights of everything the light does — bloom, rays, haze,
+          // exposure.
+          uKeyColor:   { value: new THREE.Vector3(1, 0.97, 0.92) },
+          uAmbientColor: { value: new THREE.Vector3(0.7, 0.7, 0.72) },
+          uKeyIntensity: { value: 0.9 },
+          uExposure:   { value: 1.0 },
+          uBloom:      { value: 0.55 },
+          uRays:       { value: 0.045 },
+          uHazeColor:  { value: new THREE.Vector3(0.86, 0.82, 0.74) },
           // Sun position — drives god-rays direction. Mapped from the
           // current time-of-day phase (dawn = upper-left, day = top,
           // dusk = upper-right, night = below horizon → rays off).
@@ -247,6 +280,13 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
           uniform sampler2D uDepth;
           uniform vec3 uLightDir;
           uniform float uAmbient;
+          uniform vec3 uKeyColor;
+          uniform vec3 uAmbientColor;
+          uniform float uKeyIntensity;
+          uniform float uExposure;
+          uniform float uBloom;
+          uniform float uRays;
+          uniform vec3 uHazeColor;
           uniform float uTime;
           uniform vec2 uSunUv;
           uniform float uSunOn;
@@ -327,9 +367,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
               base = sampleDof(vUv + motion, blurR);
             }
 
-            // ── Lambert + ambient ─────────────────────────────────
+            // ── Lambert + ambient, in colour ──────────────────────
+            // The fill is the sky's colour, the key the sun's; a slope
+            // toward the sun is warm, one away from it is in the sky's
+            // shade. This is what makes a lit scene instead of a dimmed one.
             float ndotl = max(dot(normalize(vNormal), normalize(uLightDir)), 0.0);
-            float shade = uAmbient + (1.0 - uAmbient) * ndotl;
+            vec3 shadeC = uAmbientColor * 1.15 + uKeyColor * (ndotl * uKeyIntensity * 1.1);
 
             // ── SSAO (cheap screen-space ambient occlusion) ───────
             // Sample 4 neighbors at increasing radius; pixels with
@@ -348,14 +391,14 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
             float aoTerm = 1.0 - clamp(ao * 1.6, 0.0, 0.35);
 
             // ── Aerial perspective haze (halved) ──────────────────
-            vec3 hazeFull = mix(vec3(0.86, 0.82, 0.74), base, smoothstep(0.0, 0.55, vDepth));
+            vec3 hazeFull = mix(uHazeColor, base, smoothstep(0.0, 0.55, vDepth));
             vec3 haze = mix(base, hazeFull, 0.5);
 
             // ── Water surface specular kick ───────────────────────
             float ripple = sin(uTime * 0.55 + vUv.x * 14.0 + vUv.y * 4.0);
             float specMid = pow(max(ripple, 0.0), 6.0) * mid * 0.25;
 
-            vec3 lit = haze * shade * aoTerm + vec3(specMid);
+            vec3 lit = haze * shadeC * aoTerm + vec3(specMid) * uKeyColor;
 
             // ── Bloom (in-shader 6-tap blur on bright pass) ───────
             // Sample 6 neighbors at offset radii, keep only the
@@ -369,7 +412,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
               float bl = max(0.0, luma(bn) - 0.65);
               bloom += bn * bl;
             }
-            bloom *= 0.32;
+            bloom *= uBloom;
 
             // ── God rays (radial samples toward sun) ──────────────
             // Sample 12 points along the line from this pixel to
@@ -385,10 +428,10 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
                 float dG = dSamp(sUv);
                 float skyContrib = smoothstep(0.45, 0.0, dG);
                 float lumS = luma(texture2D(uPaint, sUv).rgb);
-                rays += vec3(1.0, 0.94, 0.84) * skyContrib * lumS * decay;
+                rays += uKeyColor * skyContrib * lumS * decay;
                 decay *= 0.86;
               }
-              rays *= 0.020 * uSunOn;
+              rays *= uRays * uSunOn;
             }
 
             // ── Echo-location pulse ───────────────────────────────
@@ -404,7 +447,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
               pulseTerm = onRing * (1.0 - pulseAge * 0.5);
             }
 
-            vec3 finalColor = lit + bloom + rays + vec3(pulseTerm) * vec3(0.7, 0.65, 0.95);
+            vec3 finalColor = (lit + bloom + rays) * uExposure + vec3(pulseTerm) * vec3(0.7, 0.65, 0.95);
 
             // ── Dissolve-in reveal ────────────────────────────────
             // On mount uReveal animates 0→1. Each pixel "turns on"
@@ -448,7 +491,9 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
       // whenever the page scrolled. So: cache the scroll range, recompute the
       // focal *target* from a passive scroll listener (scrollY is cheap, no
       // reflow), and let the loop merely ease toward it.
-      let focalCur = 0.62;
+      // Rack focus on mount: the focus starts on the far plane and pulls
+      // to the reading distance over the first second and a half.
+      let focalCur = 0.12;
       let focalTarget = 0.62;
       let docMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const updateFocalTarget = () => {
@@ -502,6 +547,26 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
       };
 
       const start = performance.now();
+
+      // The scene light drives the key, the fill, the sun the rays come
+      // from, and the exposure. It updates once a minute; the draw loop
+      // only adds a slow wobble to the key so the relief keeps moving.
+      let sceneLight: SceneLight | null = getSceneLight();
+      const applyLight = (l: SceneLight) => {
+        sceneLight = l;
+        (material.uniforms.uKeyColor.value as InstanceType<typeof THREE.Vector3>).set(l.color[0], l.color[1], l.color[2]);
+        (material.uniforms.uAmbientColor.value as InstanceType<typeof THREE.Vector3>).set(l.ambient[0], l.ambient[1], l.ambient[2]);
+        (material.uniforms.uKeyIntensity as { value: number }).value = l.intensity;
+        (material.uniforms.uExposure as { value: number }).value = l.exposure * autoExposure;
+        (material.uniforms.uSunUv.value as InstanceType<typeof THREE.Vector2>).set(l.sunUv[0], l.sunUv[1]);
+        (material.uniforms.uSunOn as { value: number }).value = l.sunOn + l.moon * 0.35;
+        // Haze is the sky's colour with a little of the key in it.
+        (material.uniforms.uHazeColor.value as InstanceType<typeof THREE.Vector3>).set(
+          l.ambient[0] * 0.7 + l.color[0] * 0.3, l.ambient[1] * 0.7 + l.color[1] * 0.3, l.ambient[2] * 0.7 + l.color[2] * 0.3);
+        (material.uniforms.uRays as { value: number }).value = 0.03 + 0.03 * l.shafts;
+      };
+      if (sceneLight) applyLight(sceneLight);
+      const offLight = onSceneLight(applyLight);
 
       // Echo-location pulse — click anywhere on the painting and a
       // bright ring expands from the click point over 2 s. Useful as
@@ -570,6 +635,8 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
         dpr = next;
         renderer.setPixelRatio(dpr);
         renderer.setSize(window.innerWidth, window.innerHeight, false);
+        // The other layers read this to shed their own cost in order.
+        document.documentElement.setAttribute('data-atm-quality', next === FULL_DPR ? '2' : '1');
       };
       const governor = (now: number) => {
         if (lastFrame >= 0) gaps.push(now - lastFrame);
@@ -617,12 +684,13 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
 
         (material.uniforms.uTime as { value: number }).value = tNow;
 
-        // Living relief — the key light slowly orbits in azimuth so
-        // the bas-relief shadows shift over ~40s, making brushstrokes
-        // and ridges feel sculpted rather than painted-flat.
+        // Living relief — the key wobbles slowly around the scene's light
+        // so the bas-relief shadows keep shifting, brushstrokes and ridges
+        // reading as sculpted rather than painted flat.
         const az = tNow * 0.16;
+        const L = sceneLight ? sceneLight.dir : [-0.7, 0.6, 0.9];
         (material.uniforms.uLightDir.value as InstanceType<typeof THREE.Vector3>)
-          .set(Math.cos(az) * 0.7, 0.55, Math.sin(az) * 0.5 + 0.6).normalize();
+          .set(L[0] + Math.cos(az) * 0.16, L[1] + Math.sin(az * 0.7) * 0.08, L[2] + Math.sin(az) * 0.12).normalize();
 
         // Dissolve-in over 1.3s on mount.
         if (reveal.value < 1) reveal.value = Math.min(1, tNow / 1.3);
@@ -633,10 +701,12 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
         focalCur += (focalTarget - focalCur) * 0.05;
         (material.uniforms.uFocal as { value: number }).value = focalCur;
 
-        const phase = document.documentElement.getAttribute('data-time-phase') || 'day';
-        const sun = PHASE_SUN[phase] ?? PHASE_SUN.day;
-        (material.uniforms.uSunUv.value as InstanceType<typeof THREE.Vector2>).set(sun.uv[0], sun.uv[1]);
-        (material.uniforms.uSunOn as { value: number }).value = sun.on;
+        if (!sceneLight) {
+          const phase = document.documentElement.getAttribute('data-time-phase') || 'day';
+          const sun = PHASE_SUN[phase] ?? PHASE_SUN.day;
+          (material.uniforms.uSunUv.value as InstanceType<typeof THREE.Vector2>).set(sun.uv[0], sun.uv[1]);
+          (material.uniforms.uSunOn as { value: number }).value = sun.on;
+        }
         renderer.render(scene, camera);
       };
       rafId = requestAnimationFrame(draw);
@@ -653,6 +723,7 @@ export function DepthPainting({ src, paintingKey, opacity = 1, className, style,
       document.addEventListener('visibilitychange', onVis);
 
       cleanup = () => {
+        offLight();
         window.removeEventListener('resize', resize);
         window.removeEventListener('scroll', updateFocalTarget);
         focalRO.disconnect();

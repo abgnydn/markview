@@ -11,7 +11,7 @@ export interface DBWorkspace {
   totalSize: number;
   /** Optional per-workspace atmosphere — when set, switching to this
       workspace also switches the ambient layer to this painting. */
-  atmosphere?: 'none' | 'fuji' | 'wave' | 'snow' | 'fields';
+  atmosphere?: 'none' | 'fuji' | 'wave' | 'snow' | 'fields' | 'rain';
 }
 
 export interface DBFile {

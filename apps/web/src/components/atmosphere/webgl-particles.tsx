@@ -1,12 +1,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef } from 'react';
-import { Bank, DUST_LOOK, SNOW_LOOK, Shafts, Surf, stampFlat } from './accumulation';
+import { Bank, DUST_LOOK, LEDGE_LOOK, Litter, SNOW_LOOK, Shafts, Surf, drawMoon, findLedges, stampFlat } from './accumulation';
+import type { Ledge } from './accumulation';
+import { FrontLayer } from './front-layer';
 import type { ParticleKind } from './atmospheres';
+import type { Atmosphere } from '@/stores/theme-store';
+import { WeatherClock } from '@/lib/atmosphere/weather';
+import { getSceneLight, onSceneLight } from '@/lib/atmosphere/scene-light';
+import type { SceneLight } from '@/lib/atmosphere/scene-light';
+import { ensureDepth } from '@/lib/atmosphere/depth';
+import { setWind } from '@/lib/atmosphere/wind';
 
 interface WebGLParticlesProps {
   kind: Exclude<ParticleKind, 'none'>;
+  /** The painting behind the particles: its depth map is what they pass behind and land on. */
+  paintingSrc?: string;
 }
+
+const ATMOSPHERE_OF: Record<Exclude<ParticleKind, 'none'>, Exclude<Atmosphere, 'none'>> = {
+  petals: 'fuji', snow: 'snow', spray: 'wave', motes: 'fields', rain: 'rain',
+};
 
 /**
  * GPU particle system — Three.js Points with a custom shader.
@@ -62,7 +76,7 @@ export interface KindConfig {
   // 'carpet': stamped flat where they fall, faded slowly (petals). 'surf':
   // the sea's edge, droplets splash on it. 'field': a dust film plus a
   // litter of what fell, under light shafts.
-  pile: 'bank' | 'carpet' | 'surf' | 'field';
+  pile: 'bank' | 'carpet' | 'surf' | 'field' | 'rain';
   carpetAlpha: number;      // stamp alpha for carpet/field litter
   carpetFadePerSec: number; // per-second decay of the litter
 }
@@ -195,6 +209,23 @@ const drawChaff = (ctx: CanvasRenderingContext2D, s: number) => {
   ctx.stroke();
 };
 
+const drawRaindrop = (ctx: CanvasRenderingContext2D, s: number) => {
+  ctx.clearRect(0, 0, s, s);
+  const cx = s / 2, cy = s / 2;
+  // A falling drop is never seen as a drop: at any exposure it is a thin
+  // pale streak, brightest in the middle where it refracts the sky. The
+  // shader stretches it further along the fall.
+  // Long along x: the shader turns the sprite so x runs along the fall.
+  const grad = ctx.createLinearGradient(cx, cy - s * 0.06, cx, cy + s * 0.06);
+  grad.addColorStop(0, 'rgba(220, 234, 244, 0)');
+  grad.addColorStop(0.5, 'rgba(236, 246, 252, 0.95)');
+  grad.addColorStop(1, 'rgba(220, 234, 244, 0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, s * 0.42, s * 0.07, 0, 0, Math.PI * 2);
+  ctx.fill();
+};
+
 const pop = (p: Partial<Population> & Pick<Population, 'sprite'>): Population => ({
   gravity: 0, drag: 0.05, terminalV: 60, stretch: 0, baseSize: 3, sizeJitter: 4,
   lifeMin: 10, lifeMax: 20, windStrength: 0.5, alpha: 1, spawnFrom: 'top',
@@ -303,6 +334,50 @@ export const CFG: Record<Exclude<ParticleKind, 'none'>, KindConfig> = {
       }),
     ],
   },
+  rain: {
+    // A sudden shower. Drops fall fast and straight, leaning with the wind,
+    // and where they hit the ground they ring the water; the splash throws
+    // a few small droplets back up.
+    count: 1600,
+    spriteSize: 64,
+    share: 0.2,
+    pile: 'rain',
+    carpetAlpha: 0,
+    carpetFadePerSec: 0,
+    populations: [
+      pop({
+        sprite: drawRaindrop,
+        gravity: 900,
+        drag: 0.02,
+        terminalV: 760,
+        stretch: 1.6,
+        baseSize: 2.4,
+        sizeJitter: 4.5,
+        lifeMin: 2.5,
+        lifeMax: 3.5,
+        windStrength: 0.5,
+        alpha: 0.9,
+        spawnFrom: 'top',
+        initialVy: () => -(300 + Math.random() * 200),
+        initialVx: () => -40 + (Math.random() - 0.5) * 30,
+      }),
+      pop({
+        // Splash: what a drop throws back up when it lands.
+        sprite: drawSpray,
+        gravity: 500,
+        drag: 0.2,
+        terminalV: 300,
+        stretch: 0.4,
+        baseSize: 1.2,
+        sizeJitter: 2.2,
+        lifeMin: 0.35,
+        lifeMax: 0.7,
+        windStrength: 0.2,
+        alpha: 0.8,
+        spawnFrom: 'parked',
+      }),
+    ],
+  },
   motes: {
     // Dust in sunlight, and the chaff it came off. The dust rises on warm
     // air and is only seen inside a beam; the chaff is heavier, tumbles
@@ -401,7 +476,7 @@ function makeWindField() {
   };
 }
 
-export function WebGLParticles({ kind }: WebGLParticlesProps) {
+export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -410,6 +485,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
     const cfg = CFG[kind];
     const pops = cfg.populations;
     const cells = pops.length;
+    const atmosphere = ATMOSPHERE_OF[kind];
 
     let cancelled = false;
     let cleanup: (() => void) | null = null;
@@ -482,6 +558,9 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       const popOf = new Uint8Array(count);
       const parked = new Uint8Array(count);
       const parkedStack: number[][] = pops.map(() => []);
+      // Asleep: parked with a wake time. This is how the weather thins the
+      // fall — in a calm most of the population sleeps between lives.
+      const wakeAt = new Float32Array(count);
 
       const W = () => window.innerWidth;
       const H = () => window.innerHeight;
@@ -491,13 +570,18 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         cellAttr[i] = popOf[i];
       }
 
-      const park = (i: number) => {
+      const park = (i: number, sleepFor = 0) => {
         parked[i] = 1;
         alphas[i] = 0;
         life[i] = 0;
         positions[i * 3 + 1] = -H() * 3;   // off-screen; the GPU clips it
-        parkedStack[popOf[i]].push(i);
+        if (sleepFor > 0) wakeAt[i] = simClock + sleepFor;
+        else parkedStack[popOf[i]].push(i);
       };
+      let simClock = 0;
+      // The weather's spawn multiplier, 0..1: the chance a dying particle
+      // is reborn at once rather than sleeping a while.
+      let spawnGate = 1;
 
       // Give a particle its body: depth, size, spin, alpha, life. Position
       // and velocity are the caller's.
@@ -528,6 +612,10 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       // initial particles aren't all "just born" at t=0.
       const respawn = (i: number, staggered = false) => {
         const P = pops[popOf[i]];
+        if (!staggered && P.spawnFrom !== 'parked' && Math.random() > spawnGate) {
+          park(i, 1 + Math.random() * 4);
+          return;
+        }
         switch (P.spawnFrom) {
           case 'top':
             positions[i * 3] = (Math.random() - 0.5) * W() * 1.1;
@@ -582,6 +670,17 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           // camera is focused on the page; the flakes drifting past the lens
           // are the ones that should smear.
           uBokeh:   { value: 3.2 },
+          // The painting's depth map, and how screen space maps onto it.
+          // A particle whose own depth puts it behind something near in the
+          // painting is not drawn there.
+          uDepthMap:   { value: null as unknown },
+          uDepthOn:    { value: 0 },
+          uPaintScale: { value: new THREE.Vector2(1, 1) },
+          uResolution: { value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr) },
+          // Per-population tint (cell 0) and blink — fireflies at night.
+          uTint0:      { value: new THREE.Vector3(1, 1, 1) },
+          uBlink:      { value: 0 },
+          uTime:       { value: 0 },
         },
         transparent: true,
         depthWrite: false,
@@ -598,8 +697,10 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           varying float vDepth;
           varying float vStretch;
           varying float vCell;
+          varying float vSeed;
           uniform float uDpr;
           void main() {
+            vSeed = position.x * 0.013 + position.y * 0.007;
             vAlpha = alpha;
             vRotation = rotation;
             vDepth = depth;
@@ -615,13 +716,32 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           uniform sampler2D uSprite;
           uniform float uBokeh;
           uniform float uGrid;
+          uniform sampler2D uDepthMap;
+          uniform float uDepthOn;
+          uniform vec2 uPaintScale;
+          uniform vec2 uResolution;
+          uniform vec3 uTint0;
+          uniform float uBlink;
+          uniform float uTime;
           varying float vAlpha;
           varying float vRotation;
           varying float vDepth;
           varying float vStretch;
           varying float vCell;
+          varying float vSeed;
           void main() {
             if (vAlpha <= 0.002) discard;
+            // Occlusion by the painting. The particle's depth (0 far, 1
+            // near) is placed in the painting's depth range so the far
+            // ones pass behind foreground objects and the near ones pass
+            // in front of everything.
+            if (uDepthOn > 0.5) {
+              vec2 suv = gl_FragCoord.xy / uResolution;      // y up
+              vec2 puv = vec2(0.5 + (suv.x - 0.5) * uPaintScale.x, 0.5 + (0.5 - suv.y) * uPaintScale.y);
+              float pd = texture2D(uDepthMap, puv).r;
+              float sceneD = 0.35 + vDepth * 0.65;
+              if (pd > sceneD + 0.04) discard;
+            }
             // Into the sprite's own frame: rotate so x runs along the
             // velocity, then squeeze the short axis by the stretch so the
             // disc is left long along the path — a streak, not a dot.
@@ -641,7 +761,18 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
             vec4 tex = texture2D(uSprite, uv, near * uBokeh);
             // Out-of-focus highlights spread their light over more pixels,
             // so they look lighter, not dimmer: lift them a touch.
-            gl_FragColor = vec4(tex.rgb * (1.0 + near * 0.12), tex.a * vAlpha);
+            vec3 rgb = tex.rgb * (1.0 + near * 0.12);
+            float a = tex.a * vAlpha;
+            if (vCell < 0.5) {
+              rgb *= uTint0;
+              // Fireflies: each has its own slow pulse, mostly off.
+              if (uBlink > 0.0) {
+                float ph = fract(sin(vSeed * 91.7) * 43758.5) * 6.2831;
+                float f = smoothstep(0.55, 0.95, sin(uTime * (0.9 + fract(vSeed * 7.0) * 1.4) + ph));
+                a *= mix(1.0, f, uBlink);
+              }
+            }
+            gl_FragColor = vec4(rgb, a);
           }
         `,
       });
@@ -653,6 +784,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       // skipped for good, no matter where the particles go afterwards.
       points.frustumCulled = false;
       scene.add(points);
+
 
       // ── Accumulation Canvas2D layer ────────────────────────────────
       // What the particles leave behind, and (for the fields) the light
@@ -689,18 +821,104 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       surf.resize(W());
       const shafts = new Shafts();
       shafts.resize(W(), H());
+      const weather = new WeatherClock(atmosphere);
+      const litter = new Litter(cfg.carpetFadePerSec);
+      // Marks on the scroll itself — behind nothing, in front of the text.
+      const front = new FrontLayer();
+      let scrollRect: { left: number; right: number; top: number; bottom: number } | null = null;
+
+      // The scene light. Shafts take their colour and lean from it; the
+      // moon and the fireflies come out at night.
+      let light: SceneLight | null = getSceneLight();
+      const applyLight = (l: SceneLight) => {
+        light = l;
+        shafts.setLight([Math.round(l.color[0] * 255), Math.round(l.color[1] * 255), Math.round(l.color[2] * 255)], l.azimuth, l.shafts);
+      };
+      if (light) applyLight(light);
+      const offLight = onSceneLight(applyLight);
+
+      // The painting's depth: what the particles pass behind, and its
+      // ledges, which they land on. Optional — without a painting (or before
+      // its depth is known) the particles fall in front of everything.
+      let depthOn = 0;
+      let paintAspect = 1;
+      let ledgesImg: Ledge[] = [];
+      const ledgeBanks: { bank: Bank; ledge: Ledge; depth: number }[] = [];
+      const placeLedges = () => {
+        // Screen ↔ painting mapping, the same cover-fit the painting uses
+        // (see depth-painting.tsx: FOV 40°, camera at 1.6, 5% buffer).
+        const w = W(), h = H();
+        const visibleH = 2 * 1.6 * Math.tan((40 * Math.PI / 180) / 2);
+        const visibleW = visibleH * (w / h);
+        const scale = Math.max(visibleH, visibleW / paintAspect) * 1.05;
+        const sx = visibleW / (paintAspect * scale);   // painting u per screen-width fraction
+        const sy = visibleH / scale;
+        paintScale[0] = sx; paintScale[1] = sy;
+        ledgeBanks.length = 0;
+        for (const L of ledgesImg.slice(0, 18)) {
+          const toX = (u: number) => ((u - 0.5) / sx + 0.5) * w;
+          const y = ((L.y - 0.5) / sy + 0.5) * h;
+          const x0 = toX(L.x0), x1 = toX(L.x1);
+          if (y < 20 || y > h - 40 || x1 - x0 < 24) continue;
+          const b = new Bank(LEDGE_LOOK);
+          b.resize(w);
+          b.setRod({ x0: Math.max(0, x0), x1: Math.min(w, x1), y });
+          ledgeBanks.push({ bank: b, ledge: L, depth: L.depth });
+        }
+      };
+      const paintScale = new Float32Array([1, 1]);
+      let depthTex: { dispose: () => void } | null = null;
+      if (paintingSrc) {
+        // The depth map is already computed for the painting behind us (and
+        // cached); reading it again is a cache hit. Its ledges are found
+        // once, in image space.
+        void (async () => {
+          const [dep, img] = await Promise.all([
+            ensureDepth(paintingSrc),
+            new Promise<HTMLImageElement | null>((resolve) => {
+              const im = new Image();
+              im.onload = () => resolve(im);
+              im.onerror = () => resolve(null);
+              im.src = paintingSrc;
+            }),
+          ]);
+          if (cancelled || !dep) return;
+          if (img && img.naturalHeight > 0) paintAspect = img.naturalWidth / img.naturalHeight;
+          const tex = new THREE.CanvasTexture(dep.bitmap as unknown as HTMLCanvasElement);
+          tex.minFilter = THREE.LinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          tex.generateMipmaps = false;
+          tex.flipY = false;
+          (material.uniforms.uDepthMap as { value: unknown }).value = tex;
+          depthTex = tex;
+          if (pile === 'bank') {
+            const c = document.createElement('canvas');
+            c.width = Math.min(512, dep.width); c.height = Math.round(c.width * dep.height / dep.width);
+            const x = c.getContext('2d');
+            if (x) {
+              x.drawImage(dep.bitmap, 0, 0, c.width, c.height);
+              ledgesImg = findLedges(x.getImageData(0, 0, c.width, c.height));
+            }
+          }
+          placeLedges();
+          depthOn = 1;
+        })();
+      }
       // The scroll's top rod is a surface too. Its position is layout, read at
       // 8Hz off the hot path — never inside the per-particle loop.
       let rodClock = 0;
       const updateRod = () => {
         const el = document.querySelector('.viewer-content');
-        if (!el) { bank.setRod(null); return; }
+        if (!el) { bank.setRod(null); scrollRect = null; return; }
         const r = el.getBoundingClientRect();
+        scrollRect = { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
         const y = r.top - 8;                        // the rod's top edge: 8px proud of the silk
         if (y < 2 || y > H() - 30) { bank.setRod(null); return; }
         bank.setRod({ x0: r.left - 14 + 9, x1: r.right + 14 - 9, y });
       };
       let bankFrame = 0;
+      let shedClock = 0;
+      let lowQuality = false;
       // The litter is stamped with the live sprite, so what lies on the floor
       // is the same thing that fell.
       const stampLitter = (ctx: CanvasRenderingContext2D, i: number, sx: number, sy: number, size: number) => {
@@ -718,19 +936,16 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         if (carpetSeeded || pile !== 'carpet') return;
         carpetSeeded = true;
         const P = pops[0];
-        const seed = (sx: number, sy: number) => {
+        const seed = (sx: number, sy: number, onRod: boolean) => {
           const d = Math.random() ** 2;
           const size = (P.baseSize + d * P.sizeJitter) * (0.35 + d * 0.65);
-          accumCtx.save();
-          accumCtx.scale(accumDpr, accumDpr);
-          stampFlat(accumCtx, spriteCanvas, 0, grid, sx, sy, size, cfg.carpetAlpha * (0.5 + Math.random() * 0.5));
-          accumCtx.restore();
+          litter.add(sx, sy, size, cfg.carpetAlpha * (0.5 + Math.random() * 0.5), 0, onRod);
+          // Not freshly fallen: the ink has already bled.
+          litter.items[litter.items.length - 1].age = 10;
         };
-        for (let k = 0; k < 90; k++) seed(Math.random() * W(), H() - 2 - Math.random() * 24);
-        if (bank.rodTop >= 0) {
-          const el = document.querySelector('.viewer-content');
-          const r = el?.getBoundingClientRect();
-          if (r) for (let k = 0; k < 9; k++) seed(r.left + Math.random() * r.width, bank.rodTop - 4);
+        for (let k = 0; k < 90; k++) seed(Math.random() * W(), H() - 2 - Math.random() * 24, false);
+        if (bank.rodTop >= 0 && scrollRect) {
+          for (let k = 0; k < 9; k++) seed(scrollRect.left + Math.random() * (scrollRect.right - scrollRect.left), bank.rodTop - 4, true);
         }
       };
 
@@ -747,6 +962,9 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         bank.resize(W());
         surf.resize(W());
         shafts.resize(W(), H());
+        front.resize();
+        placeLedges();
+        (material.uniforms.uResolution.value as InstanceType<typeof THREE.Vector2>).set(window.innerWidth * dpr, window.innerHeight * dpr);
       };
       window.addEventListener('resize', onResize);
 
@@ -760,20 +978,28 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       // and dies away, and while it is on the whole field leans the same
       // way. That is what makes snow read as WEATHER rather than a
       // particle field — you can see one coming across the frame.
-      let gust = 0, gustTarget = 0, gustDir = 1, gustClock = 0, gustWait = 6 + Math.random() * 8;
+      // A scene opens on a gust: the weather arriving with it.
+      let gust = 0, gustTarget = 0.8, gustDir = Math.random() < 0.5 ? -1 : 1, gustClock = 0, gustWait = 2.5;
+      let windScale = 1;
+      let gustPublished = 0;
       const stepGust = (dt: number) => {
         gustClock += dt;
         if (gustTarget === 0 && gustClock > gustWait) {
-          gustTarget = 0.6 + Math.random() * 0.4;
+          gustTarget = Math.min(1, (0.6 + Math.random() * 0.4) * windScale);
           gustDir = Math.random() < 0.5 ? -1 : 1;
           gustClock = 0;
-          gustWait = 2.5 + Math.random() * 3.5;       // how long it blows
+          gustWait = (2.5 + Math.random() * 3.5) * Math.min(1.5, windScale);       // how long it blows
         } else if (gustTarget > 0 && gustClock > gustWait) {
           gustTarget = 0;
           gustClock = 0;
-          gustWait = 7 + Math.random() * 12;          // calm before the next
+          gustWait = (7 + Math.random() * 12) / windScale;          // calm before the next
         }
         gust += (gustTarget - gust) * Math.min(1, dt * (gustTarget > 0 ? 0.9 : 0.5));
+        // The scroll sways with it, at 10 Hz.
+        if (simClock - gustPublished > 0.1) {
+          gustPublished = simClock;
+          setWind(gust, gustDir);
+        }
       };
 
       // The sea. A swell arrives every nine seconds or so (the audio's
@@ -784,17 +1010,21 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       let swellWait = 2.5 + Math.random() * 2;
       let breaking = false, breakT = 0, breakDur = 1.6, breakX0 = 0, breakX1 = 0, breakStrength = 0, breakDir = 1;
       let mistBudget = 0, dropBudget = 0;
+      let seaScale = 1, seaOnset = 0;
       const emitMist = (sx: number, sy: number, spread: number, up: number) => {
         emit(0, sx, sy, (Math.random() - 0.5) * spread, up * (0.4 + Math.random() * 0.6));
       };
       const stepSea = (dt: number) => {
         const w = W(), h = H();
         if (!breaking) {
-          swellWait -= dt;
+          swellWait -= dt * seaScale;
+          // When the recording is playing, the crash in it is the break —
+          // once the swell is nearly due, the sound decides the moment.
+          if (seaOnset > 0.55 && swellWait < 4) swellWait = 0;
           if (swellWait <= 0) {
             breaking = true;
             breakT = 0;
-            breakStrength = 0.45 + Math.random() * 0.55;
+            breakStrength = Math.min(1.2, (0.45 + Math.random() * 0.55) * seaScale);
             breakDir = Math.random() < 0.5 ? -1 : 1;
             const span = w * (0.22 + Math.random() * 0.36 * breakStrength);
             const start = Math.random() * (w - span);
@@ -867,14 +1097,37 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         const tSec = now / 1000;
         const w = W(), h = H();
 
+        simClock += dt;
+        const wx = weather.step(dt);
+        spawnGate = wx.intensity;
+        windScale = wx.wind;
+        seaScale = wx.sea;
+        seaOnset = wx.onset;
+        // Visibility goes to the stylesheet (the haze thickens in a squall)
+        // on the atmosphere container, not <html>: a property on the root
+        // recalculates the whole document's style.
+        if ((bankFrame & 63) === 0) canvas.parentElement?.style.setProperty('--atm-visibility', wx.visibility.toFixed(3));
         for (let c = 0; c < cells; c++) dragFactors[c] = Math.exp(-pops[c].drag * dt);
         stepGust(dt);
         if (pile === 'surf') stepSea(dt);
-        if (pile === 'field') shafts.prepare(tSec);
+        if (shafts.visible) shafts.prepare(tSec);
+        const night = light ? light.moon > 0 : false;
+        (material.uniforms.uTime as { value: number }).value = tSec;
+        (material.uniforms.uDepthOn as { value: number }).value = depthOn;
+        (material.uniforms.uPaintScale.value as InstanceType<typeof THREE.Vector2>).set(paintScale[0], paintScale[1]);
+        if (pile === 'field') {
+          // At night the dust is gone and the fireflies are out.
+          (material.uniforms.uBlink as { value: number }).value = night ? 1 : 0;
+          const tint = material.uniforms.uTint0.value as InstanceType<typeof THREE.Vector3>;
+          if (night) tint.set(0.72, 1.0, 0.55); else tint.set(1, 1, 1);
+        }
         const scrollDelta = window.scrollY - lastScrollY;
         lastScrollY = window.scrollY;
         for (let i = 0; i < count; i++) {
-          if (parked[i]) continue;
+          if (parked[i]) {
+            if (wakeAt[i] > 0 && simClock >= wakeAt[i]) { wakeAt[i] = 0; parked[i] = 0; respawn(i, false); }
+            continue;
+          }
           const ix = i * 3;
           const P = pops[popOf[i]];
           // Position in centered coords.
@@ -963,6 +1216,11 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           // viewport, caught everything over the column the moment it
           // entered the frame.
           const atRodDepth = d > 0.28 && d < 0.5;
+          // Light on the fall: in air with visible beams, what crosses one
+          // is brighter. (For dust it is the whole difference.)
+          if (shafts.visible && pile !== 'field') alpha *= 0.85 + 0.35 * shafts.intensityAt(sx, sy);
+          // The scroll's face, at its depth: what reaches it marks it.
+          const onScroll = atRodDepth && scrollRect && sx > scrollRect.left && sx < scrollRect.right && sy > scrollRect.top + 4 && sy < scrollRect.bottom;
           if (pile === 'bank') {
             // A flake stops where the pile already is, so the drift grows
             // under the fall instead of flakes vanishing into a line.
@@ -974,6 +1232,26 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
                 settled = true;
               }
             }
+            // The painting's ledges, for flakes at their depth.
+            if (!settled && vy[i] < 0) {
+              const sceneD = 0.35 + d * 0.65;
+              for (const L of ledgeBanks) {
+                if (Math.abs(sceneD - L.depth) > 0.16) continue;
+                const lh = L.bank.rodHeightAt(sx);
+                if (lh < 0) continue;
+                const surface = L.bank.rodTop - lh;
+                if (syPrev < surface && sy >= surface) {
+                  L.bank.deposit(sx, restSize, 'rod');
+                  settled = true;
+                  break;
+                }
+              }
+            }
+            if (!settled && onScroll && Math.random() < 0.12 && vy[i] < 0) {
+              // Snow on the paper melts on contact and leaves it wet.
+              front.wet(sx, sy, restSize);
+              settled = true;
+            }
             if (!settled && sy >= h - bank.groundHeightAt(sx) - 1) {
               bank.deposit(sx, restSize, 'ground');
               settled = true;
@@ -983,26 +1261,44 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
             // some of those crossing the rod stay on it.
             const rodH = atRodDepth ? bank.rodHeightAt(sx) : -1;
             if (rodH >= 0 && syPrev < bank.rodTop && sy >= bank.rodTop && vy[i] < 0 && Math.random() < 0.4) {
-              stampLitter(accumCtx, i, sx, bank.rodTop - 4, restSize);
+              litter.add(sx, bank.rodTop - 4, restSize, cfg.carpetAlpha * alphaBase[i], popOf[i], true);
               settled = true;
             } else if (sy >= h - 4 - Math.random() * 26) {
-              stampLitter(accumCtx, i, sx, h - 2 - Math.random() * 22, restSize);
+              litter.add(sx, h - 2 - Math.random() * 22, restSize, cfg.carpetAlpha * alphaBase[i], popOf[i]);
               settled = true;
             }
           } else if (pile === 'surf') {
             // Droplets come down on the water or the foam; mist just fades.
-            if (popOf[i] === 1 && vy[i] < 0) {
+            if (popOf[i] === 1 && onScroll && Math.random() < 0.35) {
+              front.bead(sx, sy, restSize);
+              settled = true;
+            } else if (popOf[i] === 1 && vy[i] < 0) {
               const surface = h - Math.max(surf.foamHeightAt(sx), surf.washHeightAt(sx)) - 1;
               if (syPrev < surface && sy >= surface) {
                 surf.splash(sx, restSize);
                 settled = true;
               }
             }
+          } else if (pile === 'rain') {
+            if (popOf[i] === 0 && onScroll && Math.random() < 0.025) {
+              front.wet(sx, sy, restSize * 1.3);
+              settled = true;
+            } else if (popOf[i] === 0 && sy >= h - surf.washHeightAt(sx) - 1 - Math.random() * 6) {
+              surf.splash(sx, restSize * 2.2, false);
+              // Two or three droplets back up, small and short-lived.
+              const n = 2 + (Math.random() < 0.4 ? 1 : 0);
+              for (let k = 0; k < n; k++) {
+                if (!emit(1, sx + (Math.random() - 0.5) * 4, sy - 1, (Math.random() - 0.5) * 120, 60 + Math.random() * 140)) break;
+              }
+              settled = true;
+            } else if (popOf[i] === 1 && vy[i] < 0 && sy >= h - surf.washHeightAt(sx) - 1) {
+              settled = true;
+            }
           } else if (pile === 'field') {
             // Dust is lit only inside a beam; chaff is solid, so it is
             // merely brighter in one.
-            const light = shafts.intensityAt(sx, sy);
-            alpha *= popOf[i] === 0 ? 0.04 + 1.4 * light : 0.6 + 0.4 * light;
+            const beam = shafts.intensityAt(sx, sy);
+            alpha *= popOf[i] === 0 ? 0.04 + 1.4 * beam : 0.6 + 0.4 * beam;
             if (popOf[i] === 1) {
               const rodH = atRodDepth ? bank.rodHeightAt(sx) : -1;
               if (rodH >= 0) {
@@ -1028,56 +1324,92 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
           if (life[i] <= 0 || offX || offY || settled) respawn(i, false);
         }
 
-        if (pile !== 'surf') {
-          rodClock += dt;
-          if (rodClock > 0.125) { rodClock = 0; updateRod(); seedCarpet(); }
+        rodClock += dt;
+        if (rodClock > 0.125) { rodClock = 0; updateRod(); seedCarpet(); }
+        // A fast scroll shakes the ridge off the rod: it sheds, and what it
+        // sheds falls.
+        shedClock -= dt;
+        if (pile === 'bank' && Math.abs(scrollDelta) > 40 && bank.rodTop >= 0 && shedClock <= 0) {
+          shedClock = 0.5;
+          const shed = bank.shedRod(Math.min(0.6, Math.abs(scrollDelta) / 300));
+          if (shed > 0) {
+            let dropped = 0;
+            for (let i = 0; i < count && dropped < 30; i += 7) {
+              if (parked[i]) continue;
+              positions[i * 3] = (bank.rodX0 + Math.random() * (bank.rodX1 - bank.rodX0)) - w / 2;
+              positions[i * 3 + 1] = h / 2 - bank.rodTop + 2;
+              vx[i] = (Math.random() - 0.5) * 30; vy[i] = -10 - Math.random() * 30;
+              depth[i] = 0.3 + Math.random() * 0.18; depthAttr[i] = depth[i];
+              dropped++;
+            }
+          }
+        }
+        // Rain gathers on the rod's underside and drips off it.
+        if (pile === 'rain' && scrollRect && scrollRect.top > 30 && Math.random() < dt * 2.2 * wx.intensity) {
+          // The rod's underside is 14px below the border-box top (see the
+          // ::before geometry in zen.css).
+          front.drip(scrollRect.left - 10 + Math.random() * (scrollRect.right - scrollRect.left + 20), scrollRect.top + 16);
+        }
+        front.step(dt, scrollRect);
+        if (pile === 'carpet') {
+          const blown = litter.step(dt, gust, gustDir, scrollRect, w, h);
+          // Blown off the rod: back into the air as falling petals.
+          for (const it of blown) {
+            for (let i = 0; i < count; i++) {
+              if (parked[i] && wakeAt[i] > 0) {
+                wakeAt[i] = 0; parked[i] = 0;
+                positions[i * 3] = it.x - w / 2; positions[i * 3 + 1] = h / 2 - it.y;
+                vx[i] = gustDir * 30; vy[i] = 10;
+                embody(i, pops[0], false);
+                depth[i] = 0.38; depthAttr[i] = depth[i];
+                break;
+              }
+            }
+          }
         }
         // The surfaces are redrawn from their models, not accumulated as
         // pixels, so they can be drawn at a fraction of the sim rate with no
         // loss: nothing on them moves faster than a pile grows — except the
         // sea, which gets every other frame.
-        const cadence = pile === 'surf' ? 2 : 3;
+        // When the painting's governor has dropped resolution the machine is
+        // short of GPU; the surfaces redraw less often to give some back.
+        if ((bankFrame & 63) === 0) lowQuality = document.documentElement.getAttribute('data-atm-quality') === '1';
+        const cadence = (pile === 'surf' || pile === 'rain' ? 2 : 3) + (lowQuality ? 2 : 0);
         const draw = (bankFrame++ % cadence) === 0;
-        if (pile === 'bank') {
-          bank.step(dt);
-          if (draw) {
-            accumCtx.save();
-            accumCtx.setTransform(accumDpr, 0, 0, accumDpr, 0, 0);
-            accumCtx.clearRect(0, 0, w, h);
-            bank.render(accumCtx, w, h);
-            accumCtx.restore();
-          }
-        } else if (pile === 'surf') {
-          surf.step(dt);
-          if (draw) {
-            accumCtx.save();
-            accumCtx.setTransform(accumDpr, 0, 0, accumDpr, 0, 0);
-            accumCtx.clearRect(0, 0, w, h);
-            surf.render(accumCtx, w, h);
-            accumCtx.restore();
-          }
-        } else if (pile === 'field') {
+        if (pile === 'bank') { bank.step(dt); for (const L of ledgeBanks) L.bank.step(dt); }
+        if (pile === 'surf' || pile === 'rain') surf.step(dt);
+        if (pile === 'field') {
           bank.step(dt);
           // The litter thins over minutes rather than piling into a floor.
           litterCtx.globalCompositeOperation = 'destination-out';
           litterCtx.fillStyle = `rgba(0,0,0,${cfg.carpetFadePerSec * dt})`;
           litterCtx.fillRect(0, 0, litterCanvas.width, litterCanvas.height);
           litterCtx.globalCompositeOperation = 'source-over';
-          if (draw) {
-            accumCtx.save();
-            accumCtx.setTransform(accumDpr, 0, 0, accumDpr, 0, 0);
-            accumCtx.clearRect(0, 0, w, h);
-            shafts.render(accumCtx, tSec);
+        }
+        if (draw) {
+          // Everything on the accumulation layer is redrawn from its model:
+          // the moon and the beams first (they are behind the weather), then
+          // the surfaces, then what lies on them.
+          accumCtx.save();
+          accumCtx.setTransform(accumDpr, 0, 0, accumDpr, 0, 0);
+          accumCtx.clearRect(0, 0, w, h);
+          if (light && light.moon > 0 && atmosphere !== 'fields' && atmosphere !== 'rain') {
+            drawMoon(accumCtx, (0.5 + light.azimuth * 0.42) * w, h * 0.16, light.moon, w);
+          }
+          shafts.render(accumCtx, tSec);
+          if (pile === 'bank') {
+            for (const L of ledgeBanks) L.bank.render(accumCtx, w, h);
+            bank.render(accumCtx, w, h);
+          } else if (pile === 'surf' || pile === 'rain') {
+            surf.render(accumCtx, w, h);
+          } else if (pile === 'field') {
             bank.render(accumCtx, w, h);
             accumCtx.drawImage(litterCanvas, 0, 0, w, h);
-            accumCtx.restore();
+          } else if (pile === 'carpet') {
+            litter.render(accumCtx, spriteCanvas, grid, 1);
           }
-        } else if (pile === 'carpet') {
-          const fadeAlpha = cfg.carpetFadePerSec * dt;
-          accumCtx.globalCompositeOperation = 'destination-out';
-          accumCtx.fillStyle = `rgba(0,0,0,${fadeAlpha})`;
-          accumCtx.fillRect(0, 0, accumCanvas.width, accumCanvas.height);
-          accumCtx.globalCompositeOperation = 'source-over';
+          accumCtx.restore();
+          front.render();
         }
 
         // Mark attributes for GPU upload.
@@ -1114,6 +1446,11 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
         window.removeEventListener('resize', onResize);
         document.removeEventListener('visibilitychange', onVis);
         if (raf) cancelAnimationFrame(raf);
+        offLight();
+        front.destroy();
+        depthTex?.dispose();
+        setWind(0, 1);
+        canvas.parentElement?.style.removeProperty('--atm-visibility');
         accumCanvas.remove();
         geom.dispose();
         material.dispose();
@@ -1126,7 +1463,7 @@ export function WebGLParticles({ kind }: WebGLParticlesProps) {
       cancelled = true;
       cleanup?.();
     };
-  }, [kind]);
+  }, [kind, paintingSrc]);
 
   return (
     <canvas

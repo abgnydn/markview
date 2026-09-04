@@ -95,8 +95,8 @@ export const DUST_LOOK: PileLook = {
 export class Bank {
   private ground = new Float32Array(1);
   private rod = new Float32Array(1);
-  private rodX0 = 0;
-  private rodX1 = 0;
+  private rx0 = 0;
+  private rx1 = 0;
   private rodY = -1;
   private width = 1;
   private noise: HTMLCanvasElement | null = null;
@@ -120,7 +120,7 @@ export class Bank {
     if (!rod) { this.rodY = -1; return; }
     const cells = Math.max(1, Math.ceil((rod.x1 - rod.x0) / CELL) + 1);
     if (this.rod.length !== cells) this.rod = new Float32Array(cells);
-    this.rodX0 = rod.x0; this.rodX1 = rod.x1; this.rodY = rod.y;
+    this.rx0 = rod.x0; this.rx1 = rod.x1; this.rodY = rod.y;
   }
 
   /** Height of the ground pile at screen x, CSS px above the viewport bottom. */
@@ -131,18 +131,36 @@ export class Bank {
 
   /** Height of the rod ridge at screen x, or -1 when x is off the rod. */
   rodHeightAt(x: number): number {
-    if (this.rodY < 0 || x < this.rodX0 || x > this.rodX1) return -1;
-    const i = Math.max(0, Math.min(this.rod.length - 1, Math.round((x - this.rodX0) / CELL)));
+    if (this.rodY < 0 || x < this.rx0 || x > this.rx1) return -1;
+    const i = Math.max(0, Math.min(this.rod.length - 1, Math.round((x - this.rx0) / CELL)));
     return this.rod[i];
   }
 
   get rodTop(): number { return this.rodY; }
+  get rodX0(): number { return this.rx0; }
+  get rodX1(): number { return this.rx1; }
+
+  /**
+   * The rod has been shaken: a fraction of its ridge falls off. Returns
+   * the height lost, summed over the rod, so the caller knows how much to
+   * drop back into the air (0 when there was nothing to shed).
+   */
+  shedRod(fraction: number): number {
+    if (this.rodY < 0) return 0;
+    let lost = 0;
+    for (let i = 0; i < this.rod.length; i++) {
+      const d = this.rod[i] * fraction * (0.6 + Math.random() * 0.8);
+      this.rod[i] -= d;
+      lost += d;
+    }
+    return lost;
+  }
 
   /** A particle of `size` px has landed at screen x on the given surface. */
   deposit(x: number, size: number, on: 'ground' | 'rod', scale = 1): void {
     const field = on === 'ground' ? this.ground : this.rod;
     const max = on === 'ground' ? this.look.groundMax : this.look.rodMax;
-    const cx = on === 'ground' ? x / CELL : (x - this.rodX0) / CELL;
+    const cx = on === 'ground' ? x / CELL : (x - this.rx0) / CELL;
     // Kernel width varies flake to flake, so the pile is built from mounds
     // of different sizes rather than one smooth ramp.
     const radius = Math.max(2.5, size * (0.5 + Math.random() * 0.9)) / CELL;   // cells
@@ -170,7 +188,7 @@ export class Bank {
     if (this.sparkleClock > this.look.glint.every && this.sparkles.length < this.look.glint.max) {
       this.sparkleClock = 0;
       const onRod = this.rodY >= 0 && Math.random() < 0.25;
-      const x = onRod ? this.rodX0 + Math.random() * (this.rodX1 - this.rodX0) : Math.random() * this.width;
+      const x = onRod ? this.rx0 + Math.random() * (this.rx1 - this.rx0) : Math.random() * this.width;
       const max = 0.8 + Math.random() * 1.6;
       this.sparkles.push({ x, life: max, max, on: onRod ? 'rod' : 'ground' });
     }
@@ -198,7 +216,7 @@ export class Bank {
   /** Draw the ground pile and the rod ridge. Context is in CSS px. Does not clear. */
   render(ctx: CanvasRenderingContext2D, W: number, H: number): void {
     this.drawPile(ctx, this.ground, 0, W, H, 'ground');
-    if (this.rodY >= 0) this.drawPile(ctx, this.rod, this.rodX0, this.rodX1, this.rodY, 'rod');
+    if (this.rodY >= 0) this.drawPile(ctx, this.rod, this.rx0, this.rx1, this.rodY, 'rod');
   }
 
   private drawPile(ctx: CanvasRenderingContext2D, field: Float32Array, x0: number, x1: number, base: number, on: 'ground' | 'rod'): void {
@@ -446,14 +464,14 @@ export class Surf {
   }
 
   /** A droplet of `size` px has come down on the water at screen x. */
-  splash(x: number, size: number): void {
+  splash(x: number, size: number, foams = true): void {
     const y = this.width > 0 ? -this.washHeightAt(x) * Math.random() : 0;   // relative to the bottom
     if (this.rings.length < 120) {
       const max = 0.55 + size * 0.05;
       this.rings.push({ x, y, life: max, max, size });
     }
-    // Spray landing on foam adds to it, a little.
-    this.depositFoam(x, 0.35 + size * 0.12);
+    // Spray landing on foam adds to it, a little. Rain on a puddle does not.
+    if (foams) this.depositFoam(x, 0.35 + size * 0.12);
   }
 
   step(dt: number): void {
@@ -660,6 +678,24 @@ export class Shafts {
   private sprites: HTMLCanvasElement[] = [];
   private W = 1;
   private H = 1;
+  // The scene light: colour of the beams, how much they lean, and how much
+  // of them there is in this air. Set from scene-light.ts; the sprites are
+  // rebuilt when the colour changes, which is once a minute at most.
+  private color: Rgb = [255, 226, 168];
+  private lean = 1;
+  private strength = 1;
+
+  /** `azimuth` -1..1 (light from the left leans the beams right), `strength` 0..1. */
+  setLight(color: Rgb, azimuth: number, strength: number): void {
+    const changed = color[0] !== this.color[0] || color[1] !== this.color[1] || color[2] !== this.color[2];
+    this.color = color;
+    // Beams lean away from the light; straight down when it is overhead.
+    this.lean = -azimuth * 1.2;
+    this.strength = strength;
+    if (changed) this.resize(this.W, this.H);
+  }
+
+  get visible(): boolean { return this.strength > 0.02; }
 
   resize(W: number, H: number): void {
     this.W = W; this.H = H;
@@ -674,7 +710,7 @@ export class Shafts {
       // shoulders — in the warm colour of late light.
       const across = x.createLinearGradient(0, 0, bw, 0);
       const stops: [number, number][] = [[0, 0], [0.2, 0.05], [0.35, 0.28], [0.5, 1], [0.65, 0.28], [0.8, 0.05], [1, 0]];
-      for (const [p, a] of stops) across.addColorStop(p, `rgba(255, 226, 168, ${(a * 0.6).toFixed(3)})`);
+      for (const [p, a] of stops) across.addColorStop(p, rgba(this.color, a * 0.6));
       x.fillStyle = across;
       x.fillRect(0, 0, bw, bh);
       // Along the beam: brightest where it enters, thinning toward the floor.
@@ -692,6 +728,7 @@ export class Shafts {
   private axisX(b: Beam, t: number): number {
     return b.ax * this.W + Math.sin(t * 0.09 + b.phase) * b.sway;
   }
+  private angleOf(b: Beam): number { return b.angle * this.lean; }
 
   // Per-frame cache for intensityAt: the beams move once a frame, the
   // particles ask hundreds of times.
@@ -703,8 +740,8 @@ export class Shafts {
     for (let i = 0; i < this.beams.length; i++) {
       const b = this.beams[i];
       this.ax[i] = this.axisX(b, t);
-      this.cs[i] = Math.cos(b.angle);
-      this.sn[i] = Math.sin(b.angle);
+      this.cs[i] = Math.cos(this.angleOf(b));
+      this.sn[i] = Math.sin(this.angleOf(b));
     }
   }
 
@@ -719,20 +756,21 @@ export class Shafts {
       if (q > 1.6 || q < -1.6) continue;
       sum += b.intensity * Math.exp(-q * q * 2.4) * vert;
     }
-    return Math.min(1, sum * 2.2);
+    return Math.min(1, sum * 2.2 * this.strength);
   }
 
   render(ctx: CanvasRenderingContext2D, t: number): void {
+    if (!this.visible) return;
     for (let i = 0; i < this.beams.length; i++) {
       const b = this.beams[i];
       const sprite = this.sprites[i];
       if (!sprite) continue;
       ctx.save();
       ctx.translate(this.axisX(b, t), -40);
-      ctx.rotate(-b.angle);
+      ctx.rotate(-this.angleOf(b));
       // A beam breathes: dust density along it varies, so it brightens and
       // dims a little over tens of seconds.
-      ctx.globalAlpha = Math.min(1, b.intensity * 2.2) * (0.82 + 0.18 * Math.sin(t * 0.21 + b.phase * 1.7));
+      ctx.globalAlpha = Math.min(1, b.intensity * 2.2) * this.strength * (0.82 + 0.18 * Math.sin(t * 0.21 + b.phase * 1.7));
       ctx.drawImage(sprite, -sprite.width / 2, 0);
       ctx.restore();
     }
@@ -767,3 +805,171 @@ export function stampFlat(
   ctx.drawImage(sprite, cell * cw, 0, cw, cw, -s / 2, -s / 2, s, s);
   ctx.restore();
 }
+
+/**
+ * Litter — things lying where they fell, as a list rather than pixels, so
+ * the wind can move them. A gust slides the light ones along the ground;
+ * they gather against the foot of the scroll the way petals gather against
+ * a kerb, and the ones on the rod are blown off it. A petal on the ground
+ * also bleeds a little ink into the paper of the scene over its first
+ * seconds — the print's own medium, not a photograph's.
+ */
+export interface LitterItem {
+  x: number; y: number; size: number; angle: number; alpha: number; cell: number;
+  onRod: boolean;
+  age: number;
+  vx: number;
+}
+
+export class Litter {
+  items: LitterItem[] = [];
+  private readonly max: number;
+
+  constructor(private readonly fadePerSec: number, max = 520) { this.max = max; }
+
+  add(x: number, y: number, size: number, alpha: number, cell: number, onRod = false): void {
+    if (this.items.length >= this.max) this.items.shift();
+    this.items.push({ x, y, size, angle: Math.random() * Math.PI * 2, alpha, cell, onRod, age: 0, vx: 0 });
+  }
+
+  /**
+   * `gust` 0..1 and its direction; `scroll` is the reading surface's
+   * screen rect (things on the ground stop against its sides); `H` the
+   * viewport height. Returns the items blown off the rod, for the caller
+   * to drop back into the air.
+   */
+  step(dt: number, gust: number, gustDir: number, scroll: { left: number; right: number; top: number; bottom: number } | null, W: number, H: number): LitterItem[] {
+    const blownOff: LitterItem[] = [];
+    const fade = 1 - this.fadePerSec * dt;
+    for (let i = this.items.length - 1; i >= 0; i--) {
+      const it = this.items[i];
+      it.age += dt;
+      it.alpha *= fade;
+      if (it.alpha < 0.05 || it.x < -40 || it.x > W + 40) { this.items.splice(i, 1); continue; }
+      if (it.onRod) {
+        // A hard gust lifts the light ones off the rod.
+        if (gust > 0.6 && Math.random() < (gust - 0.6) * 0.12 * dt * 60 / Math.max(1, it.size * 0.25)) {
+          blownOff.push(it);
+          this.items.splice(i, 1);
+        }
+        continue;
+      }
+      // Along the ground: pushed by the gust, held back by friction, big
+      // ones harder to move.
+      const push = gust * gustDir * 90 / Math.max(1, it.size * 0.35);
+      it.vx += (push - it.vx) * Math.min(1, dt * 2.5);
+      if (Math.abs(it.vx) > 0.5) {
+        let nx = it.x + it.vx * dt;
+        if (scroll && it.y > scroll.top && it.y < scroll.bottom) {
+          // The scroll's foot is a wall on the ground.
+          const lw = scroll.left - 18, rw = scroll.right + 18;
+          if (it.x <= lw && nx > lw) { nx = lw - Math.random() * 6; it.vx = 0; }
+          else if (it.x >= rw && nx < rw) { nx = rw + Math.random() * 6; it.vx = 0; }
+        }
+        it.x = nx;
+        it.angle += it.vx * dt * 0.02;
+      }
+    }
+    return blownOff;
+  }
+
+  /** Draw every item. `ink` > 0 adds the sumi-e bleed under the ground items. */
+  render(ctx: CanvasRenderingContext2D, sprite: HTMLCanvasElement, grid: number, ink: number): void {
+    const cw = sprite.width / grid;
+    for (const it of this.items) {
+      if (ink > 0 && !it.onRod) {
+        // Ink spreads for two seconds, then holds, faint and cool.
+        const spread = Math.min(1, it.age / 2);
+        const r = it.size * (1.1 + spread * 0.9);
+        const g = ctx.createRadialGradient(it.x, it.y + 1, 0, it.x, it.y + 1, r);
+        g.addColorStop(0, `rgba(40, 30, 50, ${(0.16 * ink * it.alpha * spread).toFixed(3)})`);
+        g.addColorStop(1, 'rgba(40, 30, 50, 0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.ellipse(it.x, it.y + 1, r, r * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      ctx.rotate(it.angle);
+      ctx.scale(1, 0.72);
+      ctx.globalAlpha = it.alpha;
+      ctx.filter = 'brightness(0.86) saturate(0.9)';
+      const s = it.size * 2.2;
+      ctx.drawImage(sprite, it.cell * cw, 0, cw, cw, -s / 2, -s / 2, s, s);
+      ctx.restore();
+    }
+  }
+}
+
+/**
+ * The moon — a disc and a halo at the sun's position at night, drawn
+ * behind everything on the accumulation layer. The halo is the moon seen
+ * through the same air the snow falls through.
+ */
+export function drawMoon(ctx: CanvasRenderingContext2D, x: number, y: number, strength: number, W: number): void {
+  if (strength <= 0.01) return;
+  const r = Math.max(14, W * 0.016);
+  const halo = ctx.createRadialGradient(x, y, r * 0.8, x, y, r * 9);
+  halo.addColorStop(0, `rgba(214, 226, 248, ${(0.22 * strength).toFixed(3)})`);
+  halo.addColorStop(0.35, `rgba(190, 206, 236, ${(0.07 * strength).toFixed(3)})`);
+  halo.addColorStop(1, 'rgba(190, 206, 236, 0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(x, y, r * 9, 0, Math.PI * 2); ctx.fill();
+  const disc = ctx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
+  disc.addColorStop(0, `rgba(250, 250, 244, ${(0.95 * strength).toFixed(3)})`);
+  disc.addColorStop(0.85, `rgba(228, 232, 240, ${(0.9 * strength).toFixed(3)})`);
+  disc.addColorStop(1, `rgba(220, 226, 238, 0)`);
+  ctx.fillStyle = disc;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+}
+
+/**
+ * Ledges — the painting's own horizontal surfaces, read off its depth
+ * map: the top edge of anything near (a roof, a rail, a branch) is a
+ * place snow can lie. Found once per painting in image space, mapped to
+ * the screen by the caller.
+ */
+export interface Ledge { x0: number; x1: number; y: number; depth: number }   // image-space, 0..1 fractions
+
+export function findLedges(depth: ImageData): Ledge[] {
+  const { width: w, height: h, data } = depth;
+  const dAt = (x: number, y: number): number => data[(y * w + x) * 4] / 255;
+  // Per column: the topmost strong step from far to near, in the middle
+  // band of the picture, on something that is actually near.
+  const step = 4;
+  const cols = Math.floor(w / step);
+  const ledgeY = new Float32Array(cols).fill(-1);
+  const ledgeD = new Float32Array(cols);
+  for (let c = 0; c < cols; c++) {
+    const x = c * step;
+    for (let y = Math.floor(h * 0.12) + 6; y < h * 0.88; y += 2) {
+      const above = dAt(x, y - 6), here = dAt(x, y + 2);
+      if (here > 0.45 && here - above > 0.14) { ledgeY[c] = y; ledgeD[c] = here; break; }
+    }
+  }
+  // Group adjacent columns with a continuous edge into segments.
+  const out: Ledge[] = [];
+  let start = -1;
+  const flush = (end: number) => {
+    if (start < 0) return;
+    if (end - start >= 6) {
+      let ySum = 0, dSum = 0;
+      for (let c = start; c < end; c++) { ySum += ledgeY[c]; dSum += ledgeD[c]; }
+      const n = end - start;
+      out.push({ x0: (start * step) / w, x1: (end * step) / w, y: ySum / n / h, depth: dSum / n });
+    }
+    start = -1;
+  };
+  for (let c = 0; c < cols; c++) {
+    if (ledgeY[c] < 0) { flush(c); continue; }
+    if (start < 0) { start = c; continue; }
+    if (Math.abs(ledgeY[c] - ledgeY[c - 1]) > 5) { flush(c); start = c; }
+  }
+  flush(cols);
+  // The longest first; the caller keeps what it can afford.
+  out.sort((a, b) => (b.x1 - b.x0) - (a.x1 - a.x0));
+  return out;
+}
+
+export const LEDGE_LOOK: PileLook = { ...SNOW_LOOK, seed: () => 0, rodMax: 8, relief: 1.6 };

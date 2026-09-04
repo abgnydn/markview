@@ -16,6 +16,7 @@ const OPTIONS: Array<{ id: Atmosphere; label: string }> = [
   { id: 'wave',   label: 'Wave · ocean swell + spray' },
   { id: 'snow',   label: 'Snow · falling snow + bells' },
   { id: 'fields', label: 'Fields · warm pad + motes' },
+  { id: 'rain',   label: 'Rain · falling rain + drips' },
 ];
 
 /**

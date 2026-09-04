@@ -347,6 +347,7 @@ export function PaintingWorld({ src, kind = 'none', onClose }: PaintingWorldProp
       const trailColor = kind === 'snow' ? 0xdfe8f4
         : kind === 'fields' ? 0x4a5a2a
         : kind === 'wave' ? 0x9fc4e0
+        : kind === 'rain' ? 0x7b93aa
         : 0xb9a4ff;
       const trailGeo = new THREE.CircleGeometry(0.35, 12);
       let lastTrailPos = new THREE.Vector3(0, 0, 0);
