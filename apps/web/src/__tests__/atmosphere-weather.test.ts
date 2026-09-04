@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { WeatherClock } from '@/lib/atmosphere/weather';
 import { Bank, DUST_LOOK, SNOW_LOOK } from '@/components/atmosphere/accumulation';
+import { computeSceneLight } from '@/lib/atmosphere/scene-light';
+import { getWind, setWind } from '@/lib/atmosphere/wind';
 
 const VALID_FRONTS = ['calm', 'building', 'squall', 'clearing'] as const;
 const INITIAL_FRONTS = ['calm', 'building', 'clearing'] as const;
@@ -74,5 +76,52 @@ describe('Bank', () => {
     const h = bank.groundHeightAt(200);
     expect(Number.isFinite(h)).toBe(true);
     expect(h).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('computeSceneLight', () => {
+  const ATMS = ['fuji', 'wave', 'snow', 'fields', 'rain'] as const;
+
+  it('tintOff pins every scene to a moonless mid-afternoon', () => {
+    for (const atm of ATMS) {
+      const l = computeSceneLight(atm, new Date(2026, 5, 15, 3, 0), true);
+      expect(l.hour).toBeCloseTo(14.5, 5);
+      expect(l.phase).toBe('day');
+      expect(l.moon).toBe(0);
+    }
+  });
+
+  it('2am is night with moonlight and a unit direction vector', () => {
+    for (const atm of ATMS) {
+      const l = computeSceneLight(atm, new Date(2026, 0, 15, 2, 0));
+      expect(l.phase).toBe('night');
+      expect(l.moon).toBeCloseTo(0.55, 5);
+      expect(Math.hypot(l.dir[0], l.dir[1], l.dir[2])).toBeCloseTo(1, 5);
+    }
+  });
+
+  it('midday values are finite and in range', () => {
+    for (const atm of ATMS) {
+      const l = computeSceneLight(atm, new Date(2026, 8, 4, 12, 0));
+      for (const v of [...l.dir, ...l.color, ...l.ambient, ...l.sunUv, l.intensity, l.sunOn, l.moon, l.shafts, l.exposure, l.elevation, l.azimuth]) {
+        expect(Number.isFinite(v)).toBe(true);
+      }
+      expect(l.intensity).toBeGreaterThan(0);
+      expect(l.intensity).toBeLessThanOrEqual(1);
+      expect(l.exposure).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('wind', () => {
+  it('starts calm blowing right', () => {
+    expect(getWind()).toEqual({ gust: 0, dir: 1 });
+  });
+
+  it('publishes what the particle loop sets', () => {
+    setWind(0.5, -1);
+    expect(getWind()).toEqual({ gust: 0.5, dir: -1 });
+    setWind(0, 1);
+    expect(getWind()).toEqual({ gust: 0, dir: 1 });
   });
 });
