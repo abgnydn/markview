@@ -1298,7 +1298,11 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
             // Dust is lit only inside a beam; chaff is solid, so it is
             // merely brighter in one.
             const beam = shafts.intensityAt(sx, sy);
-            alpha *= popOf[i] === 0 ? 0.04 + 1.4 * beam : 0.6 + 0.4 * beam;
+            // Dust is lit; a firefly is a light. At night the dust population
+            // IS the fireflies (tinted and blinking in the shader), so the
+            // beams do not gate it.
+            alpha *= popOf[i] === 0 ? (night ? 1.0 : 0.04 + 1.4 * beam) : 0.6 + 0.4 * beam;
+            if (night && popOf[i] === 0) sizes[i] = restSize * 1.6;
             if (popOf[i] === 1) {
               const rodH = atRodDepth ? bank.rodHeightAt(sx) : -1;
               if (rodH >= 0) {
@@ -1377,7 +1381,12 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
         const cadence = (pile === 'surf' || pile === 'rain' ? 2 : 3) + (lowQuality ? 2 : 0);
         const draw = (bankFrame++ % cadence) === 0;
         if (pile === 'bank') { bank.step(dt); for (const L of ledgeBanks) L.bank.step(dt); }
-        if (pile === 'surf' || pile === 'rain') surf.step(dt);
+        if (pile === 'surf' || pile === 'rain') {
+          surf.step(dt);
+          // The koi live in the wash: the stylesheet shows them through the
+          // water when it is up and loses them in the sand when it drains.
+          if (pile === 'surf' && (bankFrame & 15) === 0) canvas.parentElement?.style.setProperty('--atm-wash', Math.min(1, surf.washHeightAt(w / 2) / 40).toFixed(2));
+        }
         if (pile === 'field') {
           bank.step(dt);
           // The litter thins over minutes rather than piling into a floor.
@@ -1394,7 +1403,7 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
           accumCtx.setTransform(accumDpr, 0, 0, accumDpr, 0, 0);
           accumCtx.clearRect(0, 0, w, h);
           if (light && light.moon > 0 && atmosphere !== 'fields' && atmosphere !== 'rain') {
-            drawMoon(accumCtx, (0.5 + light.azimuth * 0.42) * w, h * 0.16, light.moon, w);
+            drawMoon(accumCtx, (0.5 + light.azimuth * 0.42) * w, h * 0.09, Math.min(1, light.moon * 1.5), w);
           }
           shafts.render(accumCtx, tSec);
           if (pile === 'bank') {
@@ -1451,6 +1460,7 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
         depthTex?.dispose();
         setWind(0, 1);
         canvas.parentElement?.style.removeProperty('--atm-visibility');
+        canvas.parentElement?.style.removeProperty('--atm-wash');
         accumCanvas.remove();
         geom.dispose();
         material.dispose();

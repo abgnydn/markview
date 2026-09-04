@@ -412,6 +412,17 @@ html[data-atmosphere='rain']   { --atm-grain: 0.44; }
   animation: mv-koi-swim 1.5s ease-in-out infinite;
 }
 
+/* In the wash: --atm-wash (0..1, written on the container by the particle
+   field) is how far up the sand the water is. The koi are under the sheet
+   of water the accumulation layer draws over them, so they are seen through
+   it when it is up; when it drains they are out of the water and go — a
+   fish is not lying on wet sand. */
+.atmosphere-wave .atmosphere-creature-koi {
+  opacity: calc(var(--atm-wash, 0) * 0.9);
+  filter: blur(calc((1 - var(--atm-wash, 0)) * 0.8px));
+  transition: opacity 700ms ease, filter 700ms ease;
+}
+
 /* Butterfly — accent-coloured wings on an erratic flutter path. */
 .atmosphere-creature-butterfly {
   animation-name: mv-butterfly;

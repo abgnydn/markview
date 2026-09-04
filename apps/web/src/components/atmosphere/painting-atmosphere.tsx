@@ -444,8 +444,9 @@ function buildCreatures(atmosphereId: string): CreatureInstance[] {
           ['--flap' as string]: `${0.18 + rng() * 0.14}s`,
         };
       } else if (kind === 'koi') {
+        // At the water's edge, where the wash reaches (see --atm-wash).
         style = {
-          top: `${72 + rng() * 18}%`, width: `${30 * scale}px`, height: `${14 * scale}px`,
+          top: `${90 + rng() * 6}%`, width: `${30 * scale}px`, height: `${14 * scale}px`,
           color: `rgba(190, 72, 40, ${0.55 + rng() * 0.25})`,
           animationDuration: `${38 + rng() * 30}s`, animationDelay: `${-rng() * 40}s`,
           ['--c-drift' as string]: `${(rng() - 0.5) * 6}vh`,
