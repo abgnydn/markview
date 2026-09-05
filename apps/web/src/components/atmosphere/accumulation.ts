@@ -225,6 +225,11 @@ export class Bank {
     for (let i = 0; i < field.length; i++) if (field[i] > peak) peak = field[i];
     if (peak < 0.6) return;
 
+    // A dusting is translucent; only a deep drift is opaque. Without this
+    // a 1px pile renders the full opaque body + crest and reads as a solid
+    // bar floating over the painting.
+    const weight = Math.min(1, peak / 10);
+
     // Crest through the field's midpoints, with a stable per-cell grain so
     // the edge is crystalline rather than a spline — snow is granular at
     // every scale, and a perfectly smooth crest reads as plastic.
@@ -254,6 +259,7 @@ export class Bank {
     // 1. Ambient occlusion under the crest: the ground beside a drift is in
     //    its shadow. Drawn first, bigger and blurred, so the pile sits in it.
     ctx.save();
+    ctx.globalAlpha = weight;
     body();
     ctx.shadowColor = rgba(look.ao.color, look.ao.alpha);
     ctx.shadowBlur = on === 'ground' ? look.ao.blur : look.ao.blur * 0.36;
@@ -269,7 +275,10 @@ export class Bank {
     g.addColorStop(1.00, look.body[2]);
     body();
     ctx.fillStyle = g;
+    ctx.save();
+    ctx.globalAlpha = weight;
     ctx.fill();
+    ctx.restore();
 
     // 3. Form. One key light, upper left. A slope that faces it is lit, a
     //    slope that faces away is in its own shadow. The shade is computed
@@ -305,6 +314,7 @@ export class Bank {
     // 5. Crest light: the top surface faces the sky and is the brightest
     //    thing in the scene. A thin bright stroke, slightly lifted.
     ctx.save();
+    ctx.globalAlpha = weight;
     ctx.beginPath();
     crest();
     ctx.strokeStyle = look.crest.color;
@@ -935,6 +945,16 @@ export interface Ledge { x0: number; x1: number; y: number; depth: number }   //
 export function findLedges(depth: ImageData): Ledge[] {
   const { width: w, height: h, data } = depth;
   const dAt = (x: number, y: number): number => data[(y * w + x) * 4] / 255;
+  // The surface just below the step must STAY near for a stretch: the step
+  // leads onto a roof plane, a ridge top, a treetop — not a noise flicker
+  // in the sky or a branch tip, where depth falls away again at once. A
+  // lone step with nothing under it would render as snow floating in air.
+  const plateauBelow = (x: number, y0: number, v: number): boolean => {
+    let sum = 0, n = 0;
+    for (let y = y0; y < Math.min(h, y0 + 18); y += 2) { sum += dAt(x, y); n++; }
+    if (n === 0) return false;
+    return Math.abs(sum / n - v) < 0.09;
+  };
   // Per column: the topmost strong step from far to near, in the middle
   // band of the picture, on something that is actually near.
   const step = 4;
@@ -945,7 +965,7 @@ export function findLedges(depth: ImageData): Ledge[] {
     const x = c * step;
     for (let y = Math.floor(h * 0.12) + 6; y < h * 0.88; y += 2) {
       const above = dAt(x, y - 6), here = dAt(x, y + 2);
-      if (here > 0.45 && here - above > 0.14) { ledgeY[c] = y; ledgeD[c] = here; break; }
+      if (here > 0.55 && here - above > 0.14 && plateauBelow(x, y + 2, here)) { ledgeY[c] = y; ledgeD[c] = here; break; }
     }
   }
   // Group adjacent columns with a continuous edge into segments.
