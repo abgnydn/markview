@@ -681,6 +681,11 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
           uTint0:      { value: new THREE.Vector3(1, 1, 1) },
           uBlink:      { value: 0 },
           uTime:       { value: 0 },
+          // The reading scroll is a DOM surface, so it is not in the
+          // painting's depth map — without this every flake would draw
+          // over the text. Rect in device px, y up (gl_FragCoord space).
+          uScrollRect: { value: new THREE.Vector4(0, 0, 0, 0) },
+          uScrollOn:   { value: 0 },
         },
         transparent: true,
         depthWrite: false,
@@ -723,6 +728,8 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
           uniform vec3 uTint0;
           uniform float uBlink;
           uniform float uTime;
+          uniform vec4 uScrollRect;
+          uniform float uScrollOn;
           varying float vAlpha;
           varying float vRotation;
           varying float vDepth;
@@ -741,6 +748,14 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
               float pd = texture2D(uDepthMap, puv).r;
               float sceneD = 0.35 + vDepth * 0.65;
               if (pd > sceneD + 0.04) discard;
+            }
+            // Occlusion by the reading scroll. It hangs in front of the
+            // painting, so flakes behind it pass behind it; only the
+            // nearest ones — already soft with bokeh — drift past the page.
+            if (uScrollOn > 0.5) {
+              vec2 sp = gl_FragCoord.xy;
+              if (sp.x > uScrollRect.x && sp.y > uScrollRect.y && sp.x < uScrollRect.z && sp.y < uScrollRect.w
+                  && 0.35 + vDepth * 0.65 < 0.85) discard;
             }
             // Into the sprite's own frame: rotate so x runs along the
             // velocity, then squeeze the short axis by the stretch so the
@@ -1120,6 +1135,15 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
         const night = light ? light.moon > 0 : false;
         (material.uniforms.uTime as { value: number }).value = tSec;
         (material.uniforms.uDepthOn as { value: number }).value = depthOn;
+        // Scroll occlusion rect, refreshed from the 8Hz layout read.
+        if (scrollRect) {
+          (material.uniforms.uScrollRect.value as InstanceType<typeof THREE.Vector4>).set(
+            scrollRect.left * dpr, (H() - scrollRect.bottom) * dpr,
+            scrollRect.right * dpr, (H() - scrollRect.top) * dpr);
+          (material.uniforms.uScrollOn as { value: number }).value = 1;
+        } else {
+          (material.uniforms.uScrollOn as { value: number }).value = 0;
+        }
         (material.uniforms.uPaintScale.value as InstanceType<typeof THREE.Vector2>).set(paintScale[0], paintScale[1]);
         if (pile === 'field') {
           // At night the dust is gone and the fireflies are out.
@@ -1225,7 +1249,8 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
           // Light on the fall: in air with visible beams, what crosses one
           // is brighter. (For dust it is the whole difference.)
           if (shafts.visible && pile !== 'field') alpha *= 0.85 + 0.35 * shafts.intensityAt(sx, sy);
-          // The scroll's face, at its depth: what reaches it marks it.
+          // The scroll's face, at its depth: spray beads on it, rain wets
+          // it. Snow does not mark the paper — it falls past to the drift.
           const onScroll = atRodDepth && scrollRect && sx > scrollRect.left && sx < scrollRect.right && sy > scrollRect.top + 4 && sy < scrollRect.bottom;
           if (pile === 'bank') {
             // A flake stops where the pile already is, so the drift grows
@@ -1252,11 +1277,6 @@ export function WebGLParticles({ kind, paintingSrc }: WebGLParticlesProps) {
                   break;
                 }
               }
-            }
-            if (!settled && onScroll && Math.random() < 0.12 && vy[i] < 0) {
-              // Snow on the paper melts on contact and leaves it wet.
-              front.wet(sx, sy, restSize);
-              settled = true;
             }
             if (!settled && sy >= h - bank.groundHeightAt(sx) - 1) {
               bank.deposit(sx, restSize, 'ground');
