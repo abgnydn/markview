@@ -40,7 +40,7 @@
     "react-router-dom": "^7.18.2",
     "satori": "^0.26.0",
     "shiki": "^4.0.2",
-    "three": "^0.184.0",
+    "three": "^0.185.1",
     "y-codemirror.next": "^0.3.5",
     "y-protocols": "^1.0.7",
     "y-webrtc": "^10.3.0",
