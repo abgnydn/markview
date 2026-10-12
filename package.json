@@ -44,7 +44,7 @@
   "devDependencies": {
     "@markview/eslint-config": "workspace:*",
     "eslint": "^10.8.1",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",
